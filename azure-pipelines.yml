@@ -20,7 +20,7 @@ steps:
   displayName: 'npm install and build'
 
 - script: |
-    zip -r result.zip . -x .git/**\* > /dev/null
+    zip -r result.zip . -x .git/\build\**\* > /dev/null
   displayName: 'package results'  
 
 # Node.js with React
