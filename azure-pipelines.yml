@@ -20,13 +20,27 @@ steps:
   displayName: 'npm install and build'
 
 - script: |
-    zip -r result.zip . -x .git/\build\**\* > /dev/null
+    zip -r result.zip . -x .git/\**\* > /dev/null
   displayName: 'package results'  
 
 # Node.js with React
+
+- task: ArchiveFiles@2
+  inputs:
+    rootFolderOrFile: '$(Build.BinariesDirectory)/build'
+    includeRootFolder: true
+    archiveType: 'zip'
+    archiveFile: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip'
+    replaceExistingArchive: true
 
 - task: PublishBuildArtifacts@1
   inputs:
     pathtoPublish: '$(Build.SourcesDirectory)/result.zip' 
     artifactName: 'drop' 
   displayName: 'upload artifacts'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)/$(Build.BuildId).zip' 
+    artifactName: 'drop' 
+  displayName: 'upload artifacts 2'
