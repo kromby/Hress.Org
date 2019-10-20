@@ -20,10 +20,3 @@ steps:
   displayName: 'npm install and build'
 
 # Node.js with React
-- task: AzureRmWebAppDeployment@4
-  inputs:
-    ConnectionType: 'AzureRM'
-    azureSubscription: 'Pay-As-You-Go(c8cb2ba7-8896-46ae-8673-b3c0789a9358)'
-    appType: 'webApp'
-    WebAppName: 'hressreact'
-    packageForLinux: '$(System.DefaultWorkingDirectory)/**/*.zip'
