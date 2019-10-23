@@ -1,11 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Link, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 
 import App from './App.js';
 import UsersStatistics from './components/hardhead/userstats'
+
+// const appInsights = require("applicationinsights");
+// appInsights.setup("aea8e204-ca43-49b0-8b92-489055e8074d");
+// appInsights.start();
 
 const routing = (
     <Router>
@@ -20,7 +24,7 @@ const routing = (
           </header> */}
   
         <Switch>
-            <Route exact path="/" component={App} />
+            <Route exact path="/" component={UsersStatistics} />
             <Route path="/userstats" component={UsersStatistics} />
             <Route component={App} />
         </Switch>
