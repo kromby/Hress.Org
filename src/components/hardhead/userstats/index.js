@@ -15,7 +15,7 @@ class UserStatistics extends React.Component {
     }
 
     componentDidMount() {
-        var url = 'http://localhost:7071/api/hardhead/statistics/users';
+        var url = 'https://ezhressapi.azurewebsites.net/api/hardhead/statistics/users?code=mIDqQM07DjZa7IkNtkapKigg9Edielksif1ODu49W13p3Xhsf70foQ==';
     
         fetch(url, {
             method: 'GET'
