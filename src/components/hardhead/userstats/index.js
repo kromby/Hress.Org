@@ -14,7 +14,7 @@ class UserStatistics extends React.Component {
             stats: null,
             topN: 10,
             buttonText: 'Sjá meira', 
-            periodType: 'all'
+            periodType: 'All'
         }
 
         this.handlePeriodTypeChange = this.handlePeriodTypeChange.bind(this);
