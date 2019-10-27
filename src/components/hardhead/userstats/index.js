@@ -46,11 +46,7 @@ class UserStatistics extends React.Component {
         } else {
             return (
                 <table className="body" width="180px" cellspacing="0" cellpadding="0" border="0">
-                    <tr>
-                        <td colspan="3">
-                            <img src={top} alt="layout" />
-                        </td>
-                    </tr>
+                    <tr><td colspan="3"><img src={top} alt="layout" /></td></tr>
                     <tr>
                         <td className="MiddleLeft" />
                         <td valign="top" className="contentData">
