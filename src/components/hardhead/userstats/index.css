@@ -23,7 +23,11 @@ body {
         _padding-top: 5px;
         _padding-bottom: 5px;
         font-weight: bold;
-      }  
+      } 
+      
+body td,th {
+  padding-bottom: 10px;
+}      
 
 .top {
   height: 20px;
@@ -37,6 +41,10 @@ body {
 
 .contentData div {
   padding-bottom: 3px;
+}
+
+.contentData select {
+  width: 90%;
 }
 
 .gap {

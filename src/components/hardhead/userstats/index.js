@@ -13,12 +13,19 @@ class UserStatistics extends React.Component {
             error: null,
             stats: null,
             topN: 10,
-            buttonText: 'Sjá meira'
+            buttonText: 'Sjá meira', 
+            periodType: 'all'
         }
+
+        this.handlePeriodTypeChange = this.handlePeriodTypeChange.bind(this);
     }
 
     componentDidMount() {
-        var url = 'https://ezhressapi.azurewebsites.net/api/hardhead/statistics/users?code=mIDqQM07DjZa7IkNtkapKigg9Edielksif1ODu49W13p3Xhsf70foQ==';
+        this.getData(this.state.periodType);
+    }
+
+    getData(localPeriodType) {
+        var url = 'https://ezhressapi.azurewebsites.net/api/hardhead/statistics/users?periodType=' + localPeriodType + '&code=mIDqQM07DjZa7IkNtkapKigg9Edielksif1ODu49W13p3Xhsf70foQ==';
     
         fetch(url, {
             method: 'GET' 
@@ -33,7 +40,7 @@ class UserStatistics extends React.Component {
     }
 
     clickChangeView() {
-        if(this.state.topN === 100) {
+        if(this.state.topN > 20) {
             this.setState({
                 topN: 10,
                 buttonText: 'Sjá meira'
@@ -47,10 +54,15 @@ class UserStatistics extends React.Component {
         }
         else {
             this.setState({
-                topN: 100,
+                topN: this.state.stats.length,
                 buttonText: 'Sjá minna'
             });   
         }        
+    }
+
+    handlePeriodTypeChange(event) {
+        this.setState({periodType: event.target.value});
+        this.getData(event.target.value);
     }
 
     render() {
@@ -63,26 +75,66 @@ class UserStatistics extends React.Component {
 ];
 
         if (error) {
-            return <div>{error.message}</div>;
-        } else if (!isLoaded) {
-            return <div>Í vinnslu...</div>;
-        } else {
             return (
                 <table className="body" width="180px" cellspacing="0" cellpadding="0" border="0">
                     <tr><td className="top"><img src={top} alt="layout" /></td></tr>
                     <tr>
                         <td valign="top" className="contentData">
-                            <p>
-                                Top {this.state.topN} gestir
-                            </p>
-                            <div>
-                                <u>
-                                    Harðhaus - Fjöldi
-                                    <br/>
-                                    Fyrst mætt - Síðast mætt
-                                </u>
-                            </div>
-                            <br/>
+                        <div>{error.message}</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <img src={bottom} alt="layout" />
+                        </td>
+                    </tr>
+                </table>
+            );
+        } else if (!isLoaded) {
+            return (
+                <table className="body" width="180px" cellspacing="0" cellpadding="0" border="0">
+                    <tr><td className="top"><img src={top} alt="layout" /></td></tr>
+                    <tr>
+                        <td valign="top" className="contentData">
+                            <div>Í vinnslu...</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                        <img src={bottom} alt="layout" />
+                        </td>
+                    </tr>
+                </table>
+            );            
+        } else {
+            return (
+                <table className="body" width="180px" cellspacing="0" cellpadding="0" border="0">
+                    <tr><td className="top"><img src={top} alt="layout" /></td></tr>
+                    <tr>
+                        <th>
+                            Top {this.state.topN} gestir
+                        </th>
+                    </tr>
+                    <tr>
+                        <td className="contentData">
+                            <select value={this.state.periodType} onChange={this.handlePeriodTypeChange}>
+                                <option value="All">Frá upphafi</option>
+                                <option value="Last10">Síðustu tíu ár</option>
+                                <option value="ThisYear">Þetta ár</option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td className="contentData">
+                            <u>
+                                Harðhaus - Fjöldi
+                                <br/>
+                                Fyrst mætt - Síðast mætt
+                            </u>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td valign="top" className="contentData">
                             {stats.slice(0,3).map(stat => (
                                 <div key={stat.UserId}>
                                     <b>
