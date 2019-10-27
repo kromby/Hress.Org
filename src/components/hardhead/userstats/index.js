@@ -111,7 +111,7 @@ class UserStatistics extends React.Component {
                 <table className="body" width="180px" cellspacing="0" cellpadding="0" border="0">
                     <tr><td className="top"><img src={top} alt="layout" /></td></tr>
                     <tr>
-                        <th>
+                        <th className="contentData">
                             Top {this.state.topN} gestir
                         </th>
                     </tr>
