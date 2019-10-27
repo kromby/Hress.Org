@@ -1,5 +1,6 @@
 import React from 'react';
 import './index.css';
+import UserLink from '../../../components/users/userlink.js';
 
 import top from './top_small.png';
 import bottom from './bottom_small.png';
@@ -18,7 +19,7 @@ class UserStatistics extends React.Component {
         var url = 'https://ezhressapi.azurewebsites.net/api/hardhead/statistics/users?code=mIDqQM07DjZa7IkNtkapKigg9Edielksif1ODu49W13p3Xhsf70foQ==';
     
         fetch(url, {
-            method: 'GET'
+            method: 'GET' 
         })
         .then(res => res.json())
         .then((result) => {
@@ -55,12 +56,12 @@ class UserStatistics extends React.Component {
                                 Top 10 gestir
                             </p>
                             <div>
-                                Harðhaus - Fjöldi - Fyrst mætt
+                                <u>Harðhaus - Fjöldi - Fyrst mætt</u>
                             </div>
                             {stats.slice(0,5).map(stat => (
                                 <div key={stat.UserId}>
                                     <b>
-                                    <a href="/smu">{stat.UserId}</a>
+                                    <UserLink UserId={stat.UserId}/>
                                      - 
                                     {stat.AttendedCount}
                                      - 
@@ -68,9 +69,9 @@ class UserStatistics extends React.Component {
                                     </b>
                                 </div>
                             ))}
-                            {stats.slice(5,15).map(stat => (
+                            {stats.slice(5,25).map(stat => (
                                 <div key={stat.UserId}>
-                                    <a href="/smu">{stat.UserId}</a>
+                                    <UserLink UserId={stat.UserId}/>
                                      - 
                                     {stat.AttendedCount}
                                      - 
@@ -78,7 +79,7 @@ class UserStatistics extends React.Component {
                                 </div>
                             ))}
                             <br/>
-                            <a href="/smu">Sjá meira</a>
+                            {/* <a href="/smu">Sjá meira</a> */}
                         </td>
                         <td class="MiddleRight" />
                     </tr>
