@@ -11,7 +11,9 @@ class UserStatistics extends React.Component {
         this.state = {
             isLoaded: false,
             error: null,
-            stats: null
+            stats: null,
+            topN: 10,
+            buttonText: 'Sjá meira'
         }
     }
 
@@ -28,6 +30,27 @@ class UserStatistics extends React.Component {
         (error) => {
             this.setState({isLoaded: true, error});
         });  
+    }
+
+    clickChangeView() {
+        if(this.state.topN === 100) {
+            this.setState({
+                topN: 10,
+                buttonText: 'Sjá meira'
+            });
+        }
+        else if(this.state.topN === 10) {
+            this.setState({
+                topN: 20,
+                buttonText: 'Sjá ennþá meira'
+            });
+        }
+        else {
+            this.setState({
+                topN: 100,
+                buttonText: 'Sjá minna'
+            });   
+        }        
     }
 
     render() {
@@ -50,7 +73,7 @@ class UserStatistics extends React.Component {
                     <tr>
                         <td valign="top" className="contentData">
                             <p>
-                                Top 10 gestir
+                                Top {this.state.topN} gestir
                             </p>
                             <div>
                                 <u>
@@ -71,7 +94,7 @@ class UserStatistics extends React.Component {
                                      {monthNames[new Date(stat.LastAttended).getMonth()]} {new Date(stat.LastAttended).getFullYear()}
                                 </div>
                             ))}
-                            {stats.slice(3,15).map(stat => (
+                            {stats.slice(3,this.state.topN).map(stat => (
                                 <div key={stat.UserId}>
                                     {topCounter++}. <UserLink UserId={stat.UserId}/> - {stat.AttendedCount} 
                                     <br/>
@@ -80,6 +103,7 @@ class UserStatistics extends React.Component {
                             ))}
                             <br/>
                             {/* <a href="/smu">Sjá meira</a> */}
+                            <button onClick={() => this.clickChangeView()}>{this.state.buttonText}</button>
                         </td>
                     </tr>
                     <tr>
