@@ -23,10 +23,15 @@ body {
         _padding-top: 5px;
         _padding-bottom: 5px;
         font-weight: bold;
-      }    
+      }  
 
 .contentData {
     background-color: #ffffff;
+    text-align: center;
+}
+
+.contentData div {
+  padding-bottom: 5px;
 }
 
 .gap {

@@ -33,6 +33,8 @@ class UserStatistics extends React.Component {
     render() {
         const { error, isLoaded, stats } = this.state;
 
+        var topCounter = 1;
+
         const monthNames = ["janúar", "febrúar", "mars", "apríl", "maí", "júní",
                             "júlí", "ágúst", "september", "október", "nóvember", "desember"
 ];
@@ -56,26 +58,29 @@ class UserStatistics extends React.Component {
                                 Top 10 gestir
                             </p>
                             <div>
-                                <u>Harðhaus - Fjöldi - Fyrst mætt</u>
+                                <u>
+                                    Harðhaus - Fjöldi
+                                    <br/>
+                                    Fyrst mætt - Síðast mætt
+                                </u>
                             </div>
-                            {stats.slice(0,5).map(stat => (
+                            <br/>
+                            {stats.slice(0,3).map(stat => (
                                 <div key={stat.UserId}>
                                     <b>
-                                    <UserLink UserId={stat.UserId}/>
-                                     - 
-                                    {stat.AttendedCount}
-                                     - 
-                                    {monthNames[new Date(stat.FirstAttended).getMonth()]} {new Date(stat.FirstAttended).getFullYear()}
+                                    {topCounter++}. <UserLink UserId={stat.UserId}/> - {stat.AttendedCount}                                    
                                     </b>
+                                    <br/>
+                                     {monthNames[new Date(stat.FirstAttended).getMonth()]} {new Date(stat.FirstAttended).getFullYear()}
+                                     <br/>
+                                     {monthNames[new Date(stat.LastAttended).getMonth()]} {new Date(stat.LastAttended).getFullYear()}
                                 </div>
                             ))}
-                            {stats.slice(5,25).map(stat => (
+                            {stats.slice(3,15).map(stat => (
                                 <div key={stat.UserId}>
-                                    <UserLink UserId={stat.UserId}/>
-                                     - 
-                                    {stat.AttendedCount}
-                                     - 
-                                    {monthNames[new Date(stat.FirstAttended).getMonth()]} {new Date(stat.FirstAttended).getFullYear()}
+                                    {topCounter++}. <UserLink UserId={stat.UserId}/> - {stat.AttendedCount} 
+                                    <br/>
+                                    {new Date(stat.FirstAttended).getFullYear()} - {new Date(stat.LastAttended).getFullYear()}
                                 </div>
                             ))}
                             <br/>
