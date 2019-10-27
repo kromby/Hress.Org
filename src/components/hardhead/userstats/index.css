@@ -25,25 +25,20 @@ body {
         font-weight: bold;
       }  
 
+.top {
+  height: 20px;
+  max-height: 20px;
+}
+
 .contentData {
     background-color: #ffffff;
     text-align: center;
 }
 
 .contentData div {
-  padding-bottom: 5px;
+  padding-bottom: 3px;
 }
 
 .gap {
     height: 10px
 }
-
-.MiddleLeft {
-    width: 20px;
-    background-image: url(/WhitePixel.png);
-  }
-
-.MiddleRight {
-  width: 20px;
-  background-image: url(/WhitePixel.png);
-}  

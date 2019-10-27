@@ -46,9 +46,8 @@ class UserStatistics extends React.Component {
         } else {
             return (
                 <table className="body" width="180px" cellspacing="0" cellpadding="0" border="0">
-                    <tr><td colspan="3"><img src={top} alt="layout" /></td></tr>
+                    <tr><td className="top"><img src={top} alt="layout" /></td></tr>
                     <tr>
-                        <td className="MiddleLeft" />
                         <td valign="top" className="contentData">
                             <p>
                                 Top 10 gestir
@@ -82,10 +81,9 @@ class UserStatistics extends React.Component {
                             <br/>
                             {/* <a href="/smu">Sjá meira</a> */}
                         </td>
-                        <td class="MiddleRight" />
                     </tr>
                     <tr>
-                        <td colspan="3">
+                        <td>
                         <img src={bottom} alt="layout" />
                         </td>
                     </tr>
