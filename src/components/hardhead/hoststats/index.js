@@ -5,14 +5,14 @@ import UserLink from '../../../components/users/userlink.js';
 import top from './top_small.png';
 import bottom from './bottom_small.png';
 
-class UserStatistics extends React.Component {
+class HostStatistics extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             isLoaded: false,
             error: null,
             stats: null,
-            topN: 10,
+            topN: 5,
             buttonText: 'Sjá meira', 
             periodType: 'All'
         }
@@ -25,7 +25,7 @@ class UserStatistics extends React.Component {
     }
 
     getData(localPeriodType) {
-        var url = 'https://ezhressapi.azurewebsites.net/api/hardhead/statistics/users?periodType=' + localPeriodType + '&code=mIDqQM07DjZa7IkNtkapKigg9Edielksif1ODu49W13p3Xhsf70foQ==';
+        var url = 'https://ezhressapi.azurewebsites.net/api/hardhead/statistics/users?guestType=53&periodType=' + localPeriodType + '&code=mIDqQM07DjZa7IkNtkapKigg9Edielksif1ODu49W13p3Xhsf70foQ==';
     
         fetch(url, {
             method: 'GET' 
@@ -40,15 +40,15 @@ class UserStatistics extends React.Component {
     }
 
     clickChangeView() {
-        if(this.state.topN > 20) {
+        if(this.state.topN > 10) {
             this.setState({
-                topN: 10,
+                topN: 5,
                 buttonText: 'Sjá meira'
             });
         }
-        else if(this.state.topN === 10) {
+        else if(this.state.topN === 5) {
             this.setState({
-                topN: 20,
+                topN: 10,
                 buttonText: 'Sjá ennþá meira'
             });
         }
@@ -112,7 +112,7 @@ class UserStatistics extends React.Component {
                     <tr><td className="top"><img src={top} alt="layout" /></td></tr>
                     <tr>
                         <th className="contentData">
-                            Top {this.state.topN} gestir
+                            Top {this.state.topN} gestgjafar
                         </th>
                     </tr>
                     <tr>
@@ -130,28 +130,19 @@ class UserStatistics extends React.Component {
                             <u>
                                 Harðhaus - Fjöldi
                                 <br/>
-                                Fyrst mætt - Síðast mætt
+                                Fyrst haldið - Síðast haldið
                             </u>
                         </td>
                     </tr>
                     <tr>
                         <td valign="top" className="contentData">
-                            {stats.slice(0,3).map(stat => (
+                            {stats.slice(0,this.state.topN).map(stat => (
                                 <div key={stat.UserId}>
-                                    <b>
                                     {topCounter++}. <UserLink UserId={stat.UserId}/> - {stat.AttendedCount}                                    
-                                    </b>
                                     <br/>
                                      {monthNames[new Date(stat.FirstAttended).getMonth()]} {new Date(stat.FirstAttended).getFullYear()}
                                      <br/>
                                      {monthNames[new Date(stat.LastAttended).getMonth()]} {new Date(stat.LastAttended).getFullYear()}
-                                </div>
-                            ))}
-                            {stats.slice(3,this.state.topN).map(stat => (
-                                <div key={stat.UserId}>
-                                    {topCounter++}. <UserLink UserId={stat.UserId}/> - {stat.AttendedCount} 
-                                    <br/>
-                                    {new Date(stat.FirstAttended).getFullYear()} - {new Date(stat.LastAttended).getFullYear()}
                                 </div>
                             ))}
                             <br/>
@@ -173,4 +164,4 @@ class UserStatistics extends React.Component {
     }
 }
 
-export default UserStatistics
+export default HostStatistics

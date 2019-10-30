@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 
 import App from './App.js';
 import UsersStatistics from './components/hardhead/userstats'
+import SideMenu from './components/sidemenu';
 
 // const appInsights = require("applicationinsights");
 // appInsights.setup("aea8e204-ca43-49b0-8b92-489055e8074d");
@@ -24,7 +25,7 @@ const routing = (
           </header> */}
   
         <Switch>
-            <Route exact path="/" component={UsersStatistics} />
+            <Route exact path="/" component={SideMenu} />
             <Route path="/userstats" component={UsersStatistics} />
             <Route component={App} />
         </Switch>
