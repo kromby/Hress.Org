@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import config from 'react-global-configuration';
@@ -22,7 +22,7 @@ const routing = (
           <h1><a href="http://www.hress.org">Hress.Org</a></h1>
           <nav className="links">
             <ul>
-              <li><a href="/hardhead">Harðhaus</a></li>
+              <li><Link to="/hardhead">Harðhaus</Link></li>
               <li><a href="http://www.hress.org/yearly">Árlegt</a></li>
               <li><a href="http://www.hress.org/links">Tenglar</a></li>
               <li><a href="http://www.hress.org/comic">Comic</a></li>
