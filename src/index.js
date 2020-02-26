@@ -3,9 +3,12 @@ import ReactDOM from 'react-dom';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
+import config from 'react-global-configuration';
 
-import App from './App.js';
-import UsersStatistics from './components/hardhead/userstats'
+import App from './pages/App.js';
+import Hardhead from './pages/hardhead';
+import HardheadSidebar from './pages/hardhead/sidebar';
+import UsersStatistics from './pages/hardhead/userstats'
 import SideMenu from './components/sidemenu';
 
 // const appInsights = require("applicationinsights");
@@ -14,24 +17,106 @@ import SideMenu from './components/sidemenu';
 
 const routing = (
     <Router>
-      <div>
-          {/* <header id="header" className="alt">
-              <h1 id="logo"><a href="index.html">boardgame.hress.org</a></h1>
-              <nav id="nav">
-                  <Link to="/">Leikur</Link>
-                  -
-                  <Link to="/board">Borð</Link>
-              </nav>  
-          </header> */}
-  
-        <Switch>
+      <div id="wrapper">
+				<header id="header">
+          <h1><a href="http://www.hress.org">Hress.Org</a></h1>
+          <nav className="links">
+            <ul>
+              <li><a href="/hardhead">Harðhaus</a></li>
+              <li><a href="http://www.hress.org/yearly">Árlegt</a></li>
+              <li><a href="http://www.hress.org/links">Tenglar</a></li>
+              <li><a href="http://www.hress.org/comic">Comic</a></li>
+            </ul>
+          </nav>
+          {/* <nav className="main">
+            <ul>
+              <li className="search">
+                <a className="fa-search" href="#search">Search</a>
+                <form id="search" method="get" action="#">
+                  <input type="text" name="query" placeholder="Search" />
+                </form>
+              </li>
+              <li className="menu">
+                <a className="fa-bars" href="#menu">Menu</a>
+              </li>
+            </ul>
+          </nav> */}
+        </header>
+
+        {/* <section id="menu">
+            <section>
+              <form className="search" method="get" action="#">
+                <input type="text" name="query" placeholder="Search" />
+              </form>
+            </section>
+
+            <section>
+              <ul className="links"> */}
+                {/* <li>
+                  <a href="#">
+                    <h3>Lorem ipsum</h3>
+                    <p>Feugiat tempus veroeros dolor</p>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <h3>Dolor sit amet</h3>
+                    <p>Sed vitae justo condimentum</p>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <h3>Feugiat veroeros</h3>
+                    <p>Phasellus sed ultricies mi congue</p>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <h3>Etiam sed consequat</h3>
+                    <p>Porta lectus amet ultricies</p>
+                  </a>
+                </li> */}
+              {/* </ul>
+            </section>
+
+            <section>
+              <ul className="actions stacked"> */}
+                {/* <li><a href="#" className="button large fit">Log In</a></li> */}
+              {/* </ul>
+            </section>
+
+					</section>           */}
+
+          {/* Main section */}
+          <Switch>
             <Route exact path="/" component={SideMenu} />
             <Route path="/userstats" component={UsersStatistics} />
+            <Route path="/hardhead" component={Hardhead} />
             <Route component={App} />
-        </Switch>
+          </Switch>
+          
+          {/* Sidebar */}
+          <Switch>
+            <Route exact path="/" component={SideMenu} />
+            <Route path="/userstats" component={UsersStatistics} />
+            <Route path="/hardhead" component={HardheadSidebar} />
+            <Route component={App} />
+          </Switch>          
       </div>
     </Router>
   )  
+
+  function setConfig() {
+    console.debug('setConfig');
+  
+    config.set({ path: 'https://ezhressapi.azurewebsites.net', code: 'JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==' }, {freeze: false, environment: 'prod'});
+    config.set({ path: 'http://localhost:7071', code: ''}, {freeze: false, environment: 'dev'});
+    config.set({ });
+  
+    config.setEnvironment('prod');
+  }
+    
+  setConfig();  
 
 ReactDOM.render(routing, document.getElementById('root'));
 

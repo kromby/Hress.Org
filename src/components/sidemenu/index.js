@@ -1,6 +1,6 @@
 import React from 'react';
-import UserStatistics from '../hardhead/userstats';
-import HostStatistics from '../hardhead/hoststats';
+import UserStatistics from '../../pages/hardhead/userstats';
+import HostStatistics from '../../pages/hardhead/hoststats';
 
 class SideMenu extends React.Component {
     render() {        

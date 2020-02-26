@@ -1,4 +1,5 @@
 import React from 'react';
+import config from 'react-global-configuration';
 
 class UserLink extends React.Component {
     constructor(props) {
@@ -11,7 +12,7 @@ class UserLink extends React.Component {
     }
 
     componentDidMount() {
-        var url = 'https://ezhressapi.azurewebsites.net/api/users/' + this.props.UserId + '?code=jiJIEiMkBDYCHH6c7Op08qTgW3KMy74m84y2qIU6JroUzh/90Au1nA==';
+        var url = config.get('path') + '/api/users/' + this.props.UserId + '?code=' + config.get('code');
     
         fetch(url, {
             method: 'GET' 

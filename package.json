@@ -3,10 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "axios": "^0.19.2",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
+    "react-global-configuration": "^1.4.0",
     "react-router-dom": "^5.1.2",
-    "react-scripts": "3.2.0"
+    "react-scripts": "^3.4.0",
+    "react-youtube-embed": "^1.0.3"
   },
   "scripts": {
     "start": "react-scripts start",
