@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Author from './author';
+import './post.css';
 
 export default class Post extends Component {
     render() {

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import UserLink from './users/userlink';
+import './post.css';
 
 export default class MiniListPost extends Component {
     render() {
