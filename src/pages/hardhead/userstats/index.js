@@ -140,7 +140,7 @@ class UserStatistics extends React.Component {
             );            
         } else {
             return (
-                <MiniListPost title={"Top " + this.state.topN + " gestir"} description="Síðustu 5 árin" list={this.state.list}/>                
+                <MiniListPost title={"Top " + this.state.topN + " gestir"} description="Frá upphafi" list={this.state.list}/>                
             )                    
         }
     }

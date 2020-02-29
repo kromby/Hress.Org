@@ -1,5 +1,5 @@
 import React from 'react';
-// import UsersStatistics from '../userstats';
+import UsersStatistics from '../userstats';
 import { Intro } from '../../../components';
 import NextHardhead from './nexthardhead';
 import './sidebar.css';
@@ -7,14 +7,6 @@ import './sidebar.css';
 function HardheadSidebar() {
     return (
         <section id="sidebar">
-            {/* Intro */}
-            {/* <section id="intro">
-                <a href="#" className="logo"><img src="https://hress.azurewebsites.net/App_Themes/Default/Images/Logo.png" alt="" /></a>
-                <header>
-                    <h2>Harðhaus</h2>
-                    <p>Þar sem hressleikinn býr</p>
-                </header>
-            </section> */}
             <Intro logo="https://hress.azurewebsites.net/App_Themes/Default/Images/Logo.png" title="Harðhaus" description="" />
 
             {/* <!-- Mini Posts --> */}
@@ -23,7 +15,7 @@ function HardheadSidebar() {
 
 									{/* <!-- Mini Post --> */}
 									<NextHardhead/>
-                                    {/* <UsersStatistics/> */}
+                                    <UsersStatistics/>
 
 										{/* <article className="mini-post">
 											<header>
