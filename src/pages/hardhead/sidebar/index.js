@@ -3,6 +3,7 @@ import UsersStatistics from '../userstats';
 import { Intro } from '../../../components';
 import NextHardhead from './nexthardhead';
 import './sidebar.css';
+import AwardsSide from './awardsSide';
 
 function HardheadSidebar() {
     return (
@@ -15,7 +16,8 @@ function HardheadSidebar() {
 
 					{/* <!-- Mini Post --> */}
 					<NextHardhead/>
-					<UsersStatistics/>
+					<AwardsSide />
+					<UsersStatistics/>					
 
 					{/* <article className="mini-post">
 						<header>
@@ -44,28 +46,28 @@ function HardheadSidebar() {
 					<li>
 						<article>
 							<header>
-								<h3><a href="http://www.hress.org/Hardhead/Awards.aspx">Verðlaun</a></h3>
+								<h3><a href="http://www.hress.org/Hardhead/Awards.aspx" target="_parent">Verðlaun</a></h3>
 							</header>
 						</article>
 					</li>
 					<li>
 						<article>
 							<header>
-								<h3><a href="http://www.hress.org/Hardhead/Rules.aspx">Lög og reglur</a></h3>
+								<h3><a href="http://www.hress.org/Hardhead/Rules.aspx" target="_parent">Lög og reglur</a></h3>
 							</header>
 						</article>
 					</li>
 					<li>
 						<article>
 							<header>
-								<h3><a href="http://www.hress.org/Hardhead/Films.aspx">Myndirnar</a></h3>
+								<h3><a href="http://www.hress.org/Hardhead/Films.aspx" target="_parent">Myndirnar</a></h3>
 							</header>
 						</article>
 					</li>
 					<li>
 						<article>
 							<header>
-								<h3><a href="http://www.hress.org/Hardhead/defaultold.aspx">Gamla harðhausasíðan</a></h3>
+								<h3><a href="http://www.hress.org/Hardhead/defaultold.aspx" target="_parent">Gamla harðhausasíðan</a></h3>
 							</header>
 						</article>
 					</li>
