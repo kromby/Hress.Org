@@ -19,13 +19,13 @@ const routing = (
     <Router>
       <div id="wrapper">
 				<header id="header">
-          <h1><a href="http://www.hress.org">Hress.Org</a></h1>
+          <h1><a href="http://www.hress.org" target="_parent">Hress.Org</a></h1>
           <nav className="links">
             <ul>
               <li><Link to="/hardhead">Harðhaus</Link></li>
-              <li><a href="http://www.hress.org/yearly">Árlegt</a></li>
-              <li><a href="http://www.hress.org/links">Tenglar</a></li>
-              <li><a href="http://www.hress.org/comic">Comic</a></li>
+              <li><a href="http://www.hress.org/yearly" target="_parent">Árlegt</a></li>
+              <li><a href="http://www.hress.org/links" target="_parent">Tenglar</a></li>
+              <li><a href="http://www.hress.org/comic" target="_parent">Comic</a></li>
             </ul>
           </nav>
           {/* <nav className="main">

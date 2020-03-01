@@ -55,7 +55,7 @@ export default class Hardhead extends Component {
 							key={hardhead.ID} 
 							id={hardhead.ID} 
 							title={hardhead.Name}
-							// description={hardhead.Description}
+							description={hardhead.GuestCount + " gestir"}
 							date={hardhead.Date}
 							dateFormatted={hardhead.DateString}
 							author={hardhead.Host}
