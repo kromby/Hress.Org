@@ -1,5 +1,5 @@
 import React from 'react';
-import { MiniListPost } from '../../../components';
+import { MiniListPost } from '../../../../components';
 
 class UserStatistics extends React.Component {
     constructor(props) {

@@ -27,8 +27,8 @@ const AwardsSide = (propsData) => {
     return (
         <div>
             {data.visible ?
-            <MiniPost title="Harðhaus ársins"
-                description={data.awards.Value + " atkvæði"}
+            <MiniPost title="Harðhausa verðlaunin" href="http://www.hress.org/Hardhead/Awards.aspx"
+                description={<span>Harðhaus ársins<br/>{data.awards.Winner.Username} með {data.awards.Value} atkvæði</span>}
                 date={"1.1." + data.awards.Year}
                 dateString={data.awards.Year}
                 userHref={"http://www.hress.org/Gang/Single.aspx?Id=" + data.awards.Winner.ID}

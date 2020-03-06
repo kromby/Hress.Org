@@ -6,7 +6,7 @@ const MiniPost = (propsData) => {
         <article className="mini-post">
             <header>
                 <h3>
-                    {propsData.href ? <a href={propsData.href}>{propsData.title}</a> : propsData.title}
+                    {propsData.href ? <a href={propsData.href} target="_parent">{propsData.title}</a> : propsData.title}
                 </h3>
                 {propsData.description ? <span className="published">{propsData.description}</span> : null }
                 <time className="published" datetime={propsData.date}>{propsData.dateString}</time>

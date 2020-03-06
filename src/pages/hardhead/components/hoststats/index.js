@@ -1,6 +1,6 @@
 import React from 'react';
 import './index.css';
-import UserLink from '../../../components/users/userlink.js';
+import UserLink from '../../../../components/users/userlink.js';
 
 import top from './top_small.png';
 import bottom from './bottom_small.png';

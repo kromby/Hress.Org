@@ -8,7 +8,7 @@ import config from 'react-global-configuration';
 import App from './pages/App.js';
 import Hardhead from './pages/hardhead';
 import HardheadSidebar from './pages/hardhead/sidebar';
-import UsersStatistics from './pages/hardhead/userstats'
+import UsersStatistics from './pages/hardhead/components/userstats'
 import SideMenu from './components/sidemenu';
 
 // const appInsights = require("applicationinsights");

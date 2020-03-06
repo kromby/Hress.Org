@@ -1,9 +1,10 @@
 import React from 'react';
-import UsersStatistics from '../userstats';
+import UsersStatistics from '../components/userstats';
 import { Intro } from '../../../components';
 import NextHardhead from './nexthardhead';
 import './sidebar.css';
 import AwardsSide from './awardsSide';
+import YearsSide from './yearsSide';
 
 function HardheadSidebar() {
     return (
@@ -43,13 +44,7 @@ function HardheadSidebar() {
 			{/* <!-- Posts List --> */}
 			<section>
 				<ul className="posts">
-					<li>
-						<article>
-							<header>
-								<h3><a href="http://www.hress.org/Hardhead/Awards.aspx" target="_parent">Verðlaun</a></h3>
-							</header>
-						</article>
-					</li>
+					<YearsSide/>
 					<li>
 						<article>
 							<header>
@@ -71,24 +66,6 @@ function HardheadSidebar() {
 							</header>
 						</article>
 					</li>
-					{/* <li>
-						<article>
-							<header>
-								<h3><a href="single.html">Convallis maximus nisl mattis nunc id lorem</a></h3>
-								<time class="published" datetime="2015-10-15">October 15, 2015</time>
-							</header>
-							<a href="single.html" class="image"><img src="images/pic09.jpg" alt="" /></a>
-						</article>
-					</li>
-					<li>
-						<article>
-							<header>
-								<h3><a href="single.html">Congue ullam corper lorem ipsum dolor</a></h3>
-								<time class="published" datetime="2015-10-06">October 7, 2015</time>
-							</header>
-							<a href="single.html" class="image"><img src="images/pic12.jpg" alt="" /></a>
-						</article>
-					</li> */}
 				</ul>
 			</section>
 

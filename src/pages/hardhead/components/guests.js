@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import config from 'react-global-configuration';
-import Author from '../../components/author';
+import Author from '../../../components/author';
 
 export default class Guests extends Component {
 	constructor(props) {

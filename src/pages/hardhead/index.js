@@ -1,9 +1,10 @@
 import React, { Component } from 'react';
 import config from 'react-global-configuration';
 import { PostSmallImage } from '../../components';
-import Guests from './guests';
-import Rating from './rating.js';
-import Movie from './movie.js';
+import Guests from './components/guests';
+import Rating from './components/rating.js';
+import Movie from './components/movie.js';
+import * as qs from 'query-string';
 
 export default class Hardhead extends Component {
 	constructor(props) {
@@ -20,7 +21,20 @@ export default class Hardhead extends Component {
 	}
 
 	getHardheadData() {
-		var url = config.get('path') + '/api/hardhead?dateFrom=2019-01-01&code=' + config.get('code');		
+
+		console.log("QS: " + this.props.location.search);
+		const parsed = qs.parse(this.props.location.search);
+		console.log(parsed.parentID);
+
+		var currentDate = new Date();
+		currentDate.setMonth(currentDate.getMonth() - 5);
+		var url;
+		if(parsed.parentID) {
+			url = config.get('path') + '/api/hardhead?parentID=' + parsed.parentID + '&code=' + config.get('code');		
+		} else {
+			url = config.get('path') + '/api/hardhead?dateFrom=' + currentDate.getMonth() + '.1.' + currentDate.getFullYear() + '&code=' + config.get('code');		
+		}
+		console.log("url:" + url);
     
         fetch(url, {
             method: 'GET' 
