@@ -9,7 +9,7 @@ const MiniPost = (propsData) => {
                     {propsData.href ? <a href={propsData.href} target="_parent">{propsData.title}</a> : propsData.title}
                 </h3>
                 {propsData.description ? <span className="published">{propsData.description}</span> : null }
-                <time className="published" datetime={propsData.date}>{propsData.dateString}</time>
+                <time className="published" dateTime={propsData.date}>{propsData.dateString}</time>
                 <a href={propsData.userHref} className="author"><img src={propsData.userPhoto} alt={propsData.userText} /></a>
             </header>
             {propsData.imageSource ?

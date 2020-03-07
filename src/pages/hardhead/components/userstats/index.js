@@ -1,4 +1,5 @@
 import React from 'react';
+import config from 'react-global-configuration';
 import { MiniListPost } from '../../../../components';
 
 class UserStatistics extends React.Component {
@@ -20,7 +21,7 @@ class UserStatistics extends React.Component {
     }
 
     getData(localPeriodType) {
-        var url = 'https://ezhressapi.azurewebsites.net/api/hardhead/statistics/users?periodType=' + localPeriodType + '&code=mIDqQM07DjZa7IkNtkapKigg9Edielksif1ODu49W13p3Xhsf70foQ==';
+        var url = config.get('path') + '/api/hardhead/statistics/users?periodType=' + localPeriodType + '&code=' + config.get('code');
     
         fetch(url, {
             method: 'GET' 

@@ -5,6 +5,7 @@ import NextHardhead from './nexthardhead';
 import './sidebar.css';
 import AwardsSide from './awardsSide';
 import YearsSide from './yearsSide';
+import StatisticSide from './statisticSide';
 
 function HardheadSidebar() {
     return (
@@ -18,7 +19,7 @@ function HardheadSidebar() {
 					{/* <!-- Mini Post --> */}
 					<NextHardhead/>
 					<AwardsSide />
-					<UsersStatistics/>					
+					<StatisticSide />
 
 					{/* <article className="mini-post">
 						<header>

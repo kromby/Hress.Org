@@ -6,11 +6,11 @@ const SidePost = (propsData) => {
             <header>
                 <h3><a href={propsData.href}>{propsData.title}</a></h3>
                 {propsData.dateString ?
-                <time class="published" datetime={propsData.date}>{propsData.dateString}</time>
+                <time className="published" dateTime={propsData.date}>{propsData.dateString}</time>
                 : null}
             </header>
             {propsData.image ?
-            <a href={propsData.href} class="image"><img src={propsData.image} alt={propsData.imageText} /></a>
+            <a href={propsData.href} className="image"><img src={propsData.image} alt={propsData.imageText} /></a>
             : null}
         </article>
     )
