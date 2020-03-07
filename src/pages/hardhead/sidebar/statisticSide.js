@@ -34,7 +34,7 @@ const StatisticSide = (propsData) => {
     const getDescription = (period, guest) => {
         var description = "gestur";
 
-        if(guest === "") 
+        if(guest === "gestur") 
             description = "Oftast mætt";
         else
             description = "Oftast haldið";
