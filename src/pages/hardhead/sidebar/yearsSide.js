@@ -13,7 +13,6 @@ const YearsSide = (propsData) => {
             try {
                 setData({isLoading: true});
                 const response = await axios.get(url);
-                console.log(response);
                 setData({years: response.data, isLoading: false, visible: true});
             }
             catch(e) {

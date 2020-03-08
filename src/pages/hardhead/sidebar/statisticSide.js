@@ -13,11 +13,14 @@ const StatisticSide = (propsData) => {
                 const max = 4;
                 const periodType = Math.round(min + Math.random() * (max - min));
 
-                var url = config.get('path') + '/api/hardhead/statistics/users?periodType=' + periodType + '&code=' + config.get('code');
+                var url = '';
+                if(new Date().getMinutes() % 2 === 0)
+                    url = config.get('path') + '/api/hardhead/statistics/users?periodType=' + periodType + '&code=' + config.get('code');
+                else
+                    url = config.get('path') + '/api/hardhead/statistics/users?guestType=53&periodType=' + periodType + '&code=' + config.get('code');
+
                 setData({isLoading: true});
                 const response = await axios.get(url);
-                console.log(response);
-                console.log(response.data);
                 setData({stats: response.data, isLoading: false, visible: true});
             } catch(e) {
                 console.error(e);

@@ -21,10 +21,7 @@ export default class Hardhead extends Component {
 	}
 
 	getHardheadData() {
-
-		console.log("QS: " + this.props.location.search);
 		const parsed = qs.parse(this.props.location.search);
-		console.log(parsed.parentID);
 
 		var currentDate = new Date();
 		currentDate.setMonth(currentDate.getMonth() - 5);
@@ -34,7 +31,6 @@ export default class Hardhead extends Component {
 		} else {
 			url = config.get('path') + '/api/hardhead?dateFrom=' + currentDate.getMonth() + '.1.' + currentDate.getFullYear() + '&code=' + config.get('code');		
 		}
-		console.log("url:" + url);
     
         fetch(url, {
             method: 'GET' 

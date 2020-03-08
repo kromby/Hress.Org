@@ -1,11 +1,11 @@
 import React from 'react';
-import UsersStatistics from '../components/userstats';
 import { Intro } from '../../../components';
-import NextHardhead from './nexthardhead';
 import './sidebar.css';
+import NextHardhead from './nexthardhead';
 import AwardsSide from './awardsSide';
-import YearsSide from './yearsSide';
 import StatisticSide from './statisticSide';
+import RulesSide from './rulesSide';
+import YearsSide from './yearsSide';
 
 function HardheadSidebar() {
     return (
@@ -18,8 +18,9 @@ function HardheadSidebar() {
 
 					{/* <!-- Mini Post --> */}
 					<NextHardhead/>
-					<AwardsSide />
+					<AwardsSide />					
 					<StatisticSide />
+					<RulesSide />
 
 					{/* <article className="mini-post">
 						<header>
@@ -46,13 +47,6 @@ function HardheadSidebar() {
 			<section>
 				<ul className="posts">
 					<YearsSide/>
-					<li>
-						<article>
-							<header>
-								<h3><a href="http://www.hress.org/Hardhead/Rules.aspx" target="_parent">Lög og reglur</a></h3>
-							</header>
-						</article>
-					</li>
 					<li>
 						<article>
 							<header>
