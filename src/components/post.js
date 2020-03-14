@@ -9,15 +9,21 @@ export default class Post extends Component {
                 <header>
                     <div className="title">
                         <h2><a href={"?id=" + this.props.id}>{this.props.title}</a></h2>
-                        <p>{this.props.description}</p>
+                        {this.props.description ? <p>{this.props.description}</p> : null}
                     </div>
                     <div className="meta">
+                        {this.props.date ? 
                         <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>
+                        : null }
+                        {this.props.author ? 
                         <Author href={this.props.author}/>
+                        : null }
                     </div>
                 </header>
+                {this.props.image ?
                 <a href={"?id=" + this.props.id} class="image featured"><img src={this.props.image} alt="" /></a>
-                {/* <p>Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies mi non congue ullam corper. Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.</p> */}
+                : null }
+                {this.props.body ? <div className="published">{this.props.body}</div> : <p/> }
                 {/* <footer>
                     <ul class="actions">
                         <li><a href={"?id=" + this.props.id} class="button large">Continue Reading</a></li>

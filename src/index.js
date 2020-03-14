@@ -8,16 +8,15 @@ import config from 'react-global-configuration';
 import App from './pages/App.js';
 import Hardhead from './pages/hardhead';
 import HardheadSidebar from './pages/hardhead/sidebar';
-import UsersStatistics from './pages/hardhead/components/userstats'
-import SideMenu from './components/sidemenu';
+import Awards from './pages/hardhead/awards';
 
 // const appInsights = require("applicationinsights");
 // appInsights.setup("aea8e204-ca43-49b0-8b92-489055e8074d");
 // appInsights.start();
 
-const routing = (
-    <Router>
+const routing = (    
       <div id="wrapper">
+        <Router>
 				<header id="header">
           <h1><a href="http://www.hress.org" target="_parent">Hress.Org</a></h1>
           <nav className="links">
@@ -88,22 +87,22 @@ const routing = (
 					</section>           */}
 
           {/* Main section */}
-          <Switch>
-            <Route exact path="/" component={SideMenu} />
-            <Route path="/userstats" component={UsersStatistics} />
-            <Route path="/hardhead" component={Hardhead} />
+          <Switch>          
+            <Route exact path="/" component={Hardhead} />
+            <Route exact path="/hardhead" component={Hardhead} />  
+            <Route path="/hardhead/awards" component={Awards} />                            
             <Route component={App} />
           </Switch>
           
           {/* Sidebar */}
           <Switch>
-            <Route exact path="/" component={SideMenu} />
-            <Route path="/userstats" component={UsersStatistics} />
-            <Route path="/hardhead" component={HardheadSidebar} />
+            <Route exact path="/" component={HardheadSidebar}/>
+            <Route exact path="/hardhead" component={HardheadSidebar}/>     
+            <Route path="/hardhead/awards" />                                       
             <Route component={App} />
-          </Switch>          
+            </Switch>
+        </Router>       
       </div>
-    </Router>
   )  
 
   function setConfig() {  
