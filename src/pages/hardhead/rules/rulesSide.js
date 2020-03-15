@@ -45,7 +45,7 @@ const RulesSide = (propsData) => {
             {data.visible ?
             <MiniPost 
                 title="Lög og reglur" 
-                href="http://www.hress.org/Hardhead/Rules.aspx"
+                href="/hardhead/rules"
                 description={
                     <span>
                         <u>{data.rule.Name}</u>
