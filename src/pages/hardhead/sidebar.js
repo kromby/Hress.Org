@@ -1,11 +1,11 @@
 import React from 'react';
-import { Intro } from '../../../components';
+import { Intro } from '../../components';
 import './sidebar.css';
-import NextHardhead from './nexthardhead';
-import AwardsSide from './awardsSide';
-import StatisticSide from './statisticSide';
-import RulesSide from './rulesSide';
-import YearsSide from './yearsSide';
+import NextHardhead from './components/nexthardhead';
+import AwardsSide from './awards/awardsSide';
+import StatisticSide from './statistics/statisticsSide';
+import RulesSide from './rules/rulesSide';
+import YearsSide from './components/yearsSide';
 
 function HardheadSidebar() {
     return (
@@ -15,38 +15,22 @@ function HardheadSidebar() {
 			{/* <!-- Mini Posts --> */}
 			<section>
 				<div className="mini-posts">
-
 					{/* <!-- Mini Post --> */}
 					<NextHardhead/>
 					<AwardsSide />					
 					<StatisticSide />
 					<RulesSide />
-
-					{/* <article className="mini-post">
-						<header>
-							<h3><a href="single.html">Vitae sed condimentum</a></h3>
-							<time className="published" datetime="2015-10-20">October 20, 2015</time>
-							<a href="#" className="author"><img src="images/avatar.jpg" alt="" /></a>
-						</header>
-						<a href="single.html" className="image"><img src="images/pic04.jpg" alt="" /></a>
-					</article> */}
-
-					{/* <!-- Mini Post --> */}
-						{/* <article className="mini-post">
-							<header>
-								<h3><a href="single.html">Enim nisl veroeros</a></h3>
-								<time className="published" dateTime="2015-10-17">October 17, 2015</time>
-								<a href="#" className="author"><img src="images/avatar.jpg" alt="" /></a>
-							</header>
-							<a href="single.html" className="image"><img src="images/pic07.jpg" alt="" /></a>
-						</article> */}
-
 				</div>
 			</section>
 			{/* <!-- Posts List --> */}
 			<section>
 				<ul className="posts">
 					<YearsSide/>
+				</ul>
+			</section>
+
+			<section>
+				<ul className="posts">					
 					<li>
 						<article>
 							<header>

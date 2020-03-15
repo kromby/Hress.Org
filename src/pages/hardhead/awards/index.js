@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import { Post } from '../../../components';
-import AwardWinners from './awardWinners';
+import AwardsWinners from './awardsWinners';
 
 const Awards = (propsData) => {
     const[data, setData] = useState({awards: null, isLoading: false, visible: false})
@@ -32,7 +32,8 @@ const Awards = (propsData) => {
                     <Post key={award.ID}
                         id={award.ID}
                         title={award.Name}
-                        body={<AwardWinners href={award.Winners.Href}/>}
+                        description="Sigurvegarar frá upphafi"
+                        body={<AwardsWinners href={award.Winners.Href}/>}
                     />
                 ) : 
             null}

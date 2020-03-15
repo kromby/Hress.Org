@@ -1,13 +1,14 @@
 import React, {useState, useEffect} from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
+import Author from '../../../components/author';
 
-const AwardWinners = (propsData) => {
+const AwardsWinners = (propsData) => {
     const[data, setData] = useState({winners: null, isLoading: false, visible: false})    		
 
     useEffect(() => {
         const getAwards = async () => {
-            var url = config.get('path') + propsData.href + '?code=' + config.get('code');
+            var url = config.get('path') + propsData.href + '?position=1&code=' + config.get('code');
 
             try {
                 setData({isLoading: true});
@@ -28,10 +29,9 @@ const AwardWinners = (propsData) => {
             <table>
                 <thead>
                     <tr>
-                        <td width="80px">Ár</td>
-                        <td width="80px">Sæti</td>
-                        <td width="120px">Harðhaus</td>
-                        <td width="80px">Atkvæði</td>
+                        <td width="100px">Ár</td>
+                        <td width="200px">Harðhaus</td>
+                        <td width="100px">Atkvæði</td>
                         <td>Útskýring</td>
                     </tr>
                 </thead>
@@ -40,11 +40,11 @@ const AwardWinners = (propsData) => {
                         data.winners.map((winner, i) =>                 
                             <tr key={winner.ID}>
                                 <td>{winner.Year}</td>
-                                <td>{winner.Position}</td>
                                 <td>
-                                    <a href={winner.Winner.ID} className="author">
-                                        {winner.Winner.ProfilePhoto ? <img src={config.get('path') + winner.Winner.ProfilePhoto.Href + '?code=' + config.get('code')} alt={winner.Winner.Username} /> : winner.Winner.Username}
-                                    </a>
+                                    {typeof winner.Winner.ProfilePhoto !=='undefined' ?
+                                        <Author ID={winner.Winner.ID} Username={winner.Winner.Username} ProfilePhoto={winner.Winner.ProfilePhoto.Href} /> :
+                                        <Author ID={winner.Winner.ID} Username={winner.Winner.Username} />
+                                    }
                                 </td>
                                 
                                 <td>
@@ -62,4 +62,4 @@ const AwardWinners = (propsData) => {
     )
 }
 
-export default AwardWinners;
+export default AwardsWinners;

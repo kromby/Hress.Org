@@ -3,7 +3,7 @@ import config from 'react-global-configuration';
 import { MiniPost } from '../../../components';
 import axios from 'axios';
 
-const StatisticSide = (propsData) => {
+const StatisticsSide = (propsData) => {
     const[data, setData] = useState({stats: null, isLoading: false, visible: false})    
 
     useEffect(() => {
@@ -81,4 +81,4 @@ const StatisticSide = (propsData) => {
     )
 }
 
-export default StatisticSide;
+export default StatisticsSide;
