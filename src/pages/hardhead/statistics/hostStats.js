@@ -4,10 +4,10 @@ import axios from 'axios';
 import { Post } from '../../../components';
 import Author from '../../../components/author';
 
-const GuestStats = (propsData) => {
+const HostStats = (propsData) => {
     const[data, setData] = useState({stats: null, isLoading: false, visible: false})
 
-    var url = config.get('path') + '/api/hardhead/statistics/users?periodType=All&code=' + config.get('code');	
+    var url = config.get('path') + '/api/hardhead/statistics/users?guestType=53&periodType=All&code=' + config.get('code');	
     
     useEffect(() => {
         const getStats = async () => {
@@ -26,7 +26,7 @@ const GuestStats = (propsData) => {
 
     return (
         <Post
-            title="Hver hefur mætt á flest harðhausakvöld"
+            title="Hver hefur haldið flest harðhausakvöld"
             description="frá upphafi"
             date= { data.visible ? data.stats.DateFrom : null}
             dateFormatted = { data.visible ? data.stats.DateFromString: null}
@@ -39,8 +39,8 @@ const GuestStats = (propsData) => {
                                 <td width="100px">Nr.</td>
                                 <td width="250px">Harðhaus</td>
                                 <td>Fjöldi</td>
-                                <td>Fyrst mætt</td>
-                                <td>Síðast mætt</td>
+                                <td>Fyrst haldið</td>
+                                <td>Síðast haldið</td>
                             </tr>
                         </thead>
                         <tbody>
@@ -67,4 +67,4 @@ const GuestStats = (propsData) => {
     )
 }
 
-export default GuestStats;
+export default HostStats;

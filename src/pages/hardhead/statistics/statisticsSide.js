@@ -61,7 +61,7 @@ const StatisticsSide = (propsData) => {
     return (
         <div>
             {data.visible ?
-            <MiniPost title="Tölfræði" href=""
+            <MiniPost title="Tölfræði" href="/hardhead/stats"
                 description={
                     <span>
                         {getDescription(data.stats.PeriodTypeName, data.stats.GuestTypeName)}

@@ -22,6 +22,7 @@
 
 import React from 'react';
 import GuestStats from './guestStats';
+import HostStats from './hostStats';
 
 const Statistics  = (propsData) => {
     // const[data, setData] = useState({rules: null, isLoading: false, visible: false})
@@ -29,6 +30,7 @@ const Statistics  = (propsData) => {
     return (
         <div id="main">
             <GuestStats />
+            <HostStats />
             {/* HostStats - https://ezhressapi.azurewebsites.net/api/hardhead/statistics/users?guestType=53&periodType=All&code=mIDqQM07DjZa7IkNtkapKigg9Edielksif1ODu49W13p3Xhsf70foQ== */}
         </div>        
     )
