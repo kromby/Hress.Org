@@ -8,7 +8,7 @@ export default class Post extends Component {
             <article className="post">
                 <header>
                     <div className="title">
-                        <h2><a href={"?id=" + this.props.id}>{this.props.title}</a></h2>
+                        <h2>{this.props.id ? <a href={"?id=" + this.props.id}>{this.props.title}</a> : this.props.title}</h2>
                         {this.props.description ? <p>{this.props.description}</p> : null}
                     </div>
                     <div className="meta">
@@ -24,16 +24,18 @@ export default class Post extends Component {
                 <a href={"?id=" + this.props.id} class="image featured"><img src={this.props.image} alt="" /></a>
                 : null }
                 {this.props.body ? <div className="published">{this.props.body}</div> : <p/> }
-                {/* <footer>
+                <footer>
+                    {this.props.showFooter ?
                     <ul class="actions">
-                        <li><a href={"?id=" + this.props.id} class="button large">Continue Reading</a></li>
+                        <li><a href={"?id=" + this.props.id} class="button large">Meira</a></li>
                     </ul>
-                    <ul class="stats">
+                    : null}
+                    {/* <ul class="stats">
                         <li><a href="#">General</a></li>
                         <li><a href="#" class="icon solid fa-heart">28</a></li>
                         <li><a href="#" class="icon solid fa-comment">128</a></li>
-                    </ul>
-                </footer> */}
+                    </ul> */}
+                </footer>
             </article>
         )
     }

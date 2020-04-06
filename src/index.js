@@ -10,6 +10,7 @@ import Hardhead from './pages/hardhead';
 import HardheadSidebar from './pages/hardhead/sidebar';
 import Awards from './pages/hardhead/awards';
 import Rules from './pages/hardhead/rules';
+import Statistics from './pages/hardhead/statistics';
 
 // const appInsights = require("applicationinsights");
 // appInsights.setup("aea8e204-ca43-49b0-8b92-489055e8074d");
@@ -93,6 +94,7 @@ const routing = (
             <Route exact path="/hardhead" component={Hardhead} />  
             <Route path="/hardhead/awards" component={Awards} /> 
             <Route path="/hardhead/rules" component={Rules} />
+            <Route path="/hardhead/stats" component={Statistics} />
             <Route component={App} />
           </Switch>
           
@@ -102,6 +104,7 @@ const routing = (
             <Route exact path="/hardhead" component={HardheadSidebar}/>     
             <Route path="/hardhead/awards" />                                       
             <Route path="/hardhead/rules" />     
+            <Route path="/hardhead/stats" />     
             <Route component={App} />
             </Switch>
         </Router>       
