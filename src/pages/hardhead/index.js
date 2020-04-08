@@ -73,10 +73,13 @@ export default class Hardhead extends Component {
 								<span>
 									<h3>Kvöldið</h3>
 									{hardhead.Description ? hardhead.Description : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}
+									<br/>
+									<br/>
+									<Guests hardheadID={hardhead.ID} />
 								</span>
 							}
-							right={ <Guests hardheadID={hardhead.ID} /> }
-							bottom={ <Movie id={hardhead.ID}/> }
+							right={ <Movie id={hardhead.ID}/> }
+							// bottom={  }
 							stats={<Rating />}	
 						/>											
 					)}

@@ -32,29 +32,32 @@ const Movie = (propsData) => {
     return (
         <div className="col-12">
             <div className="col-12">
-                <br/>
                 <h3>Myndin</h3>
             </div>
             {movieData.visible ?
-                <div className="row">                    
-                        {movieData.movie.YoutubeUrl ?
-                            <div className="col-6 col-12-medium">
+                <div>                           
+                    {/* className="row" */}
+                    {/* <div className="col-6 col-12-medium"> */}
+                        <a href={movieData.movie.ImdbUrl} target="_blank" rel="noopener noreferrer">{movieData.movie.Name}</a> með {movieData.movie.Actor}<br/><br/>
+                        {movieData.movie.Reason ? movieData.movie.Reason : "Gestgjafi hefur ekki skráð ástæðu fyrir mynd :("}
+                    {/* </div> */}
+                    <br/>
+                    <br/>
+                    {movieData.movie.YoutubeUrl ?
+                            // <div className="col-6 col-12-medium">
                                 <div className="image featured">
                                     <YouTubeEmbed id={movieData.movie.YoutubeUrl}/>
                                 </div>
-                            </div> :    
+                            // </div> 
+                            :    
                             movieData.movie.PosterPhoto ?
-                                <div className="col-4">
+                                // <div className="col-4">
                                     <div className="image featured">
                                         <img src={config.get("path") + movieData.movie.PosterPhoto.Href + "?code=" + config.get("code")} alt={movieData.movie.Name} />
                                     </div>
-                                </div>
+                                // </div>
                                 : null                            
-                        }            
-                    <div className="col-6 col-12-medium">
-                        <a href={movieData.movie.ImdbUrl} target="_blank" rel="noopener noreferrer">{movieData.movie.Name}</a> með {movieData.movie.Actor}<br/><br/>
-                        {movieData.movie.Reason ? movieData.movie.Reason : "Gestgjafi hefur ekki skráð ástæðu fyrir mynd :("}
-                    </div>
+                        }                         
                 </div> :
                 null
             }
