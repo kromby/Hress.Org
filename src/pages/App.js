@@ -1,42 +1,110 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './App.css';
+import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 
-function App() {
+import PrivateRoute from './../components/access/privateRoute';
+import { AuthContext } from './../context/auth';
+import Hardhead from './hardhead';
+import HardheadSidebar from './hardhead/sidebar';
+import Awards from './hardhead/awards';
+import Rules from './hardhead/rules';
+import Statistics from './hardhead/statistics';
+import Admin from './hardhead/admin';
+import Login from './frame/login';
+import Magic from './frame/magic';
+
+function App(props) {
+  // const existingTokens = JSON.parse(localStorage.getItem("tokens"));
+  // const [authTokens, setAuthTokens] = useState(existingTokens);
+  const [authTokens, setAuthTokens] = useState();
+  
+  const setTokens = (data) => {
+    localStorage.setItem("tokens", JSON.stringify(data));
+    setAuthTokens(data);
+    console.log("App - authTokens:" + authTokens);
+  }
+
   return (
-    <div id="main">
+    <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
+      {/* <div id="wrapper"> */}
+        <Router>
+          <header id="header">
+            <h1><a href="http://www.hress.org" target="_parent">Hress.Org</a></h1>
+            <nav className="links">
+              <ul>
+                <li><Link to="/hardhead">Harðhaus</Link></li>
+                <li><a href="http://www.hress.org/yearly" target="_parent">Árlegt</a></li>
+                <li><a href="http://www.hress.org/links" target="_parent">Tenglar</a></li>
+                <li><a href="http://www.hress.org/comic" target="_parent">Comic</a></li>
+              </ul>
+            </nav>
+            <nav className="main">
+              <ul>
+                <li className="search">
+                  <a className="fa-search" href="#search">Search</a>
+                  <form id="search" method="get" action="#">
+                    <input type="text" name="query" placeholder="Search" />
+                  </form>
+                </li>
+                {authTokens ?
+                <li className="menu">
+                  <a className="fa-bars" href="#menu">Menu</a>
+                </li>
+                : null}
+              </ul>
+            </nav>
+          </header>
 
-    {/* <!-- Post --> */}
-      <article className="post">
-        <header>
-          <div className="title">
-            <h2><a href="single.html">Magna sed adipiscing</a></h2>
-            <p>Lorem ipsum dolor amet nullam consequat etiam feugiat</p>
-          </div>
-          <div className="meta">
-            <time className="published" datetime="2015-11-01">November 1, 2015</time>
-            {/* <a href="#" className="author"><span className="name">Jane Doe</span><img src="images/avatar.jpg" alt="" /></a> */}
-          </div>
-        </header>
-        <a href="single.html" className="image featured"><img src="images/pic01.jpg" alt="" /></a>
-        <p>Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at. Phasellus sed ultricies mi non congue ullam corper. Praesent tincidunt sed tellus ut rutrum. Sed vitae justo condimentum, porta lectus vitae, ultricies congue gravida diam non fringilla.</p>
-        <footer>
-          <ul className="actions">
-            <li><a href="single.html" className="button large">Continue Reading</a></li>
-          </ul>
-          <ul className="stats">
-            {/* <li><a href="#">General</a></li>
-            <li><a href="#" className="icon solid fa-heart">28</a></li>
-            <li><a href="#" className="icon solid fa-comment">128</a></li> */}
-          </ul>
-        </footer>
-      </article>
+          {/* <section id="menu">
+              <section>
+                <form className="search" method="get" action="#">
+                  <input type="text" name="query" placeholder="Search" />
+                </form>
+              </section>
 
-      {/* <!-- Pagination --> */}
-							<ul className="actions pagination">
-								{/* <li><a href="" className="disabled button large previous">Previous Page</a></li>
-								<li><a href="#" className="button large next">Next Page</a></li> */}
-							</ul>
-    </div>
+              <section>
+                <ul className="links">
+                  <li>
+                    <a href="#">
+                      <h3>Lorem ipsum</h3>
+                      <p>Feugiat tempus veroeros dolor</p>
+                    </a>
+                  </li> 
+                </ul>
+              </section>
+
+              <section>
+                <ul className="actions stacked">
+                  <li><a href="#" className="button large fit">Log In</a></li>
+                </ul>
+              </section>
+
+            </section>           */}
+
+        {/* Main section */}
+        <Switch>          
+          <Route exact path="/" component={Hardhead} />
+          <Route exact path="/hardhead" component={Hardhead} />  
+          <Route path="/hardhead/awards" component={Awards} /> 
+          <Route path="/hardhead/rules" component={Rules} />
+          <Route path="/hardhead/stats" component={Statistics} />
+          <PrivateRoute path="/hardhead/admin" component={Admin} />
+          <Route exact path="/login" component={Login} />
+          <Route path="/login/magic" component={Magic} />
+          <Route component={App} />
+        </Switch>
+      
+        {/* Sidebar */}
+        <Switch>
+          <Route exact path="/" component={HardheadSidebar}/>
+          <Route exact path="/hardhead" component={HardheadSidebar}/>     
+          <Route path="/hardhead/awards" />                                       
+          <Route path="/hardhead/rules" />     
+          <Route path="/hardhead/stats" />   
+        </Switch>
+      </Router>       
+    {/* </div> */}
+  </AuthContext.Provider>
   );
 }
 
