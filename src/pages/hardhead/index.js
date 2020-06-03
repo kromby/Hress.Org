@@ -7,6 +7,7 @@ import Movie from './components/movie.js';
 import * as qs from 'query-string';
 
 export default class Hardhead extends Component {
+
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -24,12 +25,16 @@ export default class Hardhead extends Component {
 		const parsed = qs.parse(this.props.location.search);
 
 		var currentDate = new Date();
+		console.log("curDate: " + currentDate);
+		console.log("curDate.getMonth(): " + currentDate.getMonth());
 		currentDate.setMonth(currentDate.getMonth() - 5);
+		console.log("curDate: " + currentDate);
+		console.log("curDate.getMonth(): " + currentDate.getMonth());
 		var url;
 		if(parsed.parentID) {
 			url = config.get('path') + '/api/hardhead?parentID=' + parsed.parentID + '&code=' + config.get('code');		
 		} else {
-			url = config.get('path') + '/api/hardhead?dateFrom=' + currentDate.getMonth() + '.1.' + currentDate.getFullYear() + '&code=' + config.get('code');		
+			url = config.get('path') + '/api/hardhead?dateFrom=' + (currentDate.getMonth()+1) + '.1.' + currentDate.getFullYear() + '&code=' + config.get('code');		
 		}
     
         fetch(url, {
@@ -80,7 +85,7 @@ export default class Hardhead extends Component {
 							}
 							right={ <Movie id={hardhead.ID}/> }
 							// bottom={  }
-							stats={<Rating />}	
+							stats={<Rating id={hardhead.ID} />}	
 						/>											
 					)}
 				</div>

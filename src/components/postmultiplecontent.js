@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+
 import Author from './author';
 import './post.css';
 
@@ -8,7 +10,7 @@ export default class PostMultipleContent extends Component {
             <article className="post">
                 <header>
                     <div className="title">
-                        <h2><a href={"?id=" + this.props.id}>{this.props.title}</a></h2>
+                        <h2>{this.props.id ? <Link to={"?id=" + this.props.id}>{this.props.title}</Link> : this.props.title}</h2>
                         <p>{this.props.description}</p>
                     </div>
                     <div className="meta">

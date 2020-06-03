@@ -7,7 +7,7 @@ import { useAuth } from '../../context/auth';
 
 function Magic(props) {
     const[data, setData] = useState({referer: null, code: null, isLoading: false})    
-    const {setLoggedIn} = useState(false);
+    //const[setLoggedIn] = useState(false);
     const {setAuthTokens} = useAuth();
   
     if(data.isLoading === false) {            
@@ -28,19 +28,23 @@ function Magic(props) {
                         setAuthTokens({ token: result.data });
                         //setLoggedIn(true);
                         setData({code: result.data, referer: parsed.path, isLoading: false});
-        
                         props.history.push(parsed.path)
                     }
                 }
-            );
+            ).catch(function (e) {                
+                console.error("Magic " + e);
+                setData({isLoading: false});
+                props.history.push("/"); 
+            });
         }
         catch(e) {
-            console.error(e);
+            console.error("Magic " + e);
             setData({isLoading: false});
+            props.history.push("/");
         }
     }
 
-    return (<div>Smu</div>);
+    return (<div></div>);
 }
 
 export default Magic;
