@@ -62,7 +62,7 @@ import App from './pages/App';
     config.set({ path: 'http://localhost:7071', code: ''}, {freeze: false, environment: 'dev'});
     config.set({ });
   
-    config.setEnvironment('dev');
+    config.setEnvironment('prod');
   }
     
   setConfig(); 
