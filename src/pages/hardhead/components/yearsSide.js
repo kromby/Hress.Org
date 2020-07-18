@@ -29,7 +29,9 @@ const YearsSide = (propsData) => {
         <div>
             {data.visible ? data.years.map((year) => 
                 <li key={year.ID}>
-                    <SidePost title={"Árið " + year.Name} href={"/hardhead?parentID=" + year.ID} 
+                    <SidePost 
+                        title={"Árið " + year.Name} 
+                        href={"/hardhead?parentID=" + year.ID} 
                         // dateString={year.Name} date="" 
                         image={year.Photo ? config.get("path") + year.Photo.Href + "?code=" + config.get("code") : null} imageText={year.Photo ? year.Description : null} 
                     />

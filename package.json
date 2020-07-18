@@ -3,22 +3,21 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@types/youtube": "0.0.38",
     "axios": "^0.19.2",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-global-configuration": "^1.4.0",
+    "react-rating": "^2.0.5",
     "react-router-dom": "^5.1.2",
     "react-scripts": "^3.4.0",
-    "react-youtube-embed": "^1.0.3"
+    "react-youtube": "^7.11.2"
   },
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
-  },
-  "eslintConfig": {
-    "extends": "react-app"
   },
   "browserslist": {
     "production": [

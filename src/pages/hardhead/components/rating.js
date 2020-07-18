@@ -2,21 +2,22 @@ import React, {useEffect, useState} from 'react';
 import config from 'react-global-configuration';
 import { useAuth } from '../../../context/auth';
 import axios from "axios";
+import Rating from 'react-rating';
 
-const Rating = (propsData) => {
+const HardheadRating = (propsData) => {
     const {authTokens} = useAuth();
     const [data, setData] = useState({ratings: [], isLoading: false});
 
     useEffect(() => {
         const getRatingData = async  () => {
             if(authTokens !== undefined){ 
-                console.log("Rating authTokens: " + authTokens);
                 try {
                     var url = config.get('path') + '/api/hardhead/ratings/' + propsData.id + '?code=' + config.get('code');                    
                     const response = await axios.get(url, {
                         headers: {'Authorization': 'token ' + authTokens.token}               
                     })
                     setData({ratings: response.data, isLoading: false, visible: true})
+                    console.log("Rating: " + response.data);
                 }
                 catch(e) {
                     console.error(e);
@@ -27,16 +28,64 @@ const Rating = (propsData) => {
         getRatingData();
     }, [propsData, authTokens])
 
+    const getRatingText = (rate) => {
+        console.log("getRatingText: '" + rate + "'");
+        if(rate == '1')
+            return 'hræðilegt kvöld';
+        else if(rate == '2')
+            return 'slæmt kvöld';
+        else if(rate == '3')
+            return 'ágætt kvöld';
+        else if(rate == '4')
+            return 'gott kvöld';
+        else if(rate == '5')
+            return 'frábært kvöld';
+        else
+            return '';
+    }
+
     return (
-        <div>
-            {authTokens && data.visible ? 
-            <span>
-                {data.ratings.HardheadRating}
-                <br/>
-                {data.ratings.MovieRating}
-            </span>  : "Stjörnugjöf væntanleg á næstunni"}
-        </div>
+        <ul className="stats">            
+            {authTokens && data.visible ?
+                <li>Einkunnir</li> :
+                <li>Skráðu þig inn til þess að gefa einkunn</li>
+            }
+            {data.ratings !== undefined && data.ratings.Ratings ?             
+                data.ratings.Ratings.map(rating => 
+                    <li>                        
+                        <span id={rating.Code} />
+                        {rating.Code === "REP_C_RTNG" ?  
+                            <i class="icon solid fa-beer"></i> :
+                            <i class="icon solid fa-film"></i>}
+                        <Rating
+                            emptySymbol="far fa-star fa-1x"
+                            fullSymbol="fas fa-star fa-1x"
+                            initialRating={rating.MyRating ? rating.MyRating : 0}
+                            readonly={data.ratings.Status === "closed"}
+                            onHover={(rate) => document.getElementById(rating.Code).innerHTML = getRatingText(rate) || ' '}                            
+                            onChange={(rate) => alert("Ekki tókst að vista!")}
+                        />                                                
+                    </li>
+                ) :
+                null
+            }                                        
+        </ul>
     )
 }
 
-export default Rating;
+export default HardheadRating;
+
+{/* Hardhead={data.ratings.HardheadRating}
+                <Rating
+                    emptySymbol="far fa-star fa-1x"
+                    fullSymbol="fas fa-star fa-1x"
+                    initialRating={data.ratings.Night ? data.ratings.Night.MyRating : 0}
+                    {...data.ratings.Status === "closed" ? "readonly" : null}
+                />  
+                <br/>
+                Movie={data.ratings.MovieRating}
+                <Rating
+                    emptySymbol="far fa-star fa-1x"
+                    fullSymbol="fas fa-star fa-1x"
+                    initialRating={data.ratings.Movie ? data.ratings.Movie.MyRating : 0}
+                />   */}

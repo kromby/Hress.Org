@@ -16,13 +16,26 @@ import Magic from './frame/magic';
 function App(props) {
   // const existingTokens = JSON.parse(localStorage.getItem("tokens"));
   // const [authTokens, setAuthTokens] = useState(existingTokens);
-  const [authTokens, setAuthTokens] = useState();
-  
+  const [authTokens, setAuthTokens] = useState();  
+
   const setTokens = (data) => {
+    console.log("App - authTokens:" + data);
     localStorage.setItem("tokens", JSON.stringify(data));
     setAuthTokens(data);
+    console.log("App - authTokens:" + data);
     console.log("App - authTokens:" + authTokens);
   }
+
+  const checkExistingTokens = () => {
+    if(authTokens === undefined) {
+      var existingTokens = JSON.parse(localStorage.getItem("tokens"));
+      if(existingTokens !== undefined) {
+        setAuthTokens(existingTokens);
+      }
+    }
+  }
+
+  checkExistingTokens();
 
   return (
     <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>

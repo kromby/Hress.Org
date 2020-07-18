@@ -33,12 +33,14 @@ function Magic(props) {
                 }
             ).catch(function (e) {                
                 console.error("Magic " + e);
+                setAuthTokens({token: null});
                 setData({isLoading: false});
                 props.history.push("/"); 
             });
         }
         catch(e) {
             console.error("Magic " + e);
+            setAuthTokens({token: null});
             setData({isLoading: false});
             props.history.push("/");
         }

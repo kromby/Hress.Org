@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
 // import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import './index.css';
@@ -62,10 +62,10 @@ import App from './pages/App';
     config.set({ path: 'http://localhost:7071', code: ''}, {freeze: false, environment: 'dev'});
     config.set({ });
   
-    config.setEnvironment('prod');
+    config.setEnvironment('dev');
   }
     
-  setConfig();  
+  setConfig(); 
 
 ReactDOM.render(<App/>, document.getElementById('wrapper'));
 

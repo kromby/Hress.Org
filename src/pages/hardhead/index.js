@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import config from 'react-global-configuration';
 import { PostSmallImage } from '../../components';
 import Guests from './components/guests';
-import Rating from './components/rating.js';
+import HardheadRating from './components/rating.js';
 import Movie from './components/movie.js';
 import * as qs from 'query-string';
 
@@ -23,13 +23,10 @@ export default class Hardhead extends Component {
 
 	getHardheadData() {
 		const parsed = qs.parse(this.props.location.search);
+		console.log('parsed: ' & parsed.parentID);
 
 		var currentDate = new Date();
-		console.log("curDate: " + currentDate);
-		console.log("curDate.getMonth(): " + currentDate.getMonth());
 		currentDate.setMonth(currentDate.getMonth() - 5);
-		console.log("curDate: " + currentDate);
-		console.log("curDate.getMonth(): " + currentDate.getMonth());
 		var url;
 		if(parsed.parentID) {
 			url = config.get('path') + '/api/hardhead?parentID=' + parsed.parentID + '&code=' + config.get('code');		
@@ -85,7 +82,7 @@ export default class Hardhead extends Component {
 							}
 							right={ <Movie id={hardhead.ID}/> }
 							// bottom={  }
-							stats={<Rating id={hardhead.ID} />}	
+							stats={<HardheadRating id={hardhead.ID} />}	
 						/>											
 					)}
 				</div>

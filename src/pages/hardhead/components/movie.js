@@ -1,10 +1,18 @@
 import React, {useState, useEffect} from 'react';
 import config from 'react-global-configuration';
 import axios from "axios";
-import YouTubeEmbed from 'react-youtube-embed';
+import YouTube from 'react-youtube';
 
 const Movie = (propsData) => {    
     const[movieData, setMovieData] = useState({movie: null, isLoading: false, visible: false})
+
+    const opts = {
+        width: '500',
+        playerVars: {
+          // https://developers.google.com/youtube/player_parameters
+          autoplay: 0,
+        }
+    };
 
     var movieUrl = config.get("path") + "/api/movies/" + propsData.id + "?code=" + config.get("code");
 
@@ -46,7 +54,7 @@ const Movie = (propsData) => {
                     {movieData.movie.YoutubeUrl ?
                             // <div className="col-6 col-12-medium">
                                 <div className="image featured">
-                                    <YouTubeEmbed id={movieData.movie.YoutubeUrl}/>
+                                    <YouTube videoId={movieData.movie.YoutubeUrl} opts={opts}/>
                                 </div>
                             // </div> 
                             :    
