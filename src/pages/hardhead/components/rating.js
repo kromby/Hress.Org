@@ -17,7 +17,6 @@ const HardheadRating = (propsData) => {
                         headers: {'Authorization': 'token ' + authTokens.token}               
                     })
                     setData({ratings: response.data, isLoading: false, visible: true})
-                    console.log("Rating: " + response.data);
                 }
                 catch(e) {
                     console.error(e);
@@ -29,7 +28,6 @@ const HardheadRating = (propsData) => {
     }, [propsData, authTokens])
 
     const getRatingText = (rate) => {
-        console.log("getRatingText: '" + rate + "'");
         if(rate == '1')
             return 'hræðilegt kvöld';
         else if(rate == '2')
@@ -52,11 +50,11 @@ const HardheadRating = (propsData) => {
             }
             {data.ratings !== undefined && data.ratings.Ratings ?             
                 data.ratings.Ratings.map(rating => 
-                    <li>                        
+                    <li key={rating.Code}>                        
                         <span id={rating.Code} />
                         {rating.Code === "REP_C_RTNG" ?  
-                            <i class="icon solid fa-beer"></i> :
-                            <i class="icon solid fa-film"></i>}
+                            <i className="icon solid fa-beer fa-1x"></i> :
+                            <i className="icon solid fa-film fa-1x"></i>}
                         <Rating
                             emptySymbol="far fa-star fa-1x"
                             fullSymbol="fas fa-star fa-1x"

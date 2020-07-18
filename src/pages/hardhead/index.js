@@ -13,7 +13,8 @@ export default class Hardhead extends Component {
 		this.state = {
 			isLoaded : false,
 			error: null,
-			hardheads: null
+			hardheads: null,
+			parent: 0
 		};
 	}
 
@@ -21,9 +22,16 @@ export default class Hardhead extends Component {
 		this.getHardheadData();
 	}
 
+	componentDidUpdate() {
+		const parsed = qs.parse(this.props.location.search);
+		if(this.state.parent !== parsed.parentID)
+			this.getHardheadData();
+	}
+
 	getHardheadData() {
 		const parsed = qs.parse(this.props.location.search);
 		console.log('parsed: ' & parsed.parentID);
+		this.setState({parent: parsed.parentID});
 
 		var currentDate = new Date();
 		currentDate.setMonth(currentDate.getMonth() - 5);
