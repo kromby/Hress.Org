@@ -27,17 +27,18 @@ const HardheadRating = (propsData) => {
         getRatingData();
     }, [propsData, authTokens])
 
-    const getRatingText = (rate) => {
+    const getRatingText = (rate, type) => {
+        console.log("getRatingText - " + rate); 
         if(rate == '1')
-            return 'hræðilegt kvöld';
+            return type === 'REP_C_RTNG' ? 'hræðilegt kvöld ' : 'hræðileg mynd ';
         else if(rate == '2')
-            return 'slæmt kvöld';
+            return type === 'REP_C_RTNG' ? 'slæmt kvöld ' : 'slæm mynd ';
         else if(rate == '3')
-            return 'ágætt kvöld';
+            return type === 'REP_C_RTNG' ? 'ágætt kvöld ' : 'ágæt mynd ';
         else if(rate == '4')
-            return 'gott kvöld';
+            return type === 'REP_C_RTNG' ? 'gott kvöld ' : 'góð mynd ';
         else if(rate == '5')
-            return 'frábært kvöld';
+            return type === 'REP_C_RTNG' ? 'frábært kvöld ' : 'frábær mynd ';
         else
             return '';
     }
@@ -45,24 +46,28 @@ const HardheadRating = (propsData) => {
     return (
         <ul className="stats">            
             {authTokens && data.visible ?
-                <li>Einkunnir</li> :
+                null :
                 <li>Skráðu þig inn til þess að gefa einkunn</li>
             }
             {data.ratings !== undefined && data.ratings.Ratings ?             
                 data.ratings.Ratings.map(rating => 
                     <li key={rating.Code}>                        
-                        <span id={rating.Code} />
+                        <span id={rating.Code + "_" + propsData.id} />
                         {rating.Code === "REP_C_RTNG" ?  
-                            <i className="icon solid fa-beer fa-1x"></i> :
-                            <i className="icon solid fa-film fa-1x"></i>}
+                            <i className="icon solid fa-beer fa-2x"></i> :
+                            <i className="icon solid fa-film fa-2x"></i>}
+                        {data.ratings.Readonly ?
+                        <span>({rating.NumberOfRatings} atkvæði)&nbsp;</span>
+                        : null}
+                        {data.ratings.Readonly && rating.MyRating === undefined && rating.AverageRating === undefined ? null :
                         <Rating
                             emptySymbol="far fa-star fa-1x"
                             fullSymbol="fas fa-star fa-1x"
                             initialRating={rating.MyRating ? rating.MyRating : 0}
-                            readonly={data.ratings.Status === "closed"}
-                            onHover={(rate) => document.getElementById(rating.Code).innerHTML = getRatingText(rate) || ' '}                            
+                            readonly={data.ratings.Readonly}
+                            onHover={(rate) => document.getElementById(rating.Code + "_" + propsData.id).innerHTML = getRatingText(rate, rating.Code) || ' '}                            
                             onChange={(rate) => alert("Ekki tókst að vista!")}
-                        />                                                
+                        />}
                     </li>
                 ) :
                 null
