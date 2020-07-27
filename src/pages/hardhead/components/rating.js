@@ -28,7 +28,6 @@ const HardheadRating = (propsData) => {
     }, [propsData, authTokens])
 
     const getRatingText = (rate, type) => {
-        console.log("getRatingText - " + rate); 
         if(rate == '1')
             return type === 'REP_C_RTNG' ? 'hræðilegt kvöld ' : 'hræðileg mynd ';
         else if(rate == '2')
@@ -57,13 +56,13 @@ const HardheadRating = (propsData) => {
                             <i className="icon solid fa-beer fa-2x"></i> :
                             <i className="icon solid fa-film fa-2x"></i>}
                         {data.ratings.Readonly ?
-                        <span>({rating.NumberOfRatings} atkvæði)&nbsp;</span>
+                        <span>(Fjöldi: {rating.NumberOfRatings}{rating.MyRating ? ' -  Þú: ' + rating.MyRating : null})&nbsp;</span>
                         : null}
                         {data.ratings.Readonly && rating.MyRating === undefined && rating.AverageRating === undefined ? null :
                         <Rating
                             emptySymbol="far fa-star fa-1x"
                             fullSymbol="fas fa-star fa-1x"
-                            initialRating={rating.MyRating ? rating.MyRating : 0}
+                            initialRating={data.ratings.Readonly ? rating.AverageRating : rating.MyRating}
                             readonly={data.ratings.Readonly}
                             onHover={(rate) => document.getElementById(rating.Code + "_" + propsData.id).innerHTML = getRatingText(rate, rating.Code) || ' '}                            
                             onChange={(rate) => alert("Ekki tókst að vista!")}
