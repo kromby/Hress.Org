@@ -1,8 +1,16 @@
 ### Get ratings with authorization
-
-GET http://localhost:7071/api/hardhead/ratings/5355
-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNTg4NDMyNTI1LCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.NC-c6XWS4hNSV9-jU76hrbnZ4oGnMyzHrhXpFZfyeeg
+GET http://localhost:7071/api/hardhead/5358/ratings
+Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNTk2MDY0NjQyLCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.uyMzsKysMAX-dFeRIs-qestRRGJJwBq0SOgyWxlI0Fo
 
 ### Get ratings without authorization
-
 GET http://localhost:7071/api/hardhead/ratings/5355
+
+### Post rating
+POST http://localhost:7071/api/hardhead/5358/ratings
+Content-Type: application/json
+Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNTk2MDY0NjQyLCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.uyMzsKysMAX-dFeRIs-qestRRGJJwBq0SOgyWxlI0Fo
+
+{
+	"type":"REP_C_MRTNG",
+	"rating":"4"
+}

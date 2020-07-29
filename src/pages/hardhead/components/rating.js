@@ -12,7 +12,7 @@ const HardheadRating = (propsData) => {
         const getRatingData = async  () => {
             if(authTokens !== undefined){ 
                 try {
-                    var url = config.get('path') + '/api/hardhead/ratings/' + propsData.id + '?code=' + config.get('code');                    
+                    var url = config.get('path') + '/api/hardhead/' + propsData.id + '/ratings?code=' + config.get('code');                    
                     const response = await axios.get(url, {
                         headers: {'Authorization': 'token ' + authTokens.token}               
                     })
@@ -42,6 +42,26 @@ const HardheadRating = (propsData) => {
             return '';
     }
 
+    const saveRating = async (rate, type) => {
+        if(authTokens !== undefined){ 
+            try {
+                var url = config.get('path') + '/api/hardhead/' + propsData.id + '/ratings?code=' + config.get('code');                    
+                const response = await axios.post(url, {
+                    type: type,
+                    rating: rate
+                },{
+                    headers: {'Authorization': 'token ' + authTokens.token},            
+                });
+                console.log("saveRating" + response);
+                alert('vista!');
+            }
+            catch(e) {
+                console.error(e);
+                alert('e:' + e);
+            }
+        }
+    }
+
     return (
         <ul className="stats">            
             {authTokens && data.visible ?
@@ -65,7 +85,7 @@ const HardheadRating = (propsData) => {
                             initialRating={data.ratings.Readonly ? rating.AverageRating : rating.MyRating}
                             readonly={data.ratings.Readonly}
                             onHover={(rate) => document.getElementById(rating.Code + "_" + propsData.id).innerHTML = getRatingText(rate, rating.Code) || ' '}                            
-                            onChange={(rate) => alert("Ekki tókst að vista!")}
+                            onChange={(rate) => saveRating(rate, rating.Code)}
                         />}
                     </li>
                 ) :
