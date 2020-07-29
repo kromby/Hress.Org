@@ -53,11 +53,10 @@ const HardheadRating = (propsData) => {
                     headers: {'Authorization': 'token ' + authTokens.token},            
                 });
                 console.log("saveRating" + response);
-                alert('vista!');
             }
             catch(e) {
                 console.error(e);
-                alert('e:' + e);
+                alert("Ekki tókst að vista einkunn, reyndu aftur síðar.");
             }
         }
     }
