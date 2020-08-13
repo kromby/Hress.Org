@@ -12,11 +12,13 @@ import Statistics from './hardhead/statistics';
 import Admin from './hardhead/admin';
 import Login from './frame/login';
 import Magic from './frame/magic';
+import Menu from './frame/menu';
 
 function App(props) {
   // const existingTokens = JSON.parse(localStorage.getItem("tokens"));
   // const [authTokens, setAuthTokens] = useState(existingTokens);
   const [authTokens, setAuthTokens] = useState();  
+  const [data, setData] = useState({showMenu: false});
 
   const setTokens = (data) => {
     console.log("App - authTokens:" + data);
@@ -37,9 +39,21 @@ function App(props) {
 
   checkExistingTokens();
 
+  const toggleMenu = () => {
+    // console.log(showMenu);
+    // setData({showMenu});
+    var visible = !data.showMenu;
+    
+    if(visible)
+      setData({showMenu: visible, class: "is-menu-visible"})
+    else
+      setData({showMenu: visible, class: ""})
+  }
+
   return (
     <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
-      {/* <div id="wrapper"> */}
+      <div className={data.class}>
+      <div id="wrapper" >
         <Router>
           <header id="header">
             <h1><a href="http://www.hress.org" target="_parent">Hress.Org</a></h1>
@@ -59,14 +73,14 @@ function App(props) {
                     <input type="text" name="query" placeholder="Search" />
                   </form>
                 </li>
-                {authTokens ?
-                <li className="menu">
+                <li className="menu" onClick={() => toggleMenu(true)}>
                   <a className="fa-bars" href="#menu">Menu</a>
-                </li>
-                : null}
+                </li>                
               </ul>
             </nav>
           </header>
+
+          
 
           {/* <section id="menu">
               <section>
@@ -116,7 +130,9 @@ function App(props) {
           <Route path="/hardhead/stats" />   
         </Switch>
       </Router>       
-    {/* </div> */}
+    </div>
+    <Menu visible={data.showMenu} onClick={() => toggleMenu(true)} />
+    </div>
   </AuthContext.Provider>
   );
 }

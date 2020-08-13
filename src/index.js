@@ -67,7 +67,7 @@ import App from './pages/App';
     
   setConfig(); 
 
-ReactDOM.render(<App/>, document.getElementById('wrapper'));
+ReactDOM.render(<App/>, document.getElementById('content'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

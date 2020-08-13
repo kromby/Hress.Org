@@ -2797,6 +2797,42 @@ input, select, textarea {
 							top: 0;
 							width: inherit;
 						}
+						
+					#header .main ul li > button {
+						text-decoration: none;
+						border: 0;
+						box-shadow: none;
+						color: #aaaaaa;
+						overflow: hidden;
+						position: relative;
+						text-indent: 4em;
+						width: 4em;
+					}
+
+						#header .main ul li > button:before {
+							-moz-osx-font-smoothing: grayscale;
+							-webkit-font-smoothing: antialiased;
+							display: inline-block;
+							font-style: normal;
+							font-variant: normal;
+							text-rendering: auto;
+							line-height: 1;
+							text-transform: none !important;
+							font-family: 'Font Awesome 5 Free';
+							font-weight: 900;
+						}
+
+						#header .main ul li > button:before {
+							display: block;
+							height: inherit;
+							left: 0;
+							line-height: inherit;
+							position: absolute;
+							text-align: center;
+							text-indent: 0;
+							top: 0;
+							width: inherit;
+						}
 
 		#header form {
 			margin: 0;
@@ -2879,7 +2915,11 @@ input, select, textarea {
 		width: 90em;
 	}
 
-		body.is-menu-visible #wrapper {
+		/* body.is-menu-visible #wrapper {
+			opacity: 0.15;
+		} */
+
+		.is-menu-visible #wrapper {
 			opacity: 0.15;
 		}
 
@@ -3060,7 +3100,15 @@ input, select, textarea {
 					padding-top: 0;
 				}
 
-		body.is-menu-visible #menu {
+		/* body.is-menu-visible #menu {
+			-moz-transform: translateX(0);
+			-webkit-transform: translateX(0);
+			-ms-transform: translateX(0);
+			transform: translateX(0);
+			visibility: visible;
+		} */
+
+		.is-menu-visible #menu {
 			-moz-transform: translateX(0);
 			-webkit-transform: translateX(0);
 			-ms-transform: translateX(0);

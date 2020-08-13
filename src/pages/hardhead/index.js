@@ -69,8 +69,7 @@ export default class Hardhead extends Component {
 		} else {
 			return (
 				<div id="main">
-					{[].concat(this.state.hardheads)
-					.map((hardhead, i) => 
+					{[].concat(this.state.hardheads).map((hardhead, i) => 
 						<PostSmallImage
 							key={hardhead.ID} 
 							id={hardhead.ID} 
