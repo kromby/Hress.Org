@@ -38,6 +38,8 @@ export default class Hardhead extends Component {
 		var url;
 		if(parsed.parentID) {
 			url = config.get('path') + '/api/hardhead?parentID=' + parsed.parentID + '&code=' + config.get('code');		
+		} else if(parsed.userID) {
+			url = config.get('path') + '/api/hardhead?userID=' + parsed.userID + '&code=' + config.get('code');		
 		} else {
 			url = config.get('path') + '/api/hardhead?dateFrom=' + (currentDate.getMonth()+1) + '.1.' + currentDate.getFullYear() + '&code=' + config.get('code');		
 		}
