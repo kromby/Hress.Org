@@ -14,36 +14,45 @@ export default class Hardhead extends Component {
 			isLoaded : false,
 			error: null,
 			hardheads: null,
-			parent: 0
+			url: null
 		};
 	}
 
 	componentDidMount() {
-		this.getHardheadData();
+		var url = this.getHardheadUrl();
+
+		if(this.state.url !== url) {
+			this.setState({url: url});
+			this.getHardheadData(url);
+		}
 	}
 
 	componentDidUpdate() {
-		const parsed = qs.parse(this.props.location.search);
-		if(this.state.parent !== parsed.parentID)
-			this.getHardheadData();
+		var url = this.getHardheadUrl();
+
+		if(this.state.url !== url) {
+			this.setState({url: url});
+			this.getHardheadData(url);
+		}
 	}
 
-	getHardheadData() {
+	getHardheadUrl()
+	{
 		const parsed = qs.parse(this.props.location.search);
-		console.log('parsed: ' & parsed.parentID);
-		this.setState({parent: parsed.parentID});
-
-		var currentDate = new Date();
-		currentDate.setMonth(currentDate.getMonth() - 5);
 		var url;
 		if(parsed.parentID) {
 			url = config.get('path') + '/api/hardhead?parentID=' + parsed.parentID + '&code=' + config.get('code');		
 		} else if(parsed.userID) {
 			url = config.get('path') + '/api/hardhead?userID=' + parsed.userID + '&code=' + config.get('code');		
 		} else {
+			var currentDate = new Date();
+			currentDate.setMonth(currentDate.getMonth() - 5);
 			url = config.get('path') + '/api/hardhead?dateFrom=' + (currentDate.getMonth()+1) + '.1.' + currentDate.getFullYear() + '&code=' + config.get('code');		
 		}
-    
+		return url;
+	}
+
+	getHardheadData(url) {   
         fetch(url, {
             method: 'GET' 
         })

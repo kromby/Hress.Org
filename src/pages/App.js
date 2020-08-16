@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
+import jwt from 'jsonwebtoken';
 
 import PrivateRoute from './../components/access/privateRoute';
 import { AuthContext } from './../context/auth';
@@ -15,24 +16,38 @@ import Magic from './frame/magic';
 import Menu from './frame/menu';
 
 function App(props) {
-  // const existingTokens = JSON.parse(localStorage.getItem("tokens"));
-  // const [authTokens, setAuthTokens] = useState(existingTokens);
   const [authTokens, setAuthTokens] = useState();  
   const [data, setData] = useState({showMenu: false});
 
   const setTokens = (data) => {
-    console.log("App - authTokens:" + data);
     localStorage.setItem("tokens", JSON.stringify(data));
+    var decodedToken = jwt.decode(JSON.stringify(data), {complete: true});
+    localStorage.setItem("userID", decodedToken.payload.sub);
     setAuthTokens(data);
-    console.log("App - authTokens:" + data);
-    console.log("App - authTokens:" + authTokens);
   }
 
   const checkExistingTokens = () => {
     if(authTokens === undefined) {
       var existingTokens = JSON.parse(localStorage.getItem("tokens"));
-      if(existingTokens !== undefined) {
-        setAuthTokens(existingTokens);
+      if(existingTokens !== undefined && existingTokens !== null) {
+
+        if(existingTokens.token === null) {
+          console.log("checkExistingTokens - Faulty! remove from local storage");
+          localStorage.removeItem("tokens");
+          return;
+        }
+
+        var decodedToken = jwt.decode(existingTokens.token, {complete: true});
+        var dateNow = new Date();
+        if((decodedToken.payload.exp*1000) < (dateNow.getTime()+1)) {
+          console.log("checkExistingTokens - Expired! remove from local storage");
+          localStorage.removeItem("tokens");
+        }
+        else {
+          console.log("checkExistingTokens - set auth tokens");
+          localStorage.setItem("userID", decodedToken.payload.sub);
+          setAuthTokens(existingTokens);
+        }
       }
     }
   }
@@ -52,9 +67,9 @@ function App(props) {
 
   return (
     <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
-      <div className={data.class}>
-      <div id="wrapper" >
+      <div className={data.class}>      
         <Router>
+        <div id="wrapper" >
           <header id="header">
             <h1><a href="http://www.hress.org" target="_parent">Hress.Org</a></h1>
             <nav className="links">
@@ -74,7 +89,8 @@ function App(props) {
                   </form>
                 </li>
                 <li className="menu" onClick={() => toggleMenu(true)}>
-                  <a className="fa-bars" href="#menu">Menu</a>
+                  {/* <a className="fa-bars" href="#menu">Menu</a> */}
+                  <span className="fa-bars">Menu</span>
                 </li>                
               </ul>
             </nav>
@@ -129,9 +145,9 @@ function App(props) {
           <Route path="/hardhead/rules" />     
           <Route path="/hardhead/stats" />   
         </Switch>
-      </Router>       
-    </div>
-    <Menu visible={data.showMenu} onClick={() => toggleMenu(true)} />
+        </div>
+        <Menu visible={data.showMenu} onClick={() => toggleMenu(true)} />
+      </Router>           
     </div>
   </AuthContext.Provider>
   );

@@ -22,3 +22,9 @@ Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9
 	"type":"REP_C_MRTNG",
 	"rating":"4"
 }
+
+### Get hardheads by userID
+GET http://localhost:7071/api/hardhead?userID=2630
+
+### Get hardheads by dateFrom
+GET http://localhost:7071/api/hardhead?dateFrom=1.1.2020

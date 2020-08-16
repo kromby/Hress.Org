@@ -1,4 +1,5 @@
 import React, {useEffect, useState, useRef} from 'react';
+import { Link } from 'react-router-dom';
 // import config from 'react-global-configuration';
 import { useAuth } from '../../context/auth';
 // import axios from "axios";
@@ -30,7 +31,7 @@ function useOutsideAlerter(ref, visible, callback) {
 
 const Menu = (propsData) => {
     const {authTokens} = useAuth();
-    const [data, setData] = useState({isLoading: false});
+    const [data, setData] = useState({isLoading: false, userID: 0});
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef, propsData.visible, propsData.onClick);
 
@@ -49,6 +50,10 @@ const Menu = (propsData) => {
             //         setData({isLoading: false, visible: false});
             //     }
             // }
+            if(authTokens !== undefined) {
+                var userID = localStorage.getItem("userID");
+                setData({userID});
+            }
         }
         getMenuData();
     }, [propsData, authTokens])
@@ -63,13 +68,20 @@ const Menu = (propsData) => {
                 </section>
 
                 <section>
-                <ul className="links">
-                    <li>
+                <ul className="links" onClick={() => propsData.onClick()}>
+                    {/* <li>
                     <a href="#">
                         <h3>Lorem ipsum</h3>
                         <p>Feugiat tempus veroeros dolor</p>
                     </a>
-                    </li> 
+                    </li>  */}
+                    {authTokens !== undefined ?
+                    <li>
+                        <Link to={"/hardhead?userID=" + data.userID}>
+                            <h3>Mín kvöld</h3>
+                            <p>Upplýsingar um öll kvöld sem þú hefur haldið</p>
+                        </Link>
+                    </li> : null}
                 </ul>
                 </section>
 
