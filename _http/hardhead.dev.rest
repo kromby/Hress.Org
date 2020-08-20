@@ -28,3 +28,6 @@ GET http://localhost:7071/api/hardhead?userID=2630
 
 ### Get hardheads by dateFrom
 GET http://localhost:7071/api/hardhead?dateFrom=1.1.2020
+
+### Get hardheads by nothing
+GET http://localhost:7071/api/hardhead?code=xxx
