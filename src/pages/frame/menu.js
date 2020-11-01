@@ -84,7 +84,7 @@ const Menu = (propsData) => {
                     {data.visible ? 
                         data.menuItems.map(item => 
                         item.Public ?
-                        <li>
+                        <li key={item.Link.Href}>
                             <Link to={"/" + item.Link.Href}>
                                 <h3>{item.Name}</h3>
                                 <p>{item.Description}</p>

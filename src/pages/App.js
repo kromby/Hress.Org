@@ -14,6 +14,7 @@ import Admin from './hardhead/admin';
 import Login from './frame/login';
 import Magic from './frame/magic';
 import Menu from './frame/menu';
+import HardheadEdit from './hardhead/hardheadEdit';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();  
@@ -131,6 +132,7 @@ function App(props) {
           <Route path="/hardhead/awards" component={Awards} /> 
           <Route path="/hardhead/rules" component={Rules} />
           <Route path="/hardhead/stats" component={Statistics} />
+          <Route path="/hardhead/:hardheadID" component={HardheadEdit} />
           <PrivateRoute path="/hardhead/admin" component={Admin} />
           <Route exact path="/login" component={Login} />
           <Route path="/login/magic" component={Magic} />
@@ -140,7 +142,8 @@ function App(props) {
         {/* Sidebar */}
         <Switch>
           <Route exact path="/" component={HardheadSidebar}/>
-          <Route exact path="/hardhead" component={HardheadSidebar}/>     
+          <Route exact path="/hardhead" component={HardheadSidebar}/> 
+          <Route path="/hardhead/:hardheadID" />    
           <Route path="/hardhead/awards" />                                       
           <Route path="/hardhead/rules" />     
           <Route path="/hardhead/stats" />   

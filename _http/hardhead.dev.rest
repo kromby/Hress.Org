@@ -8,7 +8,7 @@
 
 ### Get ratings with authorization
 GET http://localhost:7071/api/hardhead/5358/ratings
-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNTk2MDY0NjQyLCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.uyMzsKysMAX-dFeRIs-qestRRGJJwBq0SOgyWxlI0Fo
+Authorization: token 
 
 ### Get ratings without authorization
 GET http://localhost:7071/api/hardhead/ratings/5355
@@ -16,7 +16,7 @@ GET http://localhost:7071/api/hardhead/ratings/5355
 ### Post rating
 POST http://localhost:7071/api/hardhead/5358/ratings
 Content-Type: application/json
-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNTk2MDY0NjQyLCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.uyMzsKysMAX-dFeRIs-qestRRGJJwBq0SOgyWxlI0Fo
+Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNTk4ODIxMzA2LCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.Az60hJb_KDzjGHDYxlYVgb1Mh2qOYkHODMArIF90Yy0
 
 {
 	"type":"REP_C_MRTNG",
@@ -24,10 +24,31 @@ Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9
 }
 
 ### Get hardheads by userID
-GET http://localhost:7071/api/hardhead?userID=2630
+GET http://localhost:7071/api/hardhead?userID=2630&code=xxx
 
 ### Get hardheads by dateFrom
-GET http://localhost:7071/api/hardhead?dateFrom=1.1.2020
+GET http://localhost:7071/api/hardhead?dateFrom=1.1.2020&code=xxx
 
 ### Get hardheads by nothing
 GET http://localhost:7071/api/hardhead?code=xxx
+
+### Get hardhead actions
+GET http://localhost:7071/api/hardhead/5358/actions
+Content-Type: application/json
+Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNTk4ODIxMzA2LCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.Az60hJb_KDzjGHDYxlYVgb1Mh2qOYkHODMArIF90Yy0
+
+### Change hardhead
+PUT http://localhost:7071/api/hardhead
+Content-Type: application/json
+Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjAyNTQyODg0LCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.NLqTwIQOpXfGX97ez6O39-c9i8Bk6lceGDMYaAipeyU
+
+{
+	"ID": "5370",
+	"Number": "999",
+	"Host":
+	{
+		"ID": "2630"
+	},
+	"Date": "2020-07-17",
+	"NextHostID": "2627"
+}

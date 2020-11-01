@@ -7,6 +7,7 @@
     "axios": "^0.19.2",
     "jsonwebtoken": "^8.5.1",
     "react": "^16.10.2",
+    "react-datepicker": "^3.3.0",
     "react-dom": "^16.10.2",
     "react-global-configuration": "^1.4.0",
     "react-rating": "^2.0.5",

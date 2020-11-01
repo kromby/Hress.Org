@@ -5,6 +5,7 @@ import Guests from './components/guests';
 import HardheadRating from './components/rating.js';
 import Movie from './components/movie.js';
 import * as qs from 'query-string';
+import HardheadActions from './components/actions';
 
 export default class Hardhead extends Component {
 
@@ -14,13 +15,13 @@ export default class Hardhead extends Component {
 			isLoaded : false,
 			error: null,
 			hardheads: null,
-			url: null
+			url: null,
 		};
 	}
 
 	componentDidMount() {
 		var url = this.getHardheadUrl();
-
+		
 		if(this.state.url !== url) {
 			this.setState({url: url});
 			this.getHardheadData(url);
@@ -38,7 +39,7 @@ export default class Hardhead extends Component {
 
 	getHardheadUrl()
 	{
-		const parsed = qs.parse(this.props.location.search);
+		const parsed = qs.parse(this.props.location.search);			
 		var url;
 		if(parsed.parentID) {
 			url = config.get('path') + '/api/hardhead?parentID=' + parsed.parentID + '&code=' + config.get('code');		
@@ -58,14 +59,18 @@ export default class Hardhead extends Component {
         })
         .then(res => res.json())
         .then((result) => {			
-			this.setState({error: null, isLoaded: true, hardheads: result});		
+			this.setState({error: null, isLoaded: true, hardheads: result});
+			
+			if(this.props.match.params.hardheadID) {
+				this.setState({description: result.Description});
+			}
         },
         (error) => {
 			console.log(error);
             this.setState({isLoaded: true, error});
         });  
 	}
-	
+
     render() {
 		const { error, isLoaded } = this.state;
 
@@ -92,16 +97,17 @@ export default class Hardhead extends Component {
 							left={
 								<span>
 									<h3>Kvöldið</h3>
-									{hardhead.Description ? hardhead.Description : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}
+									{this.props.match.params.hardheadID ? <textarea name="Lýsing" rows="3" onChange={this.handleDescriptionChange} defaultValue={this.state.description} placeholder="Lýstu kvöldinu" /> : hardhead.Description ? hardhead.Description : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}
 									<br/>
 									<br/>
 									<Guests hardheadID={hardhead.ID} />
 								</span>
 							}
 							right={ <Movie id={hardhead.ID}/> }
+							actions={ <HardheadActions id={hardhead.ID} /> }
 							// bottom={  }
 							stats={<HardheadRating id={hardhead.ID} />}	
-						/>											
+						/>	
 					)}
 				</div>
 			)

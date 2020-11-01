@@ -29,9 +29,10 @@ export default class PostMultipleContent extends Component {
                     {this.props.bottom}
                 </div>
                 <footer>
-                    <ul className="actions">
-                        {/* <li><a href={"?id=" + this.props.id} className="button large">Continue Reading</a></li>                         */}
-                    </ul>
+                    {/* <ul className="actions">
+                        <li><a href={"?id=" + this.props.id} className="button large">Continue Reading</a></li>                        
+                    </ul> */}
+                    {this.props.actions}
                     <ul className="stats">
                         {/* <li><a href="#">General</a></li>
                         <li><a href="#" className="icon solid fa-heart">28</a></li>
