@@ -11,6 +11,8 @@ import { useAuth } from '../../context/auth';
 const HardheadEdit = (propsData) => {
 	const {authTokens} = useAuth();
 	const [hardhead, setHardhead] = useState();
+	const [users, setUsers] = useState();
+	const [nextHostID, setNextHostID] = useState();
 	const [hardheadDate, setDate] = useState(new Date());
 	const [description, setDescription] = useState("");
 	const [data, setData] = useState({isLoaded: false, hardhead: null, description: null, hardheadDate: new Date(), saved: false});
@@ -38,7 +40,19 @@ const HardheadEdit = (propsData) => {
 				setData({isLoading: false, visible: false});
 			}
 		}
+
+		const getUsers = async () => {
+			try {
+				var url = config.get('path') + '/api/users?role2=hardhead&code=' + config.get('code')
+				const response = await axios.get(url);
+				setUsers(response.data);
+			} catch (e) {
+				console.error(e);				
+			}
+		}
+
 		getHardhead();
+		getUsers();
 	}, [propsData, authTokens])
 
 	const handleSubmit = async (event) => {
@@ -51,11 +65,13 @@ const HardheadEdit = (propsData) => {
 					Number: hardhead.Number,
 					Host: hardhead.Host,
 					Date: hardheadDate,
-					Description: description					
+					Description: description,
+					NextHostID: nextHostID			
 				}, {
 					headers: {'Authorization': 'token ' + authTokens.token},            
 				});
 				setData({saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate});
+				console.log(response);
 			} catch(e) {
 				console.error(e);
 				alert("Ekki tókst að vista kvöld.");
@@ -67,6 +83,7 @@ const HardheadEdit = (propsData) => {
 
 	const handleDescriptionChange = (event) => { setDescription(event.target.value);  }
 	const handleDateChange = (event) => { setDate(event); }
+	const handleHostChange = (event) => { setNextHostID(event.target.value); }
 	
 	return (
 		<div id="main">
@@ -88,8 +105,18 @@ const HardheadEdit = (propsData) => {
 								<br/>
 								<textarea name="Lýsing" rows="3" onChange={(ev) => handleDescriptionChange(ev)} defaultValue={hardhead.Description} placeholder="Lýstu kvöldinu" />
 								<br/>
-								<br/>
+								<br/>								
 								{/* <Guests hardheadID={hardhead.ID} /> */}
+								{users ? 
+									<select id="demo-category" name="demo-category" onChange={(ev) => handleHostChange(ev)}>
+										<option value="">- Á hvern skoraðir þú? -</option>
+									{users.sort((a,b) => a.Name > b.Name ? 1 : -1).map(user => 
+										<option key={user.ID} value={user.ID}>
+											{user.Name}
+										</option>
+									)}
+									</select>
+								: null}
 								{data.saved ? <b>Kvöld vistað!</b> : null}
 								<br/>
 								<br/>
