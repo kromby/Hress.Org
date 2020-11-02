@@ -43,7 +43,7 @@ const HardheadEdit = (propsData) => {
 
 		const getUsers = async () => {
 			try {
-				var url = config.get('path') + '/api/users?role2=hardhead&code=' + config.get('code')
+				var url = config.get('path') + '/api/users?role=US_L_HEAD&code=' + config.get('code')
 				const response = await axios.get(url);
 				setUsers(response.data);
 			} catch (e) {
