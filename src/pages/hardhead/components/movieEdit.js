@@ -1,8 +1,10 @@
 import React, {useState, useEffect} from 'react';
 import config from 'react-global-configuration';
 import axios from "axios";
+import { useAuth } from '../../../context/auth';
 
 const MovieEdit = (propsData) => {    
+    const {authTokens} = useAuth();
     const[data, setData] = useState({visible: false})
     const[movie, setMovie] = useState();
 
@@ -13,7 +15,11 @@ const MovieEdit = (propsData) => {
             try {
                 const response = await axios.get(movieUrl);
 
-                if(response.data !== undefined) {                    
+                if(response.data !== undefined) {                                        
+                    if(response.data.YoutubeUrl) {
+                        response.data.YoutubeUrl = "https://www.youtube.com/watch?v=" + response.data.YoutubeUrl;
+                    }
+
                     setMovie(response.data);
                     setData({visible: true});
                 }
@@ -29,29 +35,21 @@ const MovieEdit = (propsData) => {
     const handleSubmit = async (event) => {
         event.preventDefault();	
         console.log(movie);
-		// if(authTokens !== undefined){			
-		// 	event.preventDefault();			
-		// 	try {
-		// 		var url = config.get('path') + '/api/hardhead/' + propsData.match.params.hardheadID + '?code=' + config.get('code');
-		// 		const response = await axios.put(url, {
-		// 			ID: propsData.match.params.hardheadID,
-		// 			Number: hardhead.Number,
-		// 			Host: hardhead.Host,
-		// 			Date: hardheadDate,
-		// 			Description: description,
-		// 			NextHostID: nextHostID			
-		// 		}, {
-		// 			headers: {'Authorization': 'token ' + authTokens.token},            
-		// 		});
-		// 		setData({saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate});
-		// 		console.log(response);
-		// 	} catch(e) {
-		// 		console.error(e);
-		// 		alert("Ekki tókst að vista kvöld.");
-		// 	}
-		// } else {
-		// 	// TODO: redirect to main page
-		// }
+		if(authTokens !== undefined){			
+			event.preventDefault();			
+			try {
+				const response = await axios.put(movieUrl, movie, {
+					headers: {'Authorization': 'token ' + authTokens.token},            
+				});
+				setData({saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate});
+				console.log(response);
+			} catch(e) {
+				console.error(e);
+				alert("Ekki tókst að vista kvöld.");
+			}
+		} else {
+			// TODO: redirect to main page
+		}
     }	
     
     const handleMovieChange = (event) => { movie.Name = event.target.value; setMovie(movie);  }
@@ -78,15 +76,16 @@ const MovieEdit = (propsData) => {
                     <br/>
                     <textarea name="reason" rows="3" onChange={(ev) => handleReasonChange(ev)} defaultValue={movie ? movie.Reason : null} placeholder="Ástæða fyrir mynd?" />
                     <br/>
-                    <input id="poster" type="text" name="poster" onChange={(ev) => handlePosterChange(ev)} placeholder="Slóð á poster"/>
-                    <br/>
-                    {movie ? 
+                    {/* <input id="poster" type="text" name="poster" onChange={(ev) => handlePosterChange(ev)} placeholder="Slóð á poster"/>
+                    <br/> */}
+                    {/* {movie && movie.PosterPhoto ? 
                         <div className="image featured">
                             <img src={config.get("path") + movie.PosterPhoto.Href + "?code=" + config.get("code")} alt={movie.Name} />
                         </div>
-                    : null}
+                    : null} */}
                     <br/>
-                    {/* <button tooltip="Vista mynd" className="button large">Vista mynd</button> */}
+                    {data.saved ? <b>Kvöld vistað!<br/></b> : null}
+                    <button tooltip="Vista mynd" className="button large">Vista mynd</button>
                 </div>
             </div>
         </form>

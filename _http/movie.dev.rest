@@ -1,0 +1,10 @@
+PUT http://localhost:7071/api/movies/5373
+Content-Type: application/json
+Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjA1NTY2ODU4LCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.rUOCCHmOtJB5wdoEiH8PoMpMMGjCdOk3z1HUjbwZ0Sg
+
+{
+    "Name": "The movie",
+    "Actor": "Smu",
+    "ImdbUrl":"imdb.com",
+    "YoutubeUrl": "youtube.com/watch?v=Uq4qyHi3sYM"
+}
