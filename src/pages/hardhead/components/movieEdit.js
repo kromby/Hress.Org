@@ -25,7 +25,9 @@ const MovieEdit = (propsData) => {
                 }
             }
             catch(e) {
+                console.error("Error getting movie.");
                 console.error(e);
+                setMovie({});
                 setData({visible: false});
             }
         };
