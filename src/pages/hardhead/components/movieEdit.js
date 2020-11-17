@@ -5,7 +5,7 @@ import { useAuth } from '../../../context/auth';
 
 const MovieEdit = (propsData) => {    
     const {authTokens} = useAuth();
-    const[data, setData] = useState({visible: false})
+    const[data, setData] = useState({visible: false, saving: false})
     const[movie, setMovie] = useState();
 
     var movieUrl = config.get("path") + "/api/movies/" + propsData.id + "?code=" + config.get("code");
@@ -36,6 +36,7 @@ const MovieEdit = (propsData) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();	
+        setData({visible: data.visible, saving: true});
         console.log(movie);
 		if(authTokens !== undefined){			
 			event.preventDefault();			
@@ -43,15 +44,17 @@ const MovieEdit = (propsData) => {
 				const response = await axios.put(movieUrl, movie, {
 					headers: {'Authorization': 'token ' + authTokens.token},            
 				});
-				setData({saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate});
+				setData({saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate, saving: false});
 				console.log(response);
 			} catch(e) {
 				console.error(e);
-				alert("Ekki tókst að vista kvöld.");
+                alert("Ekki tókst að vista kvöld.");
+                setData({visible: data.visible, saving: false});
 			}
 		} else {
 			// TODO: redirect to main page
-		}
+        }
+        
     }	
     
     const handleMovieChange = (event) => { movie.Name = event.target.value; setMovie(movie);  }
@@ -87,7 +90,7 @@ const MovieEdit = (propsData) => {
                     : null} */}
                     <br/>
                     {data.saved ? <b>Kvöld vistað!<br/></b> : null}
-                    <button tooltip="Vista mynd" className="button large">Vista mynd</button>
+                    <button tooltip="Vista mynd" className="button large" disabled={data.saving}>Vista mynd</button>
                 </div>
             </div>
         </form>
