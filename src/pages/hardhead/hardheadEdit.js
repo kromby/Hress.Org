@@ -7,6 +7,7 @@ import "react-datepicker/dist/react-datepicker.css"
 import axios from "axios";
 import { useAuth } from '../../context/auth';
 import MovieEdit from './components/movieEdit';
+import GuestsEdit from './components/guestsEdit';
 
 const HardheadEdit = (propsData) => {
 	const {authTokens} = useAuth();
@@ -97,28 +98,33 @@ const HardheadEdit = (propsData) => {
 					dateFormatted={hardhead.DateString}
 					author={hardhead.Host}
 					left={
-						<form onSubmit={handleSubmit}>
-							<h3>Kvöldið</h3>
-							<DatePicker selected={hardheadDate} onChange={(date) => handleDateChange(date)} dateFormat="dd.MM.yyyy" minDate={data.minDate} maxDate={data.maxDate} />
+						<div>
+							<form onSubmit={handleSubmit}>
+								<h3>Kvöldið</h3>
+								<DatePicker selected={hardheadDate} onChange={(date) => handleDateChange(date)} dateFormat="dd.MM.yyyy" minDate={data.minDate} maxDate={data.maxDate} />
+								<br/>
+								<br/>
+								<textarea name="Lýsing" rows="3" onChange={(ev) => handleDescriptionChange(ev)} defaultValue={hardhead.Description} placeholder="Lýstu kvöldinu" />
+								<br/>								
+								{/* <Guests hardheadID={hardhead.ID} /> */}							
+								{users ? 
+									<select id="demo-category" name="demo-category" onChange={(ev) => handleHostChange(ev)}>
+										<option value="">- Á hvern skoraðir þú? -</option>
+									{users.sort((a,b) => a.Name > b.Name ? 1 : -1).map(user => 
+										<option key={user.ID} value={user.ID}>
+											{user.Name}
+										</option>
+									)}
+									</select>
+								: null}							
+								<br/>
+								{data.saved ? <b>Kvöld vistað!<br/></b> : null}
+								<button tooltip="Vista kvöld" className="button large">Vista kvöld</button>
+							</form>
 							<br/>
 							<br/>
-							<textarea name="Lýsing" rows="3" onChange={(ev) => handleDescriptionChange(ev)} defaultValue={hardhead.Description} placeholder="Lýstu kvöldinu" />
-							<br/>								
-							{/* <Guests hardheadID={hardhead.ID} /> */}
-							{users ? 
-								<select id="demo-category" name="demo-category" onChange={(ev) => handleHostChange(ev)}>
-									<option value="">- Á hvern skoraðir þú? -</option>
-								{users.sort((a,b) => a.Name > b.Name ? 1 : -1).map(user => 
-									<option key={user.ID} value={user.ID}>
-										{user.Name}
-									</option>
-								)}
-								</select>
-							: null}							
-							<br/>
-							{data.saved ? <b>Kvöld vistað!<br/></b> : null}
-							<button tooltip="Vista kvöld" className="button large">Vista kvöld</button>
-						</form>
+							<GuestsEdit hardheadID={hardhead.ID} users={users} />
+						</div>
 					}
 					right={ <MovieEdit id={hardhead.ID}/> }
 					// actions={

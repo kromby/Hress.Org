@@ -36,7 +36,7 @@ const MovieEdit = (propsData) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();	
-        setData({visible: data.visible, saving: true});
+        setData({visible: data.visible, saved: false, saving: true});
         console.log(movie);
 		if(authTokens !== undefined){			
 			event.preventDefault();			

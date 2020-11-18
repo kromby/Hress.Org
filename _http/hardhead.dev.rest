@@ -52,3 +52,13 @@ Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9
 	"Date": "2020-07-17",
 	"NextHostID": "2627"
 }
+
+### Post guest
+POST http://localhost:7071/api/hardhead/5358/guests/2630
+Content-Type: application/json
+Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjA1NzQwNjYwLCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.W6_XFuZtykw5X58LhmMpjhkkTBv8Qx29vKUK5UohFss
+
+### Delete guest
+DELETE  http://localhost:7071/api/hardhead/5358/guests/2630
+Content-Type: application/json
+Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjA1NzQwNjYwLCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.W6_XFuZtykw5X58LhmMpjhkkTBv8Qx29vKUK5UohFss
