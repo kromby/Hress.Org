@@ -7,6 +7,7 @@ const MovieEdit = (propsData) => {
     const {authTokens} = useAuth();
     const[data, setData] = useState({visible: false, saving: false})
     const[movie, setMovie] = useState();
+    const[buttonEnabled, setButtonEnabled] = useState(false);
 
     var movieUrl = config.get("path") + "/api/movies/" + propsData.id + "?code=" + config.get("code");
 
@@ -36,7 +37,8 @@ const MovieEdit = (propsData) => {
 
     const handleSubmit = async (event) => {
         event.preventDefault();	
-        setData({visible: data.visible, saved: false, saving: true});
+        setButtonEnabled(false);
+        setData({visible: data.visible, saved: false});
         console.log(movie);
 		if(authTokens !== undefined){			
 			event.preventDefault();			
@@ -44,12 +46,14 @@ const MovieEdit = (propsData) => {
 				const response = await axios.put(movieUrl, movie, {
 					headers: {'Authorization': 'token ' + authTokens.token},            
 				});
-				setData({saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate, saving: false});
+                setData({saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate, saving: false});
+                
 				console.log(response);
 			} catch(e) {
 				console.error(e);
                 alert("Ekki tókst að vista kvöld.");
                 setData({visible: data.visible, saving: false});
+                setButtonEnabled(true);
 			}
 		} else {
 			// TODO: redirect to main page
@@ -57,12 +61,12 @@ const MovieEdit = (propsData) => {
         
     }	
     
-    const handleMovieChange = (event) => { movie.Name = event.target.value; setMovie(movie);  }
-    const handleActorChange = (event) => { movie.Actor = event.target.value; setMovie(movie);  }
-    const handleImdbChange = (event) => { movie.ImdbUrl = event.target.value; setMovie(movie);  }
-    const handleYoutubeChange = (event) => { movie.YoutubeUrl = event.target.value; setMovie(movie);  }
-    const handleReasonChange = (event) => { movie.Reason = event.target.value; setMovie(movie);  }
-    const handlePosterChange = (event) => { movie.PosterPhoto = {Href: event.target.value}; setMovie(movie);  }
+    const handleMovieChange = (event) => { movie.Name = event.target.value; setMovie(movie); setButtonEnabled(true);  }
+    const handleActorChange = (event) => { movie.Actor = event.target.value; setMovie(movie); setButtonEnabled(true);  }
+    const handleImdbChange = (event) => { movie.ImdbUrl = event.target.value; setMovie(movie); setButtonEnabled(true);  }
+    const handleYoutubeChange = (event) => { movie.YoutubeUrl = event.target.value; setMovie(movie); setButtonEnabled(true);  }
+    const handleReasonChange = (event) => { movie.Reason = event.target.value; setMovie(movie); setButtonEnabled(true);  }
+    const handlePosterChange = (event) => { movie.PosterPhoto = {Href: event.target.value}; setMovie(movie); setButtonEnabled(true);  }
 
     return (
         <form onSubmit={handleSubmit}>
@@ -90,7 +94,7 @@ const MovieEdit = (propsData) => {
                     : null} */}
                     <br/>
                     {data.saved ? <b>Kvöld vistað!<br/></b> : null}
-                    <button tooltip="Vista mynd" className="button large" disabled={data.saving}>Vista mynd</button>
+                    <button tooltip="Vista mynd" className="button large" disabled={!buttonEnabled}>Vista mynd</button>
                 </div>
             </div>
         </form>

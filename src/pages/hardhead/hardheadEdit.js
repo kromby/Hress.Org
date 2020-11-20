@@ -17,6 +17,7 @@ const HardheadEdit = (propsData) => {
 	const [hardheadDate, setDate] = useState(new Date());
 	const [description, setDescription] = useState("");
 	const [data, setData] = useState({isLoaded: false, hardhead: null, description: null, hardheadDate: new Date(), saved: false});
+	const [buttonEnabled, setButtonEnabled] = useState(false);
 		
 		// this.handleSubmit = this.handleSubmit.bind(this);
 		// this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
@@ -57,6 +58,7 @@ const HardheadEdit = (propsData) => {
 	}, [propsData, authTokens])
 
 	const handleSubmit = async (event) => {
+		setButtonEnabled(false);
 		if(authTokens !== undefined){			
 			event.preventDefault();			
 			try {
@@ -76,15 +78,16 @@ const HardheadEdit = (propsData) => {
 			} catch(e) {
 				console.error(e);
 				alert("Ekki tókst að vista kvöld.");
+				setButtonEnabled(true);
 			}
 		} else {
 			// TODO: redirect to main page
 		}
 	}	
 
-	const handleDescriptionChange = (event) => { setDescription(event.target.value);  }
-	const handleDateChange = (event) => { setDate(event); }
-	const handleHostChange = (event) => { setNextHostID(event.target.value); }
+	const handleDescriptionChange = (event) => { setDescription(event.target.value); setButtonEnabled(true);  }
+	const handleDateChange = (event) => { setDate(event); setButtonEnabled(true); }
+	const handleHostChange = (event) => { setNextHostID(event.target.value); setButtonEnabled(true); }
 	
 	return (
 		<div id="main">
@@ -119,7 +122,7 @@ const HardheadEdit = (propsData) => {
 								: null}							
 								<br/>
 								{data.saved ? <b>Kvöld vistað!<br/></b> : null}
-								<button tooltip="Vista kvöld" className="button large">Vista kvöld</button>
+								<button tooltip="Vista kvöld" className="button large" disabled={!buttonEnabled}>Vista kvöld</button>
 							</form>
 							<br/>
 							<br/>
