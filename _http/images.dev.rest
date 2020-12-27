@@ -1,0 +1,22 @@
+### GET image PROD
+GET https://ezcontentapi.azurewebsites.net/api/Images/278434
+
+
+### Post image PROD
+POST https://ezcontentapi.azurewebsites.net/api/Images
+Content-Type: application/json
+
+{
+  "source": "https://m.media-amazon.com/images/M/MV5BMGI2YWEyMGYtYWUwNy00MzkxLWE2MjMtMzUxMzhkZDFkMTI4XkEyXkFqcGdeQXVyNjUwNzk3NDc@._V1_SX300.jpg",
+  "name": "Outland"
+}
+
+### Post image DEV
+POST https://localhost:44363/api/Images
+Content-Type: application/json
+
+{
+  "source": "https://m.media-amazon.com/images/M/MV5BMGI2YWEyMGYtYWUwNy00MzkxLWE2MjMtMzUxMzhkZDFkMTI4XkEyXkFqcGdeQXVyNjUwNzk3NDc@._V1_SX300.jpg",
+  "name": "Outland"
+}
+

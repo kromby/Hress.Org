@@ -44,30 +44,22 @@ const Movie = (propsData) => {
             </div>
             {movieData.visible ?
                 <div>                           
-                    {/* className="row" */}
-                    {/* <div className="col-6 col-12-medium"> */}
-                        <a href={movieData.movie.ImdbUrl} target="_blank" rel="noopener noreferrer">{movieData.movie.Name}</a> með {movieData.movie.Actor}<br/><br/>
-                        {movieData.movie.Reason ? movieData.movie.Reason : "Gestgjafi hefur ekki skráð ástæðu fyrir mynd :("}
-                    {/* </div> */}
+                    <a href={movieData.movie.ImdbUrl} target="_blank" rel="noopener noreferrer">{movieData.movie.Name}</a> með {movieData.movie.Actor}<br/><br/>
+                    {movieData.movie.Reason ? movieData.movie.Reason : "Gestgjafi hefur ekki skráð ástæðu fyrir mynd :("}
                     <br/>
                     <br/>
                     {movieData.movie.YoutubeUrl ?
-                            // <div className="col-6 col-12-medium">
-                                <div className="image featured">
-                                    <YouTube videoId={movieData.movie.YoutubeUrl} opts={opts}/>
-                                </div>
-                            // </div> 
-                            :    
-                            movieData.movie.PosterPhoto ?
-                                // <div className="col-4">
-                                    <div className="image featured">
-                                        <img src={config.get("path") + movieData.movie.PosterPhoto.Href + "?code=" + config.get("code")} alt={movieData.movie.Name} />
-                                    </div>
-                                // </div>
-                                : null                            
-                        }                         
-                </div> :
-                null
+                        <div className="image featured">
+                            <YouTube videoId={movieData.movie.YoutubeUrl} opts={opts}/>
+                        </div>
+                        :    
+                        movieData.movie.PosterPhoto ?
+                            <div className="image featured">
+                                <img src={config.get("path") + movieData.movie.PosterPhoto.Href + "?code=" + config.get("code")} alt={movieData.movie.Name} />
+                            </div>
+                            : null                            
+                    }                         
+                </div> : null
             }
         </div>
     )

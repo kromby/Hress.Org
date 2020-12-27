@@ -14,29 +14,21 @@ export default class Post extends Component {
                         {this.props.description ? <p>{this.props.description}</p> : null}
                     </div>
                     <div className="meta">
-                        {this.props.date ? 
-                        <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>
-                        : null }
-                        {this.props.author ? 
-                        <Author href={this.props.author}/>
-                        : null }
+                        {this.props.date ?
+                            <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>
+                            : null}
+                        {this.props.author ?
+                            <Author href={this.props.author} />
+                            : null}
                     </div>
                 </header>
                 {this.props.image ?
-                <a href={"?id=" + this.props.id} class="image featured"><img src={this.props.image} alt="" /></a>
-                : null }
-                {this.props.body ? <div className="published">{this.props.body}</div> : <p/> }
-                <footer>
-                    {this.props.showFooter ?
-                    <ul class="actions">
-                        <li><a href={"?id=" + this.props.id} class="button large">Meira</a></li>
-                    </ul>
+                    <a href={"?id=" + this.props.id} class="image featured"><img src={this.props.image} alt="" /></a>
                     : null}
-                    {/* <ul class="stats">
-                        <li><a href="#">General</a></li>
-                        <li><a href="#" class="icon solid fa-heart">28</a></li>
-                        <li><a href="#" class="icon solid fa-comment">128</a></li>
-                    </ul> */}
+                {this.props.body ? <div className="published">{this.props.body}</div> : <p />}
+                <footer>
+                    {this.props.actions}
+                    {this.props.stats}
                 </footer>
             </article>
         )

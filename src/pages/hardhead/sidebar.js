@@ -6,6 +6,7 @@ import AwardsSide from './awards/awardsSide';
 import StatisticSide from './statistics/statisticsSide';
 import RulesSide from './rules/rulesSide';
 import YearsSide from './components/yearsSide';
+import VoteNow from './awards/election/votenow';
 
 function HardheadSidebar() {
     return (
@@ -16,7 +17,8 @@ function HardheadSidebar() {
 			<section>
 				<div className="mini-posts">
 					{/* <!-- Mini Post --> */}
-					<NextHardhead/>
+					<VoteNow />
+					<NextHardhead/>					
 					<AwardsSide />					
 					<StatisticSide />
 					<RulesSide />

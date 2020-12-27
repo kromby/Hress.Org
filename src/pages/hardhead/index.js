@@ -95,13 +95,13 @@ export default class Hardhead extends Component {
 							dateFormatted={hardhead.DateString}
 							author={hardhead.Host}
 							left={
-								<span>
+								<section>
 									<h3>Kvöldið</h3>
-									{this.props.match.params.hardheadID ? <textarea name="Lýsing" rows="3" onChange={this.handleDescriptionChange} defaultValue={this.state.description} placeholder="Lýstu kvöldinu" /> : hardhead.Description ? hardhead.Description : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}
-									<br/>
-									<br/>
+									<p>
+										{hardhead.Description ? hardhead.Description : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}
+									</p>
 									<Guests hardheadID={hardhead.ID} />
-								</span>
+								</section>
 							}
 							right={ <Movie id={hardhead.ID}/> }
 							actions={ <HardheadActions id={hardhead.ID} /> }
