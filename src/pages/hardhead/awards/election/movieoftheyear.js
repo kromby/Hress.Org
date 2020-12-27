@@ -74,7 +74,7 @@ const MovieOfTheYear = (propsData) => {
                         dateFormatted={hardhead.DateString}
                         body= { <Movie id={hardhead.ID}/> }
                         actions={ <ul className="actions"></ul> }
-                        stats={ <HardheadRating id={hardhead.ID} /> }	
+                        stats={ <HardheadRating id={hardhead.ID} nightRatingVisible="false" /> }	
                     />
                 )
             : null}

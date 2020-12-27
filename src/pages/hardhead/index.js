@@ -6,6 +6,7 @@ import HardheadRating from './components/rating.js';
 import Movie from './components/movie.js';
 import * as qs from 'query-string';
 import HardheadActions from './components/actions';
+import VoteNow from './awards/election/votenow';
 
 export default class Hardhead extends Component {
 
@@ -85,6 +86,8 @@ export default class Hardhead extends Component {
 		} else {
 			return (
 				<div id="main">
+					<VoteNow/>
+
 					{[].concat(this.state.hardheads).map((hardhead, i) => 
 						<PostSmallImage
 							key={hardhead.ID} 

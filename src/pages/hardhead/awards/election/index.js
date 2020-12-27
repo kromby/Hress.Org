@@ -89,7 +89,8 @@ const Election = (propsData) => {
                 headers: { 'Authorization': 'token ' + authTokens.token },
             });
             setStep(response.data);
-            window.scrollTo(0, 0)
+            window.scrollTo(0, 0);
+            window.parent.scrollTo(0, 0);
         } catch (e) {
             console.error(e);
         }

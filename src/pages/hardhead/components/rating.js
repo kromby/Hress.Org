@@ -7,10 +7,19 @@ import Rating from 'react-rating';
 const HardheadRating = (propsData) => {
     const {authTokens} = useAuth();
     const [data, setData] = useState({ratings: [], isLoading: false});
+    const [nightRatingVisible, setNightRatingVisible] = useState(true);
+    const [movieRatingVisible, setMovieRatingVisible] = useState(true);
 
-    useEffect(() => {
+    useEffect(() => {    
+        if(propsData.nightRatingVisible) {
+            setNightRatingVisible(propsData.nightRatingVisible);
+        }
+        if(propsData.movieRatingVisible) {
+            setMovieRatingVisible(propsData.movieRatingVisible);       
+        }        
+
         const getRatingData = async  () => {
-            if(authTokens !== undefined){ 
+            if(authTokens !== undefined){                 
                 try {
                     var url = config.get('path') + '/api/hardhead/' + propsData.id + '/ratings?code=' + config.get('code');                    
                     const response = await axios.get(url, {
@@ -68,27 +77,28 @@ const HardheadRating = (propsData) => {
                 <li>Skráðu þig inn til þess að gefa einkunn</li>
             }
             {data.ratings !== undefined && data.ratings.Ratings ?             
-                data.ratings.Ratings.map(rating => 
-                    <li key={rating.Code}>                        
-                        <span id={rating.Code + "_" + propsData.id} />
-                        {rating.Code === "REP_C_RTNG" ?  
-                            <i className="icon solid fa-beer fa-2x"></i> :
-                            <i className="icon solid fa-film fa-2x"></i>}
-                        {data.ratings.Readonly ?
-                        <span>(Fjöldi: {rating.NumberOfRatings}{rating.MyRating ? ' -  Þú: ' + rating.MyRating : null})&nbsp;</span>
-                        : null}
-                        {data.ratings.Readonly && rating.MyRating === undefined && rating.AverageRating === undefined ? null :
-                        <Rating
-                            emptySymbol="far fa-star fa-1x"
-                            fullSymbol="fas fa-star fa-1x"
-                            initialRating={data.ratings.Readonly ? rating.AverageRating : rating.MyRating}
-                            readonly={data.ratings.Readonly}
-                            onHover={(rate) => document.getElementById(rating.Code + "_" + propsData.id).innerHTML = getRatingText(rate, rating.Code) || ' '}                            
-                            onChange={(rate) => saveRating(rate, rating.Code)}
-                        />}
-                    </li>
-                ) :
-                null
+                data.ratings.Ratings.map(rating =>                     
+                    ((rating.Code === "REP_C_RTNG" && nightRatingVisible === true) || (rating.Code === "REP_C_MRTNG" && movieRatingVisible === true)) ?
+                        <li key={rating.Code}>          
+                            <span id={rating.Code + "_" + propsData.id} />
+                            {rating.Code === "REP_C_RTNG" ?  
+                                <i className="icon solid fa-beer fa-2x"></i> :
+                                <i className="icon solid fa-film fa-2x"></i>}
+                            {data.ratings.Readonly ?
+                            <span>(Fjöldi: {rating.NumberOfRatings}{rating.MyRating ? ' -  Þú: ' + rating.MyRating : null})&nbsp;</span>
+                            : null}
+                            {data.ratings.Readonly && rating.MyRating === undefined && rating.AverageRating === undefined ? null :
+                            <Rating
+                                emptySymbol="far fa-star fa-1x"
+                                fullSymbol="fas fa-star fa-1x"
+                                initialRating={data.ratings.Readonly ? rating.AverageRating : rating.MyRating}
+                                readonly={data.ratings.Readonly}
+                                onHover={(rate) => document.getElementById(rating.Code + "_" + propsData.id).innerHTML = getRatingText(rate, rating.Code) || ' '}                            
+                                onChange={(rate) => saveRating(rate, rating.Code)}
+                            />}
+                        </li>
+                        : null
+                ) : null
             }                                        
         </ul>
     )

@@ -74,6 +74,7 @@ const NightOfTheYear = (propsData) => {
                         description={hardhead.GuestCount + " gestir"}
                         date={hardhead.Date}
                         dateFormatted={hardhead.DateString}
+                        author={hardhead.Host}
                         body= {[ 
                             <section>
                                 <h3>Kvöldið</h3>
@@ -87,7 +88,7 @@ const NightOfTheYear = (propsData) => {
                             </section>
                         ]}
                         actions={ <ul className="actions"></ul> }
-                        stats={ <HardheadRating id={hardhead.ID} /> }	
+                        stats={ <HardheadRating id={hardhead.ID} movieRatingVisible="false" /> }	
                     />
                 )
             : null}

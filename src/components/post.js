@@ -13,12 +13,20 @@ export default class Post extends Component {
                         <h2>{this.props.id ? <Link to={"?id=" + this.props.id}>{this.props.title}</Link> : this.props.title}</h2>
                         {this.props.description ? <p>{this.props.description}</p> : null}
                     </div>
-                    <div className="meta">
+                    {/* <div className="meta">
                         {this.props.date ?
                             <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>
                             : null}
                         {this.props.author ?
                             <Author href={this.props.author} />
+                            : null}
+                    </div> */}
+                    <div className="meta">
+                        <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>
+                        {this.props.author ? 
+                            typeof this.props.author.ProfilePhoto !=='undefined' ?
+                                <Author ID={this.props.author.ID} Username={this.props.author.Username} ProfilePhoto={this.props.author.ProfilePhoto.Href} /> :
+                                <Author ID={this.props.author.ID} Username={this.props.author.Username} />
                             : null}
                     </div>
                 </header>
