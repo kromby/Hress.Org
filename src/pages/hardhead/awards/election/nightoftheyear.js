@@ -20,6 +20,7 @@ const NightOfTheYear = (propsData) => {
                 setNights(response.data);
             } catch (e) {
                 console.error(e);
+                alert(e);
             }
         }
 
@@ -42,6 +43,7 @@ const NightOfTheYear = (propsData) => {
             });
         } catch(e) {
             console.error(e);
+            alert(e);
         }
 
         propsData.onSubmit();

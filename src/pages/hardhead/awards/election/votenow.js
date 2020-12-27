@@ -16,7 +16,8 @@ const VoteNow = (propsData) => {
                     body={
                         <section>
                             <p>
-                                <Link to="/hardhead/awards/election" className="button large">Kjósa núna!</Link>
+                                <a href="https://hressreact.azurewebsites.net/hardhead/awards/election" className="button large">Kjósa núna!</a>
+                                {/* <Link to="/hardhead/awards/election" className="button large">Kjósa núna!</Link> */}
                             </p>
                         </section>
                     }

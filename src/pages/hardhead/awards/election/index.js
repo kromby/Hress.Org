@@ -83,16 +83,18 @@ const Election = (propsData) => {
             return;
         }
 
+        window.scrollTo(0, 0);
+        window.parent.scrollTo(0, 0);
+
         try {
             var url = config.get('path') + '/api/elections/49/voters/2630/access?code=' + config.get('code');
             const response = await axios.get(url, {
                 headers: { 'Authorization': 'token ' + authTokens.token },
             });
-            setStep(response.data);
-            window.scrollTo(0, 0);
-            window.parent.scrollTo(0, 0);
+            setStep(response.data);            
         } catch (e) {
             console.error(e);
+            alert(e);
         }
     }
 

@@ -19,6 +19,7 @@ const MovieOfTheYear = (propsData) => {
                 setNights(response.data);
             } catch (e) {
                 console.error(e);
+                alert(e);
             }
         }
 
@@ -41,6 +42,7 @@ const MovieOfTheYear = (propsData) => {
             });
         } catch(e) {
             console.error(e);
+            alert(e);
         }
 
         propsData.onSubmit();

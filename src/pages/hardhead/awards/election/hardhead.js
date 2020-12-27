@@ -19,6 +19,7 @@ const HardheadOfTheYear = (propsData) => {
                 setUsers(response.data);
             } catch (e) {
                 console.error(e);
+                alert(e);
             }
         }
 
@@ -58,6 +59,7 @@ const HardheadOfTheYear = (propsData) => {
             });
         } catch(e) {
             console.error(e);
+            alert(e);
             setSavingAllowed(true);
         }
 
