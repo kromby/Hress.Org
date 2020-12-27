@@ -59,6 +59,8 @@ const NightOfTheYear = (propsData) => {
                     <section>
                         <p>
                             Gefðu öllum kvöldunum sem þú mættir á einkunn, smellt síðan á Ljúka neðst á síðunni til að halda áfram
+                            <br/>
+                            ATH! eftir að hafa smellt á Ljúka þá þarf að scrolla aftur efst á síðuna
                         </p>
                     </section>
                 }

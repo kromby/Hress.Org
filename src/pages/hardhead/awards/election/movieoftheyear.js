@@ -58,6 +58,8 @@ const MovieOfTheYear = (propsData) => {
                     <section>
                         <p>
                             Gefðu öllum myndunum sem þú sást einkunn, smellt síðan á Ljúka neðst á síðunni til að halda áfram
+                            <br/>
+                            ATH! eftir að hafa smellt á Ljúka þá þarf að scrolla aftur efst á síðuna
                         </p>
                     </section>
                 }
