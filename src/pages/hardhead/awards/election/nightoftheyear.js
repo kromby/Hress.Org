@@ -61,9 +61,7 @@ const NightOfTheYear = (propsData) => {
                 body={
                     <section>
                         <p>
-                            Gefðu öllum kvöldunum sem þú mættir á einkunn, smellt síðan á Ljúka neðst á síðunni til að halda áfram
-                            <br/>
-                            ATH! eftir að hafa smellt á Ljúka þá þarf að scrolla aftur efst á síðuna
+                            Gefðu öllum kvöldunum sem þú mættir á einkunn, smellt síðan á Ljúka neðst á síðunni til að halda áfram                            
                         </p>
                     </section>
                 }
@@ -98,7 +96,7 @@ const NightOfTheYear = (propsData) => {
 
             <ul class="actions pagination">
                 <li>
-                    <a href="#" class="button large next" onClick={handelSubmit}>{"Ljúka " + propsData.Name}</a>
+                    <a href="#" class="button large next" onClick={handelSubmit}>{"Ljúka einkunnargjöf fyrir " + propsData.Name}</a>
                     {/* <input type="submit" className="button large next" value={"Ljúka " + propsData.Name} disabled={!savingAllowed} /> */}
                 </li>
             </ul>

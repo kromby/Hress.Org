@@ -10,10 +10,14 @@ const Stallone = (propsData) => {
     const [savingAllowed, setSavingAllowed] = useState(false);
     const [selectedUser, setSelectedUser] = useState();
     const [text, setText] = useState();
+    const [userID, setUserID] = useState();
 
     var url = config.get('path') + '/api/hardhead/' + '5356' + '/users?code=' + config.get('code');
 
     useEffect(() => {
+
+        setUserID(localStorage.getItem("userID"));        
+
         const getHardheadUsers = async () => {
             try {
                 const response = await axios.get(url);
@@ -100,8 +104,10 @@ const Stallone = (propsData) => {
                                     <select name="demo-category" id="demo-category" onChange={(ev) => handleUserChange(ev)}>
                                         <option value="">- Veldu {propsData.Name} -</option>
                                         {users ?
-                                            users.sort((a, b) => a.Name > b.Name ? 1 : -1).map(user =>
+                                            users.map(user =>
+                                                user.ID != userID ?
                                                 <option key={user.ID} value={user.ID}>{user.Name}</option>
+                                                : null
                                             ) : null}
                                     </select>
                                 </div>

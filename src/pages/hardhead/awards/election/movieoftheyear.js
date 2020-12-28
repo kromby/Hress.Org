@@ -61,8 +61,6 @@ const MovieOfTheYear = (propsData) => {
                     <section>
                         <p>
                             Gefðu öllum myndunum sem þú sást einkunn, smellt síðan á Ljúka neðst á síðunni til að halda áfram
-                            <br/>
-                            ATH! eftir að hafa smellt á Ljúka þá þarf að scrolla aftur efst á síðuna
                         </p>
                     </section>
                 }
@@ -84,7 +82,7 @@ const MovieOfTheYear = (propsData) => {
 
             <ul class="actions pagination">
                 <li>
-                    <a href="#" class="button large next" onClick={handelSubmit}>{"Ljúka " + propsData.Name}</a>
+                    <a href="#" class="button large next" onClick={handelSubmit}>{"Ljúka einkunnargjöf fyrir " + propsData.Name}</a>
                     {/* <input type="submit" className="button large next" value={"Ljúka " + propsData.Name} disabled={!savingAllowed} /> */}
                 </li>
             </ul>
