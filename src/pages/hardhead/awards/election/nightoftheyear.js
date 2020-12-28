@@ -35,7 +35,8 @@ const NightOfTheYear = (propsData) => {
         }
 
         try {
-            var url = config.get('path') + "/api/elections/49/voters/2630?code=" +  config.get('code');
+            var userID = localStorage.getItem("userID");
+            var url = config.get('path') + "/api/elections/49/voters/" + userID + "?code=" +  config.get('code');
             const response = await axios.put(url, {
               LastStepID: propsData.ID
             }, {

@@ -23,7 +23,7 @@ const Election = (propsData) => {
 
         const getNextStep = async () => {
             try {
-                var url = config.get('path') + '/api/elections/49/voters/2630/access?code=' + config.get('code');
+                var url = config.get('path') + '/api/elections/49/voters/access?code=' + config.get('code');
                 const response = await axios.get(url, {
                     headers: { 'Authorization': 'token ' + authTokens.token },
                 });
@@ -87,7 +87,7 @@ const Election = (propsData) => {
         window.parent.scrollTo(0, 0);
 
         try {
-            var url = config.get('path') + '/api/elections/49/voters/2630/access?code=' + config.get('code');
+            var url = config.get('path') + '/api/elections/49/voters/access?code=' + config.get('code');
             const response = await axios.get(url, {
                 headers: { 'Authorization': 'token ' + authTokens.token },
             });
