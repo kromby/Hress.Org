@@ -18,7 +18,6 @@ const NextHardhead = (propsData) => {
                 const response = await axios.get(url);
 
                 if(response.data.length > 0) {
-                    console.log("NextHardhead: setData");
                     setData({night: response.data[0], isLoading: false, visible: true});
                 }
             }

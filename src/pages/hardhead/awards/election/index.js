@@ -15,7 +15,7 @@ const Election = (propsData) => {
     //var url = config.get('path') + '/api/hardhead/awards?code=' + config.get('code');	    
 
     useEffect(() => {
-        if (authTokens == undefined) {
+        if (authTokens === undefined) {
             // TODO Redirect back to main page
             alert("Þú þarft að skrá þig inn");
             return;
@@ -34,7 +34,7 @@ const Election = (propsData) => {
         }
 
         getNextStep();
-    }, [propsData])   
+    }, [propsData, authTokens])   
 
     const getElement = (id, name) => {
         if (id === 360) /*Vonbrigði*/ {
@@ -78,7 +78,7 @@ const Election = (propsData) => {
     }
 
     const handleSubmit = async () => {
-        if (authTokens == undefined) {
+        if (authTokens === undefined) {
             // TODO Redirect back to main page
             return;
         }

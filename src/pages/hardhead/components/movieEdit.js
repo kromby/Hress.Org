@@ -66,7 +66,7 @@ const MovieEdit = (propsData) => {
     const handleImdbChange = (event) => { movie.ImdbUrl = event.target.value; setMovie(movie); setButtonEnabled(true);  }
     const handleYoutubeChange = (event) => { movie.YoutubeUrl = event.target.value; setMovie(movie); setButtonEnabled(true);  }
     const handleReasonChange = (event) => { movie.Reason = event.target.value; setMovie(movie); setButtonEnabled(true);  }
-    const handlePosterChange = (event) => { movie.PosterPhoto = {Href: event.target.value}; setMovie(movie); setButtonEnabled(true);  }
+    // const handlePosterChange = (event) => { movie.PosterPhoto = {Href: event.target.value}; setMovie(movie); setButtonEnabled(true);  }
 
     return (
         <form onSubmit={handleSubmit}>

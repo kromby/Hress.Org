@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import config from 'react-global-configuration';
-import Author from '../../../components/author';
+import UserImage from '../../../components/users/userimage';
 
 export default class Guests extends Component {
     constructor(props) {
@@ -46,18 +46,19 @@ export default class Guests extends Component {
             )
         } else {
             return (
-                <div className="row gtr-uniform">
-                    <div className="col-12">
-                        <h3>Gestir</h3>
+                <section>
+                    <h3>Gestir</h3>
+                    <div className="row gtr-uniform">
+                        {guests.map(guest =>
+                            <div className="col-2 align-center" key={guest.ID}>
+                                {typeof guest.ProfilePhoto !== 'undefined' ?
+                                    <UserImage id={guest.ID} username={guest.Username} profilePhoto={guest.ProfilePhoto.Href} /> :
+                                    <UserImage id={guest.ID} username={guest.Username} />
+                                }
+                            </div>
+                        )}
                     </div>
-                    {guests.map(guest =>
-                        <div className="col-4" key={guest.ID}>
-                            {typeof guest.ProfilePhoto !== 'undefined' ?
-                                <Author ID={guest.ID} Username={guest.Username} ProfilePhoto={guest.ProfilePhoto.Href} /> :
-                                <Author ID={guest.ID} Username={guest.Username} />}
-                        </div>
-                    )}
-                </div>
+                </section>
             )
         }
     }

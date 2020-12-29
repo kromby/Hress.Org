@@ -42,7 +42,7 @@ const StatisticsSide = (propsData) => {
         else
             description = "Oftast haldið";
 
-        console.log(period);
+        // console.log(period);
         if(period === "All")
             description = description + " frá upphafi";
         else if(period === "Last10")

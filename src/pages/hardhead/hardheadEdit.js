@@ -1,7 +1,6 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import config from 'react-global-configuration';
-import { PostSmallImage } from '../../components';
-import Guests from './components/guests';
+import { Post } from '../../components';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css"
 import axios from "axios";
@@ -24,7 +23,7 @@ const HardheadEdit = (propsData) => {
 		// this.handleDateChange = this.handleDateChange.bind(this);
 
 	useEffect(() => {
-		if(authTokens == undefined) {
+		if(authTokens === undefined) {
 			// TODO Redirect back to main page
 		}
 
@@ -92,7 +91,7 @@ const HardheadEdit = (propsData) => {
 	return (
 		<div id="main">
 			{data.visible ? 				
-				<PostSmallImage
+				<Post
 					key={hardhead.ID} 
 					id={hardhead.ID} 
 					title={hardhead.Name}
@@ -100,8 +99,8 @@ const HardheadEdit = (propsData) => {
 					date={hardhead.Date}
 					dateFormatted={hardhead.DateString}
 					author={hardhead.Host}
-					left={
-						<div>
+					body={[
+						<div key="edit1">
 							<form onSubmit={handleSubmit}>
 								<h3>Kvöldið</h3>
 								<DatePicker selected={hardheadDate} onChange={(date) => handleDateChange(date)} dateFormat="dd.MM.yyyy" minDate={data.minDate} maxDate={data.maxDate} />
@@ -124,12 +123,10 @@ const HardheadEdit = (propsData) => {
 								{data.saved ? <b>Kvöld vistað!<br/></b> : null}
 								<button tooltip="Vista kvöld" className="button large" disabled={!buttonEnabled}>Vista kvöld</button>
 							</form>
-							<br/>
-							<br/>
-							<GuestsEdit hardheadID={hardhead.ID} users={users} />
-						</div>
-					}
-					right={ <MovieEdit id={hardhead.ID}/> }
+						</div>, 						
+						<MovieEdit key="edit2" id={hardhead.ID}/>,
+						<GuestsEdit key="edit3" hardheadID={hardhead.ID} users={users} />
+									]}
 					// actions={
 					// 	<ul className="actions">
 					// 		<li>

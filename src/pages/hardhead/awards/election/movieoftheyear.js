@@ -3,14 +3,14 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import Post from '../../../../components/post';
 import { useAuth } from '../../../../context/auth';
-import Movie from '../../components/movie';
 import HardheadRating from '../../components/rating';
+import HardheadBody from '../../components/hardheadbody';
 
 const MovieOfTheYear = (propsData) => {
     const {authTokens} = useAuth();
     const [nights, setNights] = useState();
 
-    var url = config.get('path') + '/api/hardhead?parentID=' + '5356' + '&attended=8&code=' + config.get('code');
+    var url = config.get('path') + '/api/hardhead?parentID=5356&attended=8&code=' + config.get('code');
 
     useEffect(() => {
         const getHardheadUsers = async () => {
@@ -36,7 +36,7 @@ const MovieOfTheYear = (propsData) => {
         try {
             var userID = localStorage.getItem("userID");
             var url = config.get('path') + "/api/elections/49/voters/" + userID + "?code=" +  config.get('code');
-            const response = await axios.put(url, {
+            await axios.put(url, {
               LastStepID: propsData.ID
             }, {
                 headers: {'Authorization': 'token ' + authTokens.token}
@@ -73,16 +73,17 @@ const MovieOfTheYear = (propsData) => {
                         title={hardhead.Name}
                         date={hardhead.Date}
                         dateFormatted={hardhead.DateString}
-                        body= { <Movie id={hardhead.ID}/> }
+                        // body= { <Movie id={hardhead.ID}/> }
+                        body = {<HardheadBody id={hardhead.ID} name={hardhead.Name} description={hardhead.Description} viewNight={false} viewGuests={false} /> }
                         actions={ <ul className="actions"></ul> }
                         stats={ <HardheadRating id={hardhead.ID} nightRatingVisible="false" /> }	
                     />
                 )
             : null}
 
-            <ul class="actions pagination">
+            <ul className="actions pagination">
                 <li>
-                    <a href="#" class="button large next" onClick={handelSubmit}>{"Ljúka einkunnargjöf fyrir " + propsData.Name}</a>
+                    <a href="#" className="button large next" onClick={handelSubmit}>{"Ljúka einkunnargjöf fyrir " + propsData.Name}</a>
                     {/* <input type="submit" className="button large next" value={"Ljúka " + propsData.Name} disabled={!savingAllowed} /> */}
                 </li>
             </ul>

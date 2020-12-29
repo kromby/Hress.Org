@@ -12,7 +12,7 @@ const Stallone = (propsData) => {
     const [text, setText] = useState();
     const [userID, setUserID] = useState();
 
-    var url = config.get('path') + '/api/hardhead/' + '5356' + '/users?code=' + config.get('code');
+    var url = config.get('path') + '/api/hardhead/5356/users?code=' + config.get('code');
 
     useEffect(() => {
 
@@ -73,7 +73,7 @@ const Stallone = (propsData) => {
 
         try {
             var url = config.get('path') + '/api/elections/' + propsData.ID + '/vote?code=' + config.get('code');
-            const response = await axios.post(url, {                
+            await axios.post(url, {                
                 value: selectedUser,
                 description: text
             }, {

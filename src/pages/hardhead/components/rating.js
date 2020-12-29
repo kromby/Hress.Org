@@ -37,15 +37,15 @@ const HardheadRating = (propsData) => {
     }, [propsData, authTokens])
 
     const getRatingText = (rate, type) => {
-        if(rate == '1')
+        if(rate === 1)
             return type === 'REP_C_RTNG' ? 'hræðilegt kvöld ' : 'hræðileg mynd ';
-        else if(rate == '2')
+        else if(rate === 2)
             return type === 'REP_C_RTNG' ? 'slæmt kvöld ' : 'slæm mynd ';
-        else if(rate == '3')
+        else if(rate === 3)
             return type === 'REP_C_RTNG' ? 'ágætt kvöld ' : 'ágæt mynd ';
-        else if(rate == '4')
+        else if(rate === 4)
             return type === 'REP_C_RTNG' ? 'gott kvöld ' : 'góð mynd ';
-        else if(rate == '5')
+        else if(rate === 5)
             return type === 'REP_C_RTNG' ? 'frábært kvöld ' : 'frábær mynd ';
         else
             return '';
@@ -105,18 +105,3 @@ const HardheadRating = (propsData) => {
 }
 
 export default HardheadRating;
-
-{/* Hardhead={data.ratings.HardheadRating}
-                <Rating
-                    emptySymbol="far fa-star fa-1x"
-                    fullSymbol="fas fa-star fa-1x"
-                    initialRating={data.ratings.Night ? data.ratings.Night.MyRating : 0}
-                    {...data.ratings.Status === "closed" ? "readonly" : null}
-                />  
-                <br/>
-                Movie={data.ratings.MovieRating}
-                <Rating
-                    emptySymbol="far fa-star fa-1x"
-                    fullSymbol="fas fa-star fa-1x"
-                    initialRating={data.ratings.Movie ? data.ratings.Movie.MyRating : 0}
-                />   */}

@@ -3,15 +3,14 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import Post from '../../../../components/post';
 import { useAuth } from '../../../../context/auth';
-import Movie from '../../components/movie';
 import HardheadRating from '../../components/rating';
-import Guests from '../../components/guests';
+import HardheadBody from '../../components/hardheadbody';
 
 const NightOfTheYear = (propsData) => {
     const {authTokens} = useAuth();
     const [nights, setNights] = useState();
 
-    var url = config.get('path') + '/api/hardhead?parentID=' + '5356' + '&attended=8&code=' + config.get('code');
+    var url = config.get('path') + '/api/hardhead?parentID=5356&attended=8&code=' + config.get('code');
 
     useEffect(() => {
         const getHardheadUsers = async () => {
@@ -27,7 +26,7 @@ const NightOfTheYear = (propsData) => {
         getHardheadUsers();
     }, [propsData, url])
 
-    const handelSubmit = async (event) => {
+    const handelSubmit = async () => {
 
         if(authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
@@ -37,7 +36,7 @@ const NightOfTheYear = (propsData) => {
         try {
             var userID = localStorage.getItem("userID");
             var url = config.get('path') + "/api/elections/49/voters/" + userID + "?code=" +  config.get('code');
-            const response = await axios.put(url, {
+            await axios.put(url, {
               LastStepID: propsData.ID
             }, {
                 headers: {'Authorization': 'token ' + authTokens.token}
@@ -76,27 +75,28 @@ const NightOfTheYear = (propsData) => {
                         date={hardhead.Date}
                         dateFormatted={hardhead.DateString}
                         author={hardhead.Host}
-                        body= {[ 
-                            <section>
-                                <h3>Kvöldið</h3>
-                                <p>
-                                    {hardhead.Description ? hardhead.Description : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}
-                                </p>                                
-                            </section>,
-                            <section>
-                                <Guests hardheadID={hardhead.ID} />      
-                                <p/>                      
-                            </section>
-                        ]}
+                        body = {<HardheadBody id={hardhead.ID} name={hardhead.Name} description={hardhead.Description} viewMovie={false} /> }
+                        // body= {[ 
+                        //     <section>
+                        //         <h3>Kvöldið</h3>
+                        //         <p>
+                        //             {hardhead.Description ? hardhead.Description : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}
+                        //         </p>                                
+                        //     </section>,
+                        //     <section>
+                        //         <Guests hardheadID={hardhead.ID} />      
+                        //         <p/>                      
+                        //     </section>
+                        // ]}
                         actions={ <ul className="actions"></ul> }
                         stats={ <HardheadRating id={hardhead.ID} movieRatingVisible="false" /> }	
                     />
                 )
             : null}
 
-            <ul class="actions pagination">
+            <ul className="actions pagination">
                 <li>
-                    <a href="#" class="button large next" onClick={handelSubmit}>{"Ljúka einkunnargjöf fyrir " + propsData.Name}</a>
+                    <a href="#" className="button large next" onClick={handelSubmit}>{"Ljúka einkunnargjöf fyrir " + propsData.Name}</a>
                     {/* <input type="submit" className="button large next" value={"Ljúka " + propsData.Name} disabled={!savingAllowed} /> */}
                 </li>
             </ul>

@@ -1,16 +1,17 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from "axios";
 import YouTube from 'react-youtube';
 
-const Movie = (propsData) => {    
-    const[movieData, setMovieData] = useState({movie: null, isLoading: false, visible: false})
+const Movie = (propsData) => {
+    const [movieData, setMovieData] = useState({ movie: null})
+    const [trailerOpen, setTrailerOpen] = useState(false);
 
     const opts = {
-        width: '500',
+        // width: '800',
         playerVars: {
-          // https://developers.google.com/youtube/player_parameters
-          autoplay: 0,
+            // https://developers.google.com/youtube/player_parameters
+            autoplay: 0,
         }
     };
 
@@ -19,49 +20,46 @@ const Movie = (propsData) => {
     useEffect(() => {
         const getMovieData = async () => {
             try {
-                setMovieData({isLoading: true});
+                const response = await axios.get(movieUrl);
 
-                const response = await axios.get(movieUrl, {
-                    //headers: {'Authorization': 'Basic ' + 'asdf'}
-                })
-
-                if(response.data !== undefined) {
-                    setMovieData({movie: response.data, isLoading: false, visible: true});
+                if (response.data !== undefined) {
+                    setMovieData({ movie: response.data});
+                    if (response.data.PosterPhoto) {
+                        propsData.photoPostback(response.data.PosterPhoto.Href);
+                    }
                 }
             }
-            catch(e) {
-                console.error(e);
-                setMovieData({isLoading: false, visible: false});
+            catch (e) {
+                if(e.response === undefined || e.response.status !== 404) {
+                    console.error(e);
+                }
             }
         };
         getMovieData();
     }, [propsData, movieUrl])
 
+    const toggleTrailer = async () => {
+        setTrailerOpen(!trailerOpen);
+    }
+
     return (
-        <div className="col-12">
-            <div className="col-12">
+        movieData.movie ?
+            <section>
                 <h3>Myndin</h3>
-            </div>
-            {movieData.visible ?
-                <div>                           
-                    <a href={movieData.movie.ImdbUrl} target="_blank" rel="noopener noreferrer">{movieData.movie.Name}</a> með {movieData.movie.Actor}<br/><br/>
+                <h4><a href={movieData.movie.ImdbUrl} target="_blank" rel="noopener noreferrer">{movieData.movie.Name}</a></h4>
+                <p key="movie1">
+                    {movieData.movie.Actor}
+                </p>
+                <p key="movie2">
                     {movieData.movie.Reason ? movieData.movie.Reason : "Gestgjafi hefur ekki skráð ástæðu fyrir mynd :("}
-                    <br/>
-                    <br/>
-                    {movieData.movie.YoutubeUrl ?
-                        <div className="image featured">
-                            <YouTube videoId={movieData.movie.YoutubeUrl} opts={opts}/>
-                        </div>
-                        :    
-                        movieData.movie.PosterPhoto ?
-                            <div className="image featured">
-                                <img src={config.get("path") + movieData.movie.PosterPhoto.Href + "?code=" + config.get("code")} alt={movieData.movie.Name} />
-                            </div>
-                            : null                            
-                    }                         
-                </div> : null
-            }
-        </div>
+                </p>
+                {movieData.movie.YoutubeUrl ?
+                    <p key="movie3">
+                        <button className="button small" onClick={toggleTrailer}>{trailerOpen ? "Fela trailer" : "Sjá trailer"}</button>
+                    </p> : null}
+                {trailerOpen ?
+                    <YouTube key="movie4" videoId={movieData.movie.YoutubeUrl} opts={opts} /> : null}
+            </section> : null
     )
 }
 

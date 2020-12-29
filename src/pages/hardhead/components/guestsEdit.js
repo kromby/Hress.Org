@@ -8,16 +8,6 @@ const GuestsEdit = (propsData) => {
     const [guests, setGuests] = useState();
     const [users, setUsers] = useState();
 
-    useEffect(() => {
-		if(authTokens == undefined) {
-			// TODO Redirect back to main page
-        }
-        
-        setUsers(propsData.users);
-
-		getGuests();
-    }, [propsData, authTokens])
-    
     const getGuests = async () => {
         try {
             var url = config.get('path') + '/api/hardhead/' + propsData.hardheadID + '/guests?code=' + config.get('code')
@@ -27,6 +17,18 @@ const GuestsEdit = (propsData) => {
             console.error(e);				
         }
     }
+
+    useEffect(() => {
+		if(authTokens === undefined) {
+			// TODO Redirect back to main page
+        }
+
+
+        
+        setUsers(propsData.users);
+
+		getGuests();
+    }, [propsData, authTokens])
 
     const handleGuestChange = async (event) => { 
         if(authTokens !== undefined){			
