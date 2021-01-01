@@ -22,8 +22,6 @@ const GuestsEdit = (propsData) => {
 		if(authTokens === undefined) {
 			// TODO Redirect back to main page
         }
-
-
         
         setUsers(propsData.users);
 

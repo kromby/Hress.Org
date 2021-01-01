@@ -6,7 +6,7 @@ import axios from 'axios';
 const AwardsSide = (propsData) => {
     const[data, setData] = useState({awards: null, isLoading: false, visible: false})
 
-    var url = config.get('path') + '/api/hardhead/awards/364/winners?year=' + (new Date().getYear()+1899) + '&position=1&code=' + config.get('code');		
+    var url = config.get('path') + '/api/hardhead/awards/364/winners?year=' + (new Date().getYear()-1+1899) + '&position=1&code=' + config.get('code');		
 
     useEffect(() => {
         const getAwards = async () => {
