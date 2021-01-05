@@ -58,11 +58,11 @@ import App from './pages/App';
 //   )  
 
   function setConfig() {  
-    config.set({ path: 'https://ezhressapi.azurewebsites.net', code: 'JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==' }, {freeze: false, environment: 'prod'});
-    config.set({ path: 'http://localhost:7071', code: ''}, {freeze: false, environment: 'dev'});
+    config.set({ path: 'https://ezhressapi.azurewebsites.net', imagePath: 'https://ezcontentapi.azurewebsites.net', code: 'JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==' }, {freeze: false, environment: 'prod'});
+    config.set({ path: 'http://localhost:7071', imagePath: 'https://localhost:44363', code: ''}, {freeze: false, environment: 'dev'});
     config.set({ });
   
-    config.setEnvironment('prod');
+    config.setEnvironment('dev');
   }
     
   setConfig(); 
