@@ -131,7 +131,7 @@ const MovieEdit = (propsData) => {
                         <button tooltip="Sækja mynd" className="button small" disabled={!imageGetEnabled} onClick={(ev) => getPostImage(ev)}>Sækja mynd</button>
                     </div>
                     <div className="col-12">
-                        {data.saved ? <b>Kvöld vistað!<br /></b> : null}
+                        {data.saved ? <b>Mynd vistuð!<br /></b> : null}
                         <button tooltip="Vista mynd" className="button large" disabled={!buttonEnabled}>Vista mynd</button>
                     </div>
                 </div>
