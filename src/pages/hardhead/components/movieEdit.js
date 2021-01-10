@@ -95,7 +95,7 @@ const MovieEdit = (propsData) => {
 
     const movieCallback = async (imdbId) => {
         try {
-            const response = await axios.get("http://www.omdbapi.com/?apikey=" + config.get("omdb") + "&i=" + imdbId);
+            const response = await axios.get("https://www.omdbapi.com/?apikey=" + config.get("omdb") + "&i=" + imdbId);
             console.log(response);
 
             setMovieName(response.data.Title);

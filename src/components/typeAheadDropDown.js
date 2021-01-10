@@ -30,7 +30,7 @@ const TypeAheadDropDown = (propsData) => {
 
         if (value.length >= minLength) {
             try {
-                const response = await axios.get("http://www.omdbapi.com/?apikey=" + config.get("omdb") + "&s=" + value + "&type=movie");
+                const response = await axios.get("https://www.omdbapi.com/?apikey=" + config.get("omdb") + "&s=" + value + "&type=movie");
                 setSuggestions(response.data);
             } catch (e) {
                 console.error(e);
