@@ -33,7 +33,7 @@ const YearsSide = (propsData) => {
                         title={"Árið " + year.Name} 
                         href={"/hardhead?parentID=" + year.ID} 
                         // dateString={year.Name} date="" 
-                        image={year.Photo ? config.get("path") + year.Photo.Href + "?code=" + config.get("code") : null} imageText={year.Photo ? year.Description : null} 
+                        image={year.Photo ? config.get('imagePath') + year.Photo.Href + "?code=" + config.get("code") : null} imageText={year.Photo ? year.Description : null} 
                     />
                 </li>
             ) : null}
