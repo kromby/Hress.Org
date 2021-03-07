@@ -9,7 +9,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.15.1",
     "@fortawesome/react-fontawesome": "^0.1.14",
     "@types/youtube": "0.0.38",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "jsonwebtoken": "^8.5.1",
     "msal": "^1.4.4",
     "react": "^16.14.0",
@@ -18,7 +18,7 @@
     "react-global-configuration": "^1.4.1",
     "react-rating": "^2.0.5",
     "react-router-dom": "^5.2.0",
-    "react-scripts": "^3.4.4",
+    "react-scripts": "^4.0.3",
     "react-youtube": "^7.13.0"
   },
   "scripts": {
