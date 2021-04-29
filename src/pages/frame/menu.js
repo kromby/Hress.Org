@@ -4,6 +4,47 @@ import config from 'react-global-configuration';
 import { useAuth } from '../../context/auth';
 import axios from "axios";
 
+import { useIsAuthenticated, AuthenticatedTemplate, UnauthenticatedTemplate, useMsal } from "@azure/msal-react";
+import { SignInButton } from './signInButton';
+import { SignOutButton } from './signOutButton';
+
+import { loginRequest } from "../../context/authConfig";
+import { callMsGraph } from "../../context/graph";
+
+/**
+ * Renders information about the signed-in user or a button to retrieve data about the user
+ */
+ const ProfileContent = () => {
+    const { instance, accounts } = useMsal();
+    const [graphData, setGraphData] = useState(null);
+
+    function RequestProfileData() {
+        // Silently acquires an access token which is then attached to a request for MS Graph data
+        instance.acquireTokenSilent({
+            ...loginRequest,
+            account: accounts[0]
+        }).then((response) => {
+            callMsGraph(response.accessToken).then(response => setGraphData(response));
+        });
+    }
+
+    return (
+        <>
+            <h5 className="card-title">Welcome {accounts[0].name}</h5>
+            {graphData ? 
+                <div id="profile-div">
+                    <p><strong>First Name: </strong> {graphData.givenName}</p>
+                    <p><strong>Last Name: </strong> {graphData.surname}</p>
+                    <p><strong>Email: </strong> {graphData.userPrincipalName}</p>
+                    <p><strong>Id: </strong> {graphData.id}</p>
+                </div>
+                :
+                <button variant="secondary" onClick={RequestProfileData}>Request Profile Information</button>
+            }
+        </>
+    );
+};
+
 /**
  * Hook that alerts clicks outside of the passed ref
  */
@@ -33,6 +74,7 @@ const Menu = (propsData) => {
     const {authTokens} = useAuth();
     const [data, setData] = useState({isLoading: false, menuItems: null, userID: 0});
     const wrapperRef = useRef(null);
+    const isAuthenticated = useIsAuthenticated();
     useOutsideAlerter(wrapperRef, propsData.visible, propsData.onClick);
 
     useEffect(() => {
@@ -79,6 +121,12 @@ const Menu = (propsData) => {
                 </form>
                 </section>
 
+                <AuthenticatedTemplate>
+                    <section>
+                        <ProfileContent />
+                    </section>
+                </AuthenticatedTemplate>
+
                 <section>
                 <ul className="links" onClick={() => propsData.onClick()}>
                     {data.visible ? 
@@ -105,10 +153,12 @@ const Menu = (propsData) => {
 
                 <section>
                 <ul className="actions stacked">
-                    {authTokens !== undefined ?
+                    {/* {authTokens !== undefined ?
                         <li onClick={() => propsData.onClick()}><a href="#" className="button large fit">Útskráning</a></li> :
                         <li><a href="#" className="button large fit">Innskráning</a></li>
                     }
+                    <br/><br/><br/> */}
+                    { isAuthenticated ? <SignOutButton /> : <SignInButton /> }
                 </ul>
                 </section>
             

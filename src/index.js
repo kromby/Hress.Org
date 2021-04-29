@@ -4,6 +4,9 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import config from 'react-global-configuration';
+import { PublicClientApplication } from "@azure/msal-browser";
+import { MsalProvider } from "@azure/msal-react";
+import { msalConfig } from "./context/authConfig";
 
 import App from './pages/App';
 // import Hardhead from './pages/hardhead';
@@ -57,6 +60,8 @@ import App from './pages/App';
 //       </div>
 //   )  
 
+const msalInstance = new PublicClientApplication(msalConfig);
+
   function setConfig() {  
     config.set({ path: 'https://ezhressapi.azurewebsites.net', imagePath: 'https://ezcontentapi.azurewebsites.net', code: 'JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==', omdb: '8ae68ed6' }, {freeze: false, environment: 'prod'});
     config.set({ path: 'http://localhost:7071', imagePath: 'https://ezcontentapi.azurewebsites.net', code: '', omdb: '8ae68ed6'}, {freeze: false, environment: 'hybrid'});
@@ -68,7 +73,7 @@ import App from './pages/App';
     
   setConfig(); 
 
-ReactDOM.render(<App/>, document.getElementById('content'));
+ReactDOM.render(<MsalProvider instance={msalInstance}><App/></MsalProvider>, document.getElementById('content'));
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.
