@@ -10,7 +10,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.3",
     "@fortawesome/free-solid-svg-icons": "^5.15.3",
     "@fortawesome/react-fontawesome": "^0.1.14",
-    "@types/youtube": "0.0.43",
+    "@types/youtube": "0.0.44",
     "axios": "^0.21.1",
     "jsonwebtoken": "^8.5.1",
     "msal": "^1.4.11",
