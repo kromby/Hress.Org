@@ -11,7 +11,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.15.4",
     "@fortawesome/react-fontawesome": "^0.1.15",
     "@types/youtube": "0.0.45",
-    "axios": "^0.21.1",
+    "axios": "^0.21.3",
     "jsonwebtoken": "^8.5.1",
     "msal": "^1.4.12",
     "react": "^17.0.2",
