@@ -3,7 +3,7 @@ import axios from 'axios';
 import config from 'react-global-configuration';
 
 import { useAuth } from '../../context/auth';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Post } from '../../components';
 
 function Login(props) {
@@ -35,7 +35,7 @@ function Login(props) {
     }
 
     if(isLoggedIn) {
-        return <Redirect to={referer} />
+        return <Navigate to={referer} />
     }
 
     // function handleSubmit() {
