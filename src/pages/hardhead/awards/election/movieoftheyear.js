@@ -10,7 +10,7 @@ const MovieOfTheYear = (propsData) => {
     const {authTokens} = useAuth();
     const [nights, setNights] = useState();
 
-    var url = config.get('path') + '/api/hardhead?parentID=5356&attended=8&code=' + config.get('code');
+    var url = config.get('path') + '/api/hardhead?parentID=5370&attended=8&code=' + config.get('code');
 
     useEffect(() => {
         const getHardheadUsers = async () => {
@@ -26,7 +26,7 @@ const MovieOfTheYear = (propsData) => {
         getHardheadUsers();
     }, [propsData, url])
 
-    const handelSubmit = async (event) => {
+    const handleSubmit = async (event) => {
 
         if(authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
@@ -60,7 +60,7 @@ const MovieOfTheYear = (propsData) => {
                 body={
                     <section>
                         <p>
-                            Gefðu öllum myndunum sem þú sást einkunn, smellt síðan á Ljúka neðst á síðunni til að halda áfram
+                            Gefðu öllum myndunum sem þú sást einkunn, smelltu síðan á <b>Ljúka</b> neðst á síðunni til að halda áfram
                         </p>
                     </section>
                 }
@@ -83,7 +83,7 @@ const MovieOfTheYear = (propsData) => {
 
             <ul className="actions pagination">
                 <li>
-                    <a href="#" className="button large next" onClick={handelSubmit}>{"Ljúka einkunnargjöf fyrir " + propsData.Name}</a>
+                    <a href="#" className="button large next" onClick={handleSubmit}>{"Ljúka einkunnargjöf fyrir " + propsData.Name}</a>
                     {/* <input type="submit" className="button large next" value={"Ljúka " + propsData.Name} disabled={!savingAllowed} /> */}
                 </li>
             </ul>

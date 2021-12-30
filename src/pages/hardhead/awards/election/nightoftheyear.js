@@ -10,7 +10,7 @@ const NightOfTheYear = (propsData) => {
     const {authTokens} = useAuth();
     const [nights, setNights] = useState();
 
-    var url = config.get('path') + '/api/hardhead?parentID=5356&attended=8&code=' + config.get('code');
+    var url = config.get('path') + '/api/hardhead?parentID=5370&attended=8&code=' + config.get('code');
 
     useEffect(() => {
         const getHardheadUsers = async () => {
@@ -60,7 +60,7 @@ const NightOfTheYear = (propsData) => {
                 body={
                     <section>
                         <p>
-                            Gefðu öllum kvöldunum sem þú mættir á einkunn, smellt síðan á Ljúka neðst á síðunni til að halda áfram                            
+                            Gefðu öllum kvöldunum sem þú mættir á einkunn, smelltu síðan á <i>Ljúka</i> neðst á síðunni til að halda áfram                            
                         </p>
                     </section>
                 }

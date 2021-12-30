@@ -7,6 +7,8 @@ import Stallone from './stallone';
 import HardheadOfTheYear from './hardhead';
 import MovieOfTheYear from './movieoftheyear';
 import NightOfTheYear from './nightoftheyear';
+import Rules from './rules';
+import RulesNewOld from './rulesnewold';
 
 const Election = (propsData) => {
     const { authTokens } = useAuth();
@@ -37,7 +39,19 @@ const Election = (propsData) => {
     }, [propsData, authTokens])   
 
     const getElement = (id, name) => {
-        if (id === 360) /*Vonbrigði*/ {
+        if (id === 100) /*Lög og reglur - nýjar og niðurfelldar reglur*/ {
+            return <RulesNewOld key={id}
+                ID={id}
+                Name={name}
+                onSubmit={handleSubmit}
+            />
+        } else if (id === 101) /*Lög og reglur - breytingar*/ {
+            return <Rules key={id}           
+                ID={id}
+                Name={name}
+                onSubmit={handleSubmit}
+            />
+        } else if (id === 360) /*Vonbrigði*/ {
             return <Post key={id}
                 id={id}
                 title={name}

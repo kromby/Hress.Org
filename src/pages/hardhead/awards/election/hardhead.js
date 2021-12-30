@@ -10,7 +10,7 @@ const HardheadOfTheYear = (propsData) => {
     const [savingAllowed, setSavingAllowed] = useState(false);
     const [selectedUser, setSelectedUser] = useState();
 
-    var url = config.get('path') + '/api/hardhead/' + '5356' + '/users?attended=8&code=' + config.get('code');
+    var url = config.get('path') + '/api/hardhead/' + '5370' + '/users?attended=8&code=' + config.get('code');
 
     useEffect(() => {
         const getHardheadUsers = async () => {
@@ -42,7 +42,7 @@ const HardheadOfTheYear = (propsData) => {
         setSavingAllowed(true);
     }
 
-    const handelSubmit = async (event) => {
+    const handleSubmit = async (event) => {
         setSavingAllowed(false);
         event.preventDefault();
         if (authTokens === undefined) {
@@ -76,7 +76,7 @@ const HardheadOfTheYear = (propsData) => {
             body=
             {
                 <section>
-                    <form onSubmit={handelSubmit}>
+                    <form onSubmit={handleSubmit}>
                         <div className="row gtr-uniform">
                             {users ? users.map(user =>
                                 <div className="col-4" key={user.ID} onClick={() => handleUserChange(user.ID)} >
