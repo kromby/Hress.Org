@@ -73,10 +73,10 @@ const Stallone = (propsData) => {
 
         try {
             var url = config.get('path') + '/api/elections/' + propsData.ID + '/vote?code=' + config.get('code');
-            await axios.post(url, {                
+            await axios.post(url, [{                
                 value: selectedUser,
                 description: text
-            }, {
+            }], {
                 headers: {'Authorization': 'token ' + authTokens.token},
             });
         } catch(e) {

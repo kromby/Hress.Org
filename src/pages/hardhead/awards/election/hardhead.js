@@ -52,9 +52,9 @@ const HardheadOfTheYear = (propsData) => {
 
         try {
             var url = config.get('path') + '/api/elections/' + propsData.ID + '/vote?code=' + config.get('code');
-            await axios.post(url, {
+            await axios.post(url, [{
                 value: selectedUser
-            }, {
+            }], {
                 headers: { 'Authorization': 'token ' + authTokens.token },
             });
         } catch (e) {

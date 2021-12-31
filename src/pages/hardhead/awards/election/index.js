@@ -9,6 +9,7 @@ import MovieOfTheYear from './movieoftheyear';
 import NightOfTheYear from './nightoftheyear';
 import Rules from './rules';
 import RulesNewOld from './rulesnewold';
+import Disappointment from './disappointment';
 
 const Election = (propsData) => {
     const { authTokens } = useAuth();
@@ -52,10 +53,11 @@ const Election = (propsData) => {
                 onSubmit={handleSubmit}
             />
         } else if (id === 360) /*Vonbrigði*/ {
-            return <Post key={id}
-                id={id}
-                title={name}
-            />
+            return <Disappointment key={id}
+                        ID={id}
+                        Name={name}
+                        onSubmit={handleSubmit}
+                    />
         } else if (id === 361) {
             return <MovieOfTheYear
                 key={id}
