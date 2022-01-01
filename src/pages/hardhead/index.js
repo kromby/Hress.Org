@@ -4,7 +4,7 @@ import { Post } from '../../components';
 import HardheadRating from './components/rating.js';
 import * as qs from 'query-string';
 import HardheadActions from './components/actions';
-// import VoteNow from './awards/election/votenow';
+import VoteNow from './awards/election/votenow';
 import axios from "axios";
 import HardheadBody from './components/hardheadbody';
 
@@ -42,7 +42,7 @@ const Hardhead = (propsData) => {
 
 	return (
 		<div id="main">
-			{/* <VoteNow /> */}
+			<VoteNow />
 
 			{ hardheads ?
 				hardheads.map((hardhead) =>
