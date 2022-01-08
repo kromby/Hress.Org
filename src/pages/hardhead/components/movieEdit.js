@@ -19,6 +19,8 @@ const MovieEdit = (propsData) => {
     const [reason, setReason] = useState("");
     const [posterPhotoID, setPosterPhotoID] = useState();
     const [ID, setID] = useState();
+    const [movieKills, setMovieKills] = useState();
+    const [hardheadKills, setHardheadKills] = useState();
 
     var movieUrl = config.get("path") + "/api/movies/" + propsData.id + "?code=" + config.get("code");
 
@@ -41,6 +43,8 @@ const MovieEdit = (propsData) => {
                     setReason(response.data.Reason);
                     setImagePath(response.data.PosterPhoto ? response.data.PosterPhoto.Href : "");
                     setData({ visible: true });
+                    setMovieKills(response.data.MovieKillCount);
+                    setHardheadKills(response.data.HardheadKillCount);
                 }
             }
             catch (e) {
@@ -68,7 +72,9 @@ const MovieEdit = (propsData) => {
                     ImdbUrl: imdbUrl,
                     YoutubeUrl: youtubeUrl,
                     Reason: reason,
-                    PosterPhotoID: posterPhotoID
+                    PosterPhotoID: posterPhotoID,
+                    MovieKillCount: movieKills,
+                    HardheadKillCount: hardheadKills
                 }, {
                     headers: { 'Authorization': 'token ' + authTokens.token },
                 });
@@ -92,6 +98,8 @@ const MovieEdit = (propsData) => {
     const handleYoutubeChange = (event) => { setYoutubeUrl(event.target.value); setButtonEnabled(true); }
     const handleReasonChange = (event) => { setReason(event.target.value); setButtonEnabled(true); }
     const handlePosterChange = (event) => { setImagePath(event.target.value); setImageGetEnabled(event.target.value.length > 6 && movieName.length > 1); }
+    const handleMovieKillsChange = (event) => { setMovieKills(event.target.value); setButtonEnabled(true); }
+    const handleHardhaedKillsChanges = (event) => {setHardheadKills(event.target.value); setButtonEnabled(true);}
 
     const movieCallback = async (imdbId) => {
         try {
@@ -176,6 +184,12 @@ const MovieEdit = (propsData) => {
                     </div>
                     <div className="col-6 col-12-xsmall">
                         <input id="actor" type="text" name="actor" onChange={(ev) => handleActorChange(ev)} value={actor} placeholder="Harðhaus" />
+                    </div>
+                    <div className="col-6 col-12-xsmall">
+                        <input id="movieKills" type="text" name="movieKills" onChange={(ev) => handleMovieKillsChange(ev)} value={movieKills} placeholder="Morð í myndinni" /> 
+                    </div>
+                    <div className="col-6 col-12-xsmall">
+                        <input id="hardheadKills" type="text" name="hardheadKills" onChange={(ev) => handleHardhaedKillsChanges(ev)} value={hardheadKills} placeholder="Morð af Harðhaus" />
                     </div>
                     <div className="col-12">
                         <input id="imdb" type="text" name="imdb" onChange={(ev) => handleImdbChange(ev)} value={imdbUrl} placeholder="Slóð á IMDB" />
