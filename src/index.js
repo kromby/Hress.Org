@@ -68,7 +68,7 @@ const msalInstance = new PublicClientApplication(msalConfig);
     config.set({ path: 'http://localhost:7071', imagePath: 'https://localhost:44363', code: '', omdb: '8ae68ed6'}, {freeze: false, environment: 'dev'});
     config.set({ });
   
-    config.setEnvironment('hybrid');
+    config.setEnvironment('prod');
   }
     
   setConfig(); 

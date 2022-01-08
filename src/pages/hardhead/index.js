@@ -42,7 +42,7 @@ const Hardhead = (propsData) => {
 
 	return (
 		<div id="main">
-			<VoteNow />
+			{/* <VoteNow /> */}
 
 			{ hardheads ?
 				hardheads.map((hardhead) =>
