@@ -37,6 +37,7 @@ import { callMsGraph } from "../../context/graph";
                     <p><strong>Last Name: </strong> {graphData.surname}</p>
                     <p><strong>Email: </strong> {graphData.userPrincipalName}</p>
                     <p><strong>Id: </strong> {graphData.id}</p>
+                    <p><strong>Title: </strong> {graphData.jobTitle}</p>
                 </div>
                 :
                 <button variant="secondary" onClick={RequestProfileData}>Request Profile Information</button>

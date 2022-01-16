@@ -186,10 +186,10 @@ const MovieEdit = (propsData) => {
                         <input id="actor" type="text" name="actor" onChange={(ev) => handleActorChange(ev)} value={actor} placeholder="Harðhaus" />
                     </div>
                     <div className="col-6 col-12-xsmall">
-                        <input id="movieKills" type="text" name="movieKills" onChange={(ev) => handleMovieKillsChange(ev)} value={movieKills} placeholder="Morð í myndinni" /> 
+                        <input id="movieKills" type="text" name="movieKills" onChange={(ev) => handleMovieKillsChange(ev)} value={movieKills} placeholder="Heildardráp" /> 
                     </div>
                     <div className="col-6 col-12-xsmall">
-                        <input id="hardheadKills" type="text" name="hardheadKills" onChange={(ev) => handleHardhaedKillsChanges(ev)} value={hardheadKills} placeholder="Morð af Harðhaus" />
+                        <input id="hardheadKills" type="text" name="hardheadKills" onChange={(ev) => handleHardhaedKillsChanges(ev)} value={hardheadKills} placeholder="Harðhausadráp" />
                     </div>
                     <div className="col-12">
                         <input id="imdb" type="text" name="imdb" onChange={(ev) => handleImdbChange(ev)} value={imdbUrl} placeholder="Slóð á IMDB" />

@@ -6,6 +6,7 @@ import Author from '../../../components/author';
 
 const HostStats = (propsData) => {
     const[data, setData] = useState({stats: null, isLoading: false, visible: false})
+    const [pageSize, setPageSize] = useState(10);
 
     var url = config.get('path') + '/api/hardhead/statistics/users?guestType=53&periodType=All&code=' + config.get('code');	
     
@@ -23,6 +24,23 @@ const HostStats = (propsData) => {
 
         getStats();
     }, [propsData, url])
+
+    const handleSubmit = async (event) => {
+        console.log(data.stats.List.length);
+        if (pageSize > data.stats.List.length) {
+            setPageSize(10);
+        } else {
+            setPageSize(pageSize + 10);
+        }
+    }
+
+    const getButtonText = () => {
+        if (data.stats === undefined || data.stats === null || pageSize > data.stats.List.length) {
+            return 10;
+        }
+
+        return pageSize + 10;
+    } 
 
     return (
         <Post
@@ -44,7 +62,7 @@ const HostStats = (propsData) => {
                             </tr>
                         </thead>
                         <tbody>
-                            { data.stats.List.slice(0, 10).map((stat, i) =>   
+                            { data.stats.List.slice(0, pageSize).map((stat, i) =>   
                                 <tr key={i}>
                                     <td>{i+1}</td>
                                     <td>
@@ -62,6 +80,11 @@ const HostStats = (propsData) => {
                     </table>
                 </div>
                 : null
+            }
+            actions={
+                <div>
+                    <button tooltip="Sjá meira" className="button large" onClick={handleSubmit}>Sjá {getButtonText()} efstu</button>
+                </div>
             }
         />
     )

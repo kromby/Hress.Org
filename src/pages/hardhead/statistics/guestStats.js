@@ -1,37 +1,55 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import { Post } from '../../../components';
 import Author from '../../../components/author';
 
 const GuestStats = (propsData) => {
-    const[data, setData] = useState({stats: null, isLoading: false, visible: false})
+    const [data, setData] = useState({ stats: null, isLoading: false, visible: false })
+    const [pageSize, setPageSize] = useState(10);
 
-    var url = config.get('path') + '/api/hardhead/statistics/users?periodType=All&code=' + config.get('code');	
-    
+    var url = config.get('path') + '/api/hardhead/statistics/users?periodType=All&code=' + config.get('code');
+
     useEffect(() => {
         const getStats = async () => {
             try {
-                setData({isLoading: true});
+                setData({ isLoading: true });
                 const response = await axios.get(url);
-                setData({stats: response.data, isLoading: false, visible: true});
-            } catch(e) {
+                setData({ stats: response.data, isLoading: false, visible: true });
+            } catch (e) {
                 console.error(e);
-                setData({isLoading: false, visible: false})
+                setData({ isLoading: false, visible: false })
             }
         }
 
         getStats();
     }, [propsData, url])
 
+    const handleSubmit = async (event) => {
+        console.log(data.stats.List.length);
+        if (pageSize > data.stats.List.length) {
+            setPageSize(10);
+        } else {
+            setPageSize(pageSize + 10);
+        }
+    }
+
+    const getButtonText = () => {
+        if (data.stats === undefined || data.stats === null || pageSize > data.stats.List.length) {
+            return 10;
+        }
+
+        return pageSize + 10;
+    }
+
     return (
         <Post
             title="Hver hefur mætt á flest harðhausakvöld"
             description="frá upphafi"
-            date= { data.visible ? data.stats.DateFrom : null}
-            dateFormatted = { data.visible ? data.stats.DateFromString: null}
-            showFooter = {false}
-            body= { data.visible ?
+            date={data.visible ? data.stats.DateFrom : null}
+            dateFormatted={data.visible ? data.stats.DateFromString : null}
+            showFooter={false}
+            body={data.visible ?
                 <div className="table-wrapper">
                     <table>
                         <thead>
@@ -44,11 +62,11 @@ const GuestStats = (propsData) => {
                             </tr>
                         </thead>
                         <tbody>
-                            { data.stats.List.slice(0, 10).map((stat, i) =>   
+                            {data.stats.List.slice(0, pageSize).map((stat, i) =>
                                 <tr key={i}>
-                                    <td>{i+1}</td>
+                                    <td>{i + 1}</td>
                                     <td>
-                                        {typeof stat.User.ProfilePhoto !=='undefined' && stat.User.ProfilePhoto !== null ?
+                                        {typeof stat.User.ProfilePhoto !== 'undefined' && stat.User.ProfilePhoto !== null ?
                                             <Author ID={stat.User.ID} Username={stat.User.Username} ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
                                             <Author ID={stat.User.ID} Username={stat.User.Username} />
                                         }
@@ -56,12 +74,16 @@ const GuestStats = (propsData) => {
                                     <td>{stat.AttendedCount}</td>
                                     <td>{stat.FirstAttendedString}</td>
                                     <td>{stat.LastAttendedString}</td>
-                                </tr>              
+                                </tr>
                             )}
                         </tbody>
                     </table>
                 </div>
-                : null
+                : null}
+            actions={
+                <div>
+                    <button tooltip="Sjá meira" className="button large" onClick={handleSubmit}>Sjá {getButtonText()} efstu</button>
+                </div>
             }
         />
     )
