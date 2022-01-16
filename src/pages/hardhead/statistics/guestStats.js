@@ -7,8 +7,9 @@ import Author from '../../../components/author';
 const GuestStats = (propsData) => {
     const [data, setData] = useState({ stats: null, isLoading: false, visible: false })
     const [pageSize, setPageSize] = useState(10);
+    const [period, setPeriod] = useState("All");
 
-    var url = config.get('path') + '/api/hardhead/statistics/users?periodType=All&code=' + config.get('code');
+    var url = config.get('path') + '/api/hardhead/statistics/users?periodType=' + period + '&code=' + config.get('code');
 
     useEffect(() => {
         const getStats = async () => {
@@ -26,7 +27,6 @@ const GuestStats = (propsData) => {
     }, [propsData, url])
 
     const handleSubmit = async (event) => {
-        console.log(data.stats.List.length);
         if (pageSize > data.stats.List.length) {
             setPageSize(10);
         } else {
@@ -42,10 +42,22 @@ const GuestStats = (propsData) => {
         return pageSize + 10;
     }
 
+    const handlePeriodChange = async (event) => {
+        setPeriod(event.target.value);
+    }
+
     return (
         <Post
             title="Hver hefur mætt á flest harðhausakvöld"
-            description="frá upphafi"
+            description={
+                <select id="demo-category" name="demo-category" onChange={(ev) => handlePeriodChange(ev)}>
+                    <option value="All">frá upphafi</option>
+                    <option value="Last10">síðustu 10 ár</option>
+                    <option value="Last5">síðustu 5 ár</option>
+                    <option value="Last2">síðustu 2 ár</option>
+                    <option value="ThisYear">þetta ár</option>
+                </select>
+            }
             date={data.visible ? data.stats.DateFrom : null}
             dateFormatted={data.visible ? data.stats.DateFromString : null}
             showFooter={false}
