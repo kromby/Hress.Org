@@ -16,6 +16,8 @@ import Magic from './frame/magic';
 import Menu from './frame/menu';
 import HardheadEdit from './hardhead/hardheadEdit';
 import Election from './hardhead/awards/election';
+import AwardSingle from './hardhead/awards/awardSingle';
+import AwardsSidebar from './hardhead/awards/awardsSidebar';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();  
@@ -131,6 +133,7 @@ function App(props) {
           <Route exact path="/" component={Hardhead} />
           <Route exact path="/hardhead" component={Hardhead} />  
           <Route exact path="/hardhead/awards" component={Awards} /> 
+          <Route path="/hardhead/awards/:id" component={AwardSingle} /> 
           <Route path="/hardhead/awards/election" component={Election} /> 
           <Route path="/hardhead/rules" component={Rules} />
           <Route path="/hardhead/stats" component={Statistics} />
@@ -145,9 +148,10 @@ function App(props) {
         <Switch>
           <Route exact path="/" component={HardheadSidebar}/>
           <Route exact path="/hardhead" component={HardheadSidebar}/> 
-          <Route path="/hardhead/:hardheadID" />    
-          <Route exact path="/hardhead/awards" />                                       
-          <Route path="/hardhead/awards/election" />     
+          <Route exact path="/hardhead/awards" component={AwardsSidebar} />
+          <Route path="/hardhead/:hardheadID" />              
+          <Route path="/hardhead/awards/:id" />
+          <Route path="/hardhead/awards/election" />
           <Route path="/hardhead/rules" />     
           <Route path="/hardhead/stats" />   
         </Switch>

@@ -31,6 +31,7 @@ const Awards = (propsData) => {
                 data.awards.map((award, i) => 
                     <Post key={award.ID}
                         id={award.ID}
+                        href={"/hardhead/awards/" + award.ID}
                         title={award.Name}
                         description="Sigurvegarar frá upphafi"
                         body={<AwardsWinners href={award.Winners.Href}/>}

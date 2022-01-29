@@ -10,7 +10,7 @@ export default class Post extends Component {
             <article className="post">
                 <header>
                     <div className="title">
-                        <h2>{this.props.id ? <Link to={"?id=" + this.props.id}>{this.props.title}</Link> : this.props.title}</h2>
+                        <h2>{this.props.href ? <Link to={this.props.href}>{this.props.title}</Link> : this.props.title}</h2>
                         {this.props.description ? <p>{this.props.description}</p> : null}
                     </div>
                     {/* <div className="meta">
