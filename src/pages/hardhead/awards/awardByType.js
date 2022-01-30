@@ -3,9 +3,10 @@ import config from 'react-global-configuration';
 import axios from "axios";
 import { Post } from "../../../components";
 import YearsSide from "../components/yearsSide";
+import AwardsWinners from "./awardsWinners";
 
-const AwardSingle = (propsData) => {
-    const [years, setYears] = useState();
+const AwardsByType = (propsData) => {
+    const [award, setAward] = useState();
 
     var url = config.get('path') + '/api/hardhead/awards/' + propsData.match.params.id + '?code=' + config.get('code');	
 
@@ -13,7 +14,7 @@ const AwardSingle = (propsData) => {
         const getYears = async () => {
             try {
                 const response = await axios.get(url);
-                setYears(response.data);
+                setAward(response.data);
             } catch (e) {
                 console.error(e);
             }
@@ -25,12 +26,15 @@ const AwardSingle = (propsData) => {
 
     return (
         <div id="main">
-            {years ? years.map((year) =>
-                <Post key={YearsSide.ID}
+            {award && award.Years ? award.Years.map((year) =>
+                <Post key={year.ID}
+                    title={award.Name + " " + year.Name}
+                    description={"Harðhausar sem fengu atkvæði: " + year.GuestCount}
+                    body={<AwardsWinners href={award.Winners.Href} year={year.ID} position="" />}
                 />
             ) : null}
         </div>
     )
 }
 
-export default AwardSingle;
+export default AwardsByType;
