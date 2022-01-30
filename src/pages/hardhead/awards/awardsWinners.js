@@ -8,7 +8,15 @@ const AwardsWinners = (propsData) => {
 
     useEffect(() => {
         const getAwards = async () => {
-            var url = config.get('path') + propsData.href + '?position=1&code=' + config.get('code');
+            var url = config.get('path') + propsData.href;
+            
+            if(propsData.position)
+                url = url + '?position=' + propsData.position;
+                
+            if(propsData.year)
+                url = url + '?year=' + propsData.year;
+                
+            url = url + '&code=' + config.get('code');
 
             try {
                 setData({isLoading: true});
@@ -29,7 +37,11 @@ const AwardsWinners = (propsData) => {
             <table>
                 <thead>
                     <tr>
-                        <td width="100px">Ár</td>
+                        {propsData.position ?
+                            <td width="100px">Ár</td>
+                            :
+                            <td width="100px">Sæti</td>
+                        }
                         <td width="200px">Harðhaus</td>
                         <td width="100px">Atkvæði</td>
                         <td>Útskýring</td>
@@ -38,8 +50,8 @@ const AwardsWinners = (propsData) => {
                 <tbody>
                     {data.visible ?
                         data.winners.map((winner, i) =>                 
-                            <tr key={winner.ID}>
-                                <td>{winner.Year}</td>
+                            <tr key={winner.ID}>                                
+                                <td>{propsData.position ? winner.Year : winner.Position}</td>
                                 <td>
                                     {typeof winner.Winner.ProfilePhoto !=='undefined' ?
                                         <Author ID={winner.Winner.ID} Username={winner.Winner.Username} ProfilePhoto={winner.Winner.ProfilePhoto.Href} /> :

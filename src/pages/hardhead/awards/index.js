@@ -34,7 +34,7 @@ const Awards = (propsData) => {
                         href={"/hardhead/awards/" + award.ID}
                         title={award.Name}
                         description="Sigurvegarar frá upphafi"
-                        body={<AwardsWinners href={award.Winners.Href}/>}
+                        body={<AwardsWinners href={award.Winners.Href} position="1" />}
                     />
                 ) : 
             null}

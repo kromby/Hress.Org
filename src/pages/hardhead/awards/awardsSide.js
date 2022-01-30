@@ -6,7 +6,7 @@ import axios from 'axios';
 const AwardsSide = (propsData) => {
     const[data, setData] = useState({awards: null, isLoading: false, visible: false})
 
-    var url = config.get('path') + '/api/hardhead/awards/364/winners?year=' + (new Date().getYear()-1+1899) + '&position=1&code=' + config.get('code');		
+    var url = config.get('path') + '/api/hardhead/awards/364/winners?position=1&code=' + config.get('code');		
 
     useEffect(() => {
         const getAwards = async () => {
@@ -26,7 +26,7 @@ const AwardsSide = (propsData) => {
 
     return (
         <div>
-            {data.visible ?
+            {data.visible && data.awards ?
             <MiniPost title="Harðhausa verðlaunin" href="/hardhead/awards"
                 description={<span>Harðhaus ársins<br/>{data.awards.Winner.Username} með {data.awards.Value} atkvæði</span>}
                 date={"1.1." + data.awards.Year}

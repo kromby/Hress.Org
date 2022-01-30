@@ -10,7 +10,6 @@ const AwardsSidebar = (propsData) => {
 
     useEffect(() => {
         const getYears = async () => {
-            console.log("AwardsSidebar")
             try {
                 const response = await axios.get(url);
                 setYears(response.data.filter(year => year.Hardhead));
@@ -30,6 +29,7 @@ const AwardsSidebar = (propsData) => {
                     {years ? years.map((year) =>
                         <li>
                             <SidePost
+                                key={year.ID}
                                 title={"Árið " + year.Name}
                                 href={"/hardhead/awards/year/" + year.ID}
                                 dateString={"Harðhaus ársins " + year.Hardhead.Username}
