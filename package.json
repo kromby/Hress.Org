@@ -23,7 +23,7 @@
     "react-global-configuration": "^1.4.1",
     "react-rating": "^2.0.5",
     "react-router-dom": "^5.1.0",
-    "react-scripts": "^4.0.3",
+    "react-scripts": "^5.0.0",
     "react-youtube": "^7.14.0",
     "stream-browserify": "^3.0.0",
     "util": "^0.12.4"
