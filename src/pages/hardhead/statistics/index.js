@@ -11,18 +11,19 @@
             Fjöldi unique gesta
             Fjöldi unique gestgjafa
             Fjöldi unique leikara
-        Kvöld með flesta gesti
-        Oftast mætt
-        Oftast haldið
-        Flest harðhausaverðlaun
-        Vinsælasti leikarinn
-        Flest kvöld í röð
-        Gestgjafi með flest kvöld á einu ári
+        [ ] - Kvöld með flesta gesti
+        [X] - Oftast mætt
+        [X] - Oftast haldið
+        [ ] - Flest harðhausaverðlaun
+        [ ] - Vinsælasti leikarinn
+        [ ] - Flest kvöld í röð
+        [ ] - Gestgjafi með flest kvöld á einu ári
 */
 
 import React from 'react';
 import GuestStats from './guestStats';
 import HostStats from './hostStats';
+import ActorStats from './actorStats';
 
 const Statistics  = (propsData) => {
     // const[data, setData] = useState({rules: null, isLoading: false, visible: false})
@@ -31,7 +32,7 @@ const Statistics  = (propsData) => {
         <div id="main">
             <GuestStats />
             <HostStats />
-            {/* HostStats - https://ezhressapi.azurewebsites.net/api/hardhead/statistics/users?guestType=53&periodType=All&code=mIDqQM07DjZa7IkNtkapKigg9Edielksif1ODu49W13p3Xhsf70foQ== */}
+            <ActorStats />
         </div>        
     )
 }
