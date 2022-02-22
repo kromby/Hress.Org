@@ -24,12 +24,17 @@ const Hardhead = (propsData) => {
 
 		const getHardheadsUrl = async () => {
 			const parsed = qs.parse(propsData.location.search);
+			console.log("getHardheadsUrl");
+			console.log(parsed);
 			var url;
 			if (parsed.parentID) {
 				url = config.get('path') + '/api/hardhead?parentID=' + parsed.parentID + '&code=' + config.get('code');
 			} else if (parsed.userID) {
 				url = config.get('path') + '/api/hardhead?userID=' + parsed.userID + '&code=' + config.get('code');
-			} else {
+			} else if(parsed.query) {
+				url = config.get('path') + '/api/movies?filter=' + parsed.query + '&code=' + config.get('code');
+			}
+			else {
 				var currentDate = new Date();
 				currentDate.setMonth(currentDate.getMonth() - 5);
 				url = config.get('path') + '/api/hardhead?dateFrom=' + (currentDate.getMonth() + 1) + '.1.' + currentDate.getFullYear() + '&code=' + config.get('code');
@@ -50,7 +55,7 @@ const Hardhead = (propsData) => {
 					key={hardhead.ID}
 					id={hardhead.ID}
 					title={hardhead.Name}
-					description={hardhead.GuestCount + " gestir"}
+					description={hardhead.GuestCount ? hardhead.GuestCount + " gestir" : null}
 					date={hardhead.Date}
 					dateFormatted={hardhead.DateString}
 					author={hardhead.Host}
