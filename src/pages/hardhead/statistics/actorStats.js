@@ -47,7 +47,7 @@ const ActorStats = (propsData) => {
     
     return (
         <Post
-            title="Hver hefur haldið flest harðhausakvöld"
+            title="Hvaða leikar hefur oftast verið harðhaus"
             description={
                 <select id="demo-category" name="demo-category" onChange={(ev) => handlePeriodChange(ev)}>
                     <option value="All">frá upphafi</option>
@@ -66,10 +66,10 @@ const ActorStats = (propsData) => {
                         <thead>
                             <tr>
                                 <td width="100px">Nr.</td>
-                                <td width="250px">Harðhaus</td>
+                                <td width="250px">Leikari</td>
                                 <td>Fjöldi</td>
-                                <td>Fyrst haldið</td>
-                                <td>Síðast haldið</td>
+                                <td>Fyrst</td>
+                                <td>Síðast</td>
                             </tr>
                         </thead>
                         <tbody>
