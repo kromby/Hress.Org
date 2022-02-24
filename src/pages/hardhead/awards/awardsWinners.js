@@ -1,7 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
-import Author from '../../../components/author';
+import Author from '../../../components/authorOld';
 
 const AwardsWinners = (propsData) => {
     const[data, setData] = useState({winners: null, isLoading: false, visible: false})    		

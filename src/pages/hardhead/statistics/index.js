@@ -24,6 +24,7 @@ import React from 'react';
 import GuestStats from './guestStats';
 import HostStats from './hostStats';
 import ActorStats from './actorStats';
+import AttendanceStats from './attendanceStats';
 
 const Statistics  = (propsData) => {
     // const[data, setData] = useState({rules: null, isLoading: false, visible: false})
@@ -33,6 +34,7 @@ const Statistics  = (propsData) => {
             <GuestStats />
             <HostStats />
             <ActorStats />
+            <AttendanceStats />
         </div>        
     )
 }
