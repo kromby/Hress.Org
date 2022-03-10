@@ -34,7 +34,7 @@ const Author = (propsData) => {
                 <a href={"http://www.hress.org/Gang/Single.aspx?Id=" + user.ID} className="author">
                     <span className="name">{user.Username}</span>
                     {user.ProfilePhoto && user.ProfilePhoto.Href ?
-                    <img src={"https://ezhressapi.azurewebsites.net" + user.ProfilePhoto.Href + "?code=cCzROHQTlutKpUWOy/BexCj7YkDyFLhGyk4oAEot3eHo1wBgoX/dXQ=="} alt={user.Username} /> :
+                    <img src={config.get('path') + user.ProfilePhoto.Href + "?code=" +  config.get('code')} alt={user.Username} /> :
                     null}
                 </a>
             : null }
