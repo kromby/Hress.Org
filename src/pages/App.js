@@ -20,6 +20,7 @@ import AwardSingle from './hardhead/awards/awardByType';
 import AwardsSidebar from './hardhead/awards/awardsSidebar';
 import AwardsByYear from './hardhead/awards/awardsByYear';
 import AwardsByType from './hardhead/awards/awardByType';
+import HHUsers from './hardhead/hhusers';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();  
@@ -139,6 +140,7 @@ function App(props) {
           <Route path="/hardhead/awards/:id" component={AwardsByType} /> 
           <Route path="/hardhead/awards/election" component={Election} /> 
           <Route path="/hardhead/rules" component={Rules} />
+          <Route path="/hardhead/users/:id" component={HHUsers} />
           <Route path="/hardhead/stats" component={Statistics} />
           <Route path="/hardhead/:hardheadID" component={HardheadEdit} />
           <PrivateRoute path="/hardhead/admin" component={Admin} />

@@ -11,11 +11,11 @@
             Fjöldi unique gesta
             Fjöldi unique gestgjafa
             Fjöldi unique leikara
-        [ ] - Kvöld með flesta gesti
+        [X] - Kvöld með flesta gesti
         [X] - Oftast mætt
         [X] - Oftast haldið
         [ ] - Flest harðhausaverðlaun
-        [ ] - Vinsælasti leikarinn
+        [X] - Vinsælasti leikarinn
         [ ] - Flest kvöld í röð
         [ ] - Gestgjafi með flest kvöld á einu ári
 */
