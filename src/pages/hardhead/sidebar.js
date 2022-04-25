@@ -66,7 +66,7 @@ function HardheadSidebar() {
 					<li><a href="#" className="icon solid fa-rss"><span className="label">RSS</span></a></li>
 					<li><a href="#" className="icon solid fa-envelope"><span className="label">Email</span></a></li> */}
 				</ul>
-				<p className="copyright">&copy; Hress.Org - Guðjón Karl Arnarson.<br/>Design: <a href="http://html5up.net">HTML5 UP</a>. Images: <a href="http://unsplash.com">Unsplash</a>.</p>
+				<p className="copyright">&copy; Hress.Org - Guðjón Karl Arnarson.<br/>Design: <a href="http://html5up.net">HTML5 UP</a>.</p>
 			</section>
         </section>    
     );

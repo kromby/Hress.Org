@@ -21,6 +21,7 @@ import AwardsSidebar from './hardhead/awards/awardsSidebar';
 import AwardsByYear from './hardhead/awards/awardsByYear';
 import AwardsByType from './hardhead/awards/awardByType';
 import HHUsers from './hardhead/hhusers';
+import HHUserSidebar from './hardhead/hhusers/hhUserSidebar';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();  
@@ -154,11 +155,12 @@ function App(props) {
           <Route exact path="/" component={HardheadSidebar}/>
           <Route exact path="/hardhead" component={HardheadSidebar}/> 
           <Route exact path="/hardhead/awards" component={AwardsSidebar} />
+          <Route path="/hardhead/users/:id" component={HHUserSidebar} />
           <Route path="/hardhead/awards/:id" /*component={AwardsSidebar}*/ />
           <Route path="/hardhead/:hardheadID" />              
           <Route path="/hardhead/awards/year/:id" />          
           <Route path="/hardhead/awards/election" />
-          <Route path="/hardhead/rules" />     
+          <Route path="/hardhead/rules" />   
           <Route path="/hardhead/stats" />   
         </Switch>
         </div>
