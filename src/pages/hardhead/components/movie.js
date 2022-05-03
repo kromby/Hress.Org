@@ -48,7 +48,11 @@ const Movie = (propsData) => {
                 <h3>Myndin</h3>
                 <h4><a href={movieData.movie.ImdbUrl} target="_blank" rel="noopener noreferrer">{movieData.movie.Name}</a></h4>
                 <p key="movie1">
-                    {movieData.movie.Actor}
+                    {movieData.movie.Actor} 
+                    {movieData.movie.HardheadKillCount || movieData.movie.MovieKillCount ? " (" : null}
+                    {movieData.movie.HardheadKillCount ? <span>bar ábyrgð á {movieData.movie.HardheadKillCount} drápum </span> : null}
+                    {movieData.movie.MovieKillCount ? "af " + movieData.movie.MovieKillCount : null} 
+                    {movieData.movie.HardheadKillCount || movieData.movie.MovieKillCount ? " í myndinni)" : null}                    
                 </p>
                 <p key="movie2">
                     {movieData.movie.Reason ? movieData.movie.Reason : "Gestgjafi hefur ekki skráð ástæðu fyrir mynd :("}
