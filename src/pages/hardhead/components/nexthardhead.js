@@ -36,7 +36,7 @@ const NextHardhead = (propsData) => {
                     description={data.night.Host.Username}
                     dateString={data.night.DateString} 
                     date={data.night.Date}
-                    userHref={"http://www.hress.org/Gang/Single.aspx?Id=" + data.night.Host.ID}
+                    userHref={"/hardhead/users/" + data.night.Host.ID}
                     userPhoto={config.get('path') + data.night.Host.ProfilePhoto.Href + "?code=" + config.get('code')}
                     userText={data.night.Host.Username} /> : null}        
         </div>

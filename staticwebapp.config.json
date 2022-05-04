@@ -14,7 +14,7 @@
     "responseOverrides": {
     },
     "globalHeaders": {
-      "content-security-policy": "default-src https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'"
+      "content-security-policy": "default-src https: 'unsafe-eval' 'unsafe-inline'; object-src 'none'; img-src 'self' www.w3.org;"
     },
     "mimeTypes": {
       ".json": "text/json"

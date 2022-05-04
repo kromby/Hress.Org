@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import config from 'react-global-configuration';
+import { Link } from 'react-router-dom';
 import './userimage.css';
 
 const UserImage = (propsData) => {
@@ -19,7 +21,7 @@ const UserImage = (propsData) => {
                 alt={username} />
             : null,
         <p key="102">
-            <a href={"http://www.hress.org/Gang/Single.aspx?Id=" + userID}>{username}</a>
+            <Link to={"/hardhead/users/" + userID}>{username}</Link>
         </p>
     ])
 }

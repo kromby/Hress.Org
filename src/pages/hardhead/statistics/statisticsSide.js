@@ -73,7 +73,7 @@ const StatisticsSide = (propsData) => {
                 }
                 date={data.stats.DateFrom}
                 dateString={data.stats.DateFromString}
-                userHref={"http://www.hress.org/Gang/Single.aspx?Id=" + data.stats.List[0].User.Id}
+                userHref={"/hardhead/users/" + data.stats.List[0].User.ID}
                 userPhoto={config.get('path') + data.stats.List[0].User.ProfilePhoto.Href + "?code=" + config.get('code')}
                 userText={data.stats.List[0].User.Username} /> :
             null}

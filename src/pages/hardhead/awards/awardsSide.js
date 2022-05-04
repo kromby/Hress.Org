@@ -31,7 +31,7 @@ const AwardsSide = (propsData) => {
                 description={<span>Harðhaus ársins<br/>{data.awards.Winner.Username} með {data.awards.Value} atkvæði</span>}
                 date={"1.1." + data.awards.Year}
                 dateString={data.awards.Year}
-                userHref={"http://www.hress.org/Gang/Single.aspx?Id=" + data.awards.Winner.ID}
+                userHref={"/hardhead/users/" + data.awards.Winner.ID}
                 userPhoto={config.get('path') + data.awards.Winner.ProfilePhoto.Href + "?code=" + config.get('code')}
                 userText={data.awards.Winner.Username} /> :
             null}
