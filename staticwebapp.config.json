@@ -14,7 +14,7 @@
     "responseOverrides": {
     },
     "globalHeaders": {
-      "content-security-policy": "default-src https: 'unsafe-eval' 'unsafe-inline' data:; object-src 'none'; img-src 'self' www.w3.org ezcontentapi.azurewebsites.net ezhressapi.azurewebsites.net hress.azurewebsites.net;"
+      "content-security-policy": "default-src https: 'unsafe-eval' 'unsafe-inline' data:; object-src 'none'; img-src 'self' www.w3.org ezcontentapi.azurewebsites.net ezhressapi.azurewebsites.net hress.azurewebsites.net data:;"
     },
     "mimeTypes": {
       ".json": "text/json"

@@ -1,0 +1,15 @@
+{
+  "version": "2.0",
+  "logging": {
+    "applicationInsights": {
+      "samplingSettings": {
+        "isEnabled": true,
+        "excludedTypes": "Request"
+      }
+    },
+    "logLevel": {
+      "Ez.Hress.Hardhead.UseCases.AwardInteractor": "Information",
+      "Ez.Hress.Hardhead.DataAccess.AwardTableDataAccess": "Information"
+    }
+  }
+}
