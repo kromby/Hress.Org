@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\kromb\\source\\Hress.Org.Api\\Ez.Hress.Hardhead\\Ez.Hress.Hardhead.csproj": {}
+    "C:\\Users\\kromb\\source\\Hress.Org\\api\\Ez.Hress.Hardhead\\Ez.Hress.Hardhead.csproj": {}
   },
   "projects": {
-    "C:\\Users\\kromb\\source\\Hress.Org.Api\\Ez.Hress.Hardhead\\Ez.Hress.Hardhead.csproj": {
+    "C:\\Users\\kromb\\source\\Hress.Org\\api\\Ez.Hress.Hardhead\\Ez.Hress.Hardhead.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\kromb\\source\\Hress.Org.Api\\Ez.Hress.Hardhead\\Ez.Hress.Hardhead.csproj",
+        "projectUniqueName": "C:\\Users\\kromb\\source\\Hress.Org\\api\\Ez.Hress.Hardhead\\Ez.Hress.Hardhead.csproj",
         "projectName": "Ez.Hress.Hardhead",
-        "projectPath": "C:\\Users\\kromb\\source\\Hress.Org.Api\\Ez.Hress.Hardhead\\Ez.Hress.Hardhead.csproj",
+        "projectPath": "C:\\Users\\kromb\\source\\Hress.Org\\api\\Ez.Hress.Hardhead\\Ez.Hress.Hardhead.csproj",
         "packagesPath": "C:\\Users\\kromb\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\kromb\\source\\Hress.Org.Api\\Ez.Hress.Hardhead\\obj\\",
+        "outputPath": "C:\\Users\\kromb\\source\\Hress.Org\\api\\Ez.Hress.Hardhead\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\kromb\\AppData\\Roaming\\NuGet\\NuGet.Config",

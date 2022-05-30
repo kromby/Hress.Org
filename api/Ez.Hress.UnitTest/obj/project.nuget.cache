@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "dxUaXpFjcQ6/mwrS0ZstY2SjEhqLlvOfHwBaVcUOfzfYXLWJmrzekbDrzn5p15I2SOGXWfL5NeKlRT1NStjFug==",
+  "dgSpecHash": "bLUq/ZZxlS+x9/XTMSMij6QgvzLkb8UMucMR2jY0g93uHKUwuntn+O2RMzSWkR9zfgDoMo+E5Qutvo54HbeeLQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\kromb\\source\\Hress.Org.Api\\Ez.Hress.UnitTest\\Ez.Hress.UnitTest.csproj",
+  "projectFilePath": "C:\\Users\\kromb\\source\\Hress.Org\\api\\Ez.Hress.UnitTest\\Ez.Hress.UnitTest.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\kromb\\.nuget\\packages\\azure.core\\1.22.0\\azure.core.1.22.0.nupkg.sha512",
     "C:\\Users\\kromb\\.nuget\\packages\\azure.data.tables\\12.5.0\\azure.data.tables.12.5.0.nupkg.sha512",

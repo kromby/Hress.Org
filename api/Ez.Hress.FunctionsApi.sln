@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.1.32228.430
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.FunctionsApi", "Ez.Hress.FunctionsApi.csproj", "{C6FFD510-7C37-4FFB-A2D9-0FAC42DA4E45}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.FunctionsApi", "Ez.Hress.FunctionsApi\Ez.Hress.FunctionsApi.csproj", "{C6FFD510-7C37-4FFB-A2D9-0FAC42DA4E45}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.Hardhead", "..\Ez.Hress.Hardhead\Ez.Hress.Hardhead.csproj", "{187BE088-1F45-4FA9-A613-725265D89FEF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.Hardhead", "Ez.Hress.Hardhead\Ez.Hress.Hardhead.csproj", "{187BE088-1F45-4FA9-A613-725265D89FEF}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.UnitTest", "..\Ez.Hress.UnitTest\Ez.Hress.UnitTest.csproj", "{7E8A36BB-F3F9-4440-9670-E0334BB53A02}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.UnitTest", "Ez.Hress.UnitTest\Ez.Hress.UnitTest.csproj", "{7E8A36BB-F3F9-4440-9670-E0334BB53A02}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

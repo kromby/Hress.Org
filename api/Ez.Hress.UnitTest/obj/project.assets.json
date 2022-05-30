@@ -6455,11 +6455,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\kromb\\source\\Hress.Org.Api\\Ez.Hress.UnitTest\\Ez.Hress.UnitTest.csproj",
+      "projectUniqueName": "C:\\Users\\kromb\\source\\Hress.Org\\api\\Ez.Hress.UnitTest\\Ez.Hress.UnitTest.csproj",
       "projectName": "Ez.Hress.UnitTest",
-      "projectPath": "C:\\Users\\kromb\\source\\Hress.Org.Api\\Ez.Hress.UnitTest\\Ez.Hress.UnitTest.csproj",
+      "projectPath": "C:\\Users\\kromb\\source\\Hress.Org\\api\\Ez.Hress.UnitTest\\Ez.Hress.UnitTest.csproj",
       "packagesPath": "C:\\Users\\kromb\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\kromb\\source\\Hress.Org.Api\\Ez.Hress.UnitTest\\obj\\",
+      "outputPath": "C:\\Users\\kromb\\source\\Hress.Org\\api\\Ez.Hress.UnitTest\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\kromb\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -6476,8 +6476,8 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "projectReferences": {
-            "C:\\Users\\kromb\\source\\Hress.Org.Api\\Ez.Hress.Hardhead\\Ez.Hress.Hardhead.csproj": {
-              "projectPath": "C:\\Users\\kromb\\source\\Hress.Org.Api\\Ez.Hress.Hardhead\\Ez.Hress.Hardhead.csproj"
+            "C:\\Users\\kromb\\source\\Hress.Org\\api\\Ez.Hress.Hardhead\\Ez.Hress.Hardhead.csproj": {
+              "projectPath": "C:\\Users\\kromb\\source\\Hress.Org\\api\\Ez.Hress.Hardhead\\Ez.Hress.Hardhead.csproj"
             }
           }
         }
