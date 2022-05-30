@@ -8,6 +8,7 @@
       }
     },
     "logLevel": {
+      "Ez.Hress.FunctionsApi.Startup": "Information",
       "Ez.Hress.Hardhead.UseCases.AwardInteractor": "Information",
       "Ez.Hress.Hardhead.DataAccess.AwardTableDataAccess": "Information"
     }

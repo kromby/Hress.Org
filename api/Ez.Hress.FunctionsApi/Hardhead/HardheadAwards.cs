@@ -11,7 +11,7 @@ using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.Hardhead.Entities;
 using System.Diagnostics;
 
-namespace Ez.Hress.FunctionApi.Hardhead
+namespace Ez.Hress.FunctionsApi.Hardhead
 {
     public class HardheadAwards
     {
