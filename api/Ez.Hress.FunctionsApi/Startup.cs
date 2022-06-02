@@ -26,7 +26,7 @@ namespace Ez.Hress.FunctionsApi
                 .AddEnvironmentVariables()
                 .Build();
 
-            builder.Services.AddLogging();
+            //builder.Services.AddLogging();
 
             ConfigureServices(builder, config);
         }
@@ -35,7 +35,7 @@ namespace Ez.Hress.FunctionsApi
         {                      
             var connectionString = config["TableConnectionString"];
             
-            builder.Services.AddSingleton<TableClient>(new TableClient(connectionString, "HardheadNominations"));
+            builder.Services.AddSingleton(new TableClient(connectionString, "HardheadNominations"));
             builder.Services.AddScoped<AwardInteractor>();
             builder.Services.AddScoped<IAwardDataAccess, AwardTableDataAccess>();            
         }
