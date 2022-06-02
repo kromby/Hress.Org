@@ -17,43 +17,27 @@ using System.Threading.Tasks;
 namespace Ez.Hress.FunctionsApi
 {
     public class Startup : FunctionsStartup
-    { 
-        
+    {
+
         public override void Configure(IFunctionsHostBuilder builder)
         {
             var config = new ConfigurationBuilder()
                 .AddJsonFile("host.json", optional: true)
-                .AddEnvironmentVariables()                
+                .AddEnvironmentVariables()
                 .Build();
 
-            builder.Services.AddLogging();           
+            builder.Services.AddLogging();
 
             ConfigureServices(builder, config);
-            
         }
 
         public void ConfigureServices(IFunctionsHostBuilder builder, IConfigurationRoot config)
-        {
-            var loggerFactory = new LoggerFactory();
-            var logger = loggerFactory.CreateLogger<Startup>();
-            logger.LogInformation("Logging from Startup");
-
-            //var connectionString = config.GetConnectionString("TableConnectionString");                       
+        {                      
             var connectionString = config["TableConnectionString"];
-            logger.LogInformation($"Connection String length: {connectionString.Length}");
-
-            try
-            {
-                builder.Services.AddSingleton<TableClient>(new TableClient(connectionString, "HardheadNominations"));
-                builder.Services.AddScoped<AwardInteractor>();
-                builder.Services.AddScoped<IAwardDataAccess, AwardTableDataAccess>();
-            }
-            catch (Exception ex)
-            {
-                logger.LogError(ex, "Error in Startup");
-                //throw;
-            }
-
+            
+            builder.Services.AddSingleton<TableClient>(new TableClient(connectionString, "HardheadNominations"));
+            builder.Services.AddScoped<AwardInteractor>();
+            builder.Services.AddScoped<IAwardDataAccess, AwardTableDataAccess>();            
         }
-    }   
+    }
 }
