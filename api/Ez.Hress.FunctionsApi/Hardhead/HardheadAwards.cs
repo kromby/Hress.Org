@@ -17,10 +17,10 @@ namespace Ez.Hress.FunctionsApi.Hardhead
     {
         private readonly AwardInteractor _awardInteractor;
 
-        public HardheadAwards(AwardInteractor awardInteractor)
-        {
-            _awardInteractor = awardInteractor;
-        }
+        //public HardheadAwards(AwardInteractor awardInteractor)
+        //{
+        //    _awardInteractor = awardInteractor;
+        //}
 
         [FunctionName("hardheadAwards")]
         public async Task<IActionResult> RunAwards(
