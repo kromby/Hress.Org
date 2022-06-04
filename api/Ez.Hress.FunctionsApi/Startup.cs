@@ -21,26 +21,26 @@ namespace Ez.Hress.FunctionsApi
 
         public override void Configure(IFunctionsHostBuilder builder)
         {
-            //var config = new ConfigurationBuilder()
-            //    .AddJsonFile("host.json", optional: true)
-            //    .AddEnvironmentVariables()
-            //    .Build();
+            var config = new ConfigurationBuilder()
+                .AddJsonFile("host.json", optional: true)
+                .AddEnvironmentVariables()
+                .Build();
 
             //builder.Services.AddLogging();
 
-            //ConfigureServices(builder.Services, config);
+            ConfigureServices(builder.Services, config);
         }
 
-        //public void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
-        //{
-        //    var connectionString = config["TableConnectionString"];
+        public void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
+        {
+            var connectionString = config["TableConnectionString"];
 
 
-        //    services.AddSingleton(new TableClient(connectionString, "HardheadNominations"));
-        //    services.AddScoped<AwardInteractor>();
-        //    services.AddScoped<IAwardDataAccess, AwardTableDataAccess>();
+            //    services.AddSingleton(new TableClient(connectionString, "HardheadNominations"));
+            //    services.AddScoped<AwardInteractor>();
+            //    services.AddScoped<IAwardDataAccess, AwardTableDataAccess>();
 
-        //    //services.AddA
-        //}
+            //    //services.AddA
+        }
     }
 }
