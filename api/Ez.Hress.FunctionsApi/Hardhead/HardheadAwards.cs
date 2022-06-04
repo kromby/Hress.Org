@@ -55,36 +55,32 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             log.LogInformation("C# HTTP trigger RunAwardNominations function processed a request.");
 
-            // string name = req.Query["name"];
-
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            //var json = JsonConvert.DeserializeObject(requestBody);
             Nomination nom = JsonConvert.DeserializeObject<Nomination>(requestBody);
 
             log.LogInformation($"Request body: {requestBody}");
 
-            //try
-            //{
-            //    _awardInteractor.Nominate(nom);
-            //    log.LogInformation("Return OK - No Content");
-            //    return new NoContentResult();
-            //}
-            //catch (ArgumentException aex)
-            //{
-            //    log.LogError(aex, "Invalid input");
-            //    return new BadRequestObjectResult(aex.Message);
-            //}
-            //catch(Exception ex)
-            //{
-            //    log.LogError(ex, "Unhandled error");
-            //    throw;
-            //}
-            //finally
-            //{
+            try
+            {
+                _awardInteractor.Nominate(nom);
+                log.LogInformation("Return OK - No Content");
+                return new NoContentResult();
+            }
+            catch (ArgumentException aex)
+            {
+                log.LogError(aex, "Invalid input");
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "Unhandled error");
+                throw;
+            }
+            finally
+            {
                 stopwatch.Stop();
                 log.LogInformation($"Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
-            //}
-            return new OkResult();
+            }
         }
     }
 }
