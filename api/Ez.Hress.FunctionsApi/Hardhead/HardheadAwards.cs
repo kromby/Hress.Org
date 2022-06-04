@@ -22,7 +22,29 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             _awardInteractor = awardInteractor;
         }
 
-        [FunctionName("hardheadAwardsNominations")]
+        [FunctionName("hardheadAwards")]
+        public async Task<IActionResult> RunAwards(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/awards")] HttpRequest req,
+            ILogger log)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            
+            log.LogInformation("C# HTTP trigger RunAwards function processed a request.");
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            //var json = JsonConvert.DeserializeObject(requestBody);
+            Nomination nom = JsonConvert.DeserializeObject<Nomination>(requestBody);
+
+            log.LogInformation($"Request body: {requestBody}");
+
+            stopwatch.Stop();
+            log.LogInformation($"Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+
+            return new OkResult();
+        }
+
+            [FunctionName("hardheadAwardsNominations")]
         public async Task<IActionResult> RunAwardNominations(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/awards/nominations")] HttpRequest req,
             ILogger log)
@@ -31,7 +53,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            log.LogInformation("C# HTTP trigger function processed a request.");
+            log.LogInformation("C# HTTP trigger RunAwardNominations function processed a request.");
 
             // string name = req.Query["name"];
 
