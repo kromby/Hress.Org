@@ -10,6 +10,9 @@ using Newtonsoft.Json;
 using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.Hardhead.Entities;
 using System.Diagnostics;
+using Ez.Hress.Hardhead.DataAccess;
+using System.Configuration;
+using Azure.Data.Tables;
 
 namespace Ez.Hress.FunctionsApi.Hardhead
 {
@@ -17,11 +20,14 @@ namespace Ez.Hress.FunctionsApi.Hardhead
     {
         private readonly AwardInteractor _awardInteractor;
 
-        public HardheadAwards(AwardInteractor awardInteractor)
+        public HardheadAwards()
         {
-            _awardInteractor = awardInteractor;
+            var connectionString = Environment.GetEnvironmentVariable("TableConnectionString");
+            var client = new TableClient(connectionString, "HardheadNominations");
+            var dataAccess = new AwardTableDataAccess(new LoggerFactory().CreateLogger<AwardTableDataAccess>(), client);
+            _awardInteractor = new AwardInteractor(dataAccess, new LoggerFactory().CreateLogger<AwardInteractor>());
         }
-
+        
         [FunctionName("hardheadAwards")]
         public async Task<IActionResult> RunAwards(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/awards")] HttpRequest req,
