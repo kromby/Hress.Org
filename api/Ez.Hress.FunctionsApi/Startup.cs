@@ -28,16 +28,19 @@ namespace Ez.Hress.FunctionsApi
 
             //builder.Services.AddLogging();
 
-            ConfigureServices(builder, config);
+            ConfigureServices(builder.Services, config);
         }
 
-        public void ConfigureServices(IFunctionsHostBuilder builder, IConfigurationRoot config)
+        public void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
         {                      
             var connectionString = config["TableConnectionString"];
-            
-            builder.Services.AddSingleton(new TableClient(connectionString, "HardheadNominations"));
-            builder.Services.AddScoped<AwardInteractor>();
-            builder.Services.AddScoped<IAwardDataAccess, AwardTableDataAccess>();            
+
+
+            services.AddSingleton(new TableClient(connectionString, "HardheadNominations"));
+            services.AddScoped<AwardInteractor>();
+            services.AddScoped<IAwardDataAccess, AwardTableDataAccess>();
+
+            //services.AddA
         }
     }
 }
