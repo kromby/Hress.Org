@@ -36,9 +36,9 @@ namespace Ez.Hress.FunctionsApi
             var connectionString = config["TableConnectionString"];
 
 
-            //    services.AddSingleton(new TableClient(connectionString, "HardheadNominations"));
-            //    services.AddScoped<AwardInteractor>();
-            //    services.AddScoped<IAwardDataAccess, AwardTableDataAccess>();
+            services.AddSingleton(new TableClient(connectionString, "HardheadNominations"));
+            services.AddScoped<AwardInteractor>();
+            services.AddScoped<IAwardDataAccess, AwardTableDataAccess>();
 
             //    //services.AddA
         }
