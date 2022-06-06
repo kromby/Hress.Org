@@ -6,12 +6,12 @@ namespace Ez.Hress.Hardhead.UseCases
     public class AwardInteractor
     {
         private IAwardDataAccess _awardDataAccess;
-        //private ILogger<AwardInteractor> _log;
+        private ILogger<AwardInteractor> _log;
 
-        public AwardInteractor(IAwardDataAccess dataAccess/*, ILogger<AwardInteractor> log*/)
+        public AwardInteractor(IAwardDataAccess dataAccess, ILogger<AwardInteractor> log)
         {
             _awardDataAccess = dataAccess;
-            //_log = log;
+            _log = log;
         }
 
         public async Task<int> Nominate(Nomination nomination)
@@ -22,7 +22,7 @@ namespace Ez.Hress.Hardhead.UseCases
             nomination.Validate();
             nomination.CreatedDate = DateTime.Now;
 
-            //_log.LogInformation($"Nominating {nomination.NomineeID} in group {nomination.TypeID} for {nomination.Description} by {nomination.CreatedBy}");
+            _log.LogInformation($"Nominating {nomination.NomineeID} in group {nomination.TypeID} for {nomination.Description} by {nomination.CreatedBy}");
 
             var result = await _awardDataAccess.SaveNomination(nomination);
             return result;
