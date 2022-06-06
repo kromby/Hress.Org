@@ -20,12 +20,13 @@ namespace Ez.Hress.FunctionsApi.Hardhead
     {
         private readonly AwardInteractor _awardInteractor;
 
-        public HardheadAwards()
+        public HardheadAwards(AwardInteractor awardInteractor)
         {
-            var connectionString = Environment.GetEnvironmentVariable("TableConnectionString");
-            var client = new TableClient(connectionString, "HardheadNominations");
-            var dataAccess = new AwardTableDataAccess(new LoggerFactory().CreateLogger<AwardTableDataAccess>(), client);
-            _awardInteractor = new AwardInteractor(dataAccess, new LoggerFactory().CreateLogger<AwardInteractor>());
+            _awardInteractor = awardInteractor;
+            //var connectionString = Environment.GetEnvironmentVariable("TableConnectionString");
+            //var client = new TableClient(connectionString, "HardheadNominations");
+            //var dataAccess = new AwardTableDataAccess(new LoggerFactory().CreateLogger<AwardTableDataAccess>(), client);
+            //_awardInteractor = new AwardInteractor(dataAccess, new LoggerFactory().CreateLogger<AwardInteractor>());
         }
         
         [FunctionName("hardheadAwards")]
@@ -36,21 +37,20 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             
-            log.LogInformation("C# HTTP trigger RunAwards function processed a request.");
-
-            log.LogInformation($"Host: {req.Host.Value}");
+            log.LogInformation("[RunAwards] C# HTTP trigger function processed a request.");
+            log.LogInformation($"[RunAwards] Host: {req.Host.Value}");
 
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             //var json = JsonConvert.DeserializeObject(requestBody);
             Nomination nom = JsonConvert.DeserializeObject<Nomination>(requestBody);
 
-            log.LogInformation($"Request body: {requestBody}");
+            log.LogInformation($"[RunAwards] Request body: {requestBody}");
 
             _awardInteractor.DoNothing();
 
             stopwatch.Stop();
-            log.LogInformation($"Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+            log.LogInformation($"[RunAwards] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
 
             return new OkResult();
         }
@@ -64,33 +64,34 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            log.LogInformation("C# HTTP trigger RunAwardNominations function processed a request.");
+            log.LogInformation("[RunAwardNominations] C# HTTP trigger function processed a request.");
+            log.LogInformation($"[RunAwardNominations] Host: {req.Host.Value}");            
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             Nomination nom = JsonConvert.DeserializeObject<Nomination>(requestBody);
 
-            log.LogInformation($"Request body: {requestBody}");
+            log.LogInformation($"[RunAwardNominations] Request body: {requestBody}");
 
             try
             {
                 await _awardInteractor.Nominate(nom);
-                log.LogInformation("Return OK - No Content");
+                log.LogInformation("[RunAwardNominations] Return OK - No Content");
                 return new NoContentResult();
             }
             catch (ArgumentException aex)
             {
-                log.LogError(aex, "Invalid input");
+                log.LogError(aex, "[RunAwardNominations] Invalid input");
                 return new BadRequestObjectResult(aex.Message);
             }
             catch (Exception ex)
             {
-                log.LogError(ex, "Unhandled error");
+                log.LogError(ex, "[RunAwardNominations] Unhandled error");
                 throw;
             }
             finally
             {
                 stopwatch.Stop();
-                log.LogInformation($"Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+                log.LogInformation($"[RunAwardNominations] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
             }
         }
     }
