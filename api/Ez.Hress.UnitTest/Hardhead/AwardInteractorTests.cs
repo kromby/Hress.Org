@@ -19,7 +19,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         public void NominateOK_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
-            AwardInteractor interactor = new(awardMock.Object, _log.Object);
+            AwardInteractor interactor = new(awardMock.Object/*, _log.Object*/);
 
             Nomination entity = new()
             {
@@ -38,7 +38,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         public void NominateErrNoContent_Test()
         {            
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
-            AwardInteractor interactor = new(awardMock.Object, _log.Object);
+            AwardInteractor interactor = new(awardMock.Object/*, _log.Object*/);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             Assert.Throws<ArgumentNullException>(() => interactor.Nominate(null));
@@ -49,7 +49,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         public void NominateErrNomineeMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
-            AwardInteractor interactor = new(awardMock.Object, _log.Object);
+            AwardInteractor interactor = new(awardMock.Object/*, _log.Object*/);
 
             Nomination entity = new()
             {
@@ -65,7 +65,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         public void NominateErrTypeMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
-            AwardInteractor interactor = new(awardMock.Object, _log.Object);
+            AwardInteractor interactor = new(awardMock.Object/*, _log.Object*/);
 
             Nomination entity = new()
             {
@@ -81,7 +81,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         public void NominateErrCreatedByMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
-            AwardInteractor interactor = new(awardMock.Object, _log.Object);
+            AwardInteractor interactor = new(awardMock.Object/*, _log.Object*/);
 
             Nomination entity = new()
             {
@@ -97,7 +97,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         public void NominateErrDescriptionMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
-            AwardInteractor interactor = new(awardMock.Object, _log.Object);
+            AwardInteractor interactor = new(awardMock.Object/*, _log.Object*/);
 
             Nomination entity = new()
             {

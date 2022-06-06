@@ -24,8 +24,8 @@ namespace Ez.Hress.FunctionsApi.Hardhead
         {
             var connectionString = Environment.GetEnvironmentVariable("TableConnectionString");
             //var client = new TableClient(connectionString, "HardheadNominations");
-            var dataAccess = new AwardTableDataAccess(new LoggerFactory().CreateLogger<AwardTableDataAccess>(), null);
-            _awardInteractor = new AwardInteractor(dataAccess, new LoggerFactory().CreateLogger<AwardInteractor>());
+            var dataAccess = new AwardTableDataAccess(null);
+            _awardInteractor = new AwardInteractor(dataAccess);
         }
         
         [FunctionName("hardheadAwards")]
