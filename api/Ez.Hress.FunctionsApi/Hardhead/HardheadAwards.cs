@@ -24,7 +24,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
         {
             var connectionString = Environment.GetEnvironmentVariable("TableConnectionString");
             //var client = new TableClient(connectionString, "HardheadNominations");
-            var dataAccess = new AwardTableDataAccess(null);
+            var dataAccess = new AwardTableDataAccess();
             _awardInteractor = new AwardInteractor(dataAccess);
         }
         
@@ -43,6 +43,8 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             Nomination nom = JsonConvert.DeserializeObject<Nomination>(requestBody);
 
             log.LogInformation($"Request body: {requestBody}");
+
+            _awardInteractor.DoNothing();
 
             stopwatch.Stop();
             log.LogInformation($"Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
@@ -68,7 +70,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             try
             {
-                _awardInteractor.Nominate(nom);
+                await _awardInteractor.Nominate(nom);
                 log.LogInformation("Return OK - No Content");
                 return new NoContentResult();
             }

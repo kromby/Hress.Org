@@ -9,6 +9,6 @@ namespace Ez.Hress.Hardhead.UseCases
 {
     public interface IAwardDataAccess
     {
-        void SaveNomination(Nomination nomination);
+        Task<int> SaveNomination(Nomination nomination);
     }
 }

@@ -41,10 +41,10 @@ namespace Ez.Hress.UnitTest.Hardhead
             AwardInteractor interactor = new(awardMock.Object/*, _log.Object*/);
 
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Assert.Throws<ArgumentNullException>(() => interactor.Nominate(null));
+            Assert.ThrowsAsync<ArgumentNullException>(() => interactor.Nominate(null));
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         }
-
+        
         [Fact]
         public void NominateErrNomineeMissing_Test()
         {
@@ -58,7 +58,7 @@ namespace Ez.Hress.UnitTest.Hardhead
                 Description = "Test"
             };
 
-            Assert.Throws<ArgumentException>(() => interactor.Nominate(entity));
+            Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace Ez.Hress.UnitTest.Hardhead
                 Description = "Test"
             };
 
-            Assert.Throws<ArgumentException>(() => interactor.Nominate(entity));
+            Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
         }
 
         [Fact]
@@ -90,7 +90,7 @@ namespace Ez.Hress.UnitTest.Hardhead
                 Description = "Test"
             };
 
-            Assert.Throws<ArgumentException>(() => interactor.Nominate(entity));
+            Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
         }
 
         [Fact]
@@ -107,7 +107,7 @@ namespace Ez.Hress.UnitTest.Hardhead
                 Description = String.Empty
             };
 
-            Assert.Throws<ArgumentException>(() => interactor.Nominate(entity));
+            Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
         }
     }
 }

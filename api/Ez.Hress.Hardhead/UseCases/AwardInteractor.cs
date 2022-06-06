@@ -14,7 +14,7 @@ namespace Ez.Hress.Hardhead.UseCases
             //_log = log;
         }
 
-        public void Nominate(Nomination nomination)
+        public async Task<int> Nominate(Nomination nomination)
         {
             if (nomination == null)
                 throw new ArgumentNullException(nameof(nomination));            
@@ -24,7 +24,12 @@ namespace Ez.Hress.Hardhead.UseCases
 
             //_log.LogInformation($"Nominating {nomination.NomineeID} in group {nomination.TypeID} for {nomination.Description} by {nomination.CreatedBy}");
 
-            _awardDataAccess.SaveNomination(nomination);
+            var result = await _awardDataAccess.SaveNomination(nomination);
+            return result;
+        }
+
+        public void DoNothing()
+        {            
         }
     }
 }
