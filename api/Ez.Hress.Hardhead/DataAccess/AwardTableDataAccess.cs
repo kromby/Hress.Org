@@ -14,12 +14,12 @@ namespace Ez.Hress.Hardhead.DataAccess
     public class AwardTableDataAccess : IAwardDataAccess
     {
         //private readonly ILogger<AwardTableDataAccess> _log;
-        //private readonly TableClient _tableClient;
+        private readonly TableClient _tableClient;
 
-        public AwardTableDataAccess(/*ILogger<AwardTableDataAccess> log, TableClient client*/)
+        public AwardTableDataAccess(/*ILogger<AwardTableDataAccess> log, */TableClient client)
         {
             //_log = log;
-            //_tableClient = client;
+            _tableClient = client;
         }
         
         public async Task<int> SaveNomination(Nomination nomination)
@@ -27,7 +27,7 @@ namespace Ez.Hress.Hardhead.DataAccess
             //_log.LogInformation("Saving nomination");
 
             NominationTableEntity entity = new(nomination);
-            //await _tableClient.AddEntityAsync<NominationTableEntity>(entity);
+            await _tableClient.AddEntityAsync<NominationTableEntity>(entity);
             return 1;
         }
     }

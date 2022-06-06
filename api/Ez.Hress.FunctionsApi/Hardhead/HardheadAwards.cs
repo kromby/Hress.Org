@@ -23,8 +23,8 @@ namespace Ez.Hress.FunctionsApi.Hardhead
         public HardheadAwards()
         {
             var connectionString = Environment.GetEnvironmentVariable("TableConnectionString");
-            //var client = new TableClient(connectionString, "HardheadNominations");
-            var dataAccess = new AwardTableDataAccess();
+            var client = new TableClient(connectionString, "HardheadNominations");
+            var dataAccess = new AwardTableDataAccess(client);
             _awardInteractor = new AwardInteractor(dataAccess);
         }
         
@@ -37,7 +37,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             stopwatch.Start();
             
             log.LogInformation("C# HTTP trigger RunAwards function processed a request.");
-
+            
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             //var json = JsonConvert.DeserializeObject(requestBody);
             Nomination nom = JsonConvert.DeserializeObject<Nomination>(requestBody);
