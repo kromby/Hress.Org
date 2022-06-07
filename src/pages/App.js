@@ -16,12 +16,12 @@ import Magic from './frame/magic';
 import Menu from './frame/menu';
 import HardheadEdit from './hardhead/hardheadEdit';
 import Election from './hardhead/awards/election';
-import AwardSingle from './hardhead/awards/awardByType';
 import AwardsSidebar from './hardhead/awards/awardsSidebar';
 import AwardsByYear from './hardhead/awards/awardsByYear';
 import AwardsByType from './hardhead/awards/awardByType';
 import HHUsers from './hardhead/hhusers';
 import HHUserSidebar from './hardhead/hhusers/hhUserSidebar';
+import Nominations from './hardhead/awards/nominations';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();  
@@ -138,8 +138,9 @@ function App(props) {
           <Route exact path="/hardhead" component={Hardhead} />  
           <Route exact path="/hardhead/awards" component={Awards} /> 
           <Route path="/hardhead/awards/year/:id" component={AwardsByYear} />
-          <Route path="/hardhead/awards/:id" component={AwardsByType} /> 
-          <Route path="/hardhead/awards/election" component={Election} /> 
+          <Route exact path="/hardhead/awards/nominations" component={Nominations} />
+          <Route exact path="/hardhead/awards/election" component={Election} />      
+          <Route path="/hardhead/awards/:id" component={AwardsByType} />                
           <Route path="/hardhead/rules" component={Rules} />
           <Route path="/hardhead/users/:id" component={HHUsers} />
           <Route path="/hardhead/stats" component={Statistics} />
@@ -147,7 +148,7 @@ function App(props) {
           <PrivateRoute path="/hardhead/admin" component={Admin} />
           <Route exact path="/login" component={Login} />
           <Route path="/login/magic" component={Magic} />
-          <Route component={App} />
+          {/* <Route component={App} /> */}
         </Switch>
       
         {/* Sidebar */}
@@ -160,6 +161,7 @@ function App(props) {
           <Route path="/hardhead/:hardheadID" />              
           <Route path="/hardhead/awards/year/:id" />          
           <Route path="/hardhead/awards/election" />
+          <Route path="/hardhead/awards/nominations" />
           <Route path="/hardhead/rules" />   
           <Route path="/hardhead/stats" />   
         </Switch>

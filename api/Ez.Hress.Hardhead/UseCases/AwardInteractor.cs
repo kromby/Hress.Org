@@ -22,7 +22,7 @@ namespace Ez.Hress.Hardhead.UseCases
             nomination.Validate();
             nomination.CreatedDate = DateTime.Now;
 
-            _log.LogInformation($"Nominating {nomination.NomineeID} in group {nomination.TypeID} for {nomination.Description} by {nomination.CreatedBy}");
+            _log.LogInformation($"[AwardInteractor] Nominating {nomination.NomineeID} in group {nomination.TypeID} for {nomination.Description} by {nomination.CreatedBy}");
 
             var result = await _awardDataAccess.SaveNomination(nomination);
             return result;

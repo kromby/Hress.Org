@@ -16,7 +16,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         }
         
         [Fact]
-        public void NominateOK_Test()
+        public async void NominateOK_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardInteractor interactor = new(awardMock.Object, _log.Object);
@@ -30,8 +30,7 @@ namespace Ez.Hress.UnitTest.Hardhead
             };
 
             // Þarf líka að segja í hvaða flokki er verið að tilnefna
-            interactor.Nominate(entity);
-
+            await interactor.Nominate(entity);
         }
         
         [Fact]

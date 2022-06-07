@@ -80,9 +80,6 @@ const Menu = (propsData) => {
 
     useEffect(() => {
         const getMenuData = async  () => {
-            
-            // console.log("getMenuData");
-            // console.log(window.location.pathname);
 
                 try {
                     var url = config.get('path') + '/api/menus?navigateUrl=~' + window.location.pathname + '&fetchChildren=true&code=' + config.get('code');                    
@@ -92,23 +89,16 @@ const Menu = (propsData) => {
                         });
                         var userID = localStorage.getItem("userID");
                         setData({menuItems: response.data, isLoading: false, visible: true, userID: userID})
-                        // console.log("getMenuData - data retrieved");
-                        // console.log(response.data);
-                        // console.log(data.visible);
                     }
                     else {
                         const response = await axios.get(url);
                         setData({menuItems: response.data, isLoading: false, visible: true})
-                        // console.log("getMenuData - data retrieved");
-                        // console.log(response.data);
-                        // console.log(data.visible);
                     }                    
                 }
                 catch(e) {
                     console.error(e);
                     setData({isLoading: false, visible: false});
                 }                    
-            // console.log(data.visible);
         }
         getMenuData();
     }, [propsData, authTokens])
