@@ -1,0 +1,10 @@
+### Post nominations
+POST https://vefur.hress.org/api/hardhead/awards/nominations
+ Content-Type: application/json
+
+{
+    "description": "Kromby 70",
+    "typeID": 207,
+    "nomineeID": 2640,
+    "createdBy": 2630
+}

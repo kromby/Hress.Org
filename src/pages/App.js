@@ -22,6 +22,7 @@ import AwardsByType from './hardhead/awards/awardByType';
 import HHUsers from './hardhead/hhusers';
 import HHUserSidebar from './hardhead/hhusers/hhUserSidebar';
 import Nominations from './hardhead/awards/nominations';
+import HressLogin from '../.auth/hress';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();  
@@ -148,6 +149,7 @@ function App(props) {
           <PrivateRoute path="/hardhead/admin" component={Admin} />
           <Route exact path="/login" component={Login} />
           <Route path="/login/magic" component={Magic} />
+          <Route path="/hlogin" component={HressLogin} />
           {/* <Route component={App} /> */}
         </Switch>
       

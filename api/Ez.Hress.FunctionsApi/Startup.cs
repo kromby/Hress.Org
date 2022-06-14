@@ -1,6 +1,9 @@
 ﻿using Azure.Data.Tables;
 using Ez.Hress.Hardhead.DataAccess;
 using Ez.Hress.Hardhead.UseCases;
+using Ez.Hress.Shared;
+using Ez.Hress.Shared.Entities;
+using Ez.Hress.Shared.UseCases;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,14 +29,19 @@ namespace Ez.Hress.FunctionsApi
                 .AddEnvironmentVariables()
                 .Build();
 
-            //builder.Services.AddLogging();
-
             ConfigureServices(builder.Services, config);
         }
 
         public void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
         {
             var connectionString = config["TableConnectionString"];
+
+            var key = config["Ez.Hress.Authentication.Key"];
+            var issuer = config["Ez.Hress.Authentication.Issuer"];
+            var audience = config["Ez.Hress.Authentication.Audience"];
+
+            services.AddSingleton(new AuthenticationInfo(key, issuer, audience));
+            services.AddSingleton<AuthenticationInteractor>();
 
             services.AddSingleton(new TableClient(connectionString, "HardheadNominations"));
             services.AddSingleton<AwardInteractor>();
