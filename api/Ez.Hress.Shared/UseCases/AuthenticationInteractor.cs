@@ -31,12 +31,6 @@ namespace Ez.Hress.Shared.UseCases
             _log = log;
         }
 
-        public string GetSubject(string token)
-        {
-            _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Starting GetSubject(..)");
-            return DecryptToken(token);
-        }
-
         private string DecryptToken(string token)
         {
             _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Starting DecryptToken(..)");
@@ -86,8 +80,6 @@ namespace Ez.Hress.Shared.UseCases
 
         public Tuple<bool, int> GetUserIdFromToken(string scheme, string value)
         {
-            _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Starting GetUserIdFromToken(..)");
-
             if (string.IsNullOrWhiteSpace(scheme) || string.IsNullOrWhiteSpace(value))
             {
                 _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Scheme or token value is missing. Scheme: '{scheme}'");
@@ -102,7 +94,7 @@ namespace Ez.Hress.Shared.UseCases
 
             try
             {
-                var userIdString = GetSubject(value);
+                var userIdString = DecryptToken(value);
                 if (string.IsNullOrWhiteSpace(userIdString))
                 {
                     _log.LogInformation($"[{nameof(AuthenticationInteractor)}] UserId is missing. userIdString: '{userIdString}'");

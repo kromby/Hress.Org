@@ -17,16 +17,12 @@ namespace Ez.Hress.FunctionsApi
 
         public static bool GetAuthenticatedUserID(AuthenticationInteractor authenticationInteractor, IHeaderDictionary headers, out int userID, ILogger log)
         {
-
-            
-            if(!headers.ContainsKey(AUTHORIZATION_HEADER_NAME))
+            if (!headers.ContainsKey(AUTHORIZATION_HEADER_NAME))
             {
                 log.LogInformation($"[GetAuthenticatedUserID] AuthorisationHeader is missing.");
                 userID = -1;
                 return false;
             }
-
-            log.LogInformation($"[GetAuthenticatedUserID] {AUTHORIZATION_HEADER_NAME} header: '{headers[AUTHORIZATION_HEADER_NAME].ToString()}'");
 
             var authorizationHeader = headers[AUTHORIZATION_HEADER_NAME].ToString().Split(" ");
 
