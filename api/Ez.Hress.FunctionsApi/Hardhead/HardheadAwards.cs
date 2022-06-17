@@ -30,7 +30,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
         [FunctionName("hardheadAwardsNominations")]
         public async Task<IActionResult> RunAwardNominations(
-        [HttpTrigger(AuthorizationLevel.Admin, "post", Route = "hardhead/awards/nominations")] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "hardhead/awards/nominations")] HttpRequest req,
         ILogger log)
         {
             var stopwatch = new Stopwatch();

@@ -9,9 +9,9 @@ const Nominations = (propsData) => {
     const { authTokens } = useAuth();
     const [buttonEnabled, setButtonEnabled] = useState(false);
     const [users, setUsers] = useState();
-    const [user, setUser] = useState();
     const [description, setDescription] = useState();
     const [nominee, setNominee] = useState();
+    const [isSaved, setIsSaved] = useState(false);
 
     var url = config.get('path') + '/api/hardhead/5384/users?code=' + config.get('code');
 
@@ -37,7 +37,6 @@ const Nominations = (propsData) => {
         try {
             var postUrl = config.get('apiPath') + '/api/hardhead/awards/nominations';
             const response = await axios.post(postUrl, {
-                user: 2630,
                 typeID: 207,
                 description: description,
                 nomineeID: nominee
@@ -45,6 +44,7 @@ const Nominations = (propsData) => {
                 headers: { 'Authorization': 'token ' + authTokens.token },
             });
             console.log(response);
+            setIsSaved(true);
             // TODO: Display confirmation message
         } catch (e) {
             console.error(e);
@@ -64,6 +64,7 @@ const Nominations = (propsData) => {
             return false;
         }
 
+        setIsSaved(false);
         console.log("nomineeID: " + nomineeID);
         return true;
     }
@@ -96,6 +97,7 @@ const Nominations = (propsData) => {
                                     <textarea name="Lýsing" rows="3" onChange={(ev) => handleDescriptionChange(ev)} defaultValue={description} placeholder="Fyrir hvað vilt þú tilnefna?" />
                                 </div>
                                 <div className="col-12">
+                                    {isSaved ? <b>Tilnefning skráð!<br /></b> : null}
                                     <button tooltip="Tilnefna" className="button large" disabled={!buttonEnabled}>Tilnefna</button>
                                 </div>
                             </div>
