@@ -90,14 +90,14 @@ namespace Ez.Hress.Shared.UseCases
 
             if (string.IsNullOrWhiteSpace(scheme) || string.IsNullOrWhiteSpace(value))
             {
-                _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Scheme or token value is missing. Scheme: {scheme}");
+                _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Scheme or token value is missing. Scheme: '{scheme}'");
                 return new Tuple<bool, int>(false, -1);
             }
 
-            if (scheme != "token")
+            if (scheme.Trim().ToLower() != "token")
             {
-                return new Tuple<bool, int>(false, -1);
-                _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Scheme is not token. Scheme: {scheme}");
+                _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Scheme is not token. Scheme: '{scheme}'");
+                return new Tuple<bool, int>(false, -1);                
             }
 
             try
@@ -105,7 +105,7 @@ namespace Ez.Hress.Shared.UseCases
                 var userIdString = GetSubject(value);
                 if (string.IsNullOrWhiteSpace(userIdString))
                 {
-                    _log.LogInformation($"[{nameof(AuthenticationInteractor)}] UserId is missing. userIdString: {userIdString}");
+                    _log.LogInformation($"[{nameof(AuthenticationInteractor)}] UserId is missing. userIdString: '{userIdString}'");
                     return new Tuple<bool, int>(false, -1);
                 }
 
