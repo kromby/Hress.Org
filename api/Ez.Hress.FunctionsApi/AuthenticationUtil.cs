@@ -13,18 +13,22 @@ namespace Ez.Hress.FunctionsApi
 {
     internal class AuthenticationUtil
     {
+        private const string AUTHORIZATION_HEADER_NAME = "X-Custom-Authorization";
+
         public static bool GetAuthenticatedUserID(AuthenticationInteractor authenticationInteractor, IHeaderDictionary headers, out int userID, ILogger log)
         {
-            if(!headers.ContainsKey("Authorization"))
+
+            
+            if(!headers.ContainsKey(AUTHORIZATION_HEADER_NAME))
             {
                 log.LogInformation($"[GetAuthenticatedUserID] AuthorisationHeader is missing.");
                 userID = -1;
                 return false;
             }
 
-            log.LogInformation($"[GetAuthenticatedUserID] Authorization header: '{headers["Authorization"].ToString()}'");
+            log.LogInformation($"[GetAuthenticatedUserID] {AUTHORIZATION_HEADER_NAME} header: '{headers[AUTHORIZATION_HEADER_NAME].ToString()}'");
 
-            var authorizationHeader = headers["Authorization"].ToString().Split(" ");
+            var authorizationHeader = headers[AUTHORIZATION_HEADER_NAME].ToString().Split(" ");
 
             var authInfo = authenticationInteractor.GetUserIdFromToken(authorizationHeader[0], authorizationHeader[1]);
             userID = authInfo.Item2;

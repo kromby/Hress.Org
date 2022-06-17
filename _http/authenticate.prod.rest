@@ -4,5 +4,5 @@ POST https://ezhressapi.azurewebsites.net/api/authenticate?code=JRXXeaXTE5Y9WD2k
 Content-Type: application/json
 
 {
-	"code": "d229386d772e47e6a755b337e6de71ac"
+	"code": "d6148a6b2f4f456a898de6380a1fa814"
 }

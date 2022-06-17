@@ -42,7 +42,7 @@ const Nominations = (propsData) => {
                 description: description,
                 nomineeID: nominee
             }, {
-                headers: { 'Authorization': 'token ' + authTokens.token },
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
             console.log(response);
             setIsSaved(true);

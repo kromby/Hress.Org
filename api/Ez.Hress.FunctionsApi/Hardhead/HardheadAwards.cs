@@ -43,7 +43,6 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             if (!isJWTValid)
             {
                 log.LogInformation($"[RunAwardNominations] JWT is not valid!");
-                 return new UnauthorizedResult();
                 return new UnauthorizedResult();
             }
 

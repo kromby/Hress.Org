@@ -1,10 +1,10 @@
 ### Post nominations
 POST http://localhost:7071/api/hardhead/awards/nominations
 Content-Type: application/json
-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNTk4ODIxMzA2LCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.Az60hJb_KDzjGHDYxlYVgb1Mh2qOYkHODMArIF90Yy0
+Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjU1NDI1ODQwLCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.8VMka0EuC-JPGJvKreLPfN10xkMIA20G8_1p7d0ofZQ
 
 {
-    "description": "Kromby 70",
+    "description": "Kromby 71",
     "typeID": 207,
     "nomineeID": 2640,
     "createdBy": 2630
