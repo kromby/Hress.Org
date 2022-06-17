@@ -12,6 +12,7 @@ const Nominations = (propsData) => {
     const [description, setDescription] = useState();
     const [nominee, setNominee] = useState();
     const [isSaved, setIsSaved] = useState(false);
+    const [error, setError] = useState();
 
     var url = config.get('path') + '/api/hardhead/5384/users?code=' + config.get('code');
 
@@ -45,13 +46,15 @@ const Nominations = (propsData) => {
             });
             console.log(response);
             setIsSaved(true);
-            // TODO: Display confirmation message
-        } catch (e) {
-            console.error(e);
-            // TODO: Show error message                
+        } catch (e) {            
+            console.error(e); 
+            if(e.response && e.response.status === 400) {
+                setError("Ekki tókst að skrá tilnefningu! - " + e.message);
+            }
+            else {
+                setError("Ekki tókst að skrá tilnefningu!");
+            }
         }
-        //}   
-        // TODO: Redirect to main page if authTokens missing     
     }
 
     const handleNomineeChange = (event) => { setNominee(event.target.value); setButtonEnabled(allowSaving(event.target.value, description)); }
@@ -65,6 +68,7 @@ const Nominations = (propsData) => {
         }
 
         setIsSaved(false);
+        setError("");
         console.log("nomineeID: " + nomineeID);
         return true;
     }
@@ -98,6 +102,7 @@ const Nominations = (propsData) => {
                                 </div>
                                 <div className="col-12">
                                     {isSaved ? <b>Tilnefning skráð!<br /></b> : null}
+                                    {error ? <b>{error}<br /></b> : null}
                                     <button tooltip="Tilnefna" className="button large" disabled={!buttonEnabled}>Tilnefna</button>
                                 </div>
                             </div>
