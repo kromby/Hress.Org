@@ -132,13 +132,27 @@ const Menu = (propsData) => {
                     ) : null                    
                     }
 
-                    {authTokens !== undefined ?
+                    {data.visible && authTokens !== undefined ? 
+                        data.menuItems.map(item => 
+                        !item.Public ?
+                        <li key={item.Link.Href}>
+                            <Link to={"/" + item.Link.Href}>
+                                <h3>{item.Name}</h3>
+                                <p>{item.Description}</p>
+                            </Link>
+                        </li>: null
+                    ) : null                    
+                    }
+
+
+                    {authTokens !== undefined ? 
                     <li>
                         <Link to={"/hardhead?userID=" + data.userID}>
                             <h3>Mín kvöld</h3>
                             <p>Upplýsingar um öll kvöld sem þú hefur haldið</p>
                         </Link>
-                    </li> : null}
+                    </li>
+                     : null}
                 </ul>
                 </section>
 
