@@ -41,7 +41,11 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
             if (!isJWTValid)
+            {
+                log.LogInformation($"[RunAwardNominations] JWT is not valid!");
+                 return new UnauthorizedResult();
                 return new UnauthorizedResult();
+            }
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             Nomination nom = JsonConvert.DeserializeObject<Nomination>(requestBody);

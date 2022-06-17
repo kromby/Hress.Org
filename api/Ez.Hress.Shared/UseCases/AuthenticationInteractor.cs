@@ -61,8 +61,9 @@ namespace Ez.Hress.Shared.UseCases
                 }
                 return identity.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
             }
-            catch (SecurityTokenExpiredException)
+            catch (SecurityTokenExpiredException steeex)
             {
+                _log.LogError(steeex, $"[{nameof(AuthenticationInteractor)}] Token expired");
                 return string.Empty;
             }
         }
@@ -86,18 +87,27 @@ namespace Ez.Hress.Shared.UseCases
         public Tuple<bool, int> GetUserIdFromToken(string scheme, string value)
         {
             _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Starting GetUserIdFromToken(..)");
-            
+
             if (string.IsNullOrWhiteSpace(scheme) || string.IsNullOrWhiteSpace(value))
+            {
+                _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Scheme or token value is missing. Scheme: {scheme}");
                 return new Tuple<bool, int>(false, -1);
+            }
 
             if (scheme != "token")
+            {
                 return new Tuple<bool, int>(false, -1);
+                _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Scheme is not token. Scheme: {scheme}");
+            }
 
             try
             {
                 var userIdString = GetSubject(value);
                 if (string.IsNullOrWhiteSpace(userIdString))
+                {
+                    _log.LogInformation($"[{nameof(AuthenticationInteractor)}] UserId is missing. userIdString: {userIdString}");
                     return new Tuple<bool, int>(false, -1);
+                }
 
                 return new Tuple<bool, int>(true, int.Parse(userIdString, CultureInfo.CurrentCulture));
             }
