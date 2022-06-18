@@ -1,0 +1,32 @@
+﻿namespace Ez.Hress.Shared.Entities
+{
+    public class UserBasicEntity : EntityBase
+    {
+        public string? Username { get; set; }
+
+        public int ProfilePhotoId { private get; set; }
+
+        public string Href
+        {
+            get
+            {
+                return string.Format("/api/users/{0}", ID);
+            }
+        }
+
+        public HrefEntity? ProfilePhoto
+        {
+            get
+            {
+                if (ProfilePhotoId > 0)
+                {
+                    return new HrefEntity()
+                    {
+                        Href = string.Format("/api/images/{0}/content", ProfilePhotoId)
+                    };
+                }
+                return null;
+            }
+        }
+    }
+}

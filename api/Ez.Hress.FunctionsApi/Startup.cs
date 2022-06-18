@@ -2,6 +2,7 @@
 using Ez.Hress.Hardhead.DataAccess;
 using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.Shared;
+using Ez.Hress.Shared.DataAccess;
 using Ez.Hress.Shared.Entities;
 using Ez.Hress.Shared.UseCases;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
@@ -36,11 +37,13 @@ namespace Ez.Hress.FunctionsApi
         {
             var connectionString = config["TableConnectionString"];
 
-            var key = config["Ez.Hress.Authentication.Key"];
-            var issuer = config["Ez.Hress.Authentication.Issuer"];
-            var audience = config["Ez.Hress.Authentication.Audience"];
+            var key = config["Ez.Hress.Shared.Authentication.Key"];
+            var issuer = config["Ez.Hress.Shared.Authentication.Issuer"];
+            var audience = config["Ez.Hress.Shared.Authentication.Audience"];
+            var salt = config["Ez.Hress.Shared.Authentication.Salt"];
 
-            services.AddSingleton(new AuthenticationInfo(key, issuer, audience));
+            services.AddSingleton(new AuthenticationInfo(key, issuer, audience, salt));
+            services.AddSingleton<IAuthenticationDataAccess, AuthenticationSqlAccess>();
             services.AddSingleton<AuthenticationInteractor>();
 
             services.AddSingleton(new TableClient(connectionString, "HardheadNominations"));

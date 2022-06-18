@@ -17,12 +17,12 @@ using Ez.Hress.Shared.UseCases;
 
 namespace Ez.Hress.FunctionsApi.Hardhead
 {
-    public class HardheadAwards
+    public class HardheadAwardFunctions
     {
         private readonly AwardInteractor _awardInteractor;
         private readonly AuthenticationInteractor _authenticationInteractor;
 
-        public HardheadAwards(AuthenticationInteractor authenticationInteractor, AwardInteractor awardInteractor)
+        public HardheadAwardFunctions(AuthenticationInteractor authenticationInteractor, AwardInteractor awardInteractor)
         {
             _authenticationInteractor = authenticationInteractor;
             _awardInteractor = awardInteractor;            

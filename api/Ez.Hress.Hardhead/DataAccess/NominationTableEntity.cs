@@ -13,9 +13,10 @@ namespace Ez.Hress.Hardhead.DataAccess
     {
         public NominationTableEntity()
         {
-            PartitionKey = String.Empty;
-            RowKey = String.Empty;
-            Description = String.Empty;
+            PartitionKey = string.Empty;
+            RowKey = string.Empty;
+            Description = string.Empty;
+            NomineeName = string.Empty;
         }
 
         public NominationTableEntity(Nomination nomination)
@@ -23,7 +24,8 @@ namespace Ez.Hress.Hardhead.DataAccess
             PartitionKey = nomination.TypeID.ToString();
             RowKey = Guid.NewGuid().ToString();
 
-            NomineeID = nomination.NomineeID;
+            NomineeID = nomination.Nominee.ID;
+            NomineeName = nomination.Nominee.Name ?? string.Empty;
             Description = nomination.Description;
             CreatedBy = nomination.CreatedBy;
         }
@@ -34,6 +36,7 @@ namespace Ez.Hress.Hardhead.DataAccess
         public ETag ETag { get; set; }
 
         public int NomineeID { get; set; }
+        public string NomineeName { get; set; }
         public string Description { get; set; }
         public int CreatedBy { get; set; }
     }

@@ -1,5 +1,6 @@
 ﻿using Azure;
 using Azure.Data.Tables;
+using Ez.Hress.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,13 +9,18 @@ using System.Threading.Tasks;
 
 namespace Ez.Hress.Hardhead.Entities
 {
-    public class Nomination
+    public class Nomination : EntityBase
     {
-        public Guid ID { get; set; }
+        public Nomination(int typeID, int nomineeID, string description)
+        {
+            TypeID = typeID;
+            Nominee = new UserBasicEntity() { ID = nomineeID };
+            Description = description;
+        }
 
-        public int TypeID { get; set; }
-        
-        public int NomineeID { get; set; }
+        public int TypeID { get; set; }       
+
+        public UserBasicEntity  Nominee { get; set; }        
 
         public string Description { get; set; }
 
@@ -30,11 +36,14 @@ namespace Ez.Hress.Hardhead.Entities
             if (TypeID <= 0)
                 throw new ArgumentException("TypeID must be larger then zero", nameof(TypeID));
 
-            if (NomineeID <= 0)
-                throw new ArgumentException("NomineeID must be larger then zero", nameof(NomineeID));
+            //if (NomineeID <= 0)
+            //    throw new ArgumentException("NomineeID must be larger then zero", nameof(NomineeID));
 
             if (CreatedBy <= 0)
                 throw new ArgumentException("CreatedBy must be larger then zero", nameof(CreatedBy));
+
+            if (Nominee == null)
+                throw new ArgumentNullException(nameof(Nominee));
         }
     }
 }

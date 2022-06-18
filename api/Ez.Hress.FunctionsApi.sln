@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.Hardhead", "Ez.Hre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.UnitTest", "Ez.Hress.UnitTest\Ez.Hress.UnitTest.csproj", "{7E8A36BB-F3F9-4440-9670-E0334BB53A02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ez.Hress.Shared", "Ez.Hress.Shared\Ez.Hress.Shared.csproj", "{23DCBCB5-939B-45F3-A7C5-51776EE28F23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.Shared", "Ez.Hress.Shared\Ez.Hress.Shared.csproj", "{23DCBCB5-939B-45F3-A7C5-51776EE28F23}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

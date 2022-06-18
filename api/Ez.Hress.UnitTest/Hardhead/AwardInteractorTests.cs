@@ -21,12 +21,9 @@ namespace Ez.Hress.UnitTest.Hardhead
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardInteractor interactor = new(awardMock.Object, _log.Object);
 
-            Nomination entity = new()
+            Nomination entity = new(1, 1, "Test")
             {
-                NomineeID = 1,
-                TypeID = 1,
-                CreatedBy = 1,
-                Description = "Test"
+                CreatedBy = 1                
             };
 
             // Þarf líka að segja í hvaða flokki er verið að tilnefna
@@ -50,11 +47,9 @@ namespace Ez.Hress.UnitTest.Hardhead
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardInteractor interactor = new(awardMock.Object, _log.Object);
 
-            Nomination entity = new()
+            Nomination entity = new(1, 0, "Test")
             {
-                TypeID = 1,
-                CreatedBy = 1,
-                Description = "Test"
+                CreatedBy = 1
             };
 
             Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
@@ -66,11 +61,9 @@ namespace Ez.Hress.UnitTest.Hardhead
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardInteractor interactor = new(awardMock.Object, _log.Object);
 
-            Nomination entity = new()
+            Nomination entity = new(0, 1, "Test")
             {
-                NomineeID = 1,
-                CreatedBy = 1,
-                Description = "Test"
+                CreatedBy = 1
             };
 
             Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
@@ -82,12 +75,7 @@ namespace Ez.Hress.UnitTest.Hardhead
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardInteractor interactor = new(awardMock.Object, _log.Object);
 
-            Nomination entity = new()
-            {
-                NomineeID = 1,
-                TypeID = 1,
-                Description = "Test"
-            };
+            Nomination entity = new(1, 1, "Test");
 
             Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
         }
@@ -98,12 +86,9 @@ namespace Ez.Hress.UnitTest.Hardhead
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardInteractor interactor = new(awardMock.Object, _log.Object);
 
-            Nomination entity = new()
+            Nomination entity = new(1, 1, string.Empty)
             {
-                NomineeID = 1,
-                TypeID = 1,
-                CreatedBy = 1,
-                Description = String.Empty
+                CreatedBy = 1
             };
 
             Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));

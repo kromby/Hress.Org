@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Ez.Hress.Hardhead\Ez.Hress.Hardhead.csproj" />
+    <ProjectReference Include="..\Ez.Hress.Shared\Ez.Hress.Shared.csproj" />
   </ItemGroup>
 
 </Project>
