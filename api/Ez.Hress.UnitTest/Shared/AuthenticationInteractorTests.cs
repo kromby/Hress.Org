@@ -25,12 +25,12 @@ namespace Ez.Hress.UnitTest.Shared
         {
             // SETUP
             var username = "username";
-            var password = "treblebass";
+            var password = "password";
             var ipAddress = "127.0.0.1";
             var userID = 220;
             _authMock.Setup(x => x.GetUserID(username, It.IsAny<string>())).Returns(Task.FromResult<int>(userID));
             _authMock.Setup(x => x.SaveLoginInformation(userID, ipAddress)).Returns(Task.Delay(100));
-            var authInfo = new AuthenticationInfo("key", "issuer", "audience", "salt");
+            var authInfo = new AuthenticationInfo("keyKEYkey1234.#keyKEYkey1234.#keyKEYkey1234.#keyKEYkey1234.#", "issuer", "audience", "salt");
             var interactor = new AuthenticationInteractor(authInfo, _authMock.Object, _log.Object);
 
             // ACT
@@ -38,6 +38,50 @@ namespace Ez.Hress.UnitTest.Shared
 
             // ASSERT
             Assert.False(string.IsNullOrEmpty(jwt));
+        }
+
+        [Fact]
+        public async void LoginErrorMissingUsername_Test()
+        {
+            // SETUP
+            var username = string.Empty;
+            var password = "password";
+            var ipAddress = "127.0.0.1";
+            var authInfo = new AuthenticationInfo("keyKEYkey1234.#keyKEYkey1234.#keyKEYkey1234.#keyKEYkey1234.#", "issuer", "audience", "salt");
+            var interactor = new AuthenticationInteractor(authInfo, _authMock.Object, _log.Object);
+
+            // ACT & ASSERT
+            await Assert.ThrowsAsync<ArgumentNullException>(() => interactor.Login(username, password, ipAddress));           
+        }
+
+        [Fact]
+        public async void LoginErrorMissingPassword_Test()
+        {
+            // SETUP
+            var username = "username";
+            var password = string.Empty;
+            var ipAddress = "127.0.0.1";
+            var authInfo = new AuthenticationInfo("keyKEYkey1234.#keyKEYkey1234.#keyKEYkey1234.#keyKEYkey1234.#", "issuer", "audience", "salt");            
+            var interactor = new AuthenticationInteractor(authInfo, _authMock.Object, _log.Object);
+
+            // ACT & ASSERT
+            await Assert.ThrowsAsync<ArgumentNullException>(() => interactor.Login(username, password, ipAddress));
+        }
+
+        [Fact]
+        public async void LoginErrorUnauthorized_Test()
+        {
+            // SETUP
+            var username = "username";
+            var password = "password";
+            var ipAddress = "127.0.0.1";
+            var userID = -1;
+            _authMock.Setup(x => x.GetUserID(username, It.IsAny<string>())).Returns(Task.FromResult<int>(userID));            
+            var authInfo = new AuthenticationInfo("keyKEYkey1234.#keyKEYkey1234.#keyKEYkey1234.#keyKEYkey1234.#", "issuer", "audience", "salt");
+            var interactor = new AuthenticationInteractor(authInfo, _authMock.Object, _log.Object);
+
+            // ACT & ASSERT
+            await Assert.ThrowsAsync<UnauthorizedAccessException>(() => interactor.Login(username, password, ipAddress));
         }
     }
 }

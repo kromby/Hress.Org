@@ -16,7 +16,7 @@ namespace Ez.Hress.Hardhead.DataAccess
         private readonly ILogger<AwardTableDataAccess> _log;
         private readonly TableClient _tableClient;
 
-        public AwardTableDataAccess(ILogger<AwardTableDataAccess> log, TableClient client)
+        public AwardTableDataAccess(TableClient client, ILogger<AwardTableDataAccess> log)
         {
             _log = log;
             _tableClient = client;

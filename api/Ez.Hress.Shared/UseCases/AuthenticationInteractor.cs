@@ -78,16 +78,20 @@ namespace Ez.Hress.Shared.UseCases
             string hashed = HashPassword(password, Encoding.UTF32.GetBytes(_authenticationInfo.Salt));
 
             var userID = await _authenticationDataAccess.GetUserID(username, hashed);
+            
+            if(userID <= 0)
+            {
+                _log.LogWarning($"[{nameof(AuthenticationInteractor)}] User '{username}' not authenticated.");
+                throw new UnauthorizedAccessException();
+            }
 
             var loginTask = _authenticationDataAccess.SaveLoginInformation(userID, ipAddress);
 
-            // Create JWT token
-
-            // Return JWT token
+            var jwt = GetToken(userID.ToString());
 
             loginTask.Wait();
 
-            return "";
+            return jwt;
         }
 
         private string HashPassword(string password, byte[] salt)

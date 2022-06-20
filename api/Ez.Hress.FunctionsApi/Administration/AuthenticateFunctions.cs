@@ -8,13 +8,21 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using Ez.Hress.Shared.UseCases;
 
 namespace Ez.Hress.FunctionsApi.Administration
 {
-    public static class AuthenticateFunctions
+    public class AuthenticateFunctions
     {
+        private readonly AuthenticationInteractor _authenticationInteractor;
+
+        public AuthenticateFunctions(AuthenticationInteractor authenticationInteractor)
+        {
+            _authenticationInteractor = authenticationInteractor;
+        }
+
         [FunctionName("authenticate")]
-        public static async Task<IActionResult> Run(
+        public async Task<IActionResult> Run(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
@@ -30,13 +38,18 @@ namespace Ez.Hress.FunctionsApi.Administration
 
             try
             {
-                //await _awardInteractor.Nominate(nom);
-                return new NoContentResult();
+                var jwt = await _authenticationInteractor.Login(body.Username, body.Password, req.HttpContext.Connection.RemoteIpAddress.ToString());
+                return new OkObjectResult(jwt);
             }
             catch (ArgumentException aex)
             {
                 log.LogError(aex, "[RunAwardNominations] Invalid input");
                 return new BadRequestObjectResult(aex.Message);
+            }
+            catch(UnauthorizedAccessException uaex)
+            {
+                log.LogError(uaex, "[RunAwardNominations] Unauthorized");
+                return new UnauthorizedResult();
             }
             catch (Exception ex)
             {

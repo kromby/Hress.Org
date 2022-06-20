@@ -31,18 +31,16 @@ namespace Ez.Hress.UnitTest.Hardhead
         }
         
         [Fact]
-        public void NominateErrNoContent_Test()
+        public async void NominateErrNoContent_Test()
         {            
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardInteractor interactor = new(awardMock.Object, _log.Object);
 
-#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-            Assert.ThrowsAsync<ArgumentNullException>(() => interactor.Nominate(null));
-#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+            await Assert.ThrowsAsync<ArgumentNullException>(() => interactor.Nominate(null));
         }
         
         [Fact]
-        public void NominateErrNomineeMissing_Test()
+        public async void NominateErrNomineeMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardInteractor interactor = new(awardMock.Object, _log.Object);
@@ -52,11 +50,11 @@ namespace Ez.Hress.UnitTest.Hardhead
                 CreatedBy = 1
             };
 
-            Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
+            await Assert.ThrowsAsync<ArgumentNullException>(() => interactor.Nominate(entity));
         }
 
         [Fact]
-        public void NominateErrTypeMissing_Test()
+        public async void NominateErrTypeMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardInteractor interactor = new(awardMock.Object, _log.Object);
@@ -66,22 +64,22 @@ namespace Ez.Hress.UnitTest.Hardhead
                 CreatedBy = 1
             };
 
-            Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
+            await Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
         }
 
         [Fact]
-        public void NominateErrCreatedByMissing_Test()
+        public async void NominateErrCreatedByMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardInteractor interactor = new(awardMock.Object, _log.Object);
 
             Nomination entity = new(1, 1, "Test");
 
-            Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
+            await Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
         }
 
         [Fact]
-        public void NominateErrDescriptionMissing_Test()
+        public async void NominateErrDescriptionMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardInteractor interactor = new(awardMock.Object, _log.Object);
@@ -91,7 +89,7 @@ namespace Ez.Hress.UnitTest.Hardhead
                 CreatedBy = 1
             };
 
-            Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
+            await Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
         }
     }
 }

@@ -36,13 +36,10 @@ namespace Ez.Hress.Hardhead.Entities
             if (TypeID <= 0)
                 throw new ArgumentException("TypeID must be larger then zero", nameof(TypeID));
 
-            //if (NomineeID <= 0)
-            //    throw new ArgumentException("NomineeID must be larger then zero", nameof(NomineeID));
-
             if (CreatedBy <= 0)
                 throw new ArgumentException("CreatedBy must be larger then zero", nameof(CreatedBy));
 
-            if (Nominee == null)
+            if (Nominee == null || Nominee.ID <= 0)
                 throw new ArgumentNullException(nameof(Nominee));
         }
     }

@@ -35,18 +35,21 @@ namespace Ez.Hress.FunctionsApi
 
         public void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
         {
-            var connectionString = config["TableConnectionString"];
+            var tableConnectionString = config["Ez.Hress.AzureStorage.TableConnectionString"];
+            var dbConnectionString = config["Ez.Hress.Database.ConnectionString"];
 
             var key = config["Ez.Hress.Shared.Authentication.Key"];
             var issuer = config["Ez.Hress.Shared.Authentication.Issuer"];
             var audience = config["Ez.Hress.Shared.Authentication.Audience"];
             var salt = config["Ez.Hress.Shared.Authentication.Salt"];
 
+            services.AddSingleton(new DbConnectionInfo(dbConnectionString));
+
             services.AddSingleton(new AuthenticationInfo(key, issuer, audience, salt));
             services.AddSingleton<IAuthenticationDataAccess, AuthenticationSqlAccess>();
             services.AddSingleton<AuthenticationInteractor>();
 
-            services.AddSingleton(new TableClient(connectionString, "HardheadNominations"));
+            services.AddSingleton(new TableClient(tableConnectionString, "HardheadNominations"));
             services.AddSingleton<AwardInteractor>();
             services.AddSingleton<IAwardDataAccess, AwardTableDataAccess>();
         }

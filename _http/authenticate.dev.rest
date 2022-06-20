@@ -1,5 +1,5 @@
 ### Authenticate with user and pass
-POST http://localhost:7071/api/Authenticate HTTP/1.1
+POST http://localhost:7072/api/Authenticate HTTP/1.1
 Content-Type: application/json
 
 {

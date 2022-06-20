@@ -4,7 +4,7 @@ POST https://vefur.hress.org/api/hardhead/awards/nominations
  X-Custom-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjU1NDc0Njc4LCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.DbCwD8EBxQ3G1yTr3OhWPBejSShuqqdzd8PMmofp_pA
 
 {
-    "description": "Kromby 81",
+    "description": "Kromby 82",
     "typeID": 207,
     "nomineeID": 2640,
     "createdBy": 2630
