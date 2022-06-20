@@ -22,19 +22,20 @@ namespace Ez.Hress.FunctionsApi.Administration
         }
 
         [FunctionName("authenticate")]
-        public async Task<IActionResult> Run(
+        public async Task<IActionResult> RunAuthenticate(
             [HttpTrigger(AuthorizationLevel.Function, "post", Route = null)] HttpRequest req,
             ILogger log)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             
-            log.LogInformation("[Authenticate] C# HTTP trigger function processed a request.");
+            log.LogInformation("[RunAuthenticate] C# HTTP trigger function processed a request.");
 
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
             AuthenticateBody body = JsonConvert.DeserializeObject<AuthenticateBody>(requestBody);
 
-            log.LogInformation($"[RunAwardNominations] Request username: {body.Username}");
+            log.LogInformation($"[RunAuthenticate] Request username: {body.Username}");
+            log.LogInformation($"[RunAuthenticate] Request IP Address: {req.HttpContext.Connection.RemoteIpAddress}");
 
             try
             {
@@ -43,23 +44,23 @@ namespace Ez.Hress.FunctionsApi.Administration
             }
             catch (ArgumentException aex)
             {
-                log.LogError(aex, "[RunAwardNominations] Invalid input");
+                log.LogError(aex, "[RunAuthenticate] Invalid input");
                 return new BadRequestObjectResult(aex.Message);
             }
             catch(UnauthorizedAccessException uaex)
             {
-                log.LogError(uaex, "[RunAwardNominations] Unauthorized");
+                log.LogError(uaex, "[RunAuthenticate] Unauthorized");
                 return new UnauthorizedResult();
             }
             catch (Exception ex)
             {
-                log.LogError(ex, "[RunAwardNominations] Unhandled error");
+                log.LogError(ex, "[RunAuthenticate] Unhandled error");
                 throw;
             }
             finally
             {
                 stopwatch.Stop();
-                log.LogInformation($"[RunAwardNominations] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+                log.LogInformation($"[RunAuthenticate] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
             }
         }
     }
