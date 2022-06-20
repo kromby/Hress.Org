@@ -35,11 +35,11 @@ namespace Ez.Hress.FunctionsApi.Administration
             AuthenticateBody body = JsonConvert.DeserializeObject<AuthenticateBody>(requestBody);
 
             log.LogInformation($"[RunAuthenticate] Request username: {body.Username}");
-            log.LogInformation($"[RunAuthenticate] Request IP Address: {req.HttpContext.Connection.RemoteIpAddress}");
+            log.LogInformation($"[RunAuthenticate] Request IP Address: {req.HttpContext.Connection.RemoteIpAddress.MapToIPv4()}");
 
             try
             {
-                var jwt = await _authenticationInteractor.Login(body.Username, body.Password, req.HttpContext.Connection.RemoteIpAddress.ToString());
+                var jwt = await _authenticationInteractor.Login(body.Username, body.Password, req.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString());
                 return new OkObjectResult(jwt);
             }
             catch (ArgumentException aex)
