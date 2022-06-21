@@ -1,5 +1,13 @@
-### Authenticate with code
+### Authenticate with user and pass
+POST https://vefur.hress.org/api/Authenticate HTTP/1.1
+Content-Type: application/json
 
+{
+	"username":"kromby",
+	"password":"1979gk"
+}
+
+### Authenticate with code
 POST https://ezhressapi.azurewebsites.net/api/authenticate?code=JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==
 Content-Type: application/json
 

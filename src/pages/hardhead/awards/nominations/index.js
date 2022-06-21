@@ -19,8 +19,9 @@ const Nominations = (propsData) => {
     useEffect(() => {
         const getUsers = async () => {
             try {
+                var userID = localStorage.getItem("userID");
                 const response = await axios.get(url);
-                setUsers(response.data);
+                setUsers(response.data.filter(user => user.ID != userID));
             } catch (e) {
                 console.error(e);
             }
@@ -89,7 +90,7 @@ const Nominations = (propsData) => {
                                     {users ?
                                         <select id="demo-category" name="demo-category" onChange={(ev) => handleNomineeChange(ev)}>
                                             <option value="">- Hvaða Harðhaus vilt þú tilnefna? -</option>
-                                            {users.sort((a, b) => a.Name > b.Name ? 1 : -1).map(user =>
+                                            {users.sort((a, b) => a.Name.toLowerCase() > b.Name.toLowerCase() ? 1 : -1).map(user =>
                                                 <option key={user.ID} value={user.ID}>
                                                     {user.Name}
                                                 </option>

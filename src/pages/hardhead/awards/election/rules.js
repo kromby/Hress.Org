@@ -81,7 +81,6 @@ const Rules = (propsData) => {
         tempList.push({EventID: id, PollEntryID: changeId, Value: value});
         setSelectedValues(tempList);
 
-        console.log("tempList.filter(v => v.Value === 0).length: " + tempList.filter(v => v.Value === 0).length);
         if(tempList.filter(v => v.Value === 0).length === 0) {            
             setSavingAllowed(true);            
         }            
