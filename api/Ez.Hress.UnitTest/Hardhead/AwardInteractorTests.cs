@@ -1,5 +1,7 @@
 using Ez.Hress.Hardhead.Entities;
 using Ez.Hress.Hardhead.UseCases;
+using Ez.Hress.Shared.Entities;
+using Ez.Hress.Shared.UseCases;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -7,26 +9,30 @@ namespace Ez.Hress.UnitTest.Hardhead
 {
     public class AwardInteractorTests
     {
-        private readonly Mock<IAwardDataAccess> awardMock;
-        private readonly Mock<ILogger<AwardInteractor>> _log;
+        private readonly Mock<IAwardNominateDataAccess> awardMock;
+        private readonly Mock<IUserInteractor> userMock;
+        private readonly Mock<ILogger<AwardNominateInteractor>> _log;
         public AwardInteractorTests()
         {
-            awardMock = new Mock<IAwardDataAccess>();
-            _log = new Mock<ILogger<AwardInteractor>>();
+            awardMock = new Mock<IAwardNominateDataAccess>();
+            userMock = new Mock<IUserInteractor>();
+            _log = new Mock<ILogger<AwardNominateInteractor>>();
         }
         
         [Fact]
         public async void NominateOK_Test()
         {
+            // SETUP
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
-            AwardInteractor interactor = new(awardMock.Object, _log.Object);
+            userMock.Setup(y => y.GetUser(It.IsAny<int>())).ReturnsAsync(new UserBasicEntity { ID = 1, Username = "test" });
+            AwardNominateInteractor interactor = new(awardMock.Object, userMock.Object, _log.Object);
 
             Nomination entity = new(1, 1, "Test")
             {
                 CreatedBy = 1                
             };
 
-            // Þarf líka að segja í hvaða flokki er verið að tilnefna
+            // ACT
             await interactor.Nominate(entity);
         }
         
@@ -34,7 +40,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         public async void NominateErrNoContent_Test()
         {            
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
-            AwardInteractor interactor = new(awardMock.Object, _log.Object);
+            AwardNominateInteractor interactor = new(awardMock.Object, userMock.Object, _log.Object);
 
             await Assert.ThrowsAsync<ArgumentNullException>(() => interactor.Nominate(null));
         }
@@ -43,7 +49,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         public async void NominateErrNomineeMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
-            AwardInteractor interactor = new(awardMock.Object, _log.Object);
+            AwardNominateInteractor interactor = new(awardMock.Object, userMock.Object, _log.Object);
 
             Nomination entity = new(1, 0, "Test")
             {
@@ -57,7 +63,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         public async void NominateErrTypeMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
-            AwardInteractor interactor = new(awardMock.Object, _log.Object);
+            AwardNominateInteractor interactor = new(awardMock.Object, userMock.Object, _log.Object);
 
             Nomination entity = new(0, 1, "Test")
             {
@@ -71,7 +77,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         public async void NominateErrCreatedByMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
-            AwardInteractor interactor = new(awardMock.Object, _log.Object);
+            AwardNominateInteractor interactor = new(awardMock.Object, userMock.Object, _log.Object);
 
             Nomination entity = new(1, 1, "Test");
 
@@ -82,7 +88,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         public async void NominateErrDescriptionMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
-            AwardInteractor interactor = new(awardMock.Object, _log.Object);
+            AwardNominateInteractor interactor = new(awardMock.Object, userMock.Object, _log.Object);
 
             Nomination entity = new(1, 1, string.Empty)
             {

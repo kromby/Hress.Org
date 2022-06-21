@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Ez.Hress.Hardhead.UseCases
 {
-    public interface IAwardDataAccess
+    public interface IAwardNominateDataAccess
     {
         Task<int> SaveNomination(Nomination nomination);
     }

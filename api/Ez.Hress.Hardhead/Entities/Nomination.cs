@@ -20,7 +20,7 @@ namespace Ez.Hress.Hardhead.Entities
 
         public int TypeID { get; set; }       
 
-        public UserBasicEntity  Nominee { get; set; }        
+        public UserBasicEntity Nominee { get; set; }        
 
         public string Description { get; set; }
 

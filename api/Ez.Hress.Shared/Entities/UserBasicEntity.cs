@@ -22,7 +22,8 @@
                 {
                     return new HrefEntity()
                     {
-                        Href = string.Format("/api/images/{0}/content", ProfilePhotoId)
+                        Href = string.Format("/api/images/{0}/content", ProfilePhotoId),
+                        ID = ProfilePhotoId
                     };
                 }
                 return null;

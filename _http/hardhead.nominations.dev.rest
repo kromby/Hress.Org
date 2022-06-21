@@ -1,11 +1,11 @@
 ### Post nominations
-POST http://localhost:7071/api/hardhead/awards/nominations
+POST http://localhost:7072/api/hardhead/awards/nominations
 Content-Type: application/json
-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjU1NDI1ODQwLCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.8VMka0EuC-JPGJvKreLPfN10xkMIA20G8_1p7d0ofZQ
+X-Custom-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjU1ODU0MDQ1LCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.DRJNE2w2SjfzNuiR-cnmlEY7sgGZZYqp80H0rv9bVcU
 
 {
-    "description": "Kromby 71",
+    "description": "Kromby 101",
     "typeID": 207,
-    "nomineeID": 2640,
+    "nomineeID": 2668,
     "createdBy": 2630
 }

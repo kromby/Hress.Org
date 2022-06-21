@@ -49,9 +49,12 @@ namespace Ez.Hress.FunctionsApi
             services.AddSingleton<IAuthenticationDataAccess, AuthenticationSqlAccess>();
             services.AddSingleton<AuthenticationInteractor>();
 
+            services.AddSingleton<IUserDataAccess, UserSqlDataAccess>();
+            services.AddSingleton<IUserInteractor, UserInteractor>();
+
             services.AddSingleton(new TableClient(tableConnectionString, "HardheadNominations"));
-            services.AddSingleton<AwardInteractor>();
-            services.AddSingleton<IAwardDataAccess, AwardTableDataAccess>();
+            services.AddSingleton<AwardNominateInteractor>();
+            services.AddSingleton<IAwardNominateDataAccess, AwardNominateTableDataAccess>();
         }
     }
 }

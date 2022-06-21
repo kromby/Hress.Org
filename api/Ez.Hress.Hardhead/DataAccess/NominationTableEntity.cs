@@ -26,6 +26,10 @@ namespace Ez.Hress.Hardhead.DataAccess
 
             NomineeID = nomination.Nominee.ID;
             NomineeName = nomination.Nominee.Name ?? string.Empty;
+            if (nomination.Nominee.ProfilePhoto != null)
+            {
+                NomineeImageID = nomination.Nominee.ProfilePhoto.ID > 0 ? nomination.Nominee.ProfilePhoto.ID : null;
+            }
             Description = nomination.Description;
             CreatedBy = nomination.CreatedBy;
         }
@@ -37,6 +41,7 @@ namespace Ez.Hress.Hardhead.DataAccess
 
         public int NomineeID { get; set; }
         public string NomineeName { get; set; }
+        public int? NomineeImageID { get; set; }
         public string Description { get; set; }
         public int CreatedBy { get; set; }
     }

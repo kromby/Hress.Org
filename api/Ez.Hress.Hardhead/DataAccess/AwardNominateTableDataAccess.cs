@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace Ez.Hress.Hardhead.DataAccess
 {
-    public class AwardTableDataAccess : IAwardDataAccess
+    public class AwardNominateTableDataAccess : IAwardNominateDataAccess
     {
-        private readonly ILogger<AwardTableDataAccess> _log;
+        private readonly ILogger<AwardNominateTableDataAccess> _log;
         private readonly TableClient _tableClient;
 
-        public AwardTableDataAccess(TableClient client, ILogger<AwardTableDataAccess> log)
+        public AwardNominateTableDataAccess(TableClient client, ILogger<AwardNominateTableDataAccess> log)
         {
             _log = log;
             _tableClient = client;

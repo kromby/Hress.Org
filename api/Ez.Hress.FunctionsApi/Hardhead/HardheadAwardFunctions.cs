@@ -19,10 +19,10 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 {
     public class HardheadAwardFunctions
     {
-        private readonly AwardInteractor _awardInteractor;
+        private readonly AwardNominateInteractor _awardInteractor;
         private readonly AuthenticationInteractor _authenticationInteractor;
 
-        public HardheadAwardFunctions(AuthenticationInteractor authenticationInteractor, AwardInteractor awardInteractor)
+        public HardheadAwardFunctions(AuthenticationInteractor authenticationInteractor, AwardNominateInteractor awardInteractor)
         {
             _authenticationInteractor = authenticationInteractor;
             _awardInteractor = awardInteractor;            
