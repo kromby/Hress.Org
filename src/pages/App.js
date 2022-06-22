@@ -64,8 +64,6 @@ function App(props) {
   checkExistingTokens();
 
   const toggleMenu = () => {
-    // console.log(showMenu);
-    // setData({showMenu});
     var visible = !data.showMenu;
     
     if(visible)
@@ -91,47 +89,18 @@ function App(props) {
             </nav>
             <nav className="main">
               <ul>
-                <li className="search">
+                <li className="search" onClick={() => toggleMenu(true)}>
                   <a className="fa-search" href="#search">Search</a>
-                  <form id="search" method="get" action="#">
+                  {/* <form id="search" method="get" action="#">
                     <input type="text" name="query" placeholder="Search" />
-                  </form>
+                  </form> */}
                 </li>
                 <li className="menu" onClick={() => toggleMenu(true)}>
-                  {/* <a className="fa-bars" href="#menu">Menu</a> */}
-                  <span className="fa-bars">Menu</span>
+                  <a className="fa-bars" href="#menu">Menu</a>
                 </li>                
               </ul>
             </nav>
           </header>
-
-          
-
-          {/* <section id="menu">
-              <section>
-                <form className="search" method="get" action="#">
-                  <input type="text" name="query" placeholder="Search" />
-                </form>
-              </section>
-
-              <section>
-                <ul className="links">
-                  <li>
-                    <a href="#">
-                      <h3>Lorem ipsum</h3>
-                      <p>Feugiat tempus veroeros dolor</p>
-                    </a>
-                  </li> 
-                </ul>
-              </section>
-
-              <section>
-                <ul className="actions stacked">
-                  <li><a href="#" className="button large fit">Log In</a></li>
-                </ul>
-              </section>
-
-            </section>           */}
 
         {/* Main section */}
         <Switch>          

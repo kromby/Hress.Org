@@ -7,7 +7,7 @@ import StatisticSide from './statistics/statisticsSide';
 import RulesSide from './rules/rulesSide';
 import YearsSide from './components/yearsSide';
 
-function HardheadSidebar() {
+const HardheadSidebar = (propsData) => {
     return (
         <section id="sidebar">
             <Intro logo="https://hress.azurewebsites.net/App_Themes/Default/Images/Logo.png" title="Harðhaus" description="" />
@@ -25,7 +25,7 @@ function HardheadSidebar() {
 			{/* <!-- Posts List --> */}
 			<section>
 				<ul className="posts">
-					<YearsSide/>
+					{/* <YearsSide/> */}
 				</ul>
 			</section>
 

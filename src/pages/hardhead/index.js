@@ -42,7 +42,9 @@ const Hardhead = (propsData) => {
 			return url;
 		}
 
-		getHardheads();
+		if(!hardheads) {
+			getHardheads();
+		}
 	}, [propsData])
 
 	return (

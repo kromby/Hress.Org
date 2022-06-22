@@ -7,22 +7,22 @@ import { Redirect } from 'react-router-dom';
 import { Post } from '../../components';
 
 function Login(props) {
-    const [isLoggedIn, setLoggedIn] = useState(false);
     const [isError, setIsError] = useState(false);
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const { authTokens, setAuthTokens } = useAuth();
-    const referer = props.location.state ? props.location.state.referer : '/';
+    const referer = props.location.state ? props.location.state.from : '/';
 
     function postLogin() {        
         console.log("postLogin()");
         console.log("postLogin() - " + username + ":" + password);
-        var url = config.get('path') + '/api/users/2630?code=' + config.get('code');	
+        var url = config.get('apiPath') + '/api/authenticate';
         axios.post(url, {username, password}).then(
             result => {
                 if(result.status === 200) {
-                    // setAuthTokens(result.data);
-                    setAuthTokens({ token: "smu" });
+                    console.log("/api/authenticate OK");
+                    console.log(result.data);
+                    setAuthTokens({ token: result.data });
                     setLoggedIn(true);
                 } else {
                     setIsError(true);
@@ -34,13 +34,10 @@ function Login(props) {
         });        
     }
 
-    if(isLoggedIn) {
+    if(authTokens !== undefined) {
+        console.log("referer: " + referer);
         return <Redirect to={referer} />
     }
-
-    // function handleSubmit() {
-    //     console.log("Submit - " + username + ":" + password);
-    // }
 
     return (
         <div id="main">
@@ -48,7 +45,6 @@ function Login(props) {
             
             <Post 
                 title="Innskráning" 
-                description={<span>authTokens<br/>{authTokens ? JSON.stringify(authTokens) : null}</span>}
                 body={    
                     <div className="row gtr-uniform">
                         <div className="col-6 col-12-xsmall">
