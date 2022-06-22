@@ -25,7 +25,7 @@ const HardheadSidebar = (propsData) => {
 			{/* <!-- Posts List --> */}
 			<section>
 				<ul className="posts">
-					{/* <YearsSide/> */}
+					<YearsSide/>
 				</ul>
 			</section>
 
