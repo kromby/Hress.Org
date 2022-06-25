@@ -7,12 +7,12 @@ using Moq;
 
 namespace Ez.Hress.UnitTest.Hardhead
 {
-    public class AwardInteractorTests
+    public class AwardNominateTests
     {
         private readonly Mock<IAwardNominateDataAccess> awardMock;
         private readonly Mock<IUserInteractor> userMock;
         private readonly Mock<ILogger<AwardNominateInteractor>> _log;
-        public AwardInteractorTests()
+        public AwardNominateTests()
         {
             awardMock = new Mock<IAwardNominateDataAccess>();
             userMock = new Mock<IUserInteractor>();
@@ -29,7 +29,7 @@ namespace Ez.Hress.UnitTest.Hardhead
 
             Nomination entity = new(1, 1, "Test")
             {
-                CreatedBy = 1                
+                InsertedBy = 1                
             };
 
             // ACT
@@ -53,7 +53,7 @@ namespace Ez.Hress.UnitTest.Hardhead
 
             Nomination entity = new(1, 0, "Test")
             {
-                CreatedBy = 1
+                InsertedBy = 1
             };
 
             await Assert.ThrowsAsync<ArgumentNullException>(() => interactor.Nominate(entity));
@@ -67,7 +67,7 @@ namespace Ez.Hress.UnitTest.Hardhead
 
             Nomination entity = new(0, 1, "Test")
             {
-                CreatedBy = 1
+                InsertedBy = 1
             };
 
             await Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));
@@ -92,7 +92,7 @@ namespace Ez.Hress.UnitTest.Hardhead
 
             Nomination entity = new(1, 1, string.Empty)
             {
-                CreatedBy = 1
+                InsertedBy = 1
             };
 
             await Assert.ThrowsAsync<ArgumentException>(() => interactor.Nominate(entity));

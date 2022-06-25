@@ -19,18 +19,20 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 {
     public class HardheadAwardFunctions
     {
-        private readonly AwardNominateInteractor _awardInteractor;
+        private readonly AwardNominateInteractor _awardWriteInteractor;
+        private readonly AwardNominationInteractor _awardReadInteractor;
         private readonly AuthenticationInteractor _authenticationInteractor;
 
-        public HardheadAwardFunctions(AuthenticationInteractor authenticationInteractor, AwardNominateInteractor awardInteractor)
+        public HardheadAwardFunctions(AuthenticationInteractor authenticationInteractor, AwardNominateInteractor awardWriteInteractor, AwardNominationInteractor awardReadInteractor)
         {
             _authenticationInteractor = authenticationInteractor;
-            _awardInteractor = awardInteractor;            
+            _awardWriteInteractor = awardWriteInteractor;
+            _awardReadInteractor = awardReadInteractor;
         }
 
         [FunctionName("hardheadAwardsNominations")]
         public async Task<IActionResult> RunAwardNominations(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "hardhead/awards/nominations")] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "hardhead/awards/nominations")] HttpRequest req,
         ILogger log)
         {
             var stopwatch = new Stopwatch();
@@ -46,16 +48,17 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                 return new UnauthorizedResult();
             }
 
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            Nomination nom = JsonConvert.DeserializeObject<Nomination>(requestBody);
-            nom.CreatedBy = userID;
-
-            log.LogInformation($"[RunAwardNominations] Request body: {requestBody}");
-
             try
             {
-                await _awardInteractor.Nominate(nom);
-                return new NoContentResult();
+                if (HttpMethods.IsGet(req.Method))
+                    return await GetAwardNominations(req, userID, log);
+                else if (HttpMethods.IsPost(req.Method))
+                    return await PostAwardNominations(req, userID, log);
+                else
+                {
+                    log.LogError($"[RunAwardNominations] HttpMethod '{req.Method}' ist not yet supported.");
+                    return new NotFoundResult();
+                }
             }
             catch (ArgumentException aex)
             {
@@ -72,6 +75,38 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                 stopwatch.Stop();
                 log.LogInformation($"[RunAwardNominations] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
             }
+        }
+
+        private async Task<IActionResult> PostAwardNominations(HttpRequest req, int userID, ILogger log)
+        {
+            log.LogInformation("[RunAwardNominations] PostAwardNominations");
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            Nomination nom = JsonConvert.DeserializeObject<Nomination>(requestBody);
+            nom.InsertedBy = userID;
+
+            log.LogInformation($"[RunAwardNominations] Request body: {requestBody}");
+
+            await _awardWriteInteractor.Nominate(nom);
+            return new NoContentResult();
+        }
+
+        private async Task<IActionResult> GetAwardNominations(HttpRequest req, int excludeUserID, ILogger log)
+        {
+            log.LogInformation("[RunAwardNominations] GetAwardNominations");
+
+            if (!req.Query.ContainsKey("type"))
+            {
+                throw new ArgumentNullException("Type query parameter is required.");                
+            }
+
+            if(!int.TryParse(req.Query["type"], out int typeID))
+            {
+                throw new ArgumentException("Type query parameter is not a valid integer.");
+            }
+
+            var list = await _awardReadInteractor.GetNominations(typeID, excludeUserID);
+            return new OkObjectResult(list);
         }
     }
 }

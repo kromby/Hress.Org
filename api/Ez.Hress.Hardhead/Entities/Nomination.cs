@@ -24,10 +24,6 @@ namespace Ez.Hress.Hardhead.Entities
 
         public string Description { get; set; }
 
-        public int CreatedBy { get; set; }
-
-        public DateTime CreatedDate { get; set; }
-
         public void Validate()
         {
             if (string.IsNullOrEmpty(Description))
@@ -36,8 +32,8 @@ namespace Ez.Hress.Hardhead.Entities
             if (TypeID <= 0)
                 throw new ArgumentException("TypeID must be larger then zero", nameof(TypeID));
 
-            if (CreatedBy <= 0)
-                throw new ArgumentException("CreatedBy must be larger then zero", nameof(CreatedBy));
+            if (InsertedBy <= 0)
+                throw new ArgumentException("CreatedBy must be larger then zero", nameof(InsertedBy));
 
             if (Nominee == null || Nominee.ID <= 0)
                 throw new ArgumentNullException(nameof(Nominee));

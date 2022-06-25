@@ -31,7 +31,7 @@ namespace Ez.Hress.Hardhead.DataAccess
                 NomineeImageID = nomination.Nominee.ProfilePhoto.ID > 0 ? nomination.Nominee.ProfilePhoto.ID : null;
             }
             Description = nomination.Description;
-            CreatedBy = nomination.CreatedBy;
+            CreatedBy = nomination.InsertedBy;
         }
 
         public string PartitionKey { get; set; }

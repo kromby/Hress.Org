@@ -9,6 +9,7 @@ const Nominations = (propsData) => {
     const { authTokens } = useAuth();
     const [buttonEnabled, setButtonEnabled] = useState(false);
     const [users, setUsers] = useState();
+    const [nominations, setNominations] = useState();
     const [description, setDescription] = useState();
     const [nominee, setNominee] = useState();
     const [isSaved, setIsSaved] = useState(false);
@@ -22,6 +23,17 @@ const Nominations = (propsData) => {
                 var userID = localStorage.getItem("userID");
                 const response = await axios.get(url);
                 setUsers(response.data.filter(user => user.ID != userID));
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        const getNominations = async () => {
+            try {
+                var getUrl = config.get('apiPath') + '/api/hardhead/awards/nominations?type=207';
+                const response = await axios.get(getUrl, { headers: { 'X-Custom-Authorization': 'token ' + authTokens.token } });
+                setNominations(response.data);
+
             } catch (e) {
                 console.error(e);
             }
@@ -56,6 +68,8 @@ const Nominations = (propsData) => {
                 setError("Ekki tókst að skrá tilnefningu!");
             }
         }
+
+        getNominations();
     }
 
     const handleNomineeChange = (event) => { setNominee(event.target.value); setButtonEnabled(allowSaving(event.target.value, description)); }

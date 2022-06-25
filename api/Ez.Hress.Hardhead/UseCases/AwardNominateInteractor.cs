@@ -23,11 +23,11 @@ namespace Ez.Hress.Hardhead.UseCases
                 throw new ArgumentNullException(nameof(nomination));            
 
             nomination.Validate();
-            nomination.CreatedDate = DateTime.Now;
+            nomination.Inserted = DateTime.Now;
 
             nomination.Nominee = await _userInteractor.GetUser(nomination.Nominee.ID);
 
-            _log.LogInformation($"[{nameof(AwardNominateInteractor)}] Nominating {nomination.Nominee.Username} in group {nomination.TypeID} for {nomination.Description} by {nomination.CreatedBy}");
+            _log.LogInformation($"[{nameof(AwardNominateInteractor)}] Nominating {nomination.Nominee.Username} in group {nomination.TypeID} for {nomination.Description} by {nomination.InsertedBy}");
 
             var result = await _awardDataAccess.SaveNomination(nomination);
             return result;

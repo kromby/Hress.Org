@@ -55,6 +55,8 @@ namespace Ez.Hress.FunctionsApi
             services.AddSingleton(new TableClient(tableConnectionString, "HardheadNominations"));
             services.AddSingleton<AwardNominateInteractor>();
             services.AddSingleton<IAwardNominateDataAccess, AwardNominateTableDataAccess>();
+            services.AddSingleton<AwardNominationInteractor>();
+            services.AddSingleton<IAwardNominationDataAccess, AwardNominateTableDataAccess>();
         }
     }
 }

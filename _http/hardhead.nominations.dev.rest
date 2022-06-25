@@ -9,3 +9,8 @@ X-Custom-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbG
     "nomineeID": 2668,
     "createdBy": 2630
 }
+
+### Get nominations
+GET http://localhost:7072/api/hardhead/awards/nominations
+Content-Type: application/json
+X-Custom-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjU1ODU0MDQ1LCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.DRJNE2w2SjfzNuiR-cnmlEY7sgGZZYqp80H0rv9bVcU
