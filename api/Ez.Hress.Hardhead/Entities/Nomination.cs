@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ez.Hress.Hardhead.Entities
 {
-    public class Nomination : EntityBase
+    public class Nomination : EntityBase<string>
     {
         public Nomination(int typeID, int nomineeID, string description)
         {
@@ -19,7 +19,7 @@ namespace Ez.Hress.Hardhead.Entities
         }
 
         public int TypeID { get; set; }       
-
+        
         public UserBasicEntity Nominee { get; set; }        
 
         public string Description { get; set; }

@@ -1,8 +1,8 @@
 ﻿namespace Ez.Hress.Shared.Entities
 {
-    public abstract class EntityBase
+    public abstract class EntityBase<T>
     {
-        public int ID { get; set; }
+        public T? ID { get; set; }
         public virtual string? Name { get; set; }
         public DateTime Inserted { get; set; }
         public int InsertedBy { get; set; }

@@ -1,6 +1,6 @@
 ﻿namespace Ez.Hress.Shared.Entities
 {
-    public class UserBasicEntity : EntityBase
+    public class UserBasicEntity : EntityBase<int>
     {
         public string? Username { get; set; }
 

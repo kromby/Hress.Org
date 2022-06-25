@@ -3,8 +3,8 @@ POST http://localhost:7072/api/Authenticate HTTP/1.1
 Content-Type: application/json
 
 {
-	"username":"kromby",
-	"password":"1979gk"
+	"username":"",
+	"password":""
 }
 
 ### Authenticate with code

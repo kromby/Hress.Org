@@ -39,6 +39,7 @@ namespace Ez.Hress.Hardhead.DataAccess
             foreach(var entity in result)
             {
                 var nomination = new Nomination(int.Parse(entity.PartitionKey), entity.NomineeID, entity.Description) { InsertedBy = entity.CreatedBy };
+                nomination.ID = entity.RowKey;
                 nomination.Nominee.Name = entity.NomineeName;
                 if(entity.NomineeImageID.HasValue)
                     nomination.Nominee.ProfilePhotoId = entity.NomineeImageID.Value;                

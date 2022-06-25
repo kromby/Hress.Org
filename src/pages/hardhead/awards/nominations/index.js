@@ -4,6 +4,7 @@ import { Post } from '../../../../components';
 import config from 'react-global-configuration';
 import axios from "axios";
 import { useAuth } from '../../../../context/auth';
+import Author from '../../../../components/author';
 
 const Nominations = (propsData) => {
     const { authTokens } = useAuth();
@@ -28,24 +29,28 @@ const Nominations = (propsData) => {
             }
         }
 
-        const getNominations = async () => {
-            try {
-                var getUrl = config.get('apiPath') + '/api/hardhead/awards/nominations?type=207';
-                const response = await axios.get(getUrl, { headers: { 'X-Custom-Authorization': 'token ' + authTokens.token } });
-                setNominations(response.data);
-
-            } catch (e) {
-                console.error(e);
-            }
+        if (!users) {
+            getUsers();
         }
 
-        getUsers();
+        if (!nominations) {
+            getNominations();
+        }
     }, [propsData, url])
+
+    const getNominations = async () => {
+        try {
+            var getUrl = config.get('apiPath') + '/api/hardhead/awards/nominations?type=207';
+            const response = await axios.get(getUrl, { headers: { 'X-Custom-Authorization': 'token ' + authTokens.token } });
+            setNominations(response.data);
+
+        } catch (e) {
+            console.error(e);
+        }
+    }
 
     const handleSubmit = async (event) => {
         setButtonEnabled(false);
-
-        //if (authTokens === undefined) {
         event.preventDefault();
 
         try {
@@ -57,19 +62,19 @@ const Nominations = (propsData) => {
             }, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
-            console.log(response);
             setIsSaved(true);
-        } catch (e) {            
-            console.error(e); 
-            if(e.response && e.response.status === 400) {
+            setDescription("");
+            setNominee("");
+            getNominations();                        
+        } catch (e) {
+            console.error(e);
+            if (e.response && e.response.status === 400) {
                 setError("Ekki tókst að skrá tilnefningu! - " + e.message);
             }
             else {
                 setError("Ekki tókst að skrá tilnefningu!");
             }
         }
-
-        getNominations();
     }
 
     const handleNomineeChange = (event) => { setNominee(event.target.value); setButtonEnabled(allowSaving(event.target.value, description)); }
@@ -84,7 +89,6 @@ const Nominations = (propsData) => {
 
         setIsSaved(false);
         setError("");
-        console.log("nomineeID: " + nomineeID);
         return true;
     }
 
@@ -97,12 +101,12 @@ const Nominations = (propsData) => {
                 <Post
                     title="Stallone ársins"
                     description="Tilnefndu Harðhaus fyrir frábært afrek"
-                    body={
-                        <form onSubmit={handleSubmit}>
+                    body={[
+                        <form onSubmit={handleSubmit} key="Form1">
                             <div className="row gtr-uniform">
                                 <div className="col-6 col-12-xsmall">
                                     {users ?
-                                        <select id="demo-category" name="demo-category" onChange={(ev) => handleNomineeChange(ev)}>
+                                        <select id="category" name="category" onChange={(ev) => handleNomineeChange(ev)}>
                                             <option value="">- Hvaða Harðhaus vilt þú tilnefna? -</option>
                                             {users.sort((a, b) => a.Name.toLowerCase() > b.Name.toLowerCase() ? 1 : -1).map(user =>
                                                 <option key={user.ID} value={user.ID}>
@@ -121,8 +125,33 @@ const Nominations = (propsData) => {
                                     <button tooltip="Tilnefna" className="button large" disabled={!buttonEnabled}>Tilnefna</button>
                                 </div>
                             </div>
-                        </form>
-                    }
+                        </form>,
+                        <div className="table-wrapper" key="Table2">
+                            {nominations ?
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <td width="200px">Harðhaus</td>
+                                        <td>Útskýring</td>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {nominations.map((nomination) =>
+                                        <tr key={nomination.id}>
+                                            <td>
+                                                {nomination.nominee.profilePhoto ?
+                                                    <Author ID={nomination.nominee.ID} Username={nomination.nominee.name} ProfilePhoto={nomination.nominee.profilePhoto.href} /> :
+                                                    <Author ID={nomination.nominee.ID} Username={nomination.nominee.name} />
+                                                }
+                                            </td>
+                                            <td>{nomination.description}</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                            : null }
+                        </div>
+                    ]}
                 />
             </div>
         )
