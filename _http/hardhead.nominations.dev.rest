@@ -5,7 +5,7 @@ X-Custom-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbG
 
 {
     "description": "Kromby 101",
-    "typeID": 207,
+    "typeID": 5284,
     "nomineeID": 2640,
     "createdBy": 2630
 }

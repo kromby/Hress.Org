@@ -5,7 +5,7 @@ POST https://vefur.hress.org/api/hardhead/awards/nominations
 
 {
     "description": "Kromby 90",
-    "typeID": 207,
+    "typeID": 5284,
     "nomineeID": 2640,
     "createdBy": 2630
 }
