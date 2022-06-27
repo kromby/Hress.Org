@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
 	"username":"",
-	"password":"smu2123"
+	"password":null
 }
 
 ### Authenticate with code
