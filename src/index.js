@@ -3,13 +3,7 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 import config from 'react-global-configuration';
-// import { PublicClientApplication } from "@azure/msal-browser";
-// import { MsalProvider } from "@azure/msal-react";
-// import { msalConfig } from "./context/authConfig";
-
 import App from './pages/App';
-
-// const msalInstance = new PublicClientApplication(msalConfig);
 
   function setConfig() {  
     config.set({ path: 'https://ezhressapi.azurewebsites.net', apiPath: '', imagePath: 'https://ezcontentapi.azurewebsites.net', selfPath: 'https://vefur.hress.org', code: 'JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==', omdb: '8ae68ed6' }, {freeze: false, environment: 'prod'});
@@ -19,7 +13,6 @@ import App from './pages/App';
   
     config.setEnvironment('hybrid');
   }
-    
   setConfig(); 
 
 ReactDOM.render(<App/>, document.getElementById('content'));
