@@ -17,7 +17,7 @@ import App from './pages/App';
     config.set({ path: 'http://localhost:7071', apiPath: 'http://localhost:7072', imagePath: 'https://localhost:44363', selfPath: 'http://localhost:3000', code: '', omdb: '8ae68ed6'}, {freeze: false, environment: 'dev'});
     config.set({ });
   
-    config.setEnvironment('prod');
+    config.setEnvironment('hybrid');
   }
     
   setConfig(); 

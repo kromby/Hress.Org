@@ -97,15 +97,19 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             if (!req.Query.ContainsKey("type"))
             {
-                throw new ArgumentNullException("Type query parameter is required.");                
+                throw new ArgumentNullException("Type query parameter is required.");
             }
 
-            if(!int.TryParse(req.Query["type"], out int typeID))
+            if (!int.TryParse(req.Query["type"], out int typeID))
             {
                 throw new ArgumentException("Type query parameter is not a valid integer.");
             }
 
             var list = await _awardReadInteractor.GetNominations(typeID, excludeUserID);
+
+            if (list.Count == 0)
+                return new NotFoundResult();
+
             return new OkObjectResult(list);
         }
     }

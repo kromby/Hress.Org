@@ -43,7 +43,6 @@ const Nominations = (propsData) => {
             var getUrl = config.get('apiPath') + '/api/hardhead/awards/nominations?type=207';
             const response = await axios.get(getUrl, { headers: { 'X-Custom-Authorization': 'token ' + authTokens.token } });
             setNominations(response.data);
-
         } catch (e) {
             console.error(e);
         }
@@ -126,8 +125,9 @@ const Nominations = (propsData) => {
                                 </div>
                             </div>
                         </form>,
-                        <div className="table-wrapper" key="Table2">
-                            {nominations ?
+                        <hr key="Line2"/>,
+                        <h3 key="Header3">Skráðar tilnefningar</h3>,                        
+                        <div className="table-wrapper" key="Table4">
                             <table>
                                 <thead>
                                     <tr>
@@ -135,7 +135,8 @@ const Nominations = (propsData) => {
                                         <td>Útskýring</td>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                {nominations ?
+                                <tbody>                                
                                     {nominations.map((nomination) =>
                                         <tr key={nomination.id}>
                                             <td>
@@ -148,8 +149,8 @@ const Nominations = (propsData) => {
                                         </tr>
                                     )}
                                 </tbody>
-                            </table>
-                            : null }
+                                : null }
+                            </table>                            
                         </div>
                     ]}
                 />
