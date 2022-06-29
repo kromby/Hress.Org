@@ -20,7 +20,7 @@
     "react-global-configuration": "^1.4.1",
     "react-iframe": "^1.8.0",
     "react-rating": "^2.0.5",
-    "react-router-dom": "^5.1.0",
+    "react-router-dom": "^6.3.0",
     "react-scripts": "^4.0.3",
     "react-youtube": "^9.0.2",
     "stream-browserify": "^3.0.0",
