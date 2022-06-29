@@ -23,6 +23,7 @@ import HHUsers from './hardhead/hhusers';
 import HHUserSidebar from './hardhead/hhusers/hhUserSidebar';
 import Nominations from './hardhead/awards/nominations';
 import HressLogin from '../.auth/hress';
+import LegacyFrame from './frame/legacyFrame';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();  
@@ -82,9 +83,10 @@ function App(props) {
             <nav className="links">
               <ul>
                 <li><Link to="/hardhead">Harðhaus</Link></li>
-                <li><a href="http://www.hress.org/yearly" target="_parent">Árlegt</a></li>
-                <li><a href="http://www.hress.org/links" target="_parent">Tenglar</a></li>
-                <li><a href="http://www.hress.org/comic" target="_parent">Comic</a></li>
+                <li><Link to="/yearly">Árlegt</Link></li>
+                {/* <li><Link to="/link">Tenglar</Link></li>
+                <li><Link to="/comic">Comic</Link></li> */}
+                <li><Link to="/foodandredwine">Matar- og rauðvíns</Link></li>
               </ul>
             </nav>
             <nav className="main">
@@ -119,6 +121,10 @@ function App(props) {
           <Route exact path="/login" component={Login} />
           <Route path="/login/magic" component={Magic} />
           <Route path="/hlogin" component={HressLogin} />
+          <Route path="/yearly" component={LegacyFrame} />
+          <Route path="/foodandredwine" component={LegacyFrame} />
+          <Route path="/link" component={LegacyFrame} />
+          <Route path="/comic" component={LegacyFrame} />          
           {/* <Route component={App} /> */}
         </Switch>
       
