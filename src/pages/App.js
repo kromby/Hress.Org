@@ -84,8 +84,7 @@ function App(props) {
               <ul>
                 <li><Link to="/hardhead">Harðhaus</Link></li>
                 <li><Link to="/yearly">Árlegt</Link></li>
-                {/* <li><Link to="/link">Tenglar</Link></li>
-                <li><Link to="/comic">Comic</Link></li> */}
+                {/*<li><Link to="/comic">Comic</Link></li> */}
                 <li><Link to="/foodandredwine">Matar- og rauðvíns</Link></li>
               </ul>
             </nav>
@@ -123,7 +122,6 @@ function App(props) {
           <Route path="/hlogin" component={HressLogin} />
           <Route path="/yearly" component={LegacyFrame} />
           <Route path="/foodandredwine" component={LegacyFrame} />
-          <Route path="/link" component={LegacyFrame} />
           <Route path="/comic" component={LegacyFrame} />          
           {/* <Route component={App} /> */}
         </Switch>
