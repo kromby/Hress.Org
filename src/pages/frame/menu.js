@@ -42,7 +42,7 @@ const Menu = (propsData) => {
         const getMenuData = async (pathname) => {
 
             try {
-                var url = config.get('apiPath') + '/api/menus?navigateUrl=~' + pathname + '&fetchChildren=true&code=' + config.get('code');
+                var url = config.get('apiPath') + '/api/menus?navigateUrl=~' + pathname + '&fetchChildren=true';
                 if (authTokens !== undefined) {
                     const response = await axios.get(url, {
                         headers: { 'X-Custom-Authorization': 'token ' + authTokens.token }

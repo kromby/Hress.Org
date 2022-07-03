@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import jwt from 'jsonwebtoken';
+import ReactGA from 'react-ga';
 
 import PrivateRoute from './../components/access/privateRoute';
 import { AuthContext } from './../context/auth';
@@ -29,6 +30,9 @@ import Navigation from './frame/navigation';
 function App(props) {
   const [authTokens, setAuthTokens] = useState();  
   const [data, setData] = useState({showMenu: false});
+  const TRACKING_ID = "G-Z6HJ4VPZTN";
+  ReactGA.initialize(TRACKING_ID);
+  ReactGA.pageview(window.location.pathname + window.location.search);
 
   const setTokens = (data) => {
     localStorage.setItem("tokens", JSON.stringify(data));
