@@ -94,6 +94,18 @@ namespace Ez.Hress.Shared.UseCases
             return jwt;
         }
 
+        public async Task<string> CreateMagicCode(int userID)
+        {
+            if(userID <= 0)
+                throw new ArgumentException(nameof(userID), "UserID must be greater than 0");
+
+            var code = Guid.NewGuid().ToString("N");
+            int affected = await _authenticationDataAccess.SaveMagicCode(userID, code, DateTime.Now.AddSeconds(60));
+            if (affected == 0)
+                throw new Exception("Creating magic code failed");
+            return code;
+        }
+
         private string HashPassword(string password, byte[] salt)
         {
             return Convert.ToBase64String(KeyDerivation.Pbkdf2(password, salt, KeyDerivationPrf.HMACSHA512, 10000, 256/8));

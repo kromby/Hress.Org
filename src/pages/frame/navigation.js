@@ -33,7 +33,7 @@ const Navigation = (propsData) => {
                 {links ? links.map(link =>
                     <li key={link.id}>
                         {link.isLegacy ?
-                        <a href={"https://hress.azurewebsites.net/magic/?code=d6148a6b2f4f456a898de6380a1fa814&path=" + link.link.href} target="_blank">{link.name}</a> :                        
+                        <Link to={link.link.href + "?legacy=true"} target="_blank">{link.name}</Link> :
                         <Link to={link.link.href}>{link.name}</Link>
                     }
                     </li>    

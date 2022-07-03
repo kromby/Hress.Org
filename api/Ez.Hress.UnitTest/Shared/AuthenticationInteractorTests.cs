@@ -83,5 +83,21 @@ namespace Ez.Hress.UnitTest.Shared
             // ACT & ASSERT
             await Assert.ThrowsAsync<UnauthorizedAccessException>(() => interactor.Login(username, password, ipAddress));
         }
+
+        [Fact]
+        public async void CreateMagicCodeOK_Test()
+        {
+            // ARRANGE
+            var userID = 220;
+            _authMock.Setup(x => x.SaveMagicCode(userID, It.IsAny<string>(), It.Is<DateTime>(x => x > DateTime.Now && x < DateTime.Now.AddMinutes(3)))).Returns(Task.FromResult(1));
+            var authInfo = new AuthenticationInfo("keyKEYkey1234.#keyKEYkey1234.#keyKEYkey1234.#keyKEYkey1234.#", "issuer", "audience", "salt");
+            var interactor = new AuthenticationInteractor(authInfo, _authMock.Object, _log.Object);
+
+            // ACT
+            var result = await interactor.CreateMagicCode(userID);
+
+            // ASSERT
+            Assert.False(string.IsNullOrWhiteSpace(result));
+        }
     }
 }

@@ -63,5 +63,47 @@ namespace Ez.Hress.FunctionsApi.Administration
                 log.LogInformation($"[RunAuthenticate] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
             }
         }
+
+        [FunctionName("authenticateMagic")]
+        public async Task<IActionResult> RunMagic([HttpTrigger(AuthorizationLevel.Function, "post", Route = "authenticate/magic")] HttpRequest req, ILogger log)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            log.LogInformation("[RunMagic] C# HTTP trigger function processed a request.");
+            
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            if (!isJWTValid)
+            {
+                log.LogInformation($"[RunMagic] JWT is not valid!");
+                return new UnauthorizedResult();
+            }
+
+            try
+            {
+                var code = await _authenticationInteractor.CreateMagicCode(userID);
+                return new OkObjectResult(code);
+            }
+            catch (ArgumentException aex)
+            {
+                log.LogError(aex, "[RunMagic] Invalid input");
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (UnauthorizedAccessException uaex)
+            {
+                log.LogError(uaex, "[RunMagic] Unauthorized");
+                return new UnauthorizedResult();
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "[RunMagic] Unhandled error");
+                throw;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                log.LogInformation($"[RunMagic] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+            }
+        }
     }
 }

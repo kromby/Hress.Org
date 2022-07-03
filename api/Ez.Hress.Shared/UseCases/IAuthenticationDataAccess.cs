@@ -4,6 +4,8 @@
     {
         Task<int> GetUserID(string username, string hashedPassword);
 
-        Task SaveLoginInformation(int userId, string ipAddress);
+        Task SaveLoginInformation(int userID, string ipAddress);
+
+        Task<int> SaveMagicCode(int userID, string code, DateTime expires);
     }
 }

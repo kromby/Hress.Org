@@ -38,6 +38,10 @@ namespace Ez.Hress.Administration.UseCases
                     {
                         item.Link.Href = item.Link.Href.Replace("~", "").Replace(".aspx", "");
                     }
+                    else
+                    {
+                        item.Link.Href = item.Link.Href.Replace("~", "");   //.Replace(".aspx", "");
+                    }
                 }
             }
 
@@ -62,7 +66,11 @@ namespace Ez.Hress.Administration.UseCases
                     if (!item.IsLegacy)
                     {
                         item.Link.Href = item.Link.Href.Replace("~", "").Replace(".aspx", "");
-                    }                    
+                    }          
+                    else
+                    {
+                        item.Link.Href = item.Link.Href.Replace("~", "");   //.Replace(".aspx", "");
+                    }
                 }
             }
 

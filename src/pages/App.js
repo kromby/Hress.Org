@@ -114,11 +114,16 @@ function App(props) {
           <Route exact path="/login" component={Login} />
           <Route path="/login/magic" component={Magic} />
           <Route path="/hlogin" component={HressLogin} />
+          <Route path="/album" component={LegacyFrame} />
           <Route path="/chat" component={LegacyFrame} />  
           <Route path="/comic" component={LegacyFrame} /> 
           <Route path="/default" component={LegacyFrame} />
+          <Route path="/feed" component={LegacyFrame} />
           <Route path="/foodandredwine" component={LegacyFrame} />
           <Route path="/gang" component={LegacyFrame} />
+          <Route path="/hressgames" component={LegacyFrame} />
+          <Route path="/mission" component={LegacyFrame} />
+          <Route path="/rss" component={LegacyFrame} />
           <Route path="/yearly" component={LegacyFrame} />
           {/* <Route component={App} /> */}
         </Switch>

@@ -20,7 +20,6 @@ namespace Ez.Hress.Shared.DataAccess
             _connectionString = connectionInfo.ConnectionString;
             _log = log;
         }
-                
 
         public async Task<int> GetUserID(string username, string hashedPassword)
         {
@@ -33,7 +32,7 @@ namespace Ez.Hress.Shared.DataAccess
                 using (var command = new SqlCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@username", username);
-                    
+
                     using (var reader = await command.ExecuteReaderAsync())
                     {
                         if (await reader.ReadAsync())
@@ -44,7 +43,7 @@ namespace Ez.Hress.Shared.DataAccess
                                 return reader.GetInt32(0);
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -71,6 +70,26 @@ namespace Ez.Hress.Shared.DataAccess
                     command.Parameters.AddWithValue("@ipAddress", ipAddress);
 
                     _ = await command.ExecuteNonQueryAsync();
+                }
+            }
+        }
+
+        public async Task<int> SaveMagicCode(int userID, string code, DateTime expires)
+        {
+            var sql = @"INSERT INTO [dbo].[adm_MagicCode]([Code],[InsertedBy],[Deleted])
+                        VALUES (@code, @insertedBy, @deleted)";
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                using (var command = new SqlCommand(sql, connection))
+                {
+                    command.Parameters.Add(new SqlParameter("code", code));
+                    command.Parameters.Add(new SqlParameter("insertedBy", userID));
+                    command.Parameters.Add(new SqlParameter("deleted", expires));
+
+                    return await command.ExecuteNonQueryAsync();
                 }
             }
         }
