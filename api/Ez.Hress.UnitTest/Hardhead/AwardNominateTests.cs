@@ -42,7 +42,9 @@ namespace Ez.Hress.UnitTest.Hardhead
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardNominateInteractor interactor = new(awardMock.Object, userMock.Object, _log.Object);
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             await Assert.ThrowsAsync<ArgumentNullException>(() => interactor.Nominate(null));
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         }
         
         [Fact]

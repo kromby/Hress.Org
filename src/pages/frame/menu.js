@@ -32,7 +32,7 @@ const Menu = (propsData) => {
     const { authTokens } = useAuth();
     const [data, setData] = useState({ isLoading: false, menuItems: null, userID: 0 });
     const wrapperRef = useRef(null);
-    const {pathname} = useLocation();
+    const { pathname } = useLocation();
 
     useOutsideAlerter(wrapperRef, propsData.visible, propsData.onClick);
 
@@ -40,10 +40,10 @@ const Menu = (propsData) => {
         const getMenuData = async () => {
 
             try {
-                var url = config.get('path') + '/api/menus?navigateUrl=~' + window.location.pathname + '&fetchChildren=true&code=' + config.get('code');
+                var url = config.get('apiPath') + '/api/menus?navigateUrl=~' + window.location.pathname + '&fetchChildren=true&code=' + config.get('code');
                 if (authTokens !== undefined) {
                     const response = await axios.get(url, {
-                        headers: { 'Authorization': 'token ' + authTokens.token }
+                        headers: { 'X-Custom-Authorization': 'token ' + authTokens.token }
                     });
                     var userID = localStorage.getItem("userID");
                     setData({ menuItems: response.data, isLoading: false, visible: true, userID: userID })
@@ -74,37 +74,20 @@ const Menu = (propsData) => {
                 <ul className="links" onClick={() => propsData.onClick()}>
                     {data.visible ?
                         data.menuItems.map(item =>
-                            item.Public ?
-                                <li key={item.Link.Href}>
-                                    <Link to={"/" + item.Link.Href}>
-                                        <h3>{item.Name}</h3>
-                                        <p>{item.Description}</p>
+                            <li key={item.link.href}>
+                                {item.isLegacy ?
+                                    <a href={"https://hress.azurewebsites.net/magic/?code=d6148a6b2f4f456a898de6380a1fa814&path=" + item.link.href} target="_blank">
+                                        <h3>{item.name}</h3>
+                                        <p>{item.description}</p>
+                                    </a> :
+                                    <Link to={item.link.href.replace("{userID}", data.userID)}>
+                                        <h3>{item.name}</h3>
+                                        <p>{item.description}</p>
                                     </Link>
-                                </li> : null
+                                }
+                            </li>
                         ) : null
                     }
-
-                    {data.visible && authTokens !== undefined ?
-                        data.menuItems.map(item =>
-                            !item.Public ?
-                                <li key={item.Link.Href}>
-                                    <Link to={"/" + item.Link.Href}>
-                                        <h3>{item.Name}</h3>
-                                        <p>{item.Description}</p>
-                                    </Link>
-                                </li> : null
-                        ) : null
-                    }
-
-
-                    {authTokens !== undefined ?
-                        <li>
-                            <Link to={"/hardhead?userID=" + data.userID}>
-                                <h3>Mín kvöld</h3>
-                                <p>Upplýsingar um öll kvöld sem þú hefur haldið</p>
-                            </Link>
-                        </li>
-                        : null}
                 </ul>
             </section>
 
@@ -115,7 +98,16 @@ const Menu = (propsData) => {
                         <li onClick={() => propsData.onClick()}><a href="#" className="button large fit">Útskráning</a></li> :
                         <li><a href="#" className="button large fit">Innskráning</a></li>
                     */}
-                    {authTokens === undefined ? <li><Link className="button large fit" to={{pathname: "/login", state: {from: pathname}}}>Innskráning</Link></li> : <li>Útskráning (one day)</li>}
+                    {authTokens === undefined ?
+                        <li><Link className="button large fit" to={{ pathname: "/login", state: { from: pathname } }}>Innskráning</Link></li> :
+                        [<li>
+                            <a href={"https://hress.azurewebsites.net/magic/?code=d6148a6b2f4f456a898de6380a1fa814&path=~/Gang/Profile/MyProfile.aspx"} target="_blank">
+                                <h3>Prófíll</h3>
+                                <p>Breyttu þínum upplýsingum</p>
+                            </a>
+                        </li>,
+                        <li>Útskráning (one day)</li>]
+                    }
                 </ul>
             </section>
 

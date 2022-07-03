@@ -1,1 +1,9 @@
-http://localhost:7071/api/menus?navigateUrl=~/hardhead&fetchChildren=true
+### Getting menu root - unauthorized
+http://localhost:7072/api/menus
+
+### Getting menu root - authorized
+http://localhost:7072/api/menus
+X-Custom-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjU2Nzk0MTg5LCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.z40I1lc8Ra4PluZkKUfN_zVLXxcjWfMeRnvCk1X-AAk
+
+### Get menu item by navigate URL
+http://localhost:7072/api/menus?navigateUrl=~/hardhead&fetchChildren=true

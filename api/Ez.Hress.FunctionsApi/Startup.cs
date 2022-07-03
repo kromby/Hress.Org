@@ -1,4 +1,6 @@
 ﻿using Azure.Data.Tables;
+using Ez.Hress.Administration.DataAccess;
+using Ez.Hress.Administration.UseCases;
 using Ez.Hress.Hardhead.DataAccess;
 using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.Shared;
@@ -51,6 +53,9 @@ namespace Ez.Hress.FunctionsApi
 
             services.AddSingleton<IUserDataAccess, UserSqlDataAccess>();
             services.AddSingleton<IUserInteractor, UserInteractor>();
+
+            services.AddSingleton<IMenuDataAccess, MenuSqlDataAccess>();
+            services.AddSingleton<MenuInteractor>();
 
             services.AddSingleton(new TableClient(tableConnectionString, "HardheadNominations"));
             services.AddSingleton<AwardNominateInteractor>();

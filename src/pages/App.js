@@ -24,6 +24,7 @@ import HHUserSidebar from './hardhead/hhusers/hhUserSidebar';
 import Nominations from './hardhead/awards/nominations';
 import HressLogin from '../.auth/hress';
 import LegacyFrame from './frame/legacyFrame';
+import Navigation from './frame/navigation';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();  
@@ -79,15 +80,8 @@ function App(props) {
         <Router>
         <div id="wrapper" >
           <header id="header">
-            <h1><a href="http://www.hress.org" target="_parent">Hress.Org</a></h1>
-            <nav className="links">
-              <ul>
-                <li><Link to="/hardhead">Harðhaus</Link></li>
-                <li><Link to="/yearly">Árlegt</Link></li>
-                {/*<li><Link to="/comic">Comic</Link></li> */}
-                <li><Link to="/foodandredwine">Matar- og rauðvíns</Link></li>
-              </ul>
-            </nav>
+            <h1><Link to="/">Hress.Org</Link></h1>
+            <Navigation />
             <nav className="main">
               <ul>
                 <li className="search" onClick={() => toggleMenu(true)}>
@@ -120,9 +114,12 @@ function App(props) {
           <Route exact path="/login" component={Login} />
           <Route path="/login/magic" component={Magic} />
           <Route path="/hlogin" component={HressLogin} />
-          <Route path="/yearly" component={LegacyFrame} />
+          <Route path="/chat" component={LegacyFrame} />  
+          <Route path="/comic" component={LegacyFrame} /> 
+          <Route path="/default" component={LegacyFrame} />
           <Route path="/foodandredwine" component={LegacyFrame} />
-          <Route path="/comic" component={LegacyFrame} />          
+          <Route path="/gang" component={LegacyFrame} />
+          <Route path="/yearly" component={LegacyFrame} />
           {/* <Route component={App} /> */}
         </Switch>
       

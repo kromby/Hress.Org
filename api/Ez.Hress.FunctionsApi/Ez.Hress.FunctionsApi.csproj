@@ -14,6 +14,7 @@
     <PackageReference Include="System.Configuration.ConfigurationManager" Version="6.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ez.Hress.Administration\Ez.Hress.Administration.csproj" />
     <ProjectReference Include="..\Ez.Hress.Hardhead\Ez.Hress.Hardhead.csproj" />
     <ProjectReference Include="..\Ez.Hress.Shared\Ez.Hress.Shared.csproj" />
   </ItemGroup>

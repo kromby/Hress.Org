@@ -1,0 +1,8 @@
+### Get menu no input
+GET https://ezhressapi.azurewebsites.net/api/menus?code=JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==
+
+### Get menu for root (~/)
+GET https://ezhressapi.azurewebsites.net/api/menus?navigateUrl=~/&fetchChildren=true&code=JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==
+
+### Get sidemenu for history news
+GET https://ezhressapi.azurewebsites.net/api/menus/34331/sidebars?code=JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==
