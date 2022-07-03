@@ -28,7 +28,7 @@ namespace Ez.Hress.Administration.UseCases
 
             var list = await _menuDataAccess.GetMenuItems(navigateUrl, includePrivate);
 
-            if (fetchChildren)
+            if (fetchChildren && list.Count > 0)
             {
                 list = await _menuDataAccess.GetMenuItems(list.First().ID, includePrivate);
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import jwt from 'jsonwebtoken';
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 
 import PrivateRoute from './../components/access/privateRoute';
 import { AuthContext } from './../context/auth';
@@ -32,7 +32,7 @@ function App(props) {
   const [data, setData] = useState({showMenu: false});
   const TRACKING_ID = "G-Z6HJ4VPZTN";
   ReactGA.initialize(TRACKING_ID);
-  ReactGA.pageview(window.location.pathname + window.location.search);
+  ReactGA.send("pageview");
 
   const setTokens = (data) => {
     localStorage.setItem("tokens", JSON.stringify(data));
