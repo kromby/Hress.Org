@@ -34,14 +34,17 @@ namespace Ez.Hress.Administration.UseCases
 
                 foreach (var item in list)
                 {
-                    if (item.Link != null && item.Link.Href != null && !item.IsLegacy)
+                    if (item.Link != null && item.Link.Href != null)
                     {
-                        item.Link.Href = item.Link.Href.Replace("~", "").Replace(".aspx", "");
-                    }
-                    else
-                    {
-                        item.Link.Href = item.Link.Href.Replace("~", "");   //.Replace(".aspx", "");
-                    }
+                        if (!item.IsLegacy)
+                        {
+                            item.Link.Href = item.Link.Href.Replace("~", "").Replace(".aspx", "");
+                        }
+                        else
+                        {
+                            item.Link.Href = item.Link.Href.Replace("~", "");
+                        }
+                    }                     
                 }
             }
 
@@ -69,7 +72,7 @@ namespace Ez.Hress.Administration.UseCases
                     }          
                     else
                     {
-                        item.Link.Href = item.Link.Href.Replace("~", "");   //.Replace(".aspx", "");
+                        item.Link.Href = item.Link.Href.Replace("~", "");
                     }
                 }
             }

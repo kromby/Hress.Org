@@ -17,6 +17,7 @@ namespace Ez.Hress.FunctionsApi
 
         public static bool GetAuthenticatedUserID(AuthenticationInteractor authenticationInteractor, IHeaderDictionary headers, out int userID, ILogger log)
         {
+            log.LogInformation($"[GetAuthenticatedUserID] AUTHORIZATION_HEADER_NAME: '{AUTHORIZATION_HEADER_NAME}'");
             if (!headers.ContainsKey(AUTHORIZATION_HEADER_NAME))
             {
                 log.LogInformation($"[GetAuthenticatedUserID] AuthorisationHeader is missing.");
@@ -25,6 +26,7 @@ namespace Ez.Hress.FunctionsApi
             }
 
             var authorizationHeader = headers[AUTHORIZATION_HEADER_NAME].ToString().Split(" ");
+            log.LogInformation($"[GetAuthenticatedUserID] authorizationHeader[0]: '{authorizationHeader[0]}'");
 
             var authInfo = authenticationInteractor.GetUserIdFromToken(authorizationHeader[0], authorizationHeader[1]);
             userID = authInfo.Item2;
