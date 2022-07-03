@@ -26,6 +26,7 @@ namespace Ez.Hress.FunctionsApi
             }
 
             var authorizationHeader = headers[AUTHORIZATION_HEADER_NAME].ToString().Split(" ");
+            
             log.LogInformation($"[GetAuthenticatedUserID] authorizationHeader[0]: '{authorizationHeader[0]}'");
 
             var authInfo = authenticationInteractor.GetUserIdFromToken(authorizationHeader[0], authorizationHeader[1]);

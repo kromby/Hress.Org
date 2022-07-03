@@ -14,10 +14,8 @@ const Navigation = (propsData) => {
     useEffect(() => {
         const getLinks = async () => {
             try {
-                var token = authTokens ? authTokens.token : null;
-                const response = await axios.get(url, {
-                    headers: { 'X-Custom-Authorization': 'token ' + token }
-                });
+                var headers = authTokens ? {headers: { 'X-Custom-Authorization': 'token ' + token }} : null;
+                const response = await axios.get(url, headers);
                 setLinks(response.data);
             } catch (e) {
                 console.error(e);
