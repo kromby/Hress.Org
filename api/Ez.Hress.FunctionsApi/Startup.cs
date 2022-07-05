@@ -3,6 +3,8 @@ using Ez.Hress.Administration.DataAccess;
 using Ez.Hress.Administration.UseCases;
 using Ez.Hress.Hardhead.DataAccess;
 using Ez.Hress.Hardhead.UseCases;
+using Ez.Hress.Scripts.DataAccess;
+using Ez.Hress.Scripts.UseCases;
 using Ez.Hress.Shared;
 using Ez.Hress.Shared.DataAccess;
 using Ez.Hress.Shared.Entities;
@@ -56,6 +58,9 @@ namespace Ez.Hress.FunctionsApi
 
             services.AddSingleton<IMenuDataAccess, MenuSqlDataAccess>();
             services.AddSingleton<MenuInteractor>();
+
+            services.AddSingleton<INewsDataAccess, NewsSqlDataAccess>();
+            services.AddSingleton<NewsInteractor>();
 
             services.AddSingleton(new TableClient(tableConnectionString, "HardheadNominations"));
             services.AddSingleton<AwardNominateInteractor>();

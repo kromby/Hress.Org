@@ -31,7 +31,6 @@ function useOutsideAlerter(ref, visible, callback) {
 const Menu = (propsData) => {
     const { authTokens } = useAuth();
     const [data, setData] = useState({ isLoading: false, menuItems: null, userID: 0 });
-    const [code, setCode] = useState();
     const [path, setPath] = useState();
     const wrapperRef = useRef(null);
     const { pathname } = useLocation();

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import Author from './authorOld';
+import Author from './author';
 import './post.css';
 
 export default class Post extends Component {
@@ -23,10 +23,15 @@ export default class Post extends Component {
                     </div> */}
                     <div className="meta">
                         <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>
-                        {this.props.author ? 
-                            typeof this.props.author.ProfilePhoto !=='undefined' ?
+                        {this.props.author && this.props.author.ID ?
+                            typeof this.props.author.ProfilePhoto !== 'undefined' ?
                                 <Author ID={this.props.author.ID} Username={this.props.author.Username} ProfilePhoto={this.props.author.ProfilePhoto.Href} /> :
                                 <Author ID={this.props.author.ID} Username={this.props.author.Username} />
+                            : null}
+                        {this.props.author && this.props.author.id ?
+                            typeof this.props.author.profilePhoto !== 'undefined' ?
+                                <Author ID={this.props.author.id} Username={this.props.author.username} ProfilePhoto={this.props.author.profilePhoto.href} /> :
+                                <Author ID={this.props.author.id} Username={this.props.author.username} />
                             : null}
                     </div>
                 </header>
