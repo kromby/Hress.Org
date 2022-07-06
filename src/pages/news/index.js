@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import {isMobile} from 'react-device-detect';
 import axios from "axios";
 import config from 'react-global-configuration';
 import { Post } from "../../components";
@@ -32,8 +33,16 @@ const News = (propsData) => {
                     date={news.inserted}
                     dateFormatted={news.insertedString}
                     author={news.author}
-                    body={news.content}
-                    image={config.get('path') + news.image.href + "?code=" +  config.get('code')}
+                    body={
+                        <p style={{"minHeight": "280px"}}>
+                            {!isMobile && news.imageAlign != 4 ?
+                            <span className={news.imageAlign === 1 ? "image left" : news.imageAlign === 2 ? "image right" : null}>
+                                <img style={{"maxHeight": "500px"}} src={config.get("path") + news.image.href + "?code=" +  config.get('code')} alt={news.name} />
+                            </span> : null }
+                            <span dangerouslySetInnerHTML={{ __html: news.content }} />
+                        </p>}
+                    image={isMobile || news.imageAlign === 4 ? config.get('path') + news.image.href + "?code=" +  config.get('code') : null}
+                    actions = {<p />}
                 />
             ) : null}
         </div>

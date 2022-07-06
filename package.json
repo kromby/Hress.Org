@@ -16,6 +16,7 @@
     "query-string": "^7.1.1",
     "react": "^18.2.0",
     "react-datepicker": "^4.8.0",
+    "react-device-detect": "^2.2.2",
     "react-dom": "^18.2.0",
     "react-ga4": "^1.4.1",
     "react-global-configuration": "^1.4.1",

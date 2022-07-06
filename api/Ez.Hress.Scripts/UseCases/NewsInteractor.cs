@@ -16,7 +16,7 @@ namespace Ez.Hress.Scripts.UseCases
 
         public async Task<IList<News>> GetLatestNews()
         {
-            return await _newsDataAccess.GetNews(5);
+            return await _newsDataAccess.GetNews(10);
         }
     }
 }

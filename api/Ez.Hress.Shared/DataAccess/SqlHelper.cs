@@ -12,7 +12,7 @@ namespace Ez.Hress.Shared.DataAccess
         public static int? GetNullableInt(SqlDataReader reader, string columnName)
         {
             int columnIndex = reader.GetOrdinal(columnName);
-            return (reader.IsDBNull(columnIndex) ? new int?() : Convert.ToInt32(reader.GetDecimal(columnIndex)));
+            return (reader.IsDBNull(columnIndex) ? new int?() : reader.GetInt32(columnIndex));
         }
         public static DateTime GetDateTime(SqlDataReader reader, string columnName)
         {
