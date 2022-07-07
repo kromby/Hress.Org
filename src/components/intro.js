@@ -1,12 +1,13 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './intro.css';
 
 const Intro = (propsData) => {
     return (
         <section id="intro">
-            <a href="http://www.hress.org" className="logo">
+            <Link to="/" className="logo">
                 <img src={propsData.logo} alt="" />
-            </a>
+            </Link>
             <header>
                 <h2>{propsData.title}</h2>
                 <p>{propsData.description}</p>

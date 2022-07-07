@@ -19,6 +19,8 @@ const News = (propsData) => {
             }
         }
 
+        document.title = 'Hress.Org - Upphafssíða';
+
         if(!news) {
             getNews();
         }

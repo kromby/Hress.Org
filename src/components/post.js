@@ -36,7 +36,7 @@ export default class Post extends Component {
                     </div>
                 </header>
                 {this.props.image ?
-                    <a href={"?id=" + this.props.id} class="image featured"><img src={this.props.image} alt="" /></a>
+                    <a href={"?id=" + this.props.id} className="image featured"><img src={this.props.image} alt="" /></a>
                     : null}
                 {this.props.body ? <section>{this.props.body}</section> : <p />}
                 <footer>

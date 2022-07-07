@@ -27,6 +27,7 @@ import HressLogin from '../.auth/hress';
 import LegacyFrame from './frame/legacyFrame';
 import Navigation from './frame/navigation';
 import News from './news';
+import MainSidebar from './news/mainSidebar';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();
@@ -141,7 +142,7 @@ function App(props) {
 
             {/* Sidebar */}
             <Switch>
-              <Route exact path="/" />
+              <Route exact path="/" component={MainSidebar} />
               <Route exact path="/hardhead" component={HardheadSidebar} />
               <Route exact path="/hardhead/awards" component={AwardsSidebar} />
               <Route path="/hardhead/users/:id" component={HHUserSidebar} />
