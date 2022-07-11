@@ -30,6 +30,7 @@ import Navigation from './frame/navigation';
 import News from './news';
 import MainSidebar from './news/mainSidebar';
 import SingleNews from './news/singleNews';
+import { Helmet } from 'react-helmet';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();
@@ -91,6 +92,13 @@ function App(props) {
   return (
     <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
       <div className={data.class}>
+
+        <Helmet>
+          <meta charSet="utf-8" />
+          <title>Hress.Org</title>
+          <meta property="og:title" content=""></meta>
+        </Helmet>
+
         <Router>
           <div id="wrapper" >
             <header id="header">
@@ -132,7 +140,7 @@ function App(props) {
               <Route path="/chat" component={LegacyFrame} />
               <Route path="/comic" component={LegacyFrame} />
               <Route path="/default/single.aspx" component={LegacyRedirect} />
-              <Route path="/default" component={LegacyFrame} />              
+              <Route path="/default" component={LegacyFrame} />
               <Route path="/feed" component={LegacyFrame} />
               <Route path="/foodandredwine" component={LegacyFrame} />
               <Route path="/gang" component={LegacyFrame} />
