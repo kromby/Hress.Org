@@ -95,7 +95,7 @@ function App(props) {
 
         <Helmet>
           <title>Hress.Org</title>
-          <meta name="description">Hress.Org - Þar sem hressleikinn býr</meta>
+          <meta name="description" content="Hress.Org - Þar sem hressleikinn býr" />
           <meta property="og:title" content="Hress.Org"></meta>
           <meta property="og:site_name" content="Hress.Org"></meta>
           <meta property="og:type" content="article">
