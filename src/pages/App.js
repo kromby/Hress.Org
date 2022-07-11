@@ -25,9 +25,11 @@ import HHUserSidebar from './hardhead/hhusers/hhUserSidebar';
 import Nominations from './hardhead/awards/nominations';
 import HressLogin from '../.auth/hress';
 import LegacyFrame from './frame/legacyFrame';
+import LegacyRedirect from './frame/legacyRedirect';
 import Navigation from './frame/navigation';
 import News from './news';
 import MainSidebar from './news/mainSidebar';
+import SingleNews from './news/singleNews';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();
@@ -129,12 +131,14 @@ function App(props) {
               <Route path="/album" component={LegacyFrame} />
               <Route path="/chat" component={LegacyFrame} />
               <Route path="/comic" component={LegacyFrame} />
-              <Route path="/default" component={LegacyFrame} />
+              <Route path="/default/single.aspx" component={LegacyRedirect} />
+              <Route path="/default" component={LegacyFrame} />              
               <Route path="/feed" component={LegacyFrame} />
               <Route path="/foodandredwine" component={LegacyFrame} />
               <Route path="/gang" component={LegacyFrame} />
               <Route path="/hressgames" component={LegacyFrame} />
               <Route path="/mission" component={LegacyFrame} />
+              <Route path="/news/:id" component={SingleNews} />
               <Route path="/rss" component={LegacyFrame} />
               <Route path="/yearly" component={LegacyFrame} />
               {/* <Route component={App} /> */}
