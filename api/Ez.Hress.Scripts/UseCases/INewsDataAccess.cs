@@ -9,6 +9,8 @@ namespace Ez.Hress.Scripts.UseCases
 {
     public interface INewsDataAccess
     {
-        Task<IList<News>> GetNews(int top);
+        Task<IList<News>> GetLatestNews(int top);
+
+        Task<News> GetNews(int id);
     }
 }

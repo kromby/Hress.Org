@@ -23,7 +23,7 @@ namespace Ez.Hress.FunctionsApi.News
         
         [FunctionName("news")]
         public async Task<IActionResult> RunNews(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "news/{id:int?}")] HttpRequest req, int? id,
             ILogger log)
         {
             var stopwatch = new Stopwatch();
@@ -33,8 +33,18 @@ namespace Ez.Hress.FunctionsApi.News
 
             try
             {
-                var list = await _newsInteractor.GetLatestNews();
-                return new OkObjectResult(list);
+                if (id.HasValue)
+                {
+                    var entity = await _newsInteractor.GetNews(id.Value);
+                    if (entity == null || entity.ID < 1)
+                        return new NotFoundResult();
+                    return new OkObjectResult(entity);
+                }
+                else
+                {
+                    var list = await _newsInteractor.GetLatestNews();                   
+                    return new OkObjectResult(list);
+                }
             }
             catch (ArgumentException aex)
             {

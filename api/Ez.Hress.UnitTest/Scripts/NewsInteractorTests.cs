@@ -26,7 +26,7 @@ namespace Ez.Hress.UnitTest.Scripts
         {
             // ARRANGE
             IList<News> list = new List<News>();
-            _newsDataAccess.Setup(x => x.GetNews(It.IsAny<int>())).Returns(Task.FromResult(list));
+            _newsDataAccess.Setup(x => x.GetLatestNews(It.IsAny<int>())).Returns(Task.FromResult(list));
             var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
 
             // ACT

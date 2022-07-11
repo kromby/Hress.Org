@@ -31,6 +31,6 @@ namespace Ez.Hress.Scripts.Entities
                 };
             }
         }
-        public UserBasicEntity Author { get; set; }
+        public UserBasicEntity? Author { get; set; }
     }
 }
