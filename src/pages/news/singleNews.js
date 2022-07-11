@@ -36,6 +36,9 @@ const SingleNews = (propsData) => {
                         <meta name="description" content={news.name} />
                         <meta property="og:title" content={news.name}></meta>
                         <meta property="og:image" content={news.image ? config.get('path') + news.image.href + "?code=" + config.get('code') : null}></meta>
+                        <meta property="og:image:secure_url" content={news.image ? config.get('path') + news.image.href + "?code=" + config.get('code') : null}></meta>
+                        <meta property="og:image:width" content="1000"></meta>
+                        <meta property="og:image:height" content="563"></meta>
                         {/* <meta property="og:description" content=""></meta> */}
                     </Helmet>,
                     <Post key={news.id}

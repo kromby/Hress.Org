@@ -94,9 +94,13 @@ function App(props) {
       <div className={data.class}>
 
         <Helmet>
-          <meta charSet="utf-8" />
           <title>Hress.Org</title>
-          <meta property="og:title" content=""></meta>
+          <meta name="description">Hress.Org - Þar sem hressleikinn býr</meta>
+          <meta property="og:title" content="Hress.Org"></meta>
+          <meta property="og:site_name" content="Hress.Org"></meta>
+          <meta property="og:type" content="article">
+            
+          </meta>
         </Helmet>
 
         <Router>
