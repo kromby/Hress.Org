@@ -19,7 +19,7 @@ const News = (propsData) => {
             }
         }
 
-        document.title = 'Hress.Org - Upphafssíða';
+        document.title = 'Hress.Org';
 
         if(!news) {
             getNews();
@@ -31,6 +31,7 @@ const News = (propsData) => {
             {news ? news.map(news => 
                 <Post key={news.id}
                     id={news.id}
+                    href={"/news/" + news.id}
                     title={news.name}
                     date={news.inserted}
                     dateFormatted={news.insertedString}

@@ -20,7 +20,7 @@
         [ ] - Gestgjafi með flest kvöld á einu ári
 */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import GuestStats from './guestStats';
 import HostStats from './hostStats';
 import ActorStats from './actorStats';
@@ -28,6 +28,9 @@ import AttendanceStats from './attendanceStats';
 
 const Statistics  = (propsData) => {
     // const[data, setData] = useState({rules: null, isLoading: false, visible: false})
+    useEffect(() => {
+        document.title = "Tölfræði Harðhausa | Hress.Org";
+    }, [propsData])
 
     return (
         <div id="main">

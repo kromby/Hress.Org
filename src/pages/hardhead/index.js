@@ -42,6 +42,8 @@ const Hardhead = (propsData) => {
 			return url;
 		}
 
+		document.title = "Harðhaus | Hress.Org";
+
 		if(!hardheads) {
 			getHardheads();
 		}

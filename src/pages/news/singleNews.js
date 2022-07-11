@@ -12,7 +12,9 @@ const SingleNews = (propsData) => {
             var url = config.get("apiPath") + "/api/news/" + propsData.match.params.id;
             try {
                 const response = await axios.get(url);
-                setNews(response.data);                
+                setNews(response.data);  
+                
+                document.title = response.data.name + " | Hress.Org";
             } catch(e) {
                 console.error(e);
             }

@@ -21,6 +21,8 @@ const Rules = (propsData) => {
             }            
         }
 
+        document.title = "Lög & Reglur Harðhausa | Hress.Org";
+
         getRules();
     
     }, [propsData, url])

@@ -21,6 +21,8 @@ const Awards = (propsData) => {
             }
         }
 
+        document.title = "Harðhausaverðlaunin | Hress.Org";
+
         getAwards();
 
     }, [propsData, url])    
