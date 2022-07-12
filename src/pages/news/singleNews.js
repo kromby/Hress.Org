@@ -31,7 +31,7 @@ const SingleNews = (propsData) => {
 
             {news ?
                 [
-                    <Helmet>
+                    <Helmet key="helmet">
                         <title>{news.name} | Hress.Org</title>
                         <meta name="description" content={news.name} />
                         <meta property="og:title" content={news.name}></meta>

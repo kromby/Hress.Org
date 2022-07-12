@@ -91,18 +91,16 @@ function App(props) {
 
   return (
     <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
+      <Helmet>
+        <title>Hress.Org</title>
+        <meta charset="utf-8" />
+        <meta name="description" content="Hress.Org - Þar sem hressleikinn býr" />
+        <meta property="og:url" content={window.location.href} />
+        <meta property="og:title" content="Hress.Org" />
+        <meta property="og:site_name" content="Hress.Org" />
+        <meta property="og:type" content="article" />
+      </Helmet>
       <div className={data.class}>
-
-        <Helmet>
-          <title>Hress.Org</title>
-          <meta name="description" content="Hress.Org - Þar sem hressleikinn býr" />
-          <meta property="og:title" content="Hress.Org"></meta>
-          <meta property="og:site_name" content="Hress.Org"></meta>
-          <meta property="og:type" content="article">
-            
-          </meta>
-        </Helmet>
-
         <Router>
           <div id="wrapper" >
             <header id="header">

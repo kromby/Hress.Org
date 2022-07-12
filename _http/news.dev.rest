@@ -3,4 +3,4 @@
 http://localhost:7072/api/news
 
 ### Get news by id
-http://localhost:7072/api/news/46088
+http://localhost:7072/api/news/40692
