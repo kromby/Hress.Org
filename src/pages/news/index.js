@@ -40,11 +40,11 @@ const News = (propsData) => {
                         <p style={news.imageAlign === 4 ? {"minHeight": "280px"} : null}>
                             {!isMobile && news.imageAlign != 4 ?
                             <span className={news.imageAlign === 1 ? "image left" : news.imageAlign === 2 ? "image right" : null}>
-                                <img style={{"maxHeight": "500px"}} src={config.get("path") + news.image.href + "?code=" +  config.get('code')} alt={news.name} />
+                                <img style={{"maxHeight": "500px"}} src={config.get("apiPath") + news.image.href} alt={news.name} />
                             </span> : null }
                             <span dangerouslySetInnerHTML={{ __html: news.content }} />
                         </p>}
-                    image={isMobile || news.imageAlign === 4 ? config.get('path') + news.image.href + "?code=" +  config.get('code') : null}
+                    image={isMobile || news.imageAlign === 4 ? config.get('apiPath') + news.image.href : null}
                     actions = {<p />}
                 />
             ) : null}

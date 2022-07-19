@@ -1,6 +1,7 @@
 import { Intro } from '../../components';
 import NextHardhead from '../hardhead/components/nexthardhead';
 import './mainSidebar.css';
+import OnThisDay from './onthisday';
 
 const MainSidebar = (propsData) => {
 
@@ -12,7 +13,8 @@ const MainSidebar = (propsData) => {
 			<section>
 				<div className="mini-posts">
 					{/* <!-- Mini Post --> */}
-					<NextHardhead />					
+					<OnThisDay />
+                    <NextHardhead />	
 				</div>
 			</section>
         </section>

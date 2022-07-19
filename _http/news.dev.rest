@@ -4,3 +4,6 @@ http://localhost:7072/api/news
 
 ### Get news by id
 http://localhost:7072/api/news/40692
+
+### Get historical news for this day
+http://localhost:7072/api/news?type=ONTHISDAY

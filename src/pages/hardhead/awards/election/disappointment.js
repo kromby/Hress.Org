@@ -75,7 +75,7 @@ const Disappointment = (propsData) => {
                                     <label>
                                         <h3 className="author" width="50%">
                                             {nomination.Nominee.ProfilePhoto ?
-                                                <img src={"https://ezhressapi.azurewebsites.net/" + nomination.Nominee.ProfilePhoto.Href + "?code=cCzROHQTlutKpUWOy/BexCj7YkDyFLhGyk4oAEot3eHo1wBgoX/dXQ=="} alt="" />
+                                                <img src={config.get("apiPath") + nomination.Nominee.ProfilePhoto.Href} alt={nomination.Nominee.Username} />
                                                 : null}
                                             &nbsp;&nbsp;&nbsp;
                                             <b>{nomination.Nominee.Username}</b>

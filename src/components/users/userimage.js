@@ -17,7 +17,7 @@ const UserImage = (propsData) => {
     return ([
         profilePhoto ?
             <img key="101" className="userimage"
-                src={"https://ezhressapi.azurewebsites.net" + profilePhoto + "?code=cCzROHQTlutKpUWOy/BexCj7YkDyFLhGyk4oAEot3eHo1wBgoX/dXQ=="}
+                src={config.get("apiPath") + profilePhoto}
                 alt={username} />
             : null,
         <p key="102">

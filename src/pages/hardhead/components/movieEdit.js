@@ -131,7 +131,7 @@ const MovieEdit = (propsData) => {
 
         if (authTokens !== undefined) {
             try {
-                const response = await axios.post(config.get('imagePath') + '/api/Images', {
+                const response = await axios.post(config.get('apiPath') + '/api/Images', {
                     source: useImagePath,
                     name: movieName
                 }, {
@@ -161,7 +161,7 @@ const MovieEdit = (propsData) => {
                 <span className="image right">
                     {imagePath.startsWith("http") ?
                         <img src={imagePath} alt={movieName} /> :
-                        <img src={config.get("imagePath") + imagePath + "?code=" + config.get("code")} alt={movieName} />
+                        <img src={config.get("apiPath") + imagePath} alt={movieName} />
                     }
                 </span>
                 : null}

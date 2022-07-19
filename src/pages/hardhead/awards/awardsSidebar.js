@@ -18,8 +18,9 @@ const AwardsSidebar = (propsData) => {
             }
         }
 
-        getYears();
-
+        if (!years) {
+            getYears();
+        }
     }, [propsData, url])
 
     return (
@@ -27,14 +28,14 @@ const AwardsSidebar = (propsData) => {
             <section>
                 <ul className="posts">
                     {years ? years.map((year) =>
-                        <li>
+                        <li key={year.ID}>
                             <SidePost
                                 key={year.ID}
                                 title={"Árið " + year.Name}
                                 href={"/hardhead/awards/year/" + year.ID}
                                 dateString={"Harðhaus ársins " + year.Hardhead.Username}
-                                image={year.Hardhead ? config.get('imagePath') + year.Hardhead.ProfilePhoto.Href + "?code=" + config.get("code") : null}
-                                imageText={year.Hardhead ? "Harðhaus ársins: " + year.Hardhead.Username : null}  />
+                                image={year.Hardhead ? config.get('apiPath') + year.Hardhead.ProfilePhoto.Href : null}
+                                imageText={year.Hardhead ? "Harðhaus ársins: " + year.Hardhead.Username : null} />
                         </li>
                     ) : null}
                 </ul>

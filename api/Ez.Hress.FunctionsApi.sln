@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.UnitTest", "Ez.Hre
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.Shared", "Ez.Hress.Shared\Ez.Hress.Shared.csproj", "{23DCBCB5-939B-45F3-A7C5-51776EE28F23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ez.Hress.Administration", "Ez.Hress.Administration\Ez.Hress.Administration.csproj", "{153853EC-07EA-46DE-B74E-462DE6F5F1E9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.Administration", "Ez.Hress.Administration\Ez.Hress.Administration.csproj", "{153853EC-07EA-46DE-B74E-462DE6F5F1E9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ez.Hress.Scripts", "Ez.Hress.Scripts\Ez.Hress.Scripts.csproj", "{76F6C685-D097-4E17-B7BE-ED12DBD52455}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.Scripts", "Ez.Hress.Scripts\Ez.Hress.Scripts.csproj", "{76F6C685-D097-4E17-B7BE-ED12DBD52455}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

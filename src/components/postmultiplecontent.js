@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import Author from './authorOld';
+import Author from './author';
 import './post.css';
 
 export default class PostMultipleContent extends Component {

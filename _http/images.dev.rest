@@ -20,3 +20,11 @@ Content-Type: application/json
   "name": "Outland"
 }
 
+### Get image content - HTTP
+GET http://localhost:7072/api/images/257503/content
+
+### Get image content - Relative
+GET http://localhost:7072/api/images/257360/content
+
+### Get image content - Blob
+GET http://localhost:7072/api/images/278506/content

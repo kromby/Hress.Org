@@ -12,5 +12,7 @@ namespace Ez.Hress.Scripts.UseCases
         Task<IList<News>> GetLatestNews(int top);
 
         Task<News> GetNews(int id);
+
+        Task<IList<News>> GetNews(DateTime date, bool ignoreYear);
     }
 }

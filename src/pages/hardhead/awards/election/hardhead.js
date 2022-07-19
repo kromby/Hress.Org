@@ -84,7 +84,7 @@ const HardheadOfTheYear = (propsData) => {
                                     <label>
                                         <h3 className="author" width="50%">
                                             {user.ProfilePhoto ?
-                                                <img src={"https://ezhressapi.azurewebsites.net/" + user.ProfilePhoto.Href + "?code=cCzROHQTlutKpUWOy/BexCj7YkDyFLhGyk4oAEot3eHo1wBgoX/dXQ=="} alt="Kromby" />
+                                                <img src={config.get("apiPath") + user.ProfilePhoto.Href} alt={user.Name} />
                                                 : null}
                                                 &nbsp;&nbsp;&nbsp;
                                                 <b>{user.Name}</b>

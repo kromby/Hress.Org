@@ -24,19 +24,20 @@ namespace Ez.Hress.Scripts.UseCases
             return await _newsDataAccess.GetNews(id);
         }
 
-        public async Task<IList<News>> GetHistoricalNews(int year)
+        public async Task<IList<News>> GetNewsOnThisDay(int top)
         {
-            return null;
-        }
+            _log.LogInformation($"[{nameof(NewsInteractor)}] Get historical news on this day");
+            
+            var date = DateTime.Today;
+            var list = await _newsDataAccess.GetNews(date, true);
 
-        public async Task<IList<News>> GetHistoricalNews(int year, int month)
-        {
-            return null;
-        }
+            if(list.Count() > 1)
+            {
+                int rnd = new Random().Next(list.Count());
+                return list.Where(n => n.ID == list[rnd].ID).ToList();
+            }
 
-        public async Task<IList<News>> GetHistoricalNews(int year, int month, int day)
-        {
-            return null;
+            return list;
         }
     }
 }

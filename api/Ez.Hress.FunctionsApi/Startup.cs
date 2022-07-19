@@ -37,10 +37,10 @@ namespace Ez.Hress.FunctionsApi
             ConfigureServices(builder.Services, config);
         }
 
-        public void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
+        public static void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
         {
-            var tableConnectionString = config["Ez.Hress.AzureStorage.TableConnectionString"];
             var dbConnectionString = config["Ez.Hress.Database.ConnectionString"];
+            var contentStroageConnectionString = config["Ez.Hress.Shared.ContentStorage.ConnectionString"];
 
             var key = config["Ez.Hress.Shared.Authentication.Key"];
             var issuer = config["Ez.Hress.Shared.Authentication.Issuer"];
@@ -48,6 +48,7 @@ namespace Ez.Hress.FunctionsApi
             var salt = config["Ez.Hress.Shared.Authentication.Salt"];
 
             services.AddSingleton(new DbConnectionInfo(dbConnectionString));
+            services.AddSingleton(new BlobConnectionInfo(contentStroageConnectionString));
 
             services.AddSingleton(new AuthenticationInfo(key, issuer, audience, salt));
             services.AddSingleton<IAuthenticationDataAccess, AuthenticationSqlAccess>();
@@ -62,7 +63,13 @@ namespace Ez.Hress.FunctionsApi
             services.AddSingleton<INewsDataAccess, NewsSqlDataAccess>();
             services.AddSingleton<NewsInteractor>();
 
-            services.AddSingleton(new TableClient(tableConnectionString, "HardheadNominations"));
+            services.AddSingleton<IImageInfoDataAccess, ImageInfoSqlDataAccess>();
+            services.AddSingleton<IImageContentDataAccess, ImageContentHttpDataAccess>();
+            services.AddSingleton<IImageContentDataAccess, ImageContentRelativeDataAccess>();
+            services.AddSingleton<IImageContentDataAccess, ImageContentBlobDataAccess>();
+            services.AddSingleton<ImageInteractor>();
+
+            services.AddSingleton(new TableClient(contentStroageConnectionString, "HardheadNominations"));
             services.AddSingleton<AwardNominateInteractor>();
             services.AddSingleton<IAwardNominateDataAccess, AwardNominateTableDataAccess>();
             services.AddSingleton<AwardNominationInteractor>();

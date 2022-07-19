@@ -10,8 +10,8 @@ namespace Ez.Hress.Shared.UseCases
 {
     public class UserInteractor : IUserInteractor
     {
-        private IUserDataAccess _userDataAccess;
-        private ILogger<UserInteractor> _log;
+        private readonly IUserDataAccess _userDataAccess;
+        private readonly ILogger<UserInteractor> _log;
 
         public UserInteractor(IUserDataAccess userDataAccess, ILogger<UserInteractor> log)
         {
@@ -21,7 +21,7 @@ namespace Ez.Hress.Shared.UseCases
 
         public async Task<UserBasicEntity> GetUser(int id)
         {
-            _log.LogInformation($"[{nameof(UserInteractor)}] Getting user with id {0}", id);
+            _log.LogInformation($"[{nameof(UserInteractor)}] Getting user with id {id}");
 
             return await _userDataAccess.GetUser(id);
         }

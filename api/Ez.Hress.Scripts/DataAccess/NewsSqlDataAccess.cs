@@ -126,5 +126,61 @@ namespace Ez.Hress.Scripts.DataAccess
             }
             return entity;
         }
+
+        public async Task<IList<News>> GetNews(DateTime date, bool ignoreYear)
+        {
+            string where;
+            if (ignoreYear)
+            {
+                where = @"AND DATEPART(MONTH,	news.Inserted) = @month
+                          AND DATEPART(DAY, news.Inserted) = @day";
+            }
+            else
+            {
+                throw new NotImplementedException("ignoreYear == false");
+            }
+
+
+            var sql = $@"SELECT	news.Id, news.Name, news.Hits, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId
+                        FROM	adm_Component news
+                        JOIN	adm_User author ON author.Id = news.InsertedBy
+                        JOIN	scr_Text body ON body.ComponentId = news.Id AND body.TypeId = 36
+                        LEFT OUTER JOIN	upf_Image userPhoto ON author.Id = userPhoto.UserId AND userPhoto.TypeId = 14
+                        LEFT OUTER JOIN	scr_Image img ON img.ComponentId = news.Id
+                        WHERE	news.TypeId = 9
+	                        AND	news.Deleted IS NULL
+							{where}
+                        ORDER BY news.Inserted DESC";
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                using (var command = new SqlCommand(sql))
+                {
+                    command.Connection = connection;
+                    
+                    if(ignoreYear)
+                    {
+                        command.Parameters.AddWithValue("month", date.Month);
+                        command.Parameters.AddWithValue("day", date.Day);
+                    }
+
+                    var list = new List<News>();
+
+                    using (var reader = await command.ExecuteReaderAsync())
+                    {
+                        while (reader.Read())
+                        {
+                            News entity = ParseNews(reader);
+
+                            list.Add(entity);
+                        }
+                    }
+
+                    return list;
+                }
+            }
+        }
     }
 }

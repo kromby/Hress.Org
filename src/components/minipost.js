@@ -20,7 +20,7 @@ const MiniPost = (propsData) => {
             </header>
             {propsData.imageSource ?
                 propsData.imageHref ?            
-                    <a href={propsData.imageSource} className="image"><img src={propsData.imageSource} alt={propsData.imageText} /></a> :
+                    <Link to={propsData.imageHref} className="image"><img src={propsData.imageSource} alt={propsData.imageText} /></Link> :
                     <img src={propsData.imageSource} alt={propsData.imageText} /> :
             null
             }

@@ -39,6 +39,11 @@ namespace Ez.Hress.FunctionsApi.News
                     if (entity == null || entity.ID < 1)
                         return new NotFoundResult();
                     return new OkObjectResult(entity);
+                } 
+                else if (!string.IsNullOrWhiteSpace(req.Query["type"]) && req.Query["type"].ToString().ToUpper().Equals("ONTHISDAY"))
+                {
+                    var list = await _newsInteractor.GetNewsOnThisDay(1);
+                    return new OkObjectResult(list);
                 }
                 else
                 {

@@ -14,14 +14,14 @@ const SingleNews = (propsData) => {
             try {
                 const response = await axios.get(url);
                 setNews(response.data);
-
-                // document.title = response.data.name + " | Hress.Org";
             } catch (e) {
                 console.error(e);
             }
         }
 
-        getNews();
+        if (!news) {
+            getNews();
+        }
     }, [propsData])
 
 
@@ -48,7 +48,7 @@ const SingleNews = (propsData) => {
                         dateFormatted={news.insertedString}
                         author={news.author}
                         body={<span dangerouslySetInnerHTML={{ __html: news.content }} />}
-                        image={news.image ? config.get('path') + news.image.href + "?code=" + config.get('code') : null}
+                        image={news.image ? config.get('apiPath') + news.image.href : null}
                         actions={<p />}
                     />
                 ] : null}

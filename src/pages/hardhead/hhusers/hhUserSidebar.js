@@ -38,7 +38,7 @@ const HHUserSidebar = (propsData) => {
     return (
         <section id="sidebar">
             <section id="intro">
-                <a href="#" className="logo"><img src={user && user.ProfilePhoto ? config.get("imagePath") + user.ProfilePhoto.Href : null} alt="" /></a>
+                <a href="#" className="logo"><img src={user && user.ProfilePhoto ? config.get("apiPath") + user.ProfilePhoto.Href : null} alt="" /></a>
                 <header>
                     <h2>{user ? user.Name : null}</h2>
                     <p>

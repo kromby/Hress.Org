@@ -35,7 +35,7 @@ const NextHardhead = (propsData) => {
                     dateString={hardhead.DateString} 
                     date={hardhead.Date}
                     userHref={"/hardhead/users/" + hardhead.Host.ID}
-                    userPhoto={config.get('imagePath') + hardhead.Host.ProfilePhoto.Href + "?code=" + config.get('code')}
+                    userPhoto={config.get('apiPath') + hardhead.Host.ProfilePhoto.Href}
                     userText={hardhead.Host.Username} /> : null}        
         </div>
     )
