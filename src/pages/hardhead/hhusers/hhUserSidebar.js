@@ -3,10 +3,11 @@ import axios from "axios";
 import config from 'react-global-configuration';
 import { MiniPost } from '../../../components';
 import LastFilm from "./lastfilm";
+import { Helmet } from "react-helmet";
 
 const HHUserSidebar = (propsData) => {
-    const[user, setUser] = useState();
-    const[stats, setStats]    = useState();
+    const [user, setUser] = useState();
+    const [stats, setStats] = useState();
 
     useEffect(() => {
         const getUser = async () => {
@@ -15,9 +16,9 @@ const HHUserSidebar = (propsData) => {
             try {
                 const response = await axios.get(url);
                 setUser(response.data);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
-            }            
+            }
         }
 
         const getStats = async () => {
@@ -26,9 +27,9 @@ const HHUserSidebar = (propsData) => {
             try {
                 const response = await axios.get(url);
                 setStats(response.data.List[0]);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
-            }            
+            }
         }
 
         getUser();
@@ -36,6 +37,13 @@ const HHUserSidebar = (propsData) => {
     }, [propsData])
 
     return (
+        <Helmet key="helmet">
+            <title>{user ? user.Name : null} | Hress.Org</title>
+            <meta name="description" content={user ? user.Name : null} />
+            <meta property="og:title" content={user ? user.Name : null} />
+            <meta property="og:image" content={user && user.ProfilePhoto ? config.get("apiPath") + user.ProfilePhoto.Href : null} />
+            <meta property="og:image:secure_url" content={user && user.ProfilePhoto ? config.get("apiPath") + user.ProfilePhoto.Href : null} />
+        </Helmet>,
         <section id="sidebar">
             <section id="intro">
                 <a href="#" className="logo"><img src={user && user.ProfilePhoto ? config.get("apiPath") + user.ProfilePhoto.Href : null} alt="" /></a>
@@ -53,16 +61,16 @@ const HHUserSidebar = (propsData) => {
                 <div className="mini-posts">
 
                     {/* <!-- Mini Post --> */}
-                    <MiniPost 
-                        title="Mæting" 
+                    <MiniPost
+                        title="Mæting"
                         // href="/hardhead/awards"
                         description={stats ? "Hefur mætt á " + stats.AttendedCount + " kvöld" : null}
                         date={stats ? stats.FirstAttended : null}
-                        // dateString={stats ? "Frá " + stats.FirstAttendedString : null}
-                        // userHref={"http://www.hress.org/Gang/Single.aspx?Id=" + data.awards.Winner.ID}
-                        // userPhoto={config.get('path') + data.awards.Winner.ProfilePhoto.Href + "?code=" + config.get('code')}
-                        // userText={data.awards.Winner.Username} 
-                    />     
+                    // dateString={stats ? "Frá " + stats.FirstAttendedString : null}
+                    // userHref={"http://www.hress.org/Gang/Single.aspx?Id=" + data.awards.Winner.ID}
+                    // userPhoto={config.get('path') + data.awards.Winner.ProfilePhoto.Href + "?code=" + config.get('code')}
+                    // userText={data.awards.Winner.Username} 
+                    />
 
                     <LastFilm userID={propsData.match.params.id} />
 
@@ -113,12 +121,12 @@ const HHUserSidebar = (propsData) => {
             </section> */}
 
             {/* <!-- Footer --> */}
-			<section id="footer">
-				<ul className="icons">
-					<li><a href="https://www.facebook.com/groups/988193164623754/" className="icon brands fa-facebook-f" target="_blank" rel="noopener noreferrer"><span className="label">Facebook</span></a></li>
-				</ul>
-				<p className="copyright">&copy; Hress.Org - Guðjón Karl Arnarson.<br/>Design: <a href="http://html5up.net">HTML5 UP</a>.</p>
-			</section>
+            <section id="footer">
+                <ul className="icons">
+                    <li><a href="https://www.facebook.com/groups/988193164623754/" className="icon brands fa-facebook-f" target="_blank" rel="noopener noreferrer"><span className="label">Facebook</span></a></li>
+                </ul>
+                <p className="copyright">&copy; Hress.Org - Guðjón Karl Arnarson.<br />Design: <a href="http://html5up.net">HTML5 UP</a>.</p>
+            </section>
 
         </section>
     );

@@ -91,6 +91,12 @@ const HardheadEdit = (propsData) => {
 	return (
 		<div id="main">
 			{data.visible ?
+				<Helmet key="helmet">
+					<title>Harðhaus #{hardhead.Name} | Hress.Org</title>
+					<meta name="description" content={"Harðhaus #" + hardhead.Name} />
+					<meta property="og:title" content={"Harðhaus #" + hardhead.Name} />
+				</Helmet> : null}
+			{data.visible ?
 				<Post
 					key={hardhead.ID}
 					id={hardhead.ID}

@@ -131,7 +131,7 @@ const MovieEdit = (propsData) => {
 
         if (authTokens !== undefined) {
             try {
-                const response = await axios.post(config.get('apiPath') + '/api/Images', {
+                const response = await axios.post(config.get('imagePath') + '/api/Images', {
                     source: useImagePath,
                     name: movieName
                 }, {

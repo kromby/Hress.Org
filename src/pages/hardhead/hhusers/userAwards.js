@@ -19,7 +19,7 @@ const UserAwards = (propsData) => {
             }
         }
 
-        if(!awards) {
+        if (!awards) {
             getAwards();
         }
     }, [propsData])

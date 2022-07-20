@@ -23,6 +23,8 @@ const Nominations = (propsData) => {
             }
         }
 
+        document.title = "Tilnefningar | Hress.Org";
+
         if (!users) {
             getUsers();
         }

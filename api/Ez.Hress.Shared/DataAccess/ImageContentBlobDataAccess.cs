@@ -15,13 +15,11 @@ namespace Ez.Hress.Shared.DataAccess
 {
     public class ImageContentBlobDataAccess : IImageContentDataAccess
     {
-        private readonly BlobConnectionInfo _blobConnectionInfo;
         private readonly BlobServiceClient _blobServiceClient;
         private readonly ILogger<ImageContentBlobDataAccess> _log;
 
         public ImageContentBlobDataAccess(BlobConnectionInfo blobConnectionInfo, ILogger<ImageContentBlobDataAccess> log)
         {
-            _blobConnectionInfo = blobConnectionInfo;
             _log = log;
 
             try
@@ -31,11 +29,11 @@ namespace Ez.Hress.Shared.DataAccess
             }
             catch (Exception ex)
             {
-                _log.LogError(ex, ex.Message);
+                _log.LogError(ex, "[{Class}] Exception '{Exception}'", this.GetType().Name, ex.Message);
                 throw;
             }
 
-            _log.LogDebug("[{Class}] constructor executed", nameof(ImageContentBlobDataAccess));
+            _log.LogDebug("[{Class}] constructor executed", this.GetType().Name);
 
         }
 
@@ -57,14 +55,14 @@ namespace Ez.Hress.Shared.DataAccess
                 BlobClient blobClient = containerClient.GetBlobClient(id);
                 BlobDownloadInfo response = await blobClient.DownloadAsync();
 
-                MemoryStream ms = new MemoryStream();
+                MemoryStream ms = new();
                 response.Content.CopyTo(ms);
                 return ms.ToArray();
 
             }
             catch (RequestFailedException rfex)
             {
-                _log.LogError(rfex, "[{Class}] Image not found '{Path}'", nameof(ImageContentBlobDataAccess), path);
+                _log.LogError(rfex, "[{Class}] Image not found '{Path}'", this.GetType().Name, path);
                 return null;
             }
         }

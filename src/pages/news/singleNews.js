@@ -48,7 +48,7 @@ const SingleNews = (propsData) => {
                         dateFormatted={news.insertedString}
                         author={news.author}
                         body={<span dangerouslySetInnerHTML={{ __html: news.content }} />}
-                        image={news.image ? config.get('apiPath') + news.image.href : null}
+                        image={news.image && news.image.id ? config.get('apiPath') + news.image.href : null}
                         actions={<p />}
                     />
                 ] : null}

@@ -5,7 +5,6 @@ import config from 'react-global-configuration';
 import UserAwards from "./userAwards";
 
 const HHUsers = (propsData) => { 
-
     return (
         <div id="main">
             <UserAwards id={propsData.match.params.id} />
