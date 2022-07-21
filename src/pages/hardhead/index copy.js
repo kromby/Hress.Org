@@ -1,4 +1,4 @@
-/ import React, { Component } from 'react';
+// import React, { Component } from 'react';
 // import config from 'react-global-configuration';
 // import { Post, PostSmallImage } from '../../components';
 // import Guests from './components/guests';

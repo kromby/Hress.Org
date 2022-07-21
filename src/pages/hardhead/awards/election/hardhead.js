@@ -23,7 +23,9 @@ const HardheadOfTheYear = (propsData) => {
             }
         }
 
-        getHardheadUsers();
+        if (!users) {
+            getHardheadUsers();
+        }
     }, [propsData, url])
 
     const handleUserChange = async (event) => {
@@ -33,7 +35,7 @@ const HardheadOfTheYear = (propsData) => {
         }
 
         var userID = localStorage.getItem("userID");
-        if(event == userID) {
+        if (event == userID) {
             alert("Ætlar þú í alvöru að kjósa sjálfan þig, það er ekki mjög Harðhausalegt.");
             return;
         }
@@ -86,12 +88,12 @@ const HardheadOfTheYear = (propsData) => {
                                             {user.ProfilePhoto ?
                                                 <img src={config.get("apiPath") + user.ProfilePhoto.Href} alt={user.Name} />
                                                 : null}
-                                                &nbsp;&nbsp;&nbsp;
-                                                <b>{user.Name}</b>
+                                            &nbsp;&nbsp;&nbsp;
+                                            <b>{user.Name}</b>
                                         </h3>
                                     </label>
                                     <br />
-                                           Mætti á {user.Attended} kvöld<br />
+                                    Mætti á {user.Attended} kvöld<br />
                                     <br />
                                     <br />
                                 </div>

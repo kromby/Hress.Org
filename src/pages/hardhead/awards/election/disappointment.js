@@ -21,7 +21,10 @@ const Disappointment = (propsData) => {
                 alert(e);
             }
         }
-        getNominations();
+
+        if (!disappointments) {
+            getNominations();
+        }
     }, [propsData])
 
     const handleSubmit = async (event) => {
@@ -32,7 +35,7 @@ const Disappointment = (propsData) => {
             return;
         }
 
-        var voteData = [{PollEntryID: selectedValue, Value: disappointments.filter(n => n.ID === selectedValue)[0].Nominee.ID}];
+        var voteData = [{ PollEntryID: selectedValue, Value: disappointments.filter(n => n.ID === selectedValue)[0].Nominee.ID }];
 
         try {
             var url = config.get('path') + '/api/elections/' + propsData.ID + '/vote?code=' + config.get('code');

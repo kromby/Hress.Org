@@ -36,8 +36,10 @@ const Election = (propsData) => {
             }
         }
 
-        getNextStep();
-    }, [propsData, authTokens])   
+        if (!step) {
+            getNextStep();
+        }
+    }, [propsData, authTokens])
 
     const getElement = (id, name) => {
         if (id === 100) /*Lög og reglur - nýjar og niðurfelldar reglur*/ {
@@ -47,17 +49,17 @@ const Election = (propsData) => {
                 onSubmit={handleSubmit}
             />
         } else if (id === 101) /*Lög og reglur - breytingar*/ {
-            return <Rules key={id}           
+            return <Rules key={id}
                 ID={id}
                 Name={name}
                 onSubmit={handleSubmit}
             />
         } else if (id === 360) /*Vonbrigði*/ {
             return <Disappointment key={id}
-                        ID={id}
-                        Name={name}
-                        onSubmit={handleSubmit}
-                    />
+                ID={id}
+                Name={name}
+                onSubmit={handleSubmit}
+            />
         } else if (id === 361) {
             return <MovieOfTheYear
                 key={id}
@@ -77,7 +79,7 @@ const Election = (propsData) => {
                 title={name}
             />
         } else if (id === 364) {
-            return <HardheadOfTheYear 
+            return <HardheadOfTheYear
                 key={id}
                 ID={id}
                 Name={name}
@@ -107,7 +109,7 @@ const Election = (propsData) => {
             const response = await axios.get(url, {
                 headers: { 'Authorization': 'token ' + authTokens.token },
             });
-            setStep(response.data);            
+            setStep(response.data);
         } catch (e) {
             console.error(e);
             alert(e);

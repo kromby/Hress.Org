@@ -5,9 +5,10 @@ import { Link } from "react-router-dom";
 import { Post } from "../../../components";
 
 const ActorStats = (propsData) => {
-    const[stats, setStats] = useState();
+    const [stats, setStats] = useState();
     const [pageSize, setPageSize] = useState(10);
     const [period, setPeriod] = useState("All");
+    const [reload, setReload] = useState(false);
 
     var url = config.get('path') + '/api/movies/statistics/actor?periodType=' + period + '&code=' + config.get('code');
 
@@ -16,12 +17,15 @@ const ActorStats = (propsData) => {
             try {
                 const response = await axios.get(url);
                 setStats(response.data);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         }
 
-        getStats();
+        if (!stats || reload) {
+            getStats();
+            setReload(false);
+        }
     }, [propsData, url])
 
     const handleSubmit = async (event) => {
@@ -39,12 +43,13 @@ const ActorStats = (propsData) => {
         }
 
         return pageSize + 10;
-    } 
+    }
 
     const handlePeriodChange = async (event) => {
         setPeriod(event.target.value);
-    }  
-    
+        setReload(true);
+    }
+
     return (
         <Post
             title="Hvaða leikari hefur oftast verið harðhaus"
@@ -57,10 +62,10 @@ const ActorStats = (propsData) => {
                     <option value="ThisYear">þetta ár</option>
                 </select>
             }
-            date= { stats ? stats.DateFrom : null}
-            dateFormatted = { stats ? stats.DateFromString: null}
-            showFooter = {false}
-            body= { stats ?
+            date={stats ? stats.DateFrom : null}
+            dateFormatted={stats ? stats.DateFromString : null}
+            showFooter={false}
+            body={stats ?
                 <div className="table-wrapper">
                     <table>
                         <thead>
@@ -73,14 +78,14 @@ const ActorStats = (propsData) => {
                             </tr>
                         </thead>
                         <tbody>
-                            { stats.List.slice(0, pageSize).map((stat, i) =>   
+                            {stats.List.slice(0, pageSize).map((stat, i) =>
                                 <tr key={i}>
-                                    <td>{i+1}</td>
+                                    <td>{i + 1}</td>
                                     <td><Link to={"/hardhead?query=" + stat.Text}>{stat.Text}</Link></td>
                                     <td>{stat.AttendedCount}</td>
                                     <td>{stat.FirstAttendedString}</td>
                                     <td>{stat.LastAttendedString}</td>
-                                </tr>              
+                                </tr>
                             )}
                         </tbody>
                     </table>
@@ -93,7 +98,7 @@ const ActorStats = (propsData) => {
                 </div>
             }
         />
-    )    
+    )
 }
 
 export default ActorStats;

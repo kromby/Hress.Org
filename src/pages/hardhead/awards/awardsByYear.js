@@ -14,12 +14,14 @@ const AwardsByYear = (propsData) => {
             try {
                 const response = await axios.get(url);
                 setCategories(response.data);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         }
 
-        getAwardsByYear();
+        if (!categories) {
+            getAwardsByYear();
+        }
     }, [propsData, url])
 
     return (
@@ -29,7 +31,7 @@ const AwardsByYear = (propsData) => {
                     title={category.Name}
                     description="Efstu sætin þetta ár"
                     body={<AwardsWinners href={category.Winners.Href} year={propsData.match.params.id} position="" />}
-                 />
+                />
             ) : null}
         </div>
     )

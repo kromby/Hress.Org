@@ -5,7 +5,7 @@ import Post from '../../../../components/post';
 import { useAuth } from '../../../../context/auth';
 
 const Stallone = (propsData) => {
-    const {authTokens} = useAuth();
+    const { authTokens } = useAuth();
     const [users, setUsers] = useState();
     const [savingAllowed, setSavingAllowed] = useState(false);
     const [selectedUser, setSelectedUser] = useState();
@@ -16,7 +16,7 @@ const Stallone = (propsData) => {
 
     useEffect(() => {
 
-        setUserID(localStorage.getItem("userID"));        
+        setUserID(localStorage.getItem("userID"));
 
         const getHardheadUsers = async () => {
             try {
@@ -28,104 +28,106 @@ const Stallone = (propsData) => {
             }
         }
 
-        getHardheadUsers();
+        if (!users) {
+            getHardheadUsers();
+        }
     }, [propsData, url])
 
     const handleUserChange = async (event) => {
-        if(authTokens === undefined) {
+        if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
-            return;            
+            return;
         }
 
-        if(event.target.value !== "") {
+        if (event.target.value !== "") {
             setSelectedUser(event.target.value);
             setSavingAllowed(text !== undefined && event.target.value !== undefined);
         }
         else {
             setSelectedUser(undefined);
             setSavingAllowed(false);
-        }        
+        }
     }
 
     const handleTextChange = async (event) => {
-        if(authTokens === undefined) {
+        if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
-            return;            
+            return;
         }
 
-        if(event.target.value.trim() !== "") {
+        if (event.target.value.trim() !== "") {
             setText(event.target.value);
             setSavingAllowed(event.target.value !== undefined && selectedUser !== undefined);
         } else {
             setText(undefined);
-            setSavingAllowed(false);            
-        }        
-        
+            setSavingAllowed(false);
+        }
+
     }
 
     const handelSubmit = async (event) => {
         setSavingAllowed(false);
         event.preventDefault();
-        if(authTokens === undefined) {
+        if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
-            return;            
+            return;
         }
 
         try {
             var url = config.get('path') + '/api/elections/' + propsData.ID + '/vote?code=' + config.get('code');
-            await axios.post(url, [{                
+            await axios.post(url, [{
                 value: selectedUser,
                 description: text
             }], {
-                headers: {'Authorization': 'token ' + authTokens.token},
+                headers: { 'Authorization': 'token ' + authTokens.token },
             });
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             alert(e);
-            setSavingAllowed(true);            
+            setSavingAllowed(true);
         }
 
         propsData.onSubmit();
     }
 
-    return (        
-            <Post
-                id={propsData.ID}
-                title={propsData.Name}
-                description={propsData.Description}
-                date={propsData.Date}
-                dateFormatted={propsData.Year}
-                body=
-                {
-                    <section>
-                        <form onSubmit={handelSubmit}>
-                            <div className="row gtr-uniform">
-                                <div className="col-12">
-                                    <select name="demo-category" id="demo-category" onChange={(ev) => handleUserChange(ev)}>
-                                        <option value="">- Veldu {propsData.Name} -</option>
-                                        {users ?
-                                            users.map(user =>
-                                                user.ID != userID ?
+    return (
+        <Post
+            id={propsData.ID}
+            title={propsData.Name}
+            description={propsData.Description}
+            date={propsData.Date}
+            dateFormatted={propsData.Year}
+            body=
+            {
+                <section>
+                    <form onSubmit={handelSubmit}>
+                        <div className="row gtr-uniform">
+                            <div className="col-12">
+                                <select name="demo-category" id="demo-category" onChange={(ev) => handleUserChange(ev)}>
+                                    <option value="">- Veldu {propsData.Name} -</option>
+                                    {users ?
+                                        users.map(user =>
+                                            user.ID != userID ?
                                                 <option key={user.ID} value={user.ID}>{user.Name}</option>
                                                 : null
-                                            ) : null}
-                                    </select>
-                                </div>
-                                <div className="col-12">
-                                    <textarea name="demo-message" id="demo-message" placeholder="Skrifaðu rökstuðning fyrir valinu" rows="3" onChange={(ev) => handleTextChange(ev)}></textarea>
-                                </div>
-                                <div className="col-12">
-                                    <ul className="actions">
-                                        <li>
-                                            <input type="submit" value={"Kjósa " + propsData.Name} disabled={!savingAllowed} />
-                                        </li>
-                                    </ul>
-                                </div>
+                                        ) : null}
+                                </select>
                             </div>
-                        </form>
-                    </section>
-                }
-            />
+                            <div className="col-12">
+                                <textarea name="demo-message" id="demo-message" placeholder="Skrifaðu rökstuðning fyrir valinu" rows="3" onChange={(ev) => handleTextChange(ev)}></textarea>
+                            </div>
+                            <div className="col-12">
+                                <ul className="actions">
+                                    <li>
+                                        <input type="submit" value={"Kjósa " + propsData.Name} disabled={!savingAllowed} />
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            }
+        />
     )
 }
 

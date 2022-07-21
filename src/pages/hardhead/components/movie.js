@@ -4,7 +4,7 @@ import axios from "axios";
 import YouTube from 'react-youtube';
 
 const Movie = (propsData) => {
-    const [movieData, setMovieData] = useState({ movie: null})
+    const [movieData, setMovieData] = useState({ movie: null })
     const [trailerOpen, setTrailerOpen] = useState(false);
 
     const opts = {
@@ -23,19 +23,22 @@ const Movie = (propsData) => {
                 const response = await axios.get(movieUrl);
 
                 if (response.data !== undefined) {
-                    setMovieData({ movie: response.data});
+                    setMovieData({ movie: response.data });
                     if (response.data.PosterPhoto) {
                         propsData.photoPostback(response.data.PosterPhoto.Href);
                     }
                 }
             }
             catch (e) {
-                if(e.response === undefined || e.response.status !== 404) {
+                if (e.response === undefined || e.response.status !== 404) {
                     console.error(e);
                 }
             }
         };
-        getMovieData();
+
+        if (!movieData) {
+            getMovieData();
+        }
     }, [propsData, movieUrl])
 
     const toggleTrailer = async () => {
@@ -48,11 +51,11 @@ const Movie = (propsData) => {
                 <h3>Myndin</h3>
                 <h4><a href={movieData.movie.ImdbUrl} target="_blank" rel="noopener noreferrer">{movieData.movie.Name}</a></h4>
                 <p key="movie1">
-                    {movieData.movie.Actor} 
+                    {movieData.movie.Actor}
                     {movieData.movie.HardheadKillCount || movieData.movie.MovieKillCount ? " (" : null}
                     {movieData.movie.HardheadKillCount ? <span>bar ábyrgð á {movieData.movie.HardheadKillCount} drápum </span> : null}
-                    {movieData.movie.MovieKillCount ? "af " + movieData.movie.MovieKillCount : null} 
-                    {movieData.movie.HardheadKillCount || movieData.movie.MovieKillCount ? " í myndinni)" : null}                    
+                    {movieData.movie.MovieKillCount ? "af " + movieData.movie.MovieKillCount : null}
+                    {movieData.movie.HardheadKillCount || movieData.movie.MovieKillCount ? " í myndinni)" : null}
                 </p>
                 <p key="movie2">
                     {movieData.movie.Reason ? movieData.movie.Reason : "Gestgjafi hefur ekki skráð ástæðu fyrir mynd :("}

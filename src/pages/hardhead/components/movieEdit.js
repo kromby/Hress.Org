@@ -54,6 +54,7 @@ const MovieEdit = (propsData) => {
                 setData({ visible: false });
             }
         };
+
         getMovieData();
     }, [propsData, movieUrl])
 

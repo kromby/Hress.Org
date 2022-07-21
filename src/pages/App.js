@@ -23,7 +23,6 @@ import AwardsByType from './hardhead/awards/awardByType';
 import HHUsers from './hardhead/hhusers';
 import HHUserSidebar from './hardhead/hhusers/hhUserSidebar';
 import Nominations from './hardhead/awards/nominations';
-import HressLogin from '../.auth/hress';
 import LegacyFrame from './frame/legacyFrame';
 import LegacyRedirect from './frame/legacyRedirect';
 import Navigation from './frame/navigation';
@@ -132,7 +131,6 @@ function App(props) {
               <PrivateRoute path="/hardhead/admin" component={Admin} />
               <Route exact path="/login" component={Login} />
               <Route path="/login/magic" component={Magic} />
-              <Route path="/hlogin" component={HressLogin} />
               <Route path="/album" component={LegacyFrame} />
               <Route path="/chat" component={LegacyFrame} />
               <Route path="/comic" component={LegacyFrame} />

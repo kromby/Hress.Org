@@ -32,8 +32,13 @@ const HHUserSidebar = (propsData) => {
             }
         }
 
-        getUser();
-        getStats();
+        if (!user) {
+            getUser();
+        }
+
+        if (!stats) {
+            getStats();
+        }
     }, [propsData])
 
     return (

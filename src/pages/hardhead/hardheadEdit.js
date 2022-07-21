@@ -52,8 +52,12 @@ const HardheadEdit = (propsData) => {
 			}
 		}
 
-		getHardhead();
-		getUsers();
+		if (!hardhead) {
+			getHardhead();
+		}
+		if (!users) {
+			getUsers();
+		}
 	}, [propsData, authTokens])
 
 	const handleSubmit = async (event) => {

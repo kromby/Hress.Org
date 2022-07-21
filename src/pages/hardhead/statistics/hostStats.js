@@ -1,29 +1,33 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import { Post } from '../../../components';
 import Author from '../../../components/author';
 
 const HostStats = (propsData) => {
-    const[data, setData] = useState({stats: null, isLoading: false, visible: false})
+    const [data, setData] = useState({ stats: null, isLoading: false, visible: false })
     const [pageSize, setPageSize] = useState(10);
     const [period, setPeriod] = useState("All");
+    const [reload, setReload] = useState(false);
 
-    var url = config.get('path') + '/api/hardhead/statistics/users?guestType=53&periodType=' + period + '&code=' + config.get('code');	
-    
+    var url = config.get('path') + '/api/hardhead/statistics/users?guestType=53&periodType=' + period + '&code=' + config.get('code');
+
     useEffect(() => {
         const getStats = async () => {
             try {
-                setData({isLoading: true});
+                setData({ isLoading: true });
                 const response = await axios.get(url);
-                setData({stats: response.data, isLoading: false, visible: true});
-            } catch(e) {
+                setData({ stats: response.data, isLoading: false, visible: true });
+            } catch (e) {
                 console.error(e);
-                setData({isLoading: false, visible: false})
+                setData({ isLoading: false, visible: false })
             }
         }
 
-        getStats();
+        if (!data.stats || reload) {
+            getStats();
+            setReload(false);
+        }
     }, [propsData, url])
 
     const handleSubmit = async (event) => {
@@ -41,11 +45,12 @@ const HostStats = (propsData) => {
         }
 
         return pageSize + 10;
-    } 
+    }
 
     const handlePeriodChange = async (event) => {
         setPeriod(event.target.value);
-    }    
+        setReload(true);
+    }
 
     return (
         <Post
@@ -59,10 +64,10 @@ const HostStats = (propsData) => {
                     <option value="ThisYear">þetta ár</option>
                 </select>
             }
-            date= { data.visible ? data.stats.DateFrom : null}
-            dateFormatted = { data.visible ? data.stats.DateFromString: null}
-            showFooter = {false}
-            body= { data.visible ?
+            date={data.visible ? data.stats.DateFrom : null}
+            dateFormatted={data.visible ? data.stats.DateFromString : null}
+            showFooter={false}
+            body={data.visible ?
                 <div className="table-wrapper">
                     <table>
                         <thead>
@@ -75,11 +80,11 @@ const HostStats = (propsData) => {
                             </tr>
                         </thead>
                         <tbody>
-                            { data.stats.List.slice(0, pageSize).map((stat, i) =>   
+                            {data.stats.List.slice(0, pageSize).map((stat, i) =>
                                 <tr key={i}>
-                                    <td>{i+1}</td>
+                                    <td>{i + 1}</td>
                                     <td>
-                                        {typeof stat.User.ProfilePhoto !=='undefined' && stat.User.ProfilePhoto !== null ?
+                                        {typeof stat.User.ProfilePhoto !== 'undefined' && stat.User.ProfilePhoto !== null ?
                                             <Author ID={stat.User.ID} Username={stat.User.Username} ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
                                             <Author ID={stat.User.ID} Username={stat.User.Username} />
                                         }
@@ -87,7 +92,7 @@ const HostStats = (propsData) => {
                                     <td>{stat.AttendedCount}</td>
                                     <td>{stat.FirstAttendedString}</td>
                                     <td>{stat.LastAttendedString}</td>
-                                </tr>              
+                                </tr>
                             )}
                         </tbody>
                     </table>

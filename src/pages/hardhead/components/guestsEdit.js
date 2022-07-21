@@ -26,7 +26,9 @@ const GuestsEdit = (propsData) => {
 
         setUsers(propsData.users);
 
-        getGuests();
+        if (!guests) {
+            getGuests();
+        }
     }, [propsData, authTokens])
 
     const handleGuestChange = async (event) => {

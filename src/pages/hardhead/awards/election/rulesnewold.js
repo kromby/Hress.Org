@@ -5,7 +5,7 @@ import { useAuth } from "../../../../context/auth"
 import { Post } from "../../../../components";
 
 const RulesNewOld = (propsData) => {
-    const {authTokens} = useAuth();
+    const { authTokens } = useAuth();
     const [rules, setRules] = useState();
     const [selectedValues, setSelectedValues] = useState([]);
     const [savingAllowed, setSavingAllowed] = useState(false);
@@ -19,55 +19,58 @@ const RulesNewOld = (propsData) => {
 
                 var arr = [];
                 response.data.forEach(element => {
-                    arr.push({PollEntryID: element.ID, Value: 0});
+                    arr.push({ PollEntryID: element.ID, Value: 0 });
                 });
                 setSelectedValues(arr);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
                 alert(e);
             }
         }
-        getRules();        
-    }, [propsData])    
+
+        if (!rules) {
+            getRules();
+        }
+    }, [propsData])
 
     const handleSubmit = async (event) => {
         setSavingAllowed(false);
         event.preventDefault();
-        if(authTokens === undefined) {
+        if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
-            return;            
+            return;
         }
 
         try {
             var url = config.get('path') + '/api/elections/' + propsData.ID + '/vote?code=' + config.get('code');
             await axios.post(url, selectedValues, {
-                headers: {'Authorization': 'token ' + authTokens.token},
+                headers: { 'Authorization': 'token ' + authTokens.token },
             });
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             alert(e);
-            setSavingAllowed(true);            
+            setSavingAllowed(true);
         }
 
         propsData.onSubmit();
-    }  
+    }
 
-    const handleChange = async(id, value) => {
+    const handleChange = async (id, value) => {
         if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
             return;
         }
 
         var tempList = selectedValues.filter(v => v.PollEntryID !== id);
-        tempList.push({PollEntryID: id, Value: value});
+        tempList.push({ PollEntryID: id, Value: value });
         setSelectedValues(tempList);
 
 
         console.log("Length");
         console.log(tempList.filter(v => v.Value === 0).length);
-        if(tempList.filter(v => v.Value === 0).length === 0) {            
-            setSavingAllowed(true);            
-        }            
+        if (tempList.filter(v => v.Value === 0).length === 0) {
+            setSavingAllowed(true);
+        }
     }
 
     return (
@@ -81,25 +84,25 @@ const RulesNewOld = (propsData) => {
                     body={
                         <section>
                             <div onClick={() => handleChange(rule.ID, 1)}>
-                                <input 
-                                    type="radio" 
-                                    radioGroup={"id_" + rule.ID} 
-                                    checked={selectedValues.filter(v => v.PollEntryID === rule.ID)[0] ? selectedValues.filter(v => v.PollEntryID === rule.ID)[0].Value === 1: false} 
-                                    onChange={() => handleChange(rule.ID, 1)}/>
-                                <label>Samþykkja</label>                                
+                                <input
+                                    type="radio"
+                                    radioGroup={"id_" + rule.ID}
+                                    checked={selectedValues.filter(v => v.PollEntryID === rule.ID)[0] ? selectedValues.filter(v => v.PollEntryID === rule.ID)[0].Value === 1 : false}
+                                    onChange={() => handleChange(rule.ID, 1)} />
+                                <label>Samþykkja</label>
                             </div>
                             <div onClick={() => handleChange(rule.ID, -1)}>
-                                <input 
-                                    type="radio" 
-                                    radioGroup={"id_" + rule.ID} 
-                                    checked={selectedValues.filter(v => v.PollEntryID === rule.ID)[0] ? selectedValues.filter(v => v.PollEntryID === rule.ID)[0].Value === -1: false}
-                                    onChange={() => handleChange(rule.ID, -1)}/>
+                                <input
+                                    type="radio"
+                                    radioGroup={"id_" + rule.ID}
+                                    checked={selectedValues.filter(v => v.PollEntryID === rule.ID)[0] ? selectedValues.filter(v => v.PollEntryID === rule.ID)[0].Value === -1 : false}
+                                    onChange={() => handleChange(rule.ID, -1)} />
                                 <label>Hafna</label>
                             </div>
                         </section>
                     }
                 />
-            ) : <Post title="Engar reglubreytingar"/> }
+            ) : <Post title="Engar reglubreytingar" />}
 
             <ul className="actions pagination">
                 <li>
@@ -107,9 +110,9 @@ const RulesNewOld = (propsData) => {
                     <input type="submit" value={"Kjósa " + propsData.Name} disabled={!savingAllowed} /> */}
                     <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Ljúka kosningu um " + propsData.Name}</button>
                 </li>
-            </ul>  
+            </ul>
         </div>
-    )    
+    )
 }
 
 export default RulesNewOld;

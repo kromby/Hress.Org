@@ -6,7 +6,7 @@ const Intro = (propsData) => {
     return (
         <section id="intro">
             <Link to="/" className="logo">
-                <img src={propsData.logo} alt="" />
+                <img src={propsData.logo} alt="Hress.Org" />
             </Link>
             <header>
                 <h2>{propsData.title}</h2>

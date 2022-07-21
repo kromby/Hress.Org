@@ -8,7 +8,7 @@ import AwardsWinners from "./awardsWinners";
 const AwardsByType = (propsData) => {
     const [award, setAward] = useState();
 
-    var url = config.get('path') + '/api/hardhead/awards/' + propsData.match.params.id + '?code=' + config.get('code');	
+    var url = config.get('path') + '/api/hardhead/awards/' + propsData.match.params.id + '?code=' + config.get('code');
 
     useEffect(() => {
         const getYears = async () => {
@@ -20,8 +20,9 @@ const AwardsByType = (propsData) => {
             }
         }
 
-        getYears();
-
+        if (!award) {
+            getYears();
+        }
     }, [propsData])
 
     return (

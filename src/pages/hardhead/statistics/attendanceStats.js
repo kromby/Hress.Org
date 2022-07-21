@@ -5,9 +5,10 @@ import { Post } from "../../../components";
 import Author from "../../../components/author";
 
 const AttendanceStats = (propsData) => {
-    const[stats, setStats] = useState();
+    const [stats, setStats] = useState();
     const [pageSize, setPageSize] = useState(10);
     const [period, setPeriod] = useState("All");
+    const [reload, setReload] = useState(false);
 
     var url = config.get('path') + '/api/hardhead/statistics/attendance?periodType=' + period + '&code=' + config.get('code');
 
@@ -16,12 +17,15 @@ const AttendanceStats = (propsData) => {
             try {
                 const response = await axios.get(url);
                 setStats(response.data);
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
             }
         }
 
-        getStats();
+        if (!stats || reload) {
+            getStats();
+            setReload(false);
+        }
     }, [propsData, url])
 
     const handleSubmit = async (event) => {
@@ -39,12 +43,13 @@ const AttendanceStats = (propsData) => {
         }
 
         return pageSize + 10;
-    } 
+    }
 
     const handlePeriodChange = async (event) => {
         setPeriod(event.target.value);
-    }  
-    
+        setReload(true);
+    }
+
     return (
         <Post
             title="Á hvaða kvöld var best mætt"
@@ -57,24 +62,24 @@ const AttendanceStats = (propsData) => {
                     <option value="ThisYear">þetta ár</option>
                 </select>
             }
-            date= { stats ? stats.DateFrom : null}
-            dateFormatted = { stats ? stats.DateFromString: null}
-            showFooter = {false}
-            body= { stats ?
+            date={stats ? stats.DateFrom : null}
+            dateFormatted={stats ? stats.DateFromString : null}
+            showFooter={false}
+            body={stats ?
                 <div className="table-wrapper">
                     <table>
                         <thead>
                             <tr>
                                 <td width="100px">Nr.</td>
-                                <td width="250px">Harðhaus</td>                                
+                                <td width="250px">Harðhaus</td>
                                 <td>Dagsetning</td>
                                 <td>Fjöldi</td>
                             </tr>
                         </thead>
                         <tbody>
-                            { stats.List.slice(0, pageSize).map((stat, i) =>   
+                            {stats.List.slice(0, pageSize).map((stat, i) =>
                                 <tr key={i}>
-                                    <td>{i+1}</td>
+                                    <td>{i + 1}</td>
                                     <td>
                                         {stat.User.ProfilePhoto ?
                                             <Author ID={stat.User.ID} Username={stat.User.Username} ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
@@ -82,10 +87,10 @@ const AttendanceStats = (propsData) => {
                                             // <Author ID={stat.User.ID} Username={stat.User.Username} ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
                                             // <Author ID={stat.User.ID} Username={stat.User.Username} />
                                         }
-                                    </td>                                    
+                                    </td>
                                     <td>{stat.FirstAttendedString}</td>
                                     <td>{stat.AttendedCount}</td>
-                                </tr>              
+                                </tr>
                             )}
                         </tbody>
                     </table>
@@ -98,7 +103,7 @@ const AttendanceStats = (propsData) => {
                 </div>
             }
         />
-    )     
+    )
 }
 
 export default AttendanceStats;

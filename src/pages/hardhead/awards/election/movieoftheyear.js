@@ -7,7 +7,7 @@ import HardheadRating from '../../components/rating';
 import HardheadBody from '../../components/hardheadbody';
 
 const MovieOfTheYear = (propsData) => {
-    const {authTokens} = useAuth();
+    const { authTokens } = useAuth();
     const [nights, setNights] = useState();
 
     var url = config.get('path') + '/api/hardhead?parentID=5370&attended=8&code=' + config.get('code');
@@ -23,25 +23,27 @@ const MovieOfTheYear = (propsData) => {
             }
         }
 
-        getHardheadUsers();
+        if (!nights) {
+            getHardheadUsers();
+        }
     }, [propsData, url])
 
     const handleSubmit = async (event) => {
 
-        if(authTokens === undefined) {
+        if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
             return;
         }
 
         try {
             var userID = localStorage.getItem("userID");
-            var url = config.get('path') + "/api/elections/49/voters/" + userID + "?code=" +  config.get('code');
+            var url = config.get('path') + "/api/elections/49/voters/" + userID + "?code=" + config.get('code');
             await axios.put(url, {
-              LastStepID: propsData.ID
+                LastStepID: propsData.ID
             }, {
-                headers: {'Authorization': 'token ' + authTokens.token}
+                headers: { 'Authorization': 'token ' + authTokens.token }
             });
-        } catch(e) {
+        } catch (e) {
             console.error(e);
             alert(e);
         }
@@ -49,7 +51,7 @@ const MovieOfTheYear = (propsData) => {
         propsData.onSubmit();
     }
 
-    return (  
+    return (
         <div>
             <Post
                 id={propsData.ID}
@@ -66,20 +68,20 @@ const MovieOfTheYear = (propsData) => {
                 }
             />
 
-            {nights ? nights.map(hardhead => 
-                    <Post
-                        key={hardhead.ID} 
-                        id={hardhead.ID} 
-                        title={hardhead.Name}
-                        date={hardhead.Date}
-                        dateFormatted={hardhead.DateString}
-                        // body= { <Movie id={hardhead.ID}/> }
-                        body = {<HardheadBody id={hardhead.ID} name={hardhead.Name} description={hardhead.Description} viewNight={false} viewGuests={false} /> }
-                        actions={ <ul className="actions"></ul> }
-                        stats={ <HardheadRating id={hardhead.ID} nightRatingVisible="false" /> }	
-                    />
-                )
-            : null}
+            {nights ? nights.map(hardhead =>
+                <Post
+                    key={hardhead.ID}
+                    id={hardhead.ID}
+                    title={hardhead.Name}
+                    date={hardhead.Date}
+                    dateFormatted={hardhead.DateString}
+                    // body= { <Movie id={hardhead.ID}/> }
+                    body={<HardheadBody id={hardhead.ID} name={hardhead.Name} description={hardhead.Description} viewNight={false} viewGuests={false} />}
+                    actions={<ul className="actions"></ul>}
+                    stats={<HardheadRating id={hardhead.ID} nightRatingVisible="false" />}
+                />
+            )
+                : null}
 
             <ul className="actions pagination">
                 <li>

@@ -8,6 +8,7 @@ const GuestStats = (propsData) => {
     const [data, setData] = useState({ stats: null, isLoading: false, visible: false })
     const [pageSize, setPageSize] = useState(10);
     const [period, setPeriod] = useState("All");
+    const [reload, setReload] = useState(false);
 
     var url = config.get('path') + '/api/hardhead/statistics/users?periodType=' + period + '&code=' + config.get('code');
 
@@ -23,7 +24,10 @@ const GuestStats = (propsData) => {
             }
         }
 
-        getStats();
+        if (!data.stats || reload) {
+            getStats();
+            setReload(false);
+        }
     }, [propsData, url])
 
     const handleSubmit = async (event) => {
@@ -44,6 +48,7 @@ const GuestStats = (propsData) => {
 
     const handlePeriodChange = async (event) => {
         setPeriod(event.target.value);
+        setReload(true);
     }
 
     return (

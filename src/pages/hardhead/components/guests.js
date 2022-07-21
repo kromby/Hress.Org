@@ -13,7 +13,9 @@ export default class Guests extends Component {
     }
 
     componentDidMount() {
-        this.getData(this.props.hardheadID);
+        if (!this.state.guests) {
+            this.getData(this.props.hardheadID);
+        }
     }
 
     getData(id) {
