@@ -37,7 +37,7 @@ const News = (propsData) => {
                     dateFormatted={news.insertedString}
                     author={news.author}
                     body={
-                        <p style={news.imageAlign === 4 ? {"minHeight": "280px"} : null}>
+                        <p style={news.image && news.imageAlign !== 4 ? { "minHeight": news.image.height-50 } : null}>
                             {!isMobile && news.imageAlign != 4 ?
                             <span className={news.imageAlign === 1 ? "image left" : news.imageAlign === 2 ? "image right" : null}>
                                 <img style={{"maxHeight": "500px"}} src={config.get("apiPath") + news.image.href} alt={news.name} />

@@ -30,6 +30,7 @@ import News from './news';
 import MainSidebar from './news/mainSidebar';
 import SingleNews from './news/singleNews';
 import { Helmet } from 'react-helmet';
+import HistoryNews from './news/history';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();
@@ -134,13 +135,15 @@ function App(props) {
               <Route path="/album" component={LegacyFrame} />
               <Route path="/chat" component={LegacyFrame} />
               <Route path="/comic" component={LegacyFrame} />
-              <Route path="/default/single.aspx" component={LegacyRedirect} />
+              {/* <Route path="/default/history" component={HistoryNews} /> */}
+              <Route path="/default/single.aspx" component={LegacyRedirect} />              
               <Route path="/default" component={LegacyFrame} />
               <Route path="/feed" component={LegacyFrame} />
               <Route path="/foodandredwine" component={LegacyFrame} />
               <Route path="/gang" component={LegacyFrame} />
               <Route path="/hressgames" component={LegacyFrame} />
               <Route path="/mission" component={LegacyFrame} />
+              <Route path="/news/history" component={HistoryNews} />
               <Route path="/news/:id" component={SingleNews} />
               <Route path="/rss" component={LegacyFrame} />
               <Route path="/yearly" component={LegacyFrame} />

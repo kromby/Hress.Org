@@ -42,7 +42,10 @@ namespace Ez.Hress.FunctionsApi.News
                 } 
                 else if (!string.IsNullOrWhiteSpace(req.Query["type"]) && req.Query["type"].ToString().ToUpper().Equals("ONTHISDAY"))
                 {
-                    var list = await _newsInteractor.GetNewsOnThisDay(1);
+                    int top = int.MaxValue;
+                    _ = int.TryParse(req.Query["top"], out top);
+
+                    var list = await _newsInteractor.GetNewsOnThisDay(top);
                     return new OkObjectResult(list);
                 }
                 else

@@ -25,40 +25,40 @@ namespace Ez.Hress.Scripts.DataAccess
 
         public async Task<IList<News>> GetLatestNews(int top)
         {
-            var sql = @"SELECT	TOP (@top) news.Id, news.Name, news.Hits, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId
+            var sql = @"SELECT	TOP (@top) news.Id, news.Name, news.Hits, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId, gImg.Description 'ImageName', gImg.Height, gImg.Width
                         FROM	adm_Component news
                         JOIN	adm_User author ON author.Id = news.InsertedBy
                         JOIN	scr_Text body ON body.ComponentId = news.Id AND body.TypeId = 36
                         LEFT OUTER JOIN	upf_Image userPhoto ON author.Id = userPhoto.UserId AND userPhoto.TypeId = 14
                         LEFT OUTER JOIN	scr_Image img ON img.ComponentId = news.Id
+						LEFT OUTER JOIN gen_Image gImg ON img.ImageId = gImg.Id
                         WHERE	news.TypeId = 9
 	                        AND	news.Deleted IS NULL
                         ORDER BY news.Inserted DESC";
+            
+            _log.LogInformation("[{Class}] top: {top}", nameof(GetLatestNews), top);
+            _log.LogInformation("[{Class}] Executing SQL: '{SQL}'", nameof(GetLatestNews), sql);
 
-            using (var connection = new SqlConnection(_connectionString))
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql);
+            command.Connection = connection;
+            command.Parameters.AddWithValue("top", top);
+
+            var list = new List<News>();
+
+            using (var reader = await command.ExecuteReaderAsync())
             {
-                await connection.OpenAsync();
-
-                using (var command = new SqlCommand(sql))
+                while (reader.Read())
                 {
-                    command.Connection = connection;
-                    command.Parameters.AddWithValue("top", top);
+                    News entity = ParseNews(reader);
 
-                    var list = new List<News>();
-
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (reader.Read())
-                        {
-                            News entity = ParseNews(reader);
-
-                            list.Add(entity);
-                        }
-                    }
-
-                    return list;
+                    list.Add(entity);
                 }
             }
+
+            return list;
         }
 
         private static News ParseNews(SqlDataReader reader)
@@ -79,8 +79,13 @@ namespace Ez.Hress.Scripts.DataAccess
                 }
             };
             if (!reader.IsDBNull(reader.GetOrdinal("ImageID")))
-            {
-                entity.ImageID = reader.GetInt32(reader.GetOrdinal("ImageID"));
+            {               
+                entity.Image = new ImageHrefEntity(SqlHelper.GetInt(reader, "ImageID"), reader.GetString(reader.GetOrdinal("ImageName")))
+                {
+                    Height = SqlHelper.GetInt(reader, "Height"),
+                    Width = SqlHelper.GetInt(reader, "Width")
+                };
+            
                 entity.ImageAlign = Enum.Parse<Align>(reader.GetInt32(reader.GetOrdinal("Align")).ToString());
             }
             if (!reader.IsDBNull(reader.GetOrdinal("AuthorImageID")))
@@ -93,35 +98,35 @@ namespace Ez.Hress.Scripts.DataAccess
 
         public async Task<News> GetNews(int id)
         {
-            var sql = @"SELECT	news.Id, news.Name, news.Hits, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId
+            var sql = @"SELECT	news.Id, news.Name, news.Hits, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId, gImg.Description 'ImageName', gImg.Height, gImg.Width
                         FROM	adm_Component news
                         JOIN	adm_User author ON author.Id = news.InsertedBy
                         JOIN	scr_Text body ON body.ComponentId = news.Id AND body.TypeId = 36
                         LEFT OUTER JOIN	upf_Image userPhoto ON author.Id = userPhoto.UserId AND userPhoto.TypeId = 14
                         LEFT OUTER JOIN	scr_Image img ON img.ComponentId = news.Id
+						LEFT OUTER JOIN gen_Image gImg ON img.ImageId = gImg.Id
                         WHERE	news.Id = @id
                             AND	news.TypeId = 9
 	                        AND	news.Deleted IS NULL
                         ORDER BY news.Inserted DESC";
+
+            _log.LogInformation("[{Class}] id: {id}", nameof(GetLatestNews), id);
+            _log.LogInformation("[{Class}] Executing SQL: '{SQL}'", nameof(GetLatestNews), sql);
 
             News entity = new();
             using (var connection = new SqlConnection(_connectionString))
             {
                 await connection.OpenAsync();
 
-                using (var command = new SqlCommand(sql))
-                {
-                    command.Connection = connection;
-                    command.Parameters.AddWithValue("id", id);
+                using var command = new SqlCommand(sql);
+                command.Connection = connection;
+                command.Parameters.AddWithValue("id", id);
 
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        if (reader.HasRows)
-                        {
-                            reader.Read();
-                            entity = ParseNews(reader);
-                        }
-                    }
+                using var reader = await command.ExecuteReaderAsync();
+                if (reader.HasRows)
+                {
+                    reader.Read();
+                    entity = ParseNews(reader);
                 }
             }
             return entity;
@@ -141,46 +146,43 @@ namespace Ez.Hress.Scripts.DataAccess
             }
 
 
-            var sql = $@"SELECT	news.Id, news.Name, news.Hits, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId
+            var sql = $@"SELECT	news.Id, news.Name, news.Hits, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId, gImg.Description 'ImageName', gImg.Height, gImg.Width
                         FROM	adm_Component news
                         JOIN	adm_User author ON author.Id = news.InsertedBy
                         JOIN	scr_Text body ON body.ComponentId = news.Id AND body.TypeId = 36
                         LEFT OUTER JOIN	upf_Image userPhoto ON author.Id = userPhoto.UserId AND userPhoto.TypeId = 14
                         LEFT OUTER JOIN	scr_Image img ON img.ComponentId = news.Id
+						LEFT OUTER JOIN gen_Image gImg ON img.ImageId = gImg.Id
                         WHERE	news.TypeId = 9
 	                        AND	news.Deleted IS NULL
 							{where}
                         ORDER BY news.Inserted DESC";
 
-            using (var connection = new SqlConnection(_connectionString))
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql);
+            command.Connection = connection;
+
+            if (ignoreYear)
             {
-                await connection.OpenAsync();
+                command.Parameters.AddWithValue("month", date.Month);
+                command.Parameters.AddWithValue("day", date.Day);
+            }
 
-                using (var command = new SqlCommand(sql))
+            var list = new List<News>();
+
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (reader.Read())
                 {
-                    command.Connection = connection;
-                    
-                    if(ignoreYear)
-                    {
-                        command.Parameters.AddWithValue("month", date.Month);
-                        command.Parameters.AddWithValue("day", date.Day);
-                    }
+                    News entity = ParseNews(reader);
 
-                    var list = new List<News>();
-
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        while (reader.Read())
-                        {
-                            News entity = ParseNews(reader);
-
-                            list.Add(entity);
-                        }
-                    }
-
-                    return list;
+                    list.Add(entity);
                 }
             }
+
+            return list;
         }
     }
 }

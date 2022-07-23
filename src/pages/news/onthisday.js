@@ -3,6 +3,7 @@ import config from 'react-global-configuration';
 import { ErrorBoundary } from "react-error-boundary";
 import axios from "axios";
 import { MiniPost } from "../../components";
+import { Link } from "react-router-dom";
 
 const OnThisDay = () => {
     const [news, setNews] = useState();
@@ -10,7 +11,7 @@ const OnThisDay = () => {
     useEffect(() => {
         const getNews = async () => {
 
-            var url = config.get("apiPath") + "/api/news/?type=onthisday";
+            var url = config.get("apiPath") + "/api/news/?type=onthisday&top=1";
             try {
                 const response = await axios.get(url);
                 setNews(response.data);
@@ -36,8 +37,10 @@ const OnThisDay = () => {
                 {news ? news.map(news =>
                     <MiniPost
                         key={news.id}
-                        title="Frétt frá þessum degi"
-                        description={news.name}
+                        title={news.name}
+                        description={
+                            <Link to="/news/history">Sjá allar fréttir frá þessum degi</Link>
+                        }
                         dateString={news.insertedString}
                         date={news.inserted}
                         href={"/news/" + news.id}

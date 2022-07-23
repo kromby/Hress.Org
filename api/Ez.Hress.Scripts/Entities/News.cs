@@ -21,16 +21,7 @@ namespace Ez.Hress.Scripts.Entities
     {
         public string? Content { get; set; }
         public Align ImageAlign { get; set; }
-        public int? ImageID { private get; set; }
-        public HrefEntity Image { get
-            {
-                return new HrefEntity
-                {
-                    ID = ImageID,
-                    Href = $"/api/images/{ImageID}/content"
-                };
-            }
-        }
+        public ImageHrefEntity? Image { get; set; }
         public UserBasicEntity? Author { get; set; }
     }
 }

@@ -31,9 +31,9 @@ namespace Ez.Hress.Scripts.UseCases
             var date = DateTime.Today;
             var list = await _newsDataAccess.GetNews(date, true);
 
-            if(list.Count() > 1)
+            if(list.Count > 1 && top == 1)
             {
-                int rnd = new Random().Next(list.Count());
+                int rnd = new Random().Next(list.Count);
                 return list.Where(n => n.ID == list[rnd].ID).ToList();
             }
 
