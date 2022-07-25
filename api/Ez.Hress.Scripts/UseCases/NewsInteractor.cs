@@ -29,7 +29,7 @@ namespace Ez.Hress.Scripts.UseCases
             _log.LogInformation($"[{nameof(NewsInteractor)}] Get historical news on this day");
             
             var date = DateTime.Today;
-            var list = await _newsDataAccess.GetNews(date, true);
+            var list = await _newsDataAccess.GetNews(date, true, true, false);
 
             if(list.Count > 1 && top == 1)
             {
@@ -38,6 +38,41 @@ namespace Ez.Hress.Scripts.UseCases
             }
 
             return list;
+        }
+
+        public async Task<IList<News>> GetNewsByYear(int year)
+        {
+            if (year < 2000 && year <= DateTime.Today.Year)
+            {
+                throw new ArgumentException($"Year must be after 2000 and not in the future", nameof(year));
+            }
+
+            return await _newsDataAccess.GetNews(new DateTime(year, 1, 1), false, false, true);
+        }
+
+        public async Task<IList<News>> GetNewsByYearAndMonth(int year, int month)
+        {
+            if (year < 2000 && year <= DateTime.Today.Year)
+            {
+                throw new ArgumentException($"Year must be after 2000 and not in the future", nameof(year));
+            }
+
+            if (month < 1 && month > 12)
+            {
+                throw new ArgumentException($"Month must be between 1 and 12", nameof(month));
+            }
+
+            return await _newsDataAccess.GetNews(new DateTime(year, month, 1), false, true, true);
+        }
+
+        public async Task<IList<StatisticNewsByDate>> GetNewsYearStatistics()
+        {
+            return await _newsDataAccess.GetNewsStatisticsByDate(null);
+        }
+
+        public async Task<IList<StatisticNewsByDate>> GetNewsMonthStatistics(int year)
+        {
+            return await _newsDataAccess.GetNewsStatisticsByDate(year);
         }
     }
 }

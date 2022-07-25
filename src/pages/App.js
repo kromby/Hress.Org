@@ -31,6 +31,7 @@ import MainSidebar from './news/mainSidebar';
 import SingleNews from './news/singleNews';
 import { Helmet } from 'react-helmet';
 import HistoryNews from './news/history';
+import HistorySidebar from './news/historySidebar';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();
@@ -163,6 +164,7 @@ function App(props) {
               <Route path="/hardhead/awards/nominations" />
               <Route path="/hardhead/rules" />
               <Route path="/hardhead/stats" />
+              <Route path="/news/history" component={HistorySidebar} />
             </Switch>
           </div>
           <Menu visible={data.showMenu} onClick={() => toggleMenu(true)} />

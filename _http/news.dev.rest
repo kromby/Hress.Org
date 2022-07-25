@@ -1,9 +1,20 @@
 ### Get latest news
-
-http://localhost:7072/api/news
+GET http://localhost:7072/api/news
 
 ### Get news by id
-http://localhost:7072/api/news/40692
+GET http://localhost:7072/api/news/40692
 
 ### Get historical news for this day
-http://localhost:7072/api/news?type=ONTHISDAY
+GET http://localhost:7072/api/news?type=ONTHISDAY
+
+### Get historical news by year
+GET http://localhost:7072/api/news?year=2016
+
+### Get historical news by year and month
+GET http://localhost:7072/api/news?year=2016&month=12
+
+### Get news statistics by year
+GET http://localhost:7072/api/news/statistics/years
+
+### Get news statistics by year and month
+GET http://localhost:7072/api/news/statistics/years/2008/months

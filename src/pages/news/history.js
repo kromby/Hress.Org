@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react";
 import config from 'react-global-configuration';
-import {isMobile} from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 import { ErrorBoundary } from "react-error-boundary";
 import axios from "axios";
 import { Post } from "../../components";
+import * as qs from 'query-string';
 
 const HistoryNews = (propsData) => {
     const [news, setNews] = useState();
+    const [lastUrl, setLastUrl] = useState();
 
     useEffect(() => {
-        const getNews = async () => {
-            var url = config.get("apiPath") + "/api/news/?type=onthisday";
+        const getNews = async (url) => {
             try {
                 const response = await axios.get(url);
                 setNews(response.data);
@@ -19,10 +20,22 @@ const HistoryNews = (propsData) => {
             }
         }
 
-        document.title = "Gamlar fréttir | Hress.Org";
+        const parsed = qs.parse(propsData.location.search);
+        if (parsed.year) {
+            if(parsed.month) {
+                var url = config.get("apiPath") + "/api/news/?year=" + parsed.year + "&month=" + parsed.month;   
+            } else {            
+                var url = config.get("apiPath") + "/api/news/?year=" + parsed.year;   
+            }
+            document.title = "Fréttir ársins " + parsed.year + " | Hress.Org";         
+        } else {
+            var url = config.get("apiPath") + "/api/news/?type=onthisday";
+            document.title = "Gamlar fréttir | Hress.Org";
+        }        
 
-        if (!news) {
-            getNews();
+        if (!news || lastUrl != url) {
+            setLastUrl(url);
+            getNews(url);
         }
     }, [propsData])
 
@@ -45,8 +58,8 @@ const HistoryNews = (propsData) => {
                         dateFormatted={news.insertedString}
                         author={news.author}
                         body={
-                            <p style={news.image && news.imageAlign !== 4 ? { "minHeight": news.image.height-50 } : null}>
-                                {!isMobile && news.imageAlign != 4 ?
+                            <p style={news.image && news.imageAlign !== 4 ? { "minHeight": news.image.height - 50 } : null}>
+                                {!isMobile && news.image && news.imageAlign != 4 ?
                                     <span className={news.imageAlign === 1 ? "image left" : news.imageAlign === 2 ? "image right" : null}>
                                         <img style={{ "maxHeight": "500px" }} src={config.get("apiPath") + news.image.href} alt={news.name} />
                                     </span> : null}

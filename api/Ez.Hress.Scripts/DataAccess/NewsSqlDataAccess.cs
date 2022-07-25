@@ -35,7 +35,7 @@ namespace Ez.Hress.Scripts.DataAccess
                         WHERE	news.TypeId = 9
 	                        AND	news.Deleted IS NULL
                         ORDER BY news.Inserted DESC";
-            
+
             _log.LogInformation("[{Class}] top: {top}", nameof(GetLatestNews), top);
             _log.LogInformation("[{Class}] Executing SQL: '{SQL}'", nameof(GetLatestNews), sql);
 
@@ -79,13 +79,13 @@ namespace Ez.Hress.Scripts.DataAccess
                 }
             };
             if (!reader.IsDBNull(reader.GetOrdinal("ImageID")))
-            {               
+            {
                 entity.Image = new ImageHrefEntity(SqlHelper.GetInt(reader, "ImageID"), reader.GetString(reader.GetOrdinal("ImageName")))
                 {
                     Height = SqlHelper.GetInt(reader, "Height"),
                     Width = SqlHelper.GetInt(reader, "Width")
                 };
-            
+
                 entity.ImageAlign = Enum.Parse<Align>(reader.GetInt32(reader.GetOrdinal("Align")).ToString());
             }
             if (!reader.IsDBNull(reader.GetOrdinal("AuthorImageID")))
@@ -132,19 +132,21 @@ namespace Ez.Hress.Scripts.DataAccess
             return entity;
         }
 
-        public async Task<IList<News>> GetNews(DateTime date, bool ignoreYear)
+        public async Task<IList<News>> GetNews(DateTime date, bool useDay, bool useMonth, bool useYear)
         {
-            string where;
-            if (ignoreYear)
+            StringBuilder where = new();
+            if (useDay)
             {
-                where = @"AND DATEPART(MONTH,	news.Inserted) = @month
-                          AND DATEPART(DAY, news.Inserted) = @day";
+                where.Append("AND DATEPART(DAY, news.Inserted) = @day ");
             }
-            else
+            if (useMonth)
             {
-                throw new NotImplementedException("ignoreYear == false");
+                where.Append("AND DATEPART(MONTH,	news.Inserted) = @month ");
             }
-
+            if (useYear)
+            {
+                where.Append("AND DATEPART(YEAR,	news.Inserted) = @year ");
+            }
 
             var sql = $@"SELECT	news.Id, news.Name, news.Hits, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId, gImg.Description 'ImageName', gImg.Height, gImg.Width
                         FROM	adm_Component news
@@ -164,10 +166,17 @@ namespace Ez.Hress.Scripts.DataAccess
             using var command = new SqlCommand(sql);
             command.Connection = connection;
 
-            if (ignoreYear)
+            if (useDay)
+            {
+                command.Parameters.AddWithValue("day", date.Day);
+            }
+            if (useMonth)
             {
                 command.Parameters.AddWithValue("month", date.Month);
-                command.Parameters.AddWithValue("day", date.Day);
+            }
+            if (useYear)
+            {
+                command.Parameters.AddWithValue("year", date.Year);
             }
 
             var list = new List<News>();
@@ -177,6 +186,68 @@ namespace Ez.Hress.Scripts.DataAccess
                 while (reader.Read())
                 {
                     News entity = ParseNews(reader);
+
+                    list.Add(entity);
+                }
+            }
+
+            return list;
+        }
+
+        public async Task<IList<StatisticNewsByDate>> GetNewsStatisticsByDate(int? year)
+        {
+            string sql;
+
+            if (year.HasValue)
+            {
+                sql = @"SELECT	DATEPART(month, news.Inserted) 'month', COUNT(news.Id) 'counter'
+                        FROM	adm_Component news
+                        WHERE	news.TypeId = 9
+	                        AND	news.Deleted IS NULL
+							AND	DATEPART(year, news.Inserted) = @year
+						GROUP BY DATEPART(month, news.Inserted)
+						ORDER BY DATEPART(month, news.Inserted) DESC";
+            }
+            else
+            {
+                sql = @"SELECT	DATEPART(year, news.Inserted) 'year', COUNT(news.Id) 'counter'
+                        FROM	adm_Component news
+                        WHERE	news.TypeId = 9
+	                        AND	news.Deleted IS NULL
+						GROUP BY DATEPART(year, news.Inserted)
+						ORDER BY DATEPART(year, news.Inserted) DESC";
+            }
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql);
+            command.Connection = connection;
+
+            var list = new List<StatisticNewsByDate>();
+
+            if (year.HasValue)
+            {
+                command.Parameters.AddWithValue("year", year.Value);
+            }
+
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (reader.Read())
+                {
+                    StatisticNewsByDate entity;
+                    if (year.HasValue)
+                    {
+                        entity = new(DatePart.Month,
+                        SqlHelper.GetInt(reader, "month"),
+                        SqlHelper.GetInt(reader, "counter"));
+                    }
+                    else
+                    {
+                        entity = new(DatePart.Year,
+                        SqlHelper.GetInt(reader, "year"),
+                        SqlHelper.GetInt(reader, "counter"));
+                    }
 
                     list.Add(entity);
                 }

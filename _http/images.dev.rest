@@ -28,3 +28,6 @@ GET http://localhost:7072/api/images/257360/content
 
 ### Get image content - Blob
 GET http://localhost:7072/api/images/278506/content
+
+### Get image content - faulty?
+GET http://localhost:7072/api/images/267245/content

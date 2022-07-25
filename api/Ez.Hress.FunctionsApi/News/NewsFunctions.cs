@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Ez.Hress.Scripts.UseCases;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace Ez.Hress.FunctionsApi.News
 {
@@ -20,7 +21,7 @@ namespace Ez.Hress.FunctionsApi.News
         {
             _newsInteractor = newsInteractor;
         }
-        
+
         [FunctionName("news")]
         public async Task<IActionResult> RunNews(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "news/{id:int?}")] HttpRequest req, int? id,
@@ -28,29 +29,52 @@ namespace Ez.Hress.FunctionsApi.News
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            
+
             log.LogInformation("[RunNews] C# HTTP trigger function processed a request.");
 
             try
             {
                 if (id.HasValue)
                 {
+                    log.LogInformation("[{Function}] Getting a single news by ID '{Id}'", nameof(RunNews), id);
                     var entity = await _newsInteractor.GetNews(id.Value);
                     if (entity == null || entity.ID < 1)
                         return new NotFoundResult();
                     return new OkObjectResult(entity);
-                } 
+                }
                 else if (!string.IsNullOrWhiteSpace(req.Query["type"]) && req.Query["type"].ToString().ToUpper().Equals("ONTHISDAY"))
                 {
+                    log.LogInformation("[{Function}] Getting news for type '{Type}'", nameof(RunNews), req.Query["type"]);
                     int top = int.MaxValue;
                     _ = int.TryParse(req.Query["top"], out top);
 
                     var list = await _newsInteractor.GetNewsOnThisDay(top);
                     return new OkObjectResult(list);
                 }
+                else if (!string.IsNullOrWhiteSpace(req.Query["year"]))
+                {
+                    if (!int.TryParse(req.Query["year"], out int year))
+                    {
+                        return new BadRequestObjectResult("Year property invalid");
+                    }
+
+                    IList<Scripts.Entities.News> list = null;
+                    if (int.TryParse(req.Query["month"], out int month))
+                    {
+                        log.LogInformation("[{Function}] Getting news for year '{Year}' and month '{Month}'", nameof(RunNews), year, month);
+                        list = await _newsInteractor.GetNewsByYearAndMonth(year, month);
+                    }
+                    else
+                    {
+                        log.LogInformation("[{Function}] Getting news by Year '{Year}'", nameof(RunNews), year);                        
+                        list = await _newsInteractor.GetNewsByYear(year);
+                    }
+                    return new OkObjectResult(list);
+                }
                 else
                 {
-                    var list = await _newsInteractor.GetLatestNews();                   
+                    log.LogInformation("[{Function}] Getting latest news", nameof(RunNews));
+                    var list = await _newsInteractor.GetLatestNews();
                     return new OkObjectResult(list);
                 }
             }

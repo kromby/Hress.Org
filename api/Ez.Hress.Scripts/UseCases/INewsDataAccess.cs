@@ -13,6 +13,8 @@ namespace Ez.Hress.Scripts.UseCases
 
         Task<News> GetNews(int id);
 
-        Task<IList<News>> GetNews(DateTime date, bool ignoreYear);
+        Task<IList<News>> GetNews(DateTime date, bool useDay, bool useMonth, bool useYear);
+
+        Task<IList<StatisticNewsByDate>> GetNewsStatisticsByDate(int? year);
     }
 }
