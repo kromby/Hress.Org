@@ -10,11 +10,12 @@ import HardheadBody from './components/hardheadbody';
 
 const Hardhead = (propsData) => {
 	const [hardheads, setHardheads] = useState();	
+	const [lastUrl , setLastUrl] = useState();
 
 	useEffect(() => {
-		const getHardheads = async () => {
+		const getHardheads = async (url) => {
 			try {
-				const response = await axios.get(await getHardheadsUrl());
+				const response = await axios.get(url);
 				setHardheads(response.data);
 			}
 			catch (e) {
@@ -22,7 +23,7 @@ const Hardhead = (propsData) => {
 			}
 		}
 
-		const getHardheadsUrl = async () => {
+		const getHardheadsUrl = () => {
 			const parsed = qs.parse(propsData.location.search);
 			console.log("getHardheadsUrl");
 			console.log(parsed);
@@ -44,8 +45,11 @@ const Hardhead = (propsData) => {
 
 		document.title = "Harðhaus | Hress.Org";
 
-		if(!hardheads) {
-			getHardheads();
+		var url = getHardheadsUrl();
+
+		if(!hardheads || lastUrl != url) {
+			getHardheads(url);
+			setLastUrl(url);
 		}
 	}, [propsData])
 

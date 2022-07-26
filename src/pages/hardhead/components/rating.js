@@ -9,6 +9,7 @@ const HardheadRating = (propsData) => {
     const [data, setData] = useState({ ratings: [], isLoading: false });
     const [nightRatingVisible, setNightRatingVisible] = useState(true);
     const [movieRatingVisible, setMovieRatingVisible] = useState(true);
+    const [lastLoggedIn, setLastLoggedIn] = useState(false);
 
     useEffect(() => {
         if (propsData.nightRatingVisible) {
@@ -34,8 +35,11 @@ const HardheadRating = (propsData) => {
             }
         }
 
-        if (!data.ratings) {
+        var loggedIn = authTokens ? true : false;
+
+        if (!data.ratings || lastLoggedIn != loggedIn) {
             getRatingData();
+            setLastLoggedIn(loggedIn);
         }
     }, [propsData, authTokens])
 

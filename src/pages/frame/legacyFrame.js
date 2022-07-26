@@ -28,6 +28,8 @@ const LegacyFrame = (propsData) => {
             }
         }
 
+        document.title = window.location.pathname + " | Hress.Org";
+
         const parsed = qs.parse(propsData.location.search);
         setIsLegacy(parsed.legacy);
         console.log("[LegacyFrame] legacy: '" + parsed.legacy + "'");

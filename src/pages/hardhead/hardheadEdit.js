@@ -7,6 +7,7 @@ import axios from "axios";
 import { useAuth } from '../../context/auth';
 import MovieEdit from './components/movieEdit';
 import GuestsEdit from './components/guestsEdit';
+import { Helmet } from 'react-helmet';
 
 const HardheadEdit = (propsData) => {
 	const { authTokens } = useAuth();

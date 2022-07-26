@@ -19,7 +19,7 @@ const News = (propsData) => {
             }
         }
 
-        document.title = 'Hress.Org';
+        document.title = "Forsíða | Hress.Org";
 
         if(!news) {
             getNews();

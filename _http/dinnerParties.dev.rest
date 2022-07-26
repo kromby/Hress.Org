@@ -1,0 +1,2 @@
+### Get all dinner parties
+GET http://localhost:7072/api/dinnerParties

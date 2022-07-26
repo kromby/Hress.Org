@@ -6,6 +6,7 @@ import axios from "axios";
 const HardheadActions = (propsData) => {
     const { authTokens } = useAuth();
     const [data, setData] = useState({ actions: [], isLoading: false, visible: false });
+    const [lastLoggedIn, setLastLoggedIn] = useState(false);
 
     useEffect(() => {
         const getActions = async () => {
@@ -25,8 +26,11 @@ const HardheadActions = (propsData) => {
             }
         }
 
-        if (!data.actions) {
+        var loggedIn = authTokens ? true : false;
+
+        if (!data.actions || lastLoggedIn != loggedIn) {
             getActions();
+            setLastLoggedIn(loggedIn);
         }
     }, [propsData, authTokens])
 

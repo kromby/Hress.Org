@@ -3,6 +3,8 @@ using Ez.Hress.Administration.DataAccess;
 using Ez.Hress.Administration.UseCases;
 using Ez.Hress.Hardhead.DataAccess;
 using Ez.Hress.Hardhead.UseCases;
+using Ez.Hress.MajorEvents.DataAccess;
+using Ez.Hress.MajorEvents.UseCases;
 using Ez.Hress.Scripts.DataAccess;
 using Ez.Hress.Scripts.UseCases;
 using Ez.Hress.Shared;
@@ -62,6 +64,9 @@ namespace Ez.Hress.FunctionsApi
 
             services.AddSingleton<INewsDataAccess, NewsSqlDataAccess>();
             services.AddSingleton<NewsInteractor>();
+
+            services.AddSingleton<IDinnerPartyDataAccess, DinnerPartySqlDataAccess>();
+            services.AddSingleton<DinnerPartyInteractor>();
 
             services.AddSingleton<IImageInfoDataAccess, ImageInfoSqlDataAccess>();
             services.AddSingleton<IImageContentDataAccess, ImageContentHttpDataAccess>();

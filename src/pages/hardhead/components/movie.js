@@ -36,7 +36,7 @@ const Movie = (propsData) => {
             }
         };
 
-        if (!movieData) {
+        if (!movieData.movie) {
             getMovieData();
         }
     }, [propsData, movieUrl])

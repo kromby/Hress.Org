@@ -16,6 +16,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Ez.Hress.Administration\Ez.Hress.Administration.csproj" />
     <ProjectReference Include="..\Ez.Hress.Hardhead\Ez.Hress.Hardhead.csproj" />
+    <ProjectReference Include="..\Ez.Hress.MajorEvents\Ez.Hress.MajorEvents.csproj" />
     <ProjectReference Include="..\Ez.Hress.Scripts\Ez.Hress.Scripts.csproj" />
     <ProjectReference Include="..\Ez.Hress.Shared\Ez.Hress.Shared.csproj" />
   </ItemGroup>
