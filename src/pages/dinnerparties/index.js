@@ -37,9 +37,13 @@ const DinnerParties = (propsData) => {
                     dateFormatted={dinner.dateString}
                     image={dinner.coverImage ? config.get('apiPath') + dinner.coverImage.href : null}
                     body={
-                        <p>
-                            Prump
-                        </p>
+                        <section>
+                            <p>
+                                Þetta kvöld var haldið {dinner.location[0].toLowerCase()}{dinner.location.substring(1)} og gestirnir voru {dinner.guestCount}.
+                                <br/>
+                                {dinner.theme ? " Þema kvöldsins var " + dinner.theme[0].toLowerCase() + dinner.theme.substring(1) + "." : null}
+                            </p>
+                        </section>
                     }
                 />
             ) : null}

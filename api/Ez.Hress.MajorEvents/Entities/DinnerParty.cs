@@ -43,9 +43,10 @@ namespace Ez.Hress.MajorEvents.Entities
         }
         public string Location { get; set; }
         public string? Theme { get; set; }
+        public int GuestCount { get; set; }
         public ImageHrefEntity? CoverImage { get; set; }
 
-        public override string? Name { get => $"{Number}. Matar- og Rauðvínskvöld {Year}"; }
+        public override string Name { get => $"Matar- og Rauðvínskvöld {Year}"; }
 
 
     }

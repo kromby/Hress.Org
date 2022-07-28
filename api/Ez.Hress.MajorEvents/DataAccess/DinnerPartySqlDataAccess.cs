@@ -25,13 +25,14 @@ namespace Ez.Hress.MajorEvents.DataAccess
         public async Task<IList<DinnerParty>> GetAll()
         {
             var sql = @"SELECT	ROW_NUMBER() OVER(ORDER BY dinner.Inserted ASC) 'Number', dinner.Id, dinner.Date, 
-		                        dinner.Inserted, dinner.InsertedBy, tLocation.TextValue 'Location', theme.TextValue 'Theme', img.ImageId, gImg.Description
+		                        dinner.Inserted, dinner.InsertedBy, tLocation.TextValue 'Location', theme.TextValue 'Theme', img.ImageId, COUNT(guest.Id) 'GuestCount'
                         FROM	rep_Event dinner
                         JOIN	rep_Text tLocation ON tLocation.EventId = dinner.Id AND tLocation.TypeId = 67
+						JOIN	rep_User guest ON guest.EventId = dinner.Id
                         LEFT OUTER JOIN	rep_Text theme ON theme.EventId = dinner.Id AND theme.TypeId = 194
                         LEFT OUTER JOIN rep_Image img ON img.EventId = dinner.Id AND img.TypeId = 14
-                        LEFT OUTER JOIN	gen_Image gImg ON gImg.Id = img.ImageId
                         WHERE	dinner.TypeId = 56 AND dinner.ParentId IS NULL
+						GROUP BY dinner.Id, dinner.Date, dinner.Inserted, dinner.InsertedBy, tLocation.TextValue, theme.TextValue, img.ImageId
                         ORDER BY dinner.Inserted DESC";
 
             _log.LogInformation("[{Class}] GetAll", this.GetType().Name);
@@ -55,7 +56,8 @@ namespace Ez.Hress.MajorEvents.DataAccess
                         reader.GetString(reader.GetOrdinal("Location")))
                     {
                         Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
-                        InsertedBy = SqlHelper.GetInt(reader, "InsertedBy"),                        
+                        InsertedBy = SqlHelper.GetInt(reader, "InsertedBy"),
+                        GuestCount = SqlHelper.GetInt(reader, "GuestCount")
                     };
 
                     if (!reader.IsDBNull(reader.GetOrdinal("Theme")))
@@ -65,7 +67,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
 
                     if (!reader.IsDBNull(reader.GetOrdinal("ImageId")))
                     {
-                        entity.CoverImage = new ImageHrefEntity(SqlHelper.GetInt(reader, "ImageId"), reader.GetString(reader.GetOrdinal("Description")));
+                        entity.CoverImage = new ImageHrefEntity(SqlHelper.GetInt(reader, "ImageId"), entity.Name);
                     }
 
                     list.Add(entity);
