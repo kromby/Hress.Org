@@ -22,7 +22,14 @@ namespace Ez.Hress.MajorEvents.UseCases
         public async Task<IList<DinnerParty>> GetDinnerParties()
         {
             _log.LogInformation("[{Class}] GetDinnerParties", GetType().Name);
-            return await _dinnerDataAccess.GetAll();
+            var list = await _dinnerDataAccess.GetAll();
+
+            foreach(var item in list)
+            {
+                item.Guests = await _dinnerDataAccess.GetGuests(item.ID, 197);
+            }
+
+            return list;
         }
 
         public async Task<DinnerParty> GetDinnerParty(int id)

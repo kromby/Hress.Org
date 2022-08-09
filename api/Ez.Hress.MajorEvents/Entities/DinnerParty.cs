@@ -26,6 +26,7 @@ namespace Ez.Hress.MajorEvents.Entities
             Number = number;
             Date = date;
             Location = location;
+            Guests = new List<Guest>();
         }
 
         public int Number { get; set; }
@@ -45,6 +46,8 @@ namespace Ez.Hress.MajorEvents.Entities
         public string? Theme { get; set; }
         public int GuestCount { get; set; }
         public ImageHrefEntity? CoverImage { get; set; }
+
+        public IList<Guest> Guests { get; set; }
 
         public override string Name { get => $"Matar- og Rauðvínskvöld {Year}"; }
 

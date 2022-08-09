@@ -15,6 +15,7 @@ using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -48,6 +49,11 @@ namespace Ez.Hress.FunctionsApi
             var issuer = config["Ez.Hress.Shared.Authentication.Issuer"];
             var audience = config["Ez.Hress.Shared.Authentication.Audience"];
             var salt = config["Ez.Hress.Shared.Authentication.Salt"];
+
+            services.AddMvcCore().AddNewtonsoftJson(options => {
+                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+                options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
+            });
 
             services.AddSingleton(new DbConnectionInfo(dbConnectionString));
             services.AddSingleton(new BlobConnectionInfo(contentStroageConnectionString));

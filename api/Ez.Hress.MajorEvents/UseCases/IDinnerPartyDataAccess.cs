@@ -10,6 +10,8 @@ namespace Ez.Hress.MajorEvents.UseCases
     public interface IDinnerPartyDataAccess
     {
         Task<IList<DinnerParty>> GetAll();
-        Task<DinnerParty> GetById(int id);        
+        Task<DinnerParty> GetById(int id);
+
+        Task<IList<Guest>> GetGuests(int partyID, int? typeID);
     }
 }

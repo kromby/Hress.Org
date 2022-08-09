@@ -21,7 +21,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
             _connectionString = connectionInfo.ConnectionString;
             _log = log;
         }
-        
+
         public async Task<IList<DinnerParty>> GetAll()
         {
             var sql = @"SELECT	ROW_NUMBER() OVER(ORDER BY dinner.Inserted ASC) 'Number', dinner.Id, dinner.Date, 
@@ -80,6 +80,52 @@ namespace Ez.Hress.MajorEvents.DataAccess
         public Task<DinnerParty> GetById(int id)
         {
             throw new NotImplementedException();
+        }
+
+        public async Task<IList<Guest>> GetGuests(int partyID, int? typeID)
+        {
+            string typeWhere = string.Empty;
+            if(typeID.HasValue)
+            {
+                typeWhere = " AND typ.ID = @typeID ";
+            }
+
+            var sql = $@"SELECT	guest.UserId, usr.Username, userPhoto.ImageId 'ImageID', typ.Name
+                        FROM rep_User guest
+                        JOIN adm_User usr ON guest.UserId = usr.Id
+                        JOIN gen_Type typ ON guest.TypeId = typ.Id
+                        LEFT OUTER JOIN upf_Image userPhoto ON usr.Id = userPhoto.UserId AND userPhoto.TypeId = 14
+                        WHERE guest.EventId = @partyID
+                        {typeWhere}
+                        ORDER BY typ.Id DESC, usr.Username";
+
+            _log.LogInformation("[{Class}] GetGuests", this.GetType().Name);
+            _log.LogInformation("[{Class}] Executing SQL: {sql}", this.GetType().Name, sql);
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql);
+            command.Connection = connection;
+
+            command.Parameters.AddWithValue("partyID", partyID);
+            if(typeID.HasValue)
+            {
+                command.Parameters.AddWithValue("typeID", typeID.Value);
+            }
+
+            var list = new List<Guest>();
+
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (reader.Read())
+                {
+                    Guest guest = new(SqlHelper.GetInt(reader, "UserId"), reader.GetString(reader.GetOrdinal("Username")), SqlHelper.GetInt(reader, "ImageID"), reader.GetString(reader.GetOrdinal("Name")));
+                    list.Add(guest);
+                }
+            }
+
+            return list;
         }
     }
 }

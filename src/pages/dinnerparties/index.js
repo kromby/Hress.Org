@@ -25,6 +25,18 @@ const DinnerParties = (propsData) => {
         }    
     }, [propsData])
 
+    function getAssistants (guests) {
+        console.log("[dinnerparties] guest.length: ", guests.length);
+        if(guests.length === 0) {
+            return "Að þessu sinni voru engir aðstoðarkokkar."
+        }
+        if(guests.length === 1) {
+            return guests[0].role + " í þetta skiptið var " + guests[0].name + ".";
+        } else {
+            return "Aðstoðarkokkar voru " + guests.map(guest => guest.name).join(", ") + ".";
+        }
+    }
+
     return (
         <div id="main">
             {dinners ? dinners.map(dinner =>
@@ -33,6 +45,7 @@ const DinnerParties = (propsData) => {
                     href={"/dinnerparties/" + dinner.id}
                     title={dinner.name}
                     description={"Kvöld númer " + dinner.number}
+                    author={dinner.guests[0] ? dinner.guests[0].user : null}
                     date={dinner.date}
                     dateFormatted={dinner.dateString}
                     image={dinner.coverImage ? config.get('apiPath') + dinner.coverImage.href : null}
@@ -40,8 +53,10 @@ const DinnerParties = (propsData) => {
                         <section>
                             <p>
                                 Þetta kvöld var haldið {dinner.location[0].toLowerCase()}{dinner.location.substring(1)} og gestirnir voru {dinner.guestCount}.
-                                <br/>
+                                {dinner.theme ? <br/> : null}
                                 {dinner.theme ? " Þema kvöldsins var " + dinner.theme[0].toLowerCase() + dinner.theme.substring(1) + "." : null}
+                                <br/>
+                                {getAssistants(dinner.guests)} 
                             </p>
                         </section>
                     }
