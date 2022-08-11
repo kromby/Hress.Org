@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import config from 'react-global-configuration';
 import axios from "axios";
 import { Post } from "../../components";
 import { Link } from "react-router-dom";
@@ -11,7 +12,7 @@ const Election2022 = (propsData) => {
 
     useEffect(() => {
         const getCourses = async () => {
-            var url = "http://localhost:7072/api/dinnerparties/courses/" + propsData.match.params.typeID;
+            var url = config.get("apiPath") + "/api/dinnerparties/courses/" + propsData.match.params.typeID;
             try {
                 const response = await axios.get(url);
                 setCourses(response.data);
