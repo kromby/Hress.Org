@@ -1,2 +1,5 @@
 ### Get all dinner parties
 GET http://localhost:7072/api/dinnerParties
+
+### Get all courses by typeID
+GET http://localhost:7072/api/dinnerparties/courses/191

@@ -63,5 +63,37 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                 log.LogInformation($"[RunNews] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
             }
         }
-    }
+
+        [FunctionName("dinnerPartiesCourses")]
+        public async Task<IActionResult> RunCourses(
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "dinnerparties/courses/{typeID:int}")] HttpRequest req,
+            int typeID, ILogger log)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunCourses));
+
+            try
+            {
+                var list = await _dinnerPartyInteractor.GetCoursesByType(typeID);
+                return new OkObjectResult(list);
+            }
+            catch (ArgumentException aex)
+            {
+                log.LogError(aex, "[{Function}] Invalid input", nameof(RunCourses));
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "[{Function}] Unhandled error", nameof(RunCourses));
+                throw;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunCourses), stopwatch.ElapsedMilliseconds);
+            }
+        }
+    }    
 }

@@ -32,7 +32,11 @@ const DinnerParties = (propsData) => {
         }
         if(guests.length === 1) {
             return guests[0].role + " í þetta skiptið var " + guests[0].name + ".";
-        } else {
+        } 
+        if(guests.length === 2) {
+            return "Aðstoðarkokkar í þetta skiptið voru " + guests[0].name + " og " + guests[1].name + ".";
+        }
+        else {
             return "Aðstoðarkokkar voru " + guests.map(guest => guest.name).join(", ") + ".";
         }
     }

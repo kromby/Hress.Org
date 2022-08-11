@@ -27,6 +27,9 @@ namespace Ez.Hress.MajorEvents.UseCases
             foreach(var item in list)
             {
                 item.Guests = await _dinnerDataAccess.GetGuests(item.ID, 197);
+
+                if(item.Guests.Count > 1 && item.Guests.First().ID == 2663)
+                    item.Guests = item.Guests.OrderBy(item => item.ID).ToList();
             }
 
             return list;
@@ -37,24 +40,29 @@ namespace Ez.Hress.MajorEvents.UseCases
             return await _dinnerDataAccess.GetById(id);
         }
 
-        public async void GetGuests(int id)
+        //public async void GetGuests(int id)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //public async void GetCourses(int id)
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public async Task<IList<Course>> GetCoursesByType(int typeID)
         {
-            throw new NotImplementedException();
+            return await _dinnerDataAccess.GetCoursesByTypeId(typeID);
         }
 
-        public async void GetCourses(int id)
-        {
-            throw new NotImplementedException();
-        }
+        //public async void GetRedwineTeams(int id)
+        //{
+        //    throw new NotImplementedException();
+        //}
 
-        public async void GetRedwineTeams(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public async void GetAlbums(int id)
-        {
-            throw new NotImplementedException();
-        }
+        //public async void GetAlbums(int id)
+        //{
+        //    throw new NotImplementedException();
+        //}
     }
 }

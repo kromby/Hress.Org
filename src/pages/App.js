@@ -33,6 +33,7 @@ import { Helmet } from 'react-helmet';
 import HistoryNews from './news/history';
 import HistorySidebar from './news/historySidebar';
 import DinnerParties from './dinnerparties';
+import Election2022 from './dinnerparties/election2022';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();
@@ -142,6 +143,8 @@ function App(props) {
               <Route path="/default" component={LegacyFrame} />
               <Route path="/feed" component={LegacyFrame} />
               <Route path="/foodandredwine" component={LegacyFrame} />
+              <Route path="/dinnerparties/courses/:typeID" component={Election2022} />
+              <Route path="/dinnerparties/:id" component={DinnerParties} />
               <Route path="/dinnerparties" component={DinnerParties} />
               <Route path="/gang" component={LegacyFrame} />
               <Route path="/hressgames" component={LegacyFrame} />
