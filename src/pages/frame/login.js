@@ -14,13 +14,13 @@ function Login(props) {
     const referer = props.location.state ? props.location.state.from : '/';
 
     function postLogin() {        
-        console.log("postLogin()");
-        console.log("postLogin() - " + username + ":" + password);
+        console.log("[Login] postLogin()");
+        console.log("[Login] postLogin() - " + username + ":" + password);
         var url = config.get('apiPath') + '/api/authenticate';
         axios.post(url, {username, password}).then(
             result => {
                 if(result.status === 200) {
-                    console.log("/api/authenticate OK");
+                    console.log("[Login] /api/authenticate OK");
                     console.log(result.data);
                     setAuthTokens({ token: result.data });
                     setLoggedIn(true);
@@ -35,7 +35,7 @@ function Login(props) {
     }
 
     if(authTokens !== undefined) {
-        console.log("referer: " + referer);
+        console.log("[Login] referer: " + referer);
         return <Redirect to={referer} />
     }
 

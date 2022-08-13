@@ -18,6 +18,8 @@ const DisappointmentNomination = (propsData) => {
     useEffect(() => {
         setUsers(propsData.Users);
 
+        document.title = "Tilnefna Vinnbrigði | Hress.Org";
+
         if (!nominations) {
             getNominations();
         }

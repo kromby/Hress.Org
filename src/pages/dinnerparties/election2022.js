@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
+import { Link, useLocation } from 'react-router-dom';
 import config from 'react-global-configuration';
 import axios from "axios";
 import { Post } from "../../components";
-import { Link } from "react-router-dom";
+import { useAuth } from "../../context/auth";
 
 const Election2022 = (propsData) => {
+    const { authTokens } = useAuth();
     const [courses, setCourses] = useState();
     const [selected, setSelected] = useState();
     const [savingAllowed, setSavingAllowed] = useState(false);
     const [message, setMessage] = useState();
+    const { pathname } = useLocation();
+
+    var url = config.get("apiPath") + "/api/dinnerparties/courses/" + propsData.match.params.typeID;
 
     useEffect(() => {
         const getCourses = async () => {
-            var url = config.get("apiPath") + "/api/dinnerparties/courses/" + propsData.match.params.typeID;
             try {
                 const response = await axios.get(url);
                 setCourses(response.data);
@@ -26,7 +30,7 @@ const Election2022 = (propsData) => {
         if (!courses) {
             getCourses();
         }
-    }, [propsData]);
+    }, [propsData, url]);
 
     const handleChange = async (event) => {
         setSelected(event);
@@ -37,7 +41,35 @@ const Election2022 = (propsData) => {
         setSavingAllowed(false);
         event.preventDefault();
 
-        setMessage("Atkvæði vistað! (" + selected + ")");
+        try {
+            await axios.post(url, {
+                courseID: selected
+            }, {
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+            });
+            setMessage("Atkvæði vistað!");
+        } catch (e) {
+            console.error(e);
+            if (e.response && e.response.status === 400) {
+                setMessage("Ekki tókst að kjósa! - " + e.message);
+            }
+            else {
+                setMessage("Ekki tókst að kjósa!");
+            }
+        }
+    }
+
+    if (!authTokens) {
+        return (
+            <div id="main">
+                <Post
+                    title="Kosning um forrétt"
+                    body={
+                        <p>Þú verður að vera <Link to={{ pathname: "/login", state: { from: pathname } }}>skráður inn</Link> til þess að taka þátt í kosningunni.</p>
+                    }
+                />
+            </div>
+        );
     }
 
     return (
