@@ -9,15 +9,19 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Ez.Hress.MajorEvents.UseCases;
 using System.Diagnostics;
+using Ez.Hress.MajorEvents.Entities;
+using Ez.Hress.Shared.UseCases;
 
 namespace Ez.Hress.FunctionsApi.DinnerParty
 {
     public class DinnerPartyFunction
     {
-        private DinnerPartyInteractor _dinnerPartyInteractor;
+        private readonly AuthenticationInteractor _authenticationInteractor;
+        private readonly DinnerPartyInteractor _dinnerPartyInteractor;
 
-        public DinnerPartyFunction(DinnerPartyInteractor dinnerPartyInteractor)
+        public DinnerPartyFunction(AuthenticationInteractor authenticationInteractor, DinnerPartyInteractor dinnerPartyInteractor)
         {
+            _authenticationInteractor = authenticationInteractor;
             _dinnerPartyInteractor = dinnerPartyInteractor;
         }
 
@@ -76,8 +80,32 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
 
             try
             {
-                var list = await _dinnerPartyInteractor.GetCoursesByType(typeID);
-                return new OkObjectResult(list);
+                if (req.Method == "GET")
+                {
+                    log.LogInformation("[{Function}] Getting a all courses.", nameof(RunCourses));
+                    var courses = await _dinnerPartyInteractor.GetCoursesByType(typeID);
+                    return new OkObjectResult(courses);
+                }
+                else
+                {
+                    var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+                    if (!isJWTValid)
+                    {
+                        log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunCourses));
+                        return new UnauthorizedResult();
+                    }
+
+                    log.LogInformation("[{Function}] Saving a vote.", nameof(RunCourses));
+                    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                    var vote = JsonConvert.DeserializeObject<Vote>(requestBody);
+                    vote.TypeID = typeID;
+                    vote.InsertedBy = userID;
+
+                    log.LogInformation("[{Function}] Request body: {requestBody}", nameof(RunCourses), requestBody);
+
+                    await _dinnerPartyInteractor.SaveVote(vote);
+                    return new OkResult();
+                }                
             }
             catch (ArgumentException aex)
             {

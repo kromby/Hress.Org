@@ -55,32 +55,43 @@ namespace Ez.Hress.FunctionsApi
                 options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
             });
 
+            // Connection details
             services.AddSingleton(new DbConnectionInfo(dbConnectionString));
             services.AddSingleton(new BlobConnectionInfo(contentStroageConnectionString));
 
+            // Clients
+            services.AddSingleton(new TableClient(contentStroageConnectionString, "HardheadNominations"));
+            services.AddSingleton(new TableClient(contentStroageConnectionString, "DinnerPartyElection"));
+
+            // Authentication
             services.AddSingleton(new AuthenticationInfo(key, issuer, audience, salt));
             services.AddSingleton<IAuthenticationDataAccess, AuthenticationSqlAccess>();
             services.AddSingleton<AuthenticationInteractor>();
 
+            // User
             services.AddSingleton<IUserDataAccess, UserSqlDataAccess>();
             services.AddSingleton<IUserInteractor, UserInteractor>();
 
+            // Menu
             services.AddSingleton<IMenuDataAccess, MenuSqlDataAccess>();
             services.AddSingleton<MenuInteractor>();
 
+            // News
             services.AddSingleton<INewsDataAccess, NewsSqlDataAccess>();
             services.AddSingleton<NewsInteractor>();
 
+            // Dinner Party
             services.AddSingleton<IDinnerPartyDataAccess, DinnerPartySqlDataAccess>();
             services.AddSingleton<DinnerPartyInteractor>();
 
+            // Image
             services.AddSingleton<IImageInfoDataAccess, ImageInfoSqlDataAccess>();
             services.AddSingleton<IImageContentDataAccess, ImageContentHttpDataAccess>();
             services.AddSingleton<IImageContentDataAccess, ImageContentRelativeDataAccess>();
             services.AddSingleton<IImageContentDataAccess, ImageContentBlobDataAccess>();
             services.AddSingleton<ImageInteractor>();
-
-            services.AddSingleton(new TableClient(contentStroageConnectionString, "HardheadNominations"));
+            
+            // Hardhead - Award Nominations
             services.AddSingleton<AwardNominateInteractor>();
             services.AddSingleton<IAwardNominateDataAccess, AwardNominateTableDataAccess>();
             services.AddSingleton<AwardNominationInteractor>();

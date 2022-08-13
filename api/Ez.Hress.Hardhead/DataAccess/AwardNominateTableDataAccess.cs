@@ -24,7 +24,7 @@ namespace Ez.Hress.Hardhead.DataAccess
 
         public async Task<int> SaveNomination(Nomination nomination)
         {
-            _log.LogInformation("[AwardTableDataAccess] Saving nomination");
+            _log.LogInformation("[{Class}] Saving nomination", this.GetType().Name);
 
             NominationTableEntity entity = new(nomination);
             await _tableClient.AddEntityAsync<NominationTableEntity>(entity);

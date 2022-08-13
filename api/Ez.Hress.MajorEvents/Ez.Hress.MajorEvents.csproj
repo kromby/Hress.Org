@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Azure.Data.Tables" Version="12.6.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Ez.Hress.Shared\Ez.Hress.Shared.csproj" />
   </ItemGroup>
 

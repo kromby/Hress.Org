@@ -3,3 +3,12 @@ GET http://localhost:7072/api/dinnerParties
 
 ### Get all courses by typeID
 GET http://localhost:7072/api/dinnerparties/courses/191
+
+### Post vote on course
+POST http://localhost:7072/api/dinnerparties/courses/191
+Content-Type: application/json
+X-Custom-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjYwNDA0MjQwLCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.LaqMs30sioux2NSoAA9kwsAn_4-VsYDR48NLoaCWSqs
+
+{
+    "courseID": 9979
+}

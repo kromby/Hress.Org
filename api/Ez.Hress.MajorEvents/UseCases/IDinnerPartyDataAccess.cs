@@ -15,5 +15,7 @@ namespace Ez.Hress.MajorEvents.UseCases
         Task<IList<Guest>> GetGuests(int partyID, int? typeID);
 
         Task<IList<Course>> GetCoursesByTypeId(int typeID);
+
+        Task SaveVote(Vote vote);
     }
 }

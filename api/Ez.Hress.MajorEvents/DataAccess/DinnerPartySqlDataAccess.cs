@@ -1,4 +1,5 @@
-﻿using Ez.Hress.MajorEvents.Entities;
+﻿using Azure.Data.Tables;
+using Ez.Hress.MajorEvents.Entities;
 using Ez.Hress.MajorEvents.UseCases;
 using Ez.Hress.Shared.DataAccess;
 using Ez.Hress.Shared.Entities;
@@ -15,10 +16,12 @@ namespace Ez.Hress.MajorEvents.DataAccess
     public class DinnerPartySqlDataAccess : IDinnerPartyDataAccess
     {
         private readonly string _connectionString;
+        private readonly TableClient _tableClient;
         private readonly ILogger<DinnerPartySqlDataAccess> _log;
-        public DinnerPartySqlDataAccess(DbConnectionInfo connectionInfo, ILogger<DinnerPartySqlDataAccess> log)
+        public DinnerPartySqlDataAccess(DbConnectionInfo connectionInfo, IList<TableClient> clients, ILogger<DinnerPartySqlDataAccess> log)
         {
             _connectionString = connectionInfo.ConnectionString;
+            _tableClient = clients.Where(t => t.Name == "DinnerPartyElection").First();
             _log = log;
         }
 
@@ -159,6 +162,15 @@ namespace Ez.Hress.MajorEvents.DataAccess
             }
 
             return list;
+        }
+
+        public async Task SaveVote(Vote vote)
+        {
+            _log.LogInformation("[{Class}] SaveVote", this.GetType().Name);
+
+            VoteTableEntity entity = new(vote);
+            await _tableClient.UpsertEntityAsync<VoteTableEntity>(entity);
+            return;
         }
     }
 }

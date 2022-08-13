@@ -21,7 +21,7 @@ const Election2022 = (propsData) => {
             }
         }
 
-        document.title = "Hress.Org | Hress.Org";
+        document.title = "Kosning fyrir Matar- og Rauðvíns | Hress.Org";
 
         if (!courses) {
             getCourses();

@@ -64,5 +64,10 @@ namespace Ez.Hress.MajorEvents.UseCases
         //{
         //    throw new NotImplementedException();
         //}
+
+        public async Task SaveVote(Vote vote)
+        {
+            await _dinnerDataAccess.SaveVote(vote);
+        }
     }
 }
