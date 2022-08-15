@@ -34,6 +34,7 @@ import HistoryNews from './news/history';
 import HistorySidebar from './news/historySidebar';
 import DinnerParties from './dinnerparties';
 import Election2022 from './dinnerparties/election2022';
+import DinnerParty from './dinnerparties/dinnerparty';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();
@@ -144,7 +145,7 @@ function App(props) {
               <Route path="/feed" component={LegacyFrame} />
               <Route path="/foodandredwine" component={LegacyFrame} />
               <Route path="/dinnerparties/courses/:typeID" component={Election2022} />
-              <Route path="/dinnerparties/:id" component={DinnerParties} />
+              <Route path="/dinnerparties/:id" component={DinnerParty} />
               <Route path="/dinnerparties" component={DinnerParties} />
               <Route path="/gang" component={LegacyFrame} />
               <Route path="/hressgames" component={LegacyFrame} />

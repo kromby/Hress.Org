@@ -10,15 +10,14 @@ namespace Ez.Hress.MajorEvents.Entities
 {
     public class DinnerParty : EntityBase<int>
     {
-        //SELECT ROW_NUMBER() OVER(ORDER BY dinner.Inserted ASC) 'Number', dinner.Id, dinner.Date, 
-        //  dinner.Inserted, dinner.InsertedBy, tLocation.TextValue 'Location', theme.TextValue 'Theme', img.ImageId, gImg.Description
-        //FROM    rep_Event dinner
-        //JOIN rep_Text tLocation ON tLocation.EventId = dinner.Id AND tLocation.TypeId = 67
-        //LEFT OUTER JOIN rep_Text theme ON theme.EventId = dinner.Id AND theme.TypeId = 194
-        //LEFT OUTER JOIN rep_Image img ON img.EventId = dinner.Id AND img.TypeId = 14
-        //LEFT OUTER JOIN gen_Image gImg ON gImg.Id = img.ImageId
-        //WHERE dinner.TypeId = 56 AND dinner.ParentId IS NULL
-        //ORDER BY dinner.Inserted DESC
+        public DinnerParty(int id, DateTime date, string location)
+        {
+            ID = id;
+            Number = 0;
+            Date = date;
+            Location = location;
+            Guests = new List<Guest>();
+        }
 
         public DinnerParty(int id, int number, DateTime date, string location)
         {

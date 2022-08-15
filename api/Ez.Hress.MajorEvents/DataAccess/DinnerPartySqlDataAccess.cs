@@ -80,9 +80,58 @@ namespace Ez.Hress.MajorEvents.DataAccess
             return list;
         }
 
-        public Task<DinnerParty> GetById(int id)
+        public async Task<DinnerParty?> GetById(int id)
         {
-            throw new NotImplementedException();
+            var sql = @"SELECT	dinner.Id, dinner.Date, 
+		                        dinner.Inserted, dinner.InsertedBy, tLocation.TextValue 'Location', theme.TextValue 'Theme', img.ImageId, COUNT(guest.Id) 'GuestCount'
+                        FROM	rep_Event dinner
+                        JOIN	rep_Text tLocation ON tLocation.EventId = dinner.Id AND tLocation.TypeId = 67
+						JOIN	rep_User guest ON guest.EventId = dinner.Id
+                        LEFT OUTER JOIN	rep_Text theme ON theme.EventId = dinner.Id AND theme.TypeId = 194
+                        LEFT OUTER JOIN rep_Image img ON img.EventId = dinner.Id AND img.TypeId = 14
+                        WHERE	dinner.TypeId = 56 AND dinner.ParentId IS NULL AND dinner.Id = @id
+						GROUP BY dinner.Id, dinner.Date, dinner.Inserted, dinner.InsertedBy, tLocation.TextValue, theme.TextValue, img.ImageId
+                        ORDER BY dinner.Inserted DESC";
+
+            _log.LogInformation("[{Class}] GetById ID: {id}", this.GetType().Name, id);
+            _log.LogInformation("[{Class}] Executing SQL: {sql}", this.GetType().Name, sql);
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql);
+            command.Connection = connection;
+
+            command.Parameters.AddWithValue("@id", id);
+
+            DinnerParty? entity = null;
+
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                if (reader.Read())
+                {
+                    entity = new(SqlHelper.GetInt(reader, "ID"),
+                        SqlHelper.GetDateTime(reader, "Date"),
+                        reader.GetString(reader.GetOrdinal("Location")))
+                    {
+                        Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
+                        InsertedBy = SqlHelper.GetInt(reader, "InsertedBy"),
+                        GuestCount = SqlHelper.GetInt(reader, "GuestCount")
+                    };
+
+                    if (!reader.IsDBNull(reader.GetOrdinal("Theme")))
+                    {
+                        entity.Theme = reader.GetString(reader.GetOrdinal("Theme"));
+                    }
+                    
+                    if (!reader.IsDBNull(reader.GetOrdinal("ImageId")))
+                    {
+                        entity.CoverImage = new ImageHrefEntity(SqlHelper.GetInt(reader, "ImageId"), entity.Name);
+                    }
+                }
+            }
+
+            return entity;
         }
 
         public async Task<IList<Course>> GetCoursesByTypeId(int typeID)
@@ -110,7 +159,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
             {
                 while (reader.Read())
                 {
-                    Course entity = new(SqlHelper.GetInt(reader, "Id"), SqlHelper.GetInt(reader,"EventId"), reader.GetString(reader.GetOrdinal("TextValue")), SqlHelper.GetInt(reader, "Year"));
+                    Course entity = new(SqlHelper.GetInt(reader, "Id"), SqlHelper.GetInt(reader, "EventId"), reader.GetString(reader.GetOrdinal("TextValue")), SqlHelper.GetInt(reader, "Year"));
                     list.Add(entity);
                 }
             }
@@ -121,7 +170,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
         public async Task<IList<Guest>> GetGuests(int partyID, int? typeID)
         {
             string typeWhere = string.Empty;
-            if(typeID.HasValue)
+            if (typeID.HasValue)
             {
                 typeWhere = " AND typ.ID = @typeID ";
             }
@@ -145,7 +194,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
             command.Connection = connection;
 
             command.Parameters.AddWithValue("partyID", partyID);
-            if(typeID.HasValue)
+            if (typeID.HasValue)
             {
                 command.Parameters.AddWithValue("typeID", typeID.Value);
             }

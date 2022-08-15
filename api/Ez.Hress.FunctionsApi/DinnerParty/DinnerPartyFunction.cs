@@ -28,7 +28,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
         
         [FunctionName("dinnerParties")]
         public async Task<IActionResult> RunDinnerParties(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "dinnerparties/{id:int?}")] HttpRequest req,
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/{id:int?}")] HttpRequest req,
             int? id, ILogger log)
         {
             var stopwatch = new Stopwatch();

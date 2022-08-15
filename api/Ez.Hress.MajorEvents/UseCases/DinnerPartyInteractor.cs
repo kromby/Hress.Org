@@ -35,9 +35,20 @@ namespace Ez.Hress.MajorEvents.UseCases
             return list;
         }
 
-        public async Task<DinnerParty> GetDinnerParty(int id)
+        public async Task<DinnerParty?> GetDinnerParty(int id)
         {
-            return await _dinnerDataAccess.GetById(id);
+            var dinnerPartyTask = _dinnerDataAccess.GetById(id);
+            var guestsTask = _dinnerDataAccess.GetGuests(id, null);
+
+            var dinnerParty = await dinnerPartyTask;
+            guestsTask.Wait();
+
+            if (dinnerParty != null)
+            {                
+                dinnerParty.Guests = guestsTask.Result;
+            }
+
+            return dinnerParty;
         }
 
         //public async void GetGuests(int id)
