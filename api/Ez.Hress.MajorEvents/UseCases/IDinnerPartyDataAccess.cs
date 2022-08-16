@@ -1,4 +1,5 @@
 ﻿using Ez.Hress.MajorEvents.Entities;
+using Ez.Hress.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,9 @@ namespace Ez.Hress.MajorEvents.UseCases
 
         Task<IList<Guest>> GetGuests(int partyID, int? typeID);
 
-        Task<IList<Course>> GetCoursesByTypeId(int typeID);
+        Task<IList<Course>> GetCourses(int partyID);
+        
+        Task<IList<Dish>> GetCoursesByTypeId(int typeID);
 
         Task SaveVote(Vote vote);
     }

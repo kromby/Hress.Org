@@ -67,11 +67,11 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                 log.LogInformation($"[RunNews] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
             }
         }
-
+        
         [FunctionName("dinnerPartiesCourses")]
         public async Task<IActionResult> RunCourses(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "dinnerparties/courses/{typeID:int}")] HttpRequest req,
-            int typeID, ILogger log)
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/{id:int}/courses")] HttpRequest req,
+            int id, ILogger log)
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
@@ -80,32 +80,8 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
 
             try
             {
-                if (req.Method == "GET")
-                {
-                    log.LogInformation("[{Function}] Getting a all courses.", nameof(RunCourses));
-                    var courses = await _dinnerPartyInteractor.GetCoursesByType(typeID);
-                    return new OkObjectResult(courses);
-                }
-                else
-                {
-                    var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
-                    if (!isJWTValid)
-                    {
-                        log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunCourses));
-                        return new UnauthorizedResult();
-                    }
-
-                    log.LogInformation("[{Function}] Saving a vote.", nameof(RunCourses));
-                    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                    var vote = JsonConvert.DeserializeObject<Vote>(requestBody);
-                    vote.TypeID = typeID;
-                    vote.InsertedBy = userID;
-
-                    log.LogInformation("[{Function}] Request body: {requestBody}", nameof(RunCourses), requestBody);
-
-                    await _dinnerPartyInteractor.SaveVote(vote);
-                    return new OkResult();
-                }                
+                var result = await _dinnerPartyInteractor.GetCourses(id);
+                return new OkObjectResult(result);
             }
             catch (ArgumentException aex)
             {
@@ -121,6 +97,62 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
             {
                 stopwatch.Stop();
                 log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunCourses), stopwatch.ElapsedMilliseconds);
+            }
+        }
+
+        [FunctionName("dinnerPartiesCoursesByType")]
+        public async Task<IActionResult> RunCoursesByType(
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "dinnerparties/courses/{typeID:int}")] HttpRequest req,
+            int typeID, ILogger log)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunCoursesByType));
+
+            try
+            {
+                if (req.Method == "GET")
+                {
+                    log.LogInformation("[{Function}] Getting a all courses.", nameof(RunCoursesByType));
+                    var courses = await _dinnerPartyInteractor.GetCoursesByType(typeID);
+                    return new OkObjectResult(courses);
+                }
+                else
+                {
+                    var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+                    if (!isJWTValid)
+                    {
+                        log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunCoursesByType));
+                        return new UnauthorizedResult();
+                    }
+
+                    log.LogInformation("[{Function}] Saving a vote.", nameof(RunCoursesByType));
+                    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                    var vote = JsonConvert.DeserializeObject<Vote>(requestBody);
+                    vote.TypeID = typeID;
+                    vote.InsertedBy = userID;
+
+                    log.LogInformation("[{Function}] Request body: {requestBody}", nameof(RunCoursesByType), requestBody);
+
+                    await _dinnerPartyInteractor.SaveVote(vote);
+                    return new OkResult();
+                }                
+            }
+            catch (ArgumentException aex)
+            {
+                log.LogError(aex, "[{Function}] Invalid input", nameof(RunCoursesByType));
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "[{Function}] Unhandled error", nameof(RunCoursesByType));
+                throw;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunCoursesByType), stopwatch.ElapsedMilliseconds);
             }
         }
     }    

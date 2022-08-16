@@ -7,17 +7,16 @@ using System.Threading.Tasks;
 
 namespace Ez.Hress.MajorEvents.Entities
 {
-    public class Course: EntityBase<int>
+    public class Course : EntityBase<int>
     {
-        public Course(int id, int eventID, string text, int year)
+        public Course(int id, string name)
         {
             ID = id;
-            Name = text;
-            EventID = eventID;
-            Year = year;
+            Name = name;
+            Dishes = new List<Dish>();
         }
 
-        public int EventID { get; set; }
-        public int Year { get; set; }
+        public IList<Dish> Dishes { get; set; }
+
     }
 }

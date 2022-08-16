@@ -18,6 +18,8 @@ const StalloneNomination = (propsData) => {
     useEffect(() => {
         setUsers(propsData.Users);
 
+        document.title = "Tilnefna Stallone | Hress.Org";
+
         if (!nominations) {
             getNominations();
         }

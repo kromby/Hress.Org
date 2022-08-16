@@ -1,4 +1,5 @@
 ﻿using Ez.Hress.MajorEvents.Entities;
+using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -56,12 +57,12 @@ namespace Ez.Hress.MajorEvents.UseCases
         //    throw new NotImplementedException();
         //}
 
-        //public async void GetCourses(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public async Task<IList<Course>> GetCourses(int partyID)
+        {
+            return await _dinnerDataAccess.GetCourses(partyID);
+        }
 
-        public async Task<IList<Course>> GetCoursesByType(int typeID)
+        public async Task<IList<Dish>> GetCoursesByType(int typeID)
         {
             return await _dinnerDataAccess.GetCoursesByTypeId(typeID);
         }

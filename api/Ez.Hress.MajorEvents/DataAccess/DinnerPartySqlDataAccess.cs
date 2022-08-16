@@ -134,7 +134,52 @@ namespace Ez.Hress.MajorEvents.DataAccess
             return entity;
         }
 
-        public async Task<IList<Course>> GetCoursesByTypeId(int typeID)
+        public async Task<IList<Course>> GetCourses(int partyID)
+        {
+            var sql = @"SELECT	txt.Id, txt.EventId, txt.TextValue, txt.TypeId, typ.Name 'TypeName'
+                        FROM	rep_Text txt
+						JOIN	gen_Type typ ON txt.TypeId = typ.Id
+                        WHERE	txt.EventId = @partyID
+							AND	txt.TypeId IN (191, 192, 193)
+                        ORDER BY txt.TypeId";
+
+            _log.LogInformation("[{Class}] GetCoursesByTypeId", this.GetType().Name);
+            _log.LogInformation("[{Class}] Executing SQL: {sql}", this.GetType().Name, sql);
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql);
+            command.Connection = connection;
+            command.Parameters.AddWithValue("partyID", partyID);
+
+            var list = new List<Course>();
+            Course current = new(-1, "");
+
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (reader.Read())
+                {
+                    int typeID = SqlHelper.GetInt(reader, "TypeID");
+                    if (current.ID != typeID)
+                    {
+                        if (current.ID != -1)
+                        {
+                            list.Add(current);
+                        }
+                        current = new Course(typeID, reader.GetString(reader.GetOrdinal("TypeName")));
+                    }
+
+                    current.Dishes.Add(new(SqlHelper.GetInt(reader, "Id"), SqlHelper.GetInt(reader, "EventId"), reader.GetString(reader.GetOrdinal("TextValue"))));
+                }
+
+                list.Add(current);
+            }
+
+            return list;
+        }
+
+        public async Task<IList<Dish>> GetCoursesByTypeId(int typeID)
         {
             var sql = @"SELECT	txt.Id, txt.EventId, txt.TextValue, mor.Number 'Year'
                         FROM	rep_Text txt
@@ -153,13 +198,13 @@ namespace Ez.Hress.MajorEvents.DataAccess
             command.Connection = connection;
             command.Parameters.AddWithValue("typeID", typeID);
 
-            var list = new List<Course>();
+            var list = new List<Dish>();
 
             using (var reader = await command.ExecuteReaderAsync())
             {
                 while (reader.Read())
                 {
-                    Course entity = new(SqlHelper.GetInt(reader, "Id"), SqlHelper.GetInt(reader, "EventId"), reader.GetString(reader.GetOrdinal("TextValue")), SqlHelper.GetInt(reader, "Year"));
+                    Dish entity = new(SqlHelper.GetInt(reader, "Id"), SqlHelper.GetInt(reader, "EventId"), reader.GetString(reader.GetOrdinal("TextValue")), SqlHelper.GetInt(reader, "Year"));
                     list.Add(entity);
                 }
             }
