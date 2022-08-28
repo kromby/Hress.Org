@@ -1,6 +1,12 @@
 ### Get all dinner parties
 GET http://localhost:7072/api/dinnerParties
 
+### Get a single dinner party
+GET http://localhost:7072/api/dinnerParties/5304
+
+### Get all courses for a single dinner party
+GET http://localhost:7072/api/dinnerParties/5304/courses
+
 ### Get all courses by typeID
 GET http://localhost:7072/api/dinnerparties/courses/191
 

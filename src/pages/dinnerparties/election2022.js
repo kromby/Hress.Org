@@ -63,7 +63,7 @@ const Election2022 = (propsData) => {
         return (
             <div id="main">
                 <Post
-                    title="Kosning um forrétt"
+                    title="Kosning um aðalrétt"
                     body={
                         <p>Þú verður að vera <Link to={{ pathname: "/login", state: { from: pathname } }}>skráður inn</Link> til þess að taka þátt í kosningunni.</p>
                     }
@@ -75,7 +75,7 @@ const Election2022 = (propsData) => {
     return (
         <div id="main">
             <Post
-                title="Kosning um forrétt"
+                title="Kosning um aðalrétt"
                 description="Veldu þann rétt sem þú vilt fá á næsta Matar- og Rauðvínskvöldi"
                 dateFormatted="2003-2021"
                 body={
