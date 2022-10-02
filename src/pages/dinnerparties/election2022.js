@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from 'react-router-dom';
 import config from 'react-global-configuration';
 import axios from "axios";
+import {isMobile} from 'react-device-detect';
 import { Post } from "../../components";
 import { useAuth } from "../../context/auth";
 
@@ -63,9 +64,9 @@ const Election2022 = (propsData) => {
         return (
             <div id="main">
                 <Post
-                    title="Kosning um aðalrétt"
+                    title="Kosning um fordrykk"
                     body={
-                        <p>Þú verður að vera <Link to={{ pathname: "/login", state: { from: pathname } }}>skráður inn</Link> til þess að taka þátt í kosningunni.</p>
+                        <p>Þú verður að vera <Link to={{ pathname: "/login", state: { from: pathname } }}>skráð/ur inn</Link> til þess að taka þátt í kosningunni.</p>
                     }
                 />
             </div>
@@ -75,13 +76,13 @@ const Election2022 = (propsData) => {
     return (
         <div id="main">
             <Post
-                title="Kosning um aðalrétt"
-                description="Veldu þann rétt sem þú vilt fá á næsta Matar- og Rauðvínskvöldi"
+                title="Kosning um fordrykk"
+                description="Veldu þann drykk sem þú vilt fá á næsta Matar- og Rauðvínskvöldi"
                 dateFormatted="2003-2021"
                 body={
                     <div className="row gtr-uniform">
                         {courses ? courses.map(course =>
-                            <div className="col-4" key={course.id} onClick={() => handleChange(course.id)} >
+                            <div className={isMobile ? "col-12" : "col-4"} key={course.id} onClick={() => handleChange(course.id)} >
                                 <input type="radio" checked={selected === course.id} onChange={() => handleChange(course.id)} />
                                 <label>
                                     <b dangerouslySetInnerHTML={{ __html: course.name }} />

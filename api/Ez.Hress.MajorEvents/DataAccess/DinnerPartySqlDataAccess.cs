@@ -185,7 +185,6 @@ namespace Ez.Hress.MajorEvents.DataAccess
                         FROM	rep_Text txt
                         JOIN	rep_Event mor ON txt.EventID = mor.Id
                         WHERE	txt.TypeId = @typeID
-	                        AND	txt.Id NOT IN (22900, 23053, 23195, 23270, 23434, 23446, 23515, 23576, 23669)
                         ORDER BY txt.TextValue";
 
             _log.LogInformation("[{Class}] GetCoursesByTypeId", this.GetType().Name);

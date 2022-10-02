@@ -3,7 +3,6 @@ import {isMobile} from 'react-device-detect';
 import axios from "axios";
 import config from 'react-global-configuration';
 import { Post } from "../../components";
-import { Link } from "react-router-dom";
 
 const News = (propsData) => {
     const[news, setNews] = useState();    
