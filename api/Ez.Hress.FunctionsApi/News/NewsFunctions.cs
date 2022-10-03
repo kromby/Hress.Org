@@ -30,7 +30,7 @@ namespace Ez.Hress.FunctionsApi.News
             var stopwatch = new Stopwatch();
             stopwatch.Start();
 
-            log.LogInformation("[RunNews] C# HTTP trigger function processed a request.");
+            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunNews));
 
             try
             {
