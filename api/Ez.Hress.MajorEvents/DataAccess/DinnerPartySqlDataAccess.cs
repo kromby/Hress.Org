@@ -123,7 +123,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
                     {
                         entity.Theme = reader.GetString(reader.GetOrdinal("Theme"));
                     }
-                    
+
                     if (!reader.IsDBNull(reader.GetOrdinal("ImageId")))
                     {
                         entity.CoverImage = new ImageHrefEntity(SqlHelper.GetInt(reader, "ImageId"), entity.Name);
@@ -132,6 +132,84 @@ namespace Ez.Hress.MajorEvents.DataAccess
             }
 
             return entity;
+        }
+
+        public async Task<IList<PartyTeam>> GetChilds(int partyID)
+        {
+            const string sql = @"SELECT	team.Id, team.Number, wine.TextValue 'Wine', winner.TextValue 'IsWinner'
+                                FROM	rep_Event team
+                                LEFT OUTER JOIN	rep_Text wine ON wine.EventId = team.Id AND wine.TypeId = 128
+                                LEFT OUTER JOIN	rep_Text winner ON winner.EventId = team.Id AND winner.TypeId = 200
+                                WHERE	team.ParentId = @partyID
+                                ORDER BY team.Number";
+
+            _log.LogInformation("[{Class}] GetChilds ID: {partyID}", this.GetType().Name, partyID);
+            _log.LogInformation("[{Class}] Executing SQL: {sql}", this.GetType().Name, sql);
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql);
+            command.Connection = connection;
+
+            command.Parameters.AddWithValue("@partyID", partyID);
+
+            var list = new List<PartyTeam>();
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (reader.Read())
+                {
+                    var isWinner = false;
+                    if (!reader.IsDBNull(reader.GetOrdinal("IsWinner")))
+                    {
+                        var winnerString = reader.GetString(reader.GetOrdinal("isWinner"));
+                        var parsed = bool.TryParse(winnerString, out isWinner);
+                        isWinner = parsed ? isWinner : false;
+                    }
+                    var entity = new PartyTeam(SqlHelper.GetInt(reader, "ID"), SqlHelper.GetInt(reader, "Number"), isWinner);
+                    if (!reader.IsDBNull(reader.GetOrdinal("Wine")))
+                    {
+                        entity.Wine = reader.GetString(reader.GetOrdinal("Wine"));
+                    }
+
+                    list.Add(entity);
+                }
+            }
+
+            return list;
+        }
+
+        public async Task<IList<PartyUser>> GetChildUsers(int partyID)
+        {
+            const string sql = @"SELECT	member.EventId, member.UserId, usr.Username, uImg.ImageId
+                                FROM	rep_User member
+                                JOIN	adm_User usr ON member.UserId = usr.Id
+                                LEFT OUTER JOIN	upf_Image uImg ON uImg.UserId = usr.Id AND uImg.TypeId = 14
+                                WHERE	member.GroupId = @partyID";
+
+            _log.LogInformation("[{Class}] GetChildUsers ID: {partyID}", this.GetType().Name, partyID);
+            _log.LogInformation("[{Class}] Executing SQL: {sql}", this.GetType().Name, sql);
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql);
+            command.Connection = connection;
+
+            command.Parameters.AddWithValue("@partyID", partyID);
+
+            var list = new List<PartyUser>();
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (reader.Read())
+                {
+                    var user = new PartyUser(SqlHelper.GetInt(reader, "UserID"), SqlHelper.GetInt(reader, "EventID"), reader.GetString(reader.GetOrdinal("Username")), SqlHelper.GetInt(reader, "ImageId"), "Meðlimur");
+
+                    list.Add(user);
+                }
+            }
+
+            return list;
         }
 
         public async Task<IList<Course>> GetCourses(int partyID)
@@ -211,7 +289,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
             return list;
         }
 
-        public async Task<IList<Guest>> GetGuests(int partyID, int? typeID)
+        public async Task<IList<PartyUser>> GetGuests(int partyID, int? typeID)
         {
             string typeWhere = string.Empty;
             if (typeID.HasValue)
@@ -243,13 +321,13 @@ namespace Ez.Hress.MajorEvents.DataAccess
                 command.Parameters.AddWithValue("typeID", typeID.Value);
             }
 
-            var list = new List<Guest>();
+            var list = new List<PartyUser>();
 
             using (var reader = await command.ExecuteReaderAsync())
             {
                 while (reader.Read())
                 {
-                    Guest guest = new(SqlHelper.GetInt(reader, "UserId"), reader.GetString(reader.GetOrdinal("Username")), SqlHelper.GetInt(reader, "ImageID"), reader.GetString(reader.GetOrdinal("Name")));
+                    PartyUser guest = new(SqlHelper.GetInt(reader, "UserId"), partyID, reader.GetString(reader.GetOrdinal("Username")), SqlHelper.GetInt(reader, "ImageID"), reader.GetString(reader.GetOrdinal("Name")));
                     list.Add(guest);
                 }
             }

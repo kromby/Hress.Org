@@ -6,6 +6,7 @@ import { Post } from "../../components";
 import UserImage from "../../components/users/userimage";
 import DinnerMenu from "./dinnermenu";
 import { isMobile } from "react-device-detect";
+import Teams from "./teams";
 
 const DinnerParty = (propsData) => {
     const [dinner, setDinner] = useState();
@@ -102,7 +103,8 @@ const DinnerParty = (propsData) => {
                                 </section>
                             ]}
                         />,
-                        <DinnerMenu key={"Menu" + dinner.id} id={dinner.id} />
+                        <DinnerMenu key={"Menu" + dinner.id} id={dinner.id} />,
+                        <Teams key={"Team" + dinner.id} id={dinner.id} />
                     ]
                     : null
                 }

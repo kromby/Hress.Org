@@ -26,7 +26,6 @@ const DinnerParties = (propsData) => {
     }, [propsData])
 
     function getAssistants (guests) {
-        console.log("[dinnerparties] guest.length: ", guests.length);
         if(guests.length === 0) {
             return "Að þessu sinni voru engir aðstoðarkokkar."
         }

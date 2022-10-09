@@ -7,9 +7,9 @@ using System.Threading.Tasks;
 
 namespace Ez.Hress.MajorEvents.Entities
 {
-    public class Guest : EntityBase<int>
+    public class PartyUser : EntityBase<int>
     {
-        public Guest(int userId, string username, int photoId, string roleName)
+        public PartyUser(int userId, int parentId, string username, int photoId, string roleName)
         {
             ID = userId;
             Name = username;
@@ -20,9 +20,12 @@ namespace Ez.Hress.MajorEvents.Entities
                 ProfilePhotoId = photoId
             };
             Role = roleName;
+            ParentID = parentId;
         }
 
         public UserBasicEntity User { get; set; }
+
+        public int ParentID { get; set; }
         public string Role { get; set; }
     }
 }

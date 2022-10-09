@@ -1,11 +1,5 @@
 ﻿using Ez.Hress.MajorEvents.Entities;
-using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ez.Hress.MajorEvents.UseCases
 {
@@ -67,10 +61,20 @@ namespace Ez.Hress.MajorEvents.UseCases
             return await _dinnerDataAccess.GetCoursesByTypeId(typeID);
         }
 
-        //public async void GetRedwineTeams(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public async Task<IList<PartyTeam>> GetRedwineTeams(int partyID)
+        {            
+            var userThread = _dinnerDataAccess.GetChildUsers(partyID);
+            var teams = await _dinnerDataAccess.GetChilds(partyID);
+            userThread.Wait();
+            var users = userThread.Result;
+
+            foreach(var team in teams)
+            {
+                team.Members = users.Where(m => m.ParentID == team.ID).ToList();
+            }
+
+            return teams;
+        }
 
         //public async void GetAlbums(int id)
         //{
