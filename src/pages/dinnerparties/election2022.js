@@ -64,7 +64,7 @@ const Election2022 = (propsData) => {
         return (
             <div id="main">
                 <Post
-                    title="Kosning um fordrykk"
+                    title="Kosning um eftirrétt"
                     body={
                         <p>Þú verður að vera <Link to={{ pathname: "/login", state: { from: pathname } }}>skráð/ur inn</Link> til þess að taka þátt í kosningunni.</p>
                     }
@@ -76,8 +76,8 @@ const Election2022 = (propsData) => {
     return (
         <div id="main">
             <Post
-                title="Kosning um fordrykk"
-                description="Veldu þann drykk sem þú vilt fá á næsta Matar- og Rauðvínskvöldi"
+                title="Kosning um eftirrétt"
+                description="Veldu þann rétt sem þú vilt fá á næsta Matar- og Rauðvínskvöldi"
                 dateFormatted="2003-2021"
                 body={
                     <div className="row gtr-uniform">
