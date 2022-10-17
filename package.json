@@ -28,7 +28,7 @@
     "react-scripts": "^4.0.3",
     "react-youtube": "^9.0.3",
     "stream-browserify": "^3.0.0",
-    "util": "^0.12.4"
+    "util": "^0.12.5"
   },
   "scripts": {
     "start": "react-scripts start",
