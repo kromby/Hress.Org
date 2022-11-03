@@ -24,7 +24,7 @@
     "react-helmet": "^6.1.0",
     "react-iframe": "^1.8.5",
     "react-rating": "^2.0.5",
-    "react-router-dom": "^5.1.0",
+    "react-router-dom": "^6.4.3",
     "react-scripts": "^4.0.3",
     "react-youtube": "^9.0.3",
     "stream-browserify": "^3.0.0",
