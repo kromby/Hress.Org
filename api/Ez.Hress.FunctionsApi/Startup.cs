@@ -11,6 +11,8 @@ using Ez.Hress.Shared;
 using Ez.Hress.Shared.DataAccess;
 using Ez.Hress.Shared.Entities;
 using Ez.Hress.Shared.UseCases;
+using Ez.Hress.UserProfile.DataAccess;
+using Ez.Hress.UserProfile.UseCases;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -71,6 +73,9 @@ namespace Ez.Hress.FunctionsApi
             // User
             services.AddSingleton<IUserDataAccess, UserSqlDataAccess>();
             services.AddSingleton<IUserInteractor, UserInteractor>();
+
+            services.AddSingleton<IUserProfileDataAccess, UserProfileSqlDataAccess>();
+            services.AddSingleton<UserProfileInteractor>();
 
             // Menu
             services.AddSingleton<IMenuDataAccess, MenuSqlDataAccess>();

@@ -20,6 +20,7 @@
     <ProjectReference Include="..\Ez.Hress.MajorEvents\Ez.Hress.MajorEvents.csproj" />
     <ProjectReference Include="..\Ez.Hress.Scripts\Ez.Hress.Scripts.csproj" />
     <ProjectReference Include="..\Ez.Hress.Shared\Ez.Hress.Shared.csproj" />
+    <ProjectReference Include="..\Ez.Hress.UserProfile\Ez.Hress.UserProfile.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">

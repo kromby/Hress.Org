@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import './App.css';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
 import jwt from 'jsonwebtoken';
 import ReactGA from 'react-ga4';
@@ -11,7 +10,6 @@ import HardheadSidebar from './hardhead/sidebar';
 import Awards from './hardhead/awards';
 import Rules from './hardhead/rules';
 import Statistics from './hardhead/statistics';
-import Admin from './hardhead/admin';
 import Login from './frame/login';
 import Magic from './frame/magic';
 import Menu from './frame/menu';
@@ -35,6 +33,7 @@ import HistorySidebar from './news/historySidebar';
 import DinnerParties from './dinnerparties';
 import Election2022 from './dinnerparties/election2022';
 import DinnerParty from './dinnerparties/dinnerparty';
+import Profile from './profile';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();
@@ -133,7 +132,6 @@ function App(props) {
               <Route path="/hardhead/users/:id" component={HHUsers} />
               <Route path="/hardhead/stats" component={Statistics} />
               <Route path="/hardhead/:hardheadID" component={HardheadEdit} />
-              <PrivateRoute path="/hardhead/admin" component={Admin} />
               <Route exact path="/login" component={Login} />
               <Route path="/login/magic" component={Magic} />
               <Route path="/album" component={LegacyFrame} />
@@ -152,6 +150,7 @@ function App(props) {
               <Route path="/mission" component={LegacyFrame} />
               <Route path="/news/history" component={HistoryNews} />
               <Route path="/news/:id" component={SingleNews} />
+              <Route path="/profile" component={Profile} />
               <Route path="/rss" component={LegacyFrame} />
               <Route path="/yearly" component={LegacyFrame} />
               {/* <Route component={App} /> */}
