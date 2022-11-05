@@ -21,16 +21,25 @@ namespace Ez.Hress.UserProfile.UseCases
 
         public async Task<BalanceSheet> GetBalanceSheet(int userID)
         {
-            // Add check for JWT
-            // Should this only work for the ID in JWT or not?
-
-
             _log.LogInformation("[{Class}] GetBalanceSheet", GetType().Name);
 
+            var transactionTask = _userDataAccess.GetTransactions(userID);
+
+            var relations = await _userDataAccess.GetRelations(userID);
             var entity = new BalanceSheet() { UserID = userID };
-            entity.Transactions = await _userDataAccess.GetTransactions(userID);
+
+            transactionTask.Wait();
+            entity.Transactions = transactionTask.Result;
+
+            foreach (var relation in relations)
+            {                
+                var transactions = await _userDataAccess.GetTransactions(relation.RelatedUser.ID);
+                entity.Transactions = entity.Transactions.Union(transactions).ToList();
+            }
+
             if (entity.Transactions.Count > 0)
             {
+                entity.Transactions = entity.Transactions.OrderBy(t => t.Inserted).ToList();
                 entity.Balance = entity.Transactions.Sum(t => t.Amount);
             }
 

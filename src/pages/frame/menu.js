@@ -145,10 +145,14 @@ const Menu = (propsData) => {
                     {authTokens === undefined ?
                         <li key="One"><Link className="button large fit" to={{ pathname: "/login", state: { from: pathname } }}>Innskráning</Link></li> :
                         [<li key="Two">
-                            <Link to={"/Gang/Profile/MyProfile.aspx?legacy=true"} target="_blank">
+                            <Link to={"/Profile"}>
+                                <h3>Prófíll</h3>
+                                <p>Þínar upplýsingar</p>
+                            </Link>
+                            {/* <Link to={"/Gang/Profile/MyProfile.aspx?legacy=true"} target="_blank">
                                 <h3>Prófíll</h3>
                                 <p>Breyttu þínum upplýsingum</p>
-                            </Link>
+                            </Link> */}
                         </li>,
                         <li key="Three">Útskráning (one day)</li>]
                     }

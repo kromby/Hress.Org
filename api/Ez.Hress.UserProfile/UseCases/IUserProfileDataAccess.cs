@@ -10,5 +10,7 @@ namespace Ez.Hress.UserProfile.UseCases
     public interface IUserProfileDataAccess
     {
         Task<IList<Transaction>> GetTransactions(int userID);
+
+        Task<IList<Relation>> GetRelations(int userID);
     }
 }

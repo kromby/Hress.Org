@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import config from 'react-global-configuration';
 import { Post } from "../../components";
+import Author from "../../components/author";
 import { useAuth } from "../../context/auth";
 
 
@@ -11,7 +12,7 @@ const Profile = (propsData) => {
 
     useEffect(() => {
         const getBalanceSheet = async () => {
-            var url = config.get("apiPath") + "/api/users/0/balancesheet";
+            var url = config.get("apiPath") + "/api/users/2637/balancesheet";
             try {
                 const response = await axios.get(url, {
                     headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
@@ -42,23 +43,31 @@ const Profile = (propsData) => {
                                 <table>
                                     <thead>
                                         <tr>
-                                            <th width="200px">Dagsetning</th>
-                                            <th width="900px">Útskýring</th>
+                                            <th>Notandi</th>
+                                            <th>Dagsetning</th>
+                                            <th>Útskýring</th>
                                             <th>Upphæð</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         {balanceSheet.transactions.map(transaction =>
                                             <tr key={transaction.id}>
+                                                <td>
+                                                    {transaction.user.profilePhoto ?
+                                                        <Author ID={transaction.user.id} Username={transaction.user.name} ProfilePhoto={transaction.user.profilePhoto.href} /> :
+                                                        <Author ID={transaction.user.id} Username={transaction.user.name} />
+                                                    }
+                                                </td>
                                                 <td>{transaction.insertedString}</td>
                                                 <td>{transaction.name}</td>
-                                                <td>{transaction.amount}</td>
+                                                <td>{transaction.amount} kr.</td>
                                             </tr>
                                         )}
                                         <tr>
                                             <td></td>
+                                            <td></td>
                                             <td><b>Samtals</b></td>
-                                            <td><b>{balanceSheet.balance}</b></td>
+                                            <td><b>{balanceSheet.balance} kr.</b></td>
                                         </tr>
                                     </tbody>
                                 </table>
