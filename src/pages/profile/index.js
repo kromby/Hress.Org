@@ -12,7 +12,7 @@ const Profile = (propsData) => {
 
     useEffect(() => {
         const getBalanceSheet = async () => {
-            var url = config.get("apiPath") + "/api/users/2637/balancesheet";
+            var url = config.get("apiPath") + "/api/users/0/balancesheet";
             try {
                 const response = await axios.get(url, {
                     headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
