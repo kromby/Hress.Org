@@ -164,7 +164,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
                     {
                         var winnerString = reader.GetString(reader.GetOrdinal("isWinner"));
                         var parsed = bool.TryParse(winnerString, out isWinner);
-                        isWinner = parsed && isWinner;
+                        isWinner = parsed ? isWinner : false;
                     }
                     var entity = new PartyTeam(SqlHelper.GetInt(reader, "ID"), SqlHelper.GetInt(reader, "Number"), isWinner);
                     if (!reader.IsDBNull(reader.GetOrdinal("Wine")))
@@ -218,6 +218,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
                         FROM	rep_Text txt
 						JOIN	gen_Type typ ON txt.TypeId = typ.Id
                         WHERE	txt.EventId = @partyID
+							AND	txt.TypeId IN (191, 192, 193, 223)
                         ORDER BY txt.TypeId";
 
             _log.LogInformation("[{Class}] GetCoursesByTypeId", this.GetType().Name);
