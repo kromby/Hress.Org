@@ -72,6 +72,12 @@ const Profile = (propsData) => {
                                     </tbody>
                                 </table>
                             </div>
+                            <br />
+                            <br />
+                            <br />
+                            <p>
+                                <Link to={"/Gang/Profile/MyProfile.aspx?legacy=true"} target="_blank"><h3>Prófíllinn á gamla hress</h3></Link>
+                            </p>
                         </section>
                     }
                 /> : null}

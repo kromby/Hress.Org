@@ -147,7 +147,6 @@ const Menu = (propsData) => {
                         [<li key="Two">
                             <Link to={"/Profile"}>
                                 <h3>Prófíll</h3>
-                                <p>Þínar upplýsingar</p>
                             </Link>
                             {/* <Link to={"/Gang/Profile/MyProfile.aspx?legacy=true"} target="_blank">
                                 <h3>Prófíll</h3>
