@@ -1,7 +1,10 @@
 ﻿using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
+using SixLabors.ImageSharp;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -57,6 +60,87 @@ namespace Ez.Hress.Shared.UseCases
 
 
             return image;
+        }
+
+        public async Task<ImageHrefEntity> Save(ImageEntity entity, int userID)
+        {
+            if (entity == null)
+                throw new ArgumentException("Can not be null", nameof(entity));
+
+            entity.Validate();
+
+            _log.LogInformation("[{Class}] ImageEntity: '{entity}'", nameof(ImageInteractor), entity);
+
+            string? containerName = Enum.GetName(typeof(ImageContainer), entity.Container);
+            if (containerName == null)
+            {
+                var ex = new ArgumentException($"Container '{entity.Container}' not found.");
+                _log.LogError(ex, "Container not found");
+                throw ex;
+            }
+
+            int typeID = 0;
+            switch (entity.Container)
+            {
+                case ImageContainer.Album:
+                    typeID = 20;
+                    break;
+                case ImageContainer.ATVR:
+                    typeID = 25;
+                    break;
+                case ImageContainer.News:
+                    typeID = 19;
+                    break;
+                case ImageContainer.Profile:
+                    typeID = 24;
+                    break;
+                default: // Hardhead, Other
+                    typeID = 26;
+                    break;
+            };
+
+            if (entity.ID == 0)
+            {
+                entity.Inserted = DateTime.Now;
+                entity.InsertedBy = userID;
+                entity.PhotoUrl = $"BLOB:/{containerName.ToLowerInvariant()}/@ID";
+            }
+            else
+            {
+                entity.Updated = DateTime.Now;
+                entity.UpdatedBy = userID;
+            }
+
+            IImageContentDataAccess? contentDataAccess = _contentDataAccessList.FirstOrDefault(c => c.Prefix.Equals("blob:/"));
+            if (contentDataAccess == null)
+            {
+                var ex = new SystemException(@"Data access with prefix 'blob:/' not found.");
+                _log.LogError(ex, "Could not find correct content data access.");
+                throw ex;
+            }
+
+            int id = 0;
+            try
+            {
+                var imageInfo = Image.Identify(entity.Content);
+                id = await _imagesDataAccess.Save(entity, typeID, imageInfo.Height, imageInfo.Width);
+                _log.LogInformation("[{Class}] New image saved to metadata database: '{id}'", nameof(ImageInteractor), id);
+
+                if (id == -1)
+                    throw new SystemException("Saving failed - unknown reason - ID -1");
+
+#pragma warning disable CS8604 // Possible null reference argument. This is checked in entity.Validate().
+                await contentDataAccess.Save(containerName.ToLowerInvariant(), entity.Content, id);
+                _log.LogInformation("[{Class}] New image saved to blob store: '{id}'", nameof(ImageInteractor), id);
+
+                return new ImageHrefEntity(id, entity.Name);
+#pragma warning restore CS8604 // Possible null reference argument.
+            }
+            catch (InvalidImageContentException iicex)
+            {
+                _log.LogError(iicex, "Invalid image content");
+                throw;
+            }
         }
     }
 }

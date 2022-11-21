@@ -34,6 +34,8 @@ import DinnerParties from './dinnerparties';
 import Election2022 from './dinnerparties/election2022';
 import DinnerParty from './dinnerparties/dinnerparty';
 import Profile from './profile';
+import Albums from './albums';
+import Album from './albums/album';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();
@@ -135,6 +137,8 @@ function App(props) {
               <Route exact path="/login" component={Login} />
               <Route path="/login/magic" component={Magic} />
               <Route path="/album" component={LegacyFrame} />
+              <Route path="/album2/:id" component={Album} />
+              <Route path="/album2" component={Albums} />              
               <Route path="/chat" component={LegacyFrame} />
               <Route path="/comic" component={LegacyFrame} />
               {/* <Route path="/default/history" component={HistoryNews} /> */}

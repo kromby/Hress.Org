@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.Scripts", "Ez.Hres
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.MajorEvents", "Ez.Hress.MajorEvents\Ez.Hress.MajorEvents.csproj", "{04AF6284-79F4-485E-B9CA-F43E2CC40B24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ez.Hress.UserProfile", "Ez.Hress.UserProfile\Ez.Hress.UserProfile.csproj", "{121472BB-4FE2-43C0-9E03-A5EE3396748D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ez.Hress.UserProfile", "Ez.Hress.UserProfile\Ez.Hress.UserProfile.csproj", "{121472BB-4FE2-43C0-9E03-A5EE3396748D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ez.Hress.Albums", "Ez.Hress.Album\Ez.Hress.Albums.csproj", "{F85947B4-3C27-4969-9C84-C15596FC802D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -57,6 +59,10 @@ Global
 		{121472BB-4FE2-43C0-9E03-A5EE3396748D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{121472BB-4FE2-43C0-9E03-A5EE3396748D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{121472BB-4FE2-43C0-9E03-A5EE3396748D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F85947B4-3C27-4969-9C84-C15596FC802D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F85947B4-3C27-4969-9C84-C15596FC802D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F85947B4-3C27-4969-9C84-C15596FC802D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F85947B4-3C27-4969-9C84-C15596FC802D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

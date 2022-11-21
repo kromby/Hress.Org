@@ -10,18 +10,51 @@ using Newtonsoft.Json;
 using Ez.Hress.Shared.UseCases;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
+using Ez.Hress.MajorEvents.Entities;
+using Ez.Hress.Shared.Entities;
 
 namespace Ez.Hress.FunctionsApi.Images
 {
     public class ImagesContentFunction
     {
+        private readonly AuthenticationInteractor _authenticationInteractor;
         private readonly ImageInteractor _imageInteractor;
-        public ImagesContentFunction(ImageInteractor imageInteractor)
+        public ImagesContentFunction(AuthenticationInteractor authenticationInteractor, ImageInteractor imageInteractor)
         {
+            _authenticationInteractor = authenticationInteractor;
             _imageInteractor = imageInteractor;
         }
 
-        [FunctionName("imagesContent")]
+        [FunctionName("images")]
+        public async Task<IActionResult> RunImages(
+            [HttpTrigger(AuthorizationLevel.Function, "post", Route = "images")] HttpRequest req,
+            ILogger log)
+        {
+            log.LogInformation("[{Class}] C# HTTP trigger function processed a request.", nameof(RunImages));
+
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            if (!isJWTValid)
+            {
+                log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunImages));
+                return new UnauthorizedResult();
+            }
+
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            var image = JsonConvert.DeserializeObject<ImageEntity>(requestBody);
+
+            try
+            {
+                var entity = await _imageInteractor.Save(image, userID);
+                return new OkObjectResult(entity);
+            }
+            catch(ArgumentException aex)
+            {
+                log.LogError(aex, requestBody);
+                return new BadRequestResult();
+            }
+        }
+
+            [FunctionName("imagesContent")]
         public async Task<IActionResult> RunImagesContent(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "images/{id:int}/content")] HttpRequest req,
             int id, ILogger log)

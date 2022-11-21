@@ -66,5 +66,11 @@ namespace Ez.Hress.Shared.DataAccess
                 return null;
             }
         }
+
+        public async Task Save(string container, byte[] content, int id)
+        {
+            BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(container);
+            await containerClient.UploadBlobAsync(id.ToString(), new BinaryData(content));
+        }
     }
 }

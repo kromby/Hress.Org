@@ -18,5 +18,10 @@ namespace Ez.Hress.Shared.DataAccess
             var client = new HttpClient();
             return await client.GetByteArrayAsync(path);
         }
+
+        public Task Save(string container, byte[] content, int id)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

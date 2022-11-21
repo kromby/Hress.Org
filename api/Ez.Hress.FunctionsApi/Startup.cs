@@ -1,6 +1,8 @@
 ﻿using Azure.Data.Tables;
 using Ez.Hress.Administration.DataAccess;
 using Ez.Hress.Administration.UseCases;
+using Ez.Hress.Albums.DataAccess;
+using Ez.Hress.Albums.UseCases;
 using Ez.Hress.Hardhead.DataAccess;
 using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.MajorEvents.DataAccess;
@@ -95,6 +97,10 @@ namespace Ez.Hress.FunctionsApi
             services.AddSingleton<IImageContentDataAccess, ImageContentRelativeDataAccess>();
             services.AddSingleton<IImageContentDataAccess, ImageContentBlobDataAccess>();
             services.AddSingleton<ImageInteractor>();
+
+            // Albums
+            services.AddSingleton<IAlbumDataAccess, AlbumSqlDataAccess>();
+            services.AddSingleton<AlbumInteractor>();
             
             // Hardhead - Award Nominations
             services.AddSingleton<AwardNominateInteractor>();

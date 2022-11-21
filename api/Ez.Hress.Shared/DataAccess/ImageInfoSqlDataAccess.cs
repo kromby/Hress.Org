@@ -52,5 +52,38 @@ namespace Ez.Hress.Shared.DataAccess
 
             return entity;
         }
+
+        public async Task<int> Save(ImageEntity entity, int typeID, int height, int width)
+        {
+            const string sql = @"INSERT INTO [dbo].[gen_Image]
+                                   ([Source]
+                                   ,[Description]
+                                   ,[Height]
+                                   ,[Width]
+                                   ,[TypeId]
+                                   ,[Inserted]
+                                   ,[InsertedBy])
+                                VALUES (@source, @description, @height, @width, @typeID, @inserted, @insertedBy);
+                                SELECT SCOPE_IDENTITY();";
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                using var command = new SqlCommand(sql, connection);
+                command.Parameters.AddWithValue("source", entity.PhotoUrl);
+                command.Parameters.AddWithValue("description", entity.Name);
+                command.Parameters.AddWithValue("height", height);
+                command.Parameters.AddWithValue("width", width);
+                command.Parameters.AddWithValue("typeID", typeID);
+                command.Parameters.AddWithValue("inserted", entity.Inserted);
+                command.Parameters.AddWithValue("insertedBy", entity.InsertedBy);
+
+                var result = await command.ExecuteScalarAsync();
+                if (result == null)
+                    return -1;
+                return Convert.ToInt32(result);
+            }
+        }
     }
 }
