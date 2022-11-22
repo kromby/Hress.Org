@@ -136,9 +136,9 @@ function App(props) {
               <Route path="/hardhead/:hardheadID" component={HardheadEdit} />
               <Route exact path="/login" component={Login} />
               <Route path="/login/magic" component={Magic} />
-              <Route path="/album" component={LegacyFrame} />
-              <Route path="/album2/:id" component={Album} />
-              <Route path="/album2" component={Albums} />              
+              {/* <Route path="/album" component={LegacyFrame} /> */}
+              <Route path="/album/:id" component={Album} />
+              <Route path="/album" component={Albums} />              
               <Route path="/chat" component={LegacyFrame} />
               <Route path="/comic" component={LegacyFrame} />
               {/* <Route path="/default/history" component={HistoryNews} /> */}

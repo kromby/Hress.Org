@@ -50,7 +50,7 @@ const Albums = (propsData) => {
                                 <tbody>
                                     {albums ? albums.map(album =>
                                         <tr key={album.id}>
-                                            <td><Link to={"/album2/" + album.id}>{album.name}</Link></td>
+                                            <td><Link to={"/album/" + album.id}>{album.name}</Link></td>
                                             <td>{album.insertedString}</td>
                                             <td>{album.description}</td>
                                             <td>{album.imageCount} mynd(ir)</td>

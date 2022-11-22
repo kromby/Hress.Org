@@ -6,7 +6,6 @@ import AlbumImages from "./albumImages";
 
 const Album = (propsData) => {
     const [album, setAlbum] = useState();
-    const [selectedImage, setSelectedImage] = useState();
 
     useEffect(() => {
         const getAlbum = async () => {
@@ -33,7 +32,6 @@ const Album = (propsData) => {
                     title={album.name}
                     description={album.description}
                     dateFormatted={album.insertedString}
-                    image={selectedImage ? config.get("apiPath") + "/api/images/" + selectedImage + "/content"  : null}
                     body={
                         <div>
                             <AlbumImages url={album.images.href} />

@@ -2331,6 +2331,18 @@ input, select, textarea {
 				width: 100%;
 			}
 
+		.image.album {
+			display: block;
+			margin: 0 0 2em 0;
+			width: 100%;
+			text-align: center;
+		}
+
+			.image.album img {
+				display:unset;
+				max-width: 100%;				
+			}		
+
 		.image.featured {
 			display: block;
 			margin: 0 0 3em 0;
