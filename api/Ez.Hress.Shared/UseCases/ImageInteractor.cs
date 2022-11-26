@@ -80,7 +80,7 @@ namespace Ez.Hress.Shared.UseCases
             }
             catch(Exception ex)
             {
-                _log.LogError(ex);
+                _log.LogError(ex, ex.Message);
             }
 
             image.Content = content;
