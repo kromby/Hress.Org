@@ -1,9 +1,9 @@
 ﻿using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
 using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.Processing;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -31,9 +31,11 @@ namespace Ez.Hress.Shared.UseCases
 
         }
 
-        public async Task<ImageEntity?> GetContent(int id, bool useThumb)
+        public async Task<ImageEntity?> GetContent(int id, int? width)
         {
-            _log.LogInformation("[{Class}] Getting content for image: '{ID}', thumb: '{UseThumb}'", nameof(ImageInteractor), id, useThumb);
+            int useWidth = width ?? 0;
+
+            _log.LogInformation("[{Class}] Getting content for image: '{ID}', thumb: '{useWidth}'", nameof(ImageInteractor), id, useWidth);
             if (id < 0)
             {
                 _log.LogInformation("[{Class}] Invalid id: '{ID}'", nameof(ImageInteractor), id);
@@ -47,7 +49,8 @@ namespace Ez.Hress.Shared.UseCases
                 return image;
             }
 
-            string path = useThumb && !string.IsNullOrWhiteSpace(image.PhotoThumbUrl) ? image.PhotoThumbUrl : image.PhotoUrl;
+            //string path = (useWidth < 5) && !string.IsNullOrWhiteSpace(image.PhotoThumbUrl) ? image.PhotoThumbUrl : image.PhotoUrl;
+            string path = image.PhotoUrl;
             IImageContentDataAccess? contentDataAccess = _contentDataAccessList.FirstOrDefault(c => path.ToLowerInvariant().StartsWith(c.Prefix));
 
             if (contentDataAccess == null || string.IsNullOrWhiteSpace(contentDataAccess.Prefix))
@@ -56,7 +59,31 @@ namespace Ez.Hress.Shared.UseCases
                 throw new SystemException("Invalid photo URL");
             }
 
-            image.Content = await contentDataAccess.GetContent(path);
+            var content = await contentDataAccess.GetContent(path);
+
+            try
+            {
+                if (useWidth > 0 && content != null)
+                {
+                    var imageObject = Image.Load(content);
+
+                    useWidth = useWidth < imageObject.Width ? useWidth : imageObject.Width * 2;
+
+                    imageObject.Mutate(i => i.Resize(new Size(useWidth, 0)));
+
+                    using (var ms = new MemoryStream())
+                    {
+                        imageObject.SaveAsJpeg(ms);
+                        content = ms.ToArray();
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                _log.LogError(ex);
+            }
+
+            image.Content = content;
 
 
             return image;

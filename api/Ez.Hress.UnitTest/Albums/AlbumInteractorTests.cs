@@ -31,23 +31,23 @@ namespace Ez.Hress.UnitTest.Albums
             _albumDataAccessMock= new Mock<IAlbumDataAccess>(); 
         }
 
-        //[Fact]
-        //public async void AddImages_Test()
-        //{
-        //    var dbConnectionInfo = new DbConnectionInfo("");
-        //    var blobConnectionInfo = new BlobConnectionInfo("");
+        [Fact]
+        public async void AddImages_Test()
+        {
+            var dbConnectionInfo = new DbConnectionInfo("");
+            var blobConnectionInfo = new BlobConnectionInfo("");
 
-        //    IImageInfoDataAccess imageInfoDataAccess = new ImageInfoSqlDataAccess(dbConnectionInfo, _logImageInfoSql.Object);
-        //    IImageContentDataAccess imageContentDataAccess = new ImageContentBlobDataAccess(blobConnectionInfo, _logImageContentBlob.Object);
-        //    IList<IImageContentDataAccess> imageContentDataAccesses= new List<IImageContentDataAccess>();
-        //    imageContentDataAccesses.Add(imageContentDataAccess);
+            IImageInfoDataAccess imageInfoDataAccess = new ImageInfoSqlDataAccess(dbConnectionInfo, _logImageInfoSql.Object);
+            IImageContentDataAccess imageContentDataAccess = new ImageContentBlobDataAccess(blobConnectionInfo, _logImageContentBlob.Object);
+            IList<IImageContentDataAccess> imageContentDataAccesses = new List<IImageContentDataAccess>();
+            imageContentDataAccesses.Add(imageContentDataAccess);
 
-        //    var imageInteractor = new ImageInteractor(imageInfoDataAccess, imageContentDataAccesses, _logImageInteractor.Object);
+            var imageInteractor = new ImageInteractor(imageInfoDataAccess, imageContentDataAccesses, _logImageInteractor.Object);
 
-        //    var albumInteractor = new AlbumInteractor(null, imageInteractor, _logAlbumInteractor.Object);
+            var albumInteractor = new AlbumInteractor(null, imageInteractor, _logAlbumInteractor.Object);
 
-        //    await albumInteractor.AddImages(46101);
-        //}
+            await albumInteractor.AddImages(46101);
+        }
 
         [Fact]
         public async void GetAlbums_Test()

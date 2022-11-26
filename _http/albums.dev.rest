@@ -1,0 +1,9 @@
+### Get all albums
+http://localhost:7072/api/albums
+
+### Get album by id
+http://localhost:7072/api/albums/46048
+
+
+### Get images for an album
+http://localhost:7072/api/albums/46048/images
