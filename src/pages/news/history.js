@@ -65,7 +65,7 @@ const HistoryNews = (propsData) => {
                                     </span> : null}
                                 <span dangerouslySetInnerHTML={{ __html: news.content }} />
                             </p>}
-                        image={isMobile || news.imageAlign === 4 ? config.get('apiPath') + news.image.href : null}
+                        image={isMobile || news.imageAlign === 4 ? config.get('apiPath') + news.image.href + "?width=1400": null}
                         actions={<p />}
                     />) : null}
             </div>

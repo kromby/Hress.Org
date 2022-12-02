@@ -5,3 +5,10 @@ X-Custom-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbG
 ### Get balance sheet
 GET http://localhost:7072/api/users/0/balancesheet
 X-Custom-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjY3NTIyMjQzLCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.9045b9OAnRRSPMOb9xAdat_7zJIkbB1vYrbnbnefH-k
+
+
+### Boksala testt
+GET https://www.boksala.is/elastic/boksala_index/_search
+ Content-Type: application/json
+
+{"query":{"match":{"print_isbn_canonical":9789979338383}}}

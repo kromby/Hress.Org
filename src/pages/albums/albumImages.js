@@ -39,7 +39,7 @@ const AlbumImages = (propsData) => {
                 <div className="row gtr-uniform">
                     <div class="col-12">
                         <span class="image album">
-                            <img src={config.get("apiPath") + "/api/images/" + selectedImage + "/content?width=1250"} alt="" />
+                            <img src={config.get("apiPath") + "/api/images/" + selectedImage + "/content?width=1400"} alt="" />
                         </span>
                     </div>
                     {images ? images.map(image =>

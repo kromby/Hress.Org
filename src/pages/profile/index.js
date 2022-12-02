@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import config from 'react-global-configuration';
+import { Link } from "react-router-dom";
 import { Post } from "../../components";
 import Author from "../../components/author";
 import { useAuth } from "../../context/auth";

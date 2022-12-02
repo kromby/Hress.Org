@@ -67,7 +67,7 @@ namespace Ez.Hress.Shared.UseCases
                 {
                     var imageObject = Image.Load(content);
 
-                    useWidth = useWidth < imageObject.Width ? useWidth : imageObject.Width * 2;
+                    useWidth = useWidth < (imageObject.Width * 2) ? useWidth : imageObject.Width * 2;
 
                     imageObject.Mutate(i => i.Resize(new Size(useWidth, 0)));
 
