@@ -10,31 +10,30 @@ import NightOfTheYear from './nightoftheyear';
 import Rules from './rules';
 import RulesNewOld from './rulesnewold';
 import Disappointment from './disappointment';
+import { Redirect } from 'react-router-dom';
 
 const Election = (propsData) => {
     const { authTokens } = useAuth();
     const [step, setStep] = useState();
 
-    //var url = config.get('path') + '/api/hardhead/awards?code=' + config.get('code');	    
+    if (authTokens === undefined) {
+        return <Redirect  to={{ pathname: "/login", state: { from: propsData.location.pathname } }} />
+    }
 
     useEffect(() => {
-        if (authTokens === undefined) {
-            // TODO Redirect back to main page
-            alert("Þú þarft að skrá þig inn");
-            return;
-        }
-
         const getNextStep = async () => {
             try {
-                var url = config.get('path') + '/api/elections/49/voters/access?code=' + config.get('code');
+                var url = config.get('apiPath') + '/api/elections/49/voters/access';
                 const response = await axios.get(url, {
-                    headers: { 'Authorization': 'token ' + authTokens.token },
+                    headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
                 });
                 setStep(response.data);
             } catch (e) {
                 console.error(e);
             }
         }
+
+        document.title = "Harðhausakosningin | Hress.Org";
 
         if (!step) {
             getNextStep();
@@ -54,6 +53,8 @@ const Election = (propsData) => {
                 Name={name}
                 onSubmit={handleSubmit}
             />
+        } else if(id === 102) /* Mynd fyrir uppgjörskvöldið */ {
+            return <div />
         } else if (id === 360) /*Vonbrigði*/ {
             return <Disappointment key={id}
                 ID={id}
@@ -119,7 +120,7 @@ const Election = (propsData) => {
     return (
         <div id="main">
             {step ?
-                getElement(step.ID, step.Name)
+                getElement(step.id, step.name)
                 : <Post id="0" title="Kosningu lokið" />}
         </div>
     )

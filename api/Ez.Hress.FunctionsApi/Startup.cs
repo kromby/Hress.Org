@@ -101,12 +101,23 @@ namespace Ez.Hress.FunctionsApi
             // Albums
             services.AddSingleton<IAlbumDataAccess, AlbumSqlDataAccess>();
             services.AddSingleton<AlbumInteractor>();
-            
-            // Hardhead - Award Nominations
+
+            // Election (Shared)
+            services.AddSingleton<ElectionInteractor>();
+            services.AddSingleton<IElectionDataAccess, ElectionSqlAccess>();
+
+            // Hardhead
+            services.AddSingleton<IHardheadDataAccess, HardheadSqlAccess> ();
+
+            // Hardhead Election
+            services.AddSingleton<HardheadElectionInteractor>();
+
+            // Hardhead - Award
+            services.AddSingleton<IAwardDataAccess, AwardSqlAccess>();
             services.AddSingleton<AwardNominateInteractor>();
             services.AddSingleton<IAwardNominateDataAccess, AwardNominateTableDataAccess>();
             services.AddSingleton<AwardNominationInteractor>();
-            services.AddSingleton<IAwardNominationDataAccess, AwardNominateTableDataAccess>();
+            services.AddSingleton<IAwardNominationDataAccess, AwardNominateTableDataAccess>();    
         }
     }
 }

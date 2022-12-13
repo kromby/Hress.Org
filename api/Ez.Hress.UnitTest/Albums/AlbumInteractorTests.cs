@@ -39,8 +39,10 @@ namespace Ez.Hress.UnitTest.Albums
 
             IImageInfoDataAccess imageInfoDataAccess = new ImageInfoSqlDataAccess(dbConnectionInfo, _logImageInfoSql.Object);
             IImageContentDataAccess imageContentDataAccess = new ImageContentBlobDataAccess(blobConnectionInfo, _logImageContentBlob.Object);
-            IList<IImageContentDataAccess> imageContentDataAccesses = new List<IImageContentDataAccess>();
-            imageContentDataAccesses.Add(imageContentDataAccess);
+            IList<IImageContentDataAccess> imageContentDataAccesses = new List<IImageContentDataAccess>
+            {
+                imageContentDataAccess
+            };
 
             var imageInteractor = new ImageInteractor(imageInfoDataAccess, imageContentDataAccesses, _logImageInteractor.Object);
 

@@ -41,7 +41,7 @@ namespace Ez.Hress.UnitTest.Shared
             var interactor = new ImageInteractor(_infoMock.Object, contentList, _log.Object);
 
             // ACT
-            var result = await interactor.GetContent(1979, false);
+            var result = await interactor.GetContent(1979, 250);
 
             // ASSERT
             Assert.NotNull(result);
@@ -62,7 +62,7 @@ namespace Ez.Hress.UnitTest.Shared
             var interactor = new ImageInteractor(_infoMock.Object, contentList, _log.Object);
 
             // ACT
-            var result = await interactor.GetContent(1979, false);
+            var result = await interactor.GetContent(1979, 350);
 
             // ASSERT
             Assert.NotNull(result);
@@ -83,7 +83,7 @@ namespace Ez.Hress.UnitTest.Shared
             var interactor = new ImageInteractor(_infoMock.Object, contentList, _log.Object);
 
             // ACT
-            var result = await interactor.GetContent(1979, false);
+            var result = await interactor.GetContent(1979, 500);
 
             // ASSERT
             Assert.NotNull(result);

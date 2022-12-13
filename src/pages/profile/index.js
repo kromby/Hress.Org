@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import config from 'react-global-configuration';
-import { Link } from "react-router-dom";
+import { Link, Redirect } from "react-router-dom";
 import { Post } from "../../components";
 import Author from "../../components/author";
 import { useAuth } from "../../context/auth";
@@ -10,6 +10,10 @@ import { useAuth } from "../../context/auth";
 const Profile = (propsData) => {
     const { authTokens } = useAuth();
     const [balanceSheet, setBalanceSheet] = useState();
+
+    if (authTokens === undefined) {
+        return <Redirect  to={{ pathname: "/login", state: { from: propsData.location.pathname } }} />
+    }
 
     useEffect(() => {
         const getBalanceSheet = async () => {

@@ -5,6 +5,7 @@ import config from 'react-global-configuration';
 import { useAuth } from '../../context/auth';
 import { Redirect } from 'react-router-dom';
 import { Post } from '../../components';
+import { useEffect } from 'react';
 
 function Login(props) {
     const [isError, setIsError] = useState(false);
@@ -13,8 +14,10 @@ function Login(props) {
     const { authTokens, setAuthTokens } = useAuth();
     const [referer, setReferer] = useState(props.location.state ? props.location.state.from : '/');
 
+    console.log("[Login] referer: " + referer);
+    
     const postLogin = async () => {
-        console.log("[Login] postLogin()");
+        console.log("[Login] postLogin()");        
         var url = config.get('apiPath') + '/api/authenticate';
         try {
             const result = await axios.post(url, { username, password });
