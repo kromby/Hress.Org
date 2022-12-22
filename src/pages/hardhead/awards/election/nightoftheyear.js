@@ -77,7 +77,7 @@ const NightOfTheYear = (propsData) => {
                     date={hardhead.Date}
                     dateFormatted={hardhead.DateString}
                     author={hardhead.Host}
-                    body={<HardheadBody id={hardhead.ID} name={hardhead.Name} description={hardhead.Description} viewMovie={false} />}
+                    body={<HardheadBody id={hardhead.ID} name={hardhead.Name} description={hardhead.Description} viewMovie={false} imageHeight={"270px"} />}
                     // body= {[ 
                     //     <section>
                     //         <h3>Kvöldið</h3>

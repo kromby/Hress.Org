@@ -42,9 +42,9 @@ const RulesNewOld = (propsData) => {
         }
 
         try {
-            var url = config.get('path') + '/api/elections/' + propsData.ID + '/vote?code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/elections/' + propsData.ID + '/vote';
             await axios.post(url, selectedValues, {
-                headers: { 'Authorization': 'token ' + authTokens.token },
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
         } catch (e) {
             console.error(e);

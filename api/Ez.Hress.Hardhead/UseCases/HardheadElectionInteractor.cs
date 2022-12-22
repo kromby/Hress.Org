@@ -1,4 +1,5 @@
 ﻿using Ez.Hress.Hardhead.Entities;
+using Ez.Hress.Shared.Entities;
 using Ez.Hress.Shared.UseCases;
 using Microsoft.Extensions.Logging;
 using System;
@@ -13,12 +14,14 @@ namespace Ez.Hress.Hardhead.UseCases
     {
         private readonly ElectionInteractor _electionInteractor;
         private readonly IHardheadDataAccess _hardheadDataAccess;
+        private readonly IHardheadElectionDataAccess _hardheadElectionDataAccess;
         private readonly IAwardDataAccess _awardDataAccess;
         private readonly ILogger<HardheadElectionInteractor> _log;
 
-        public HardheadElectionInteractor(IAwardDataAccess awardDataAccess, IHardheadDataAccess hardheadDataAccess, ElectionInteractor electionInteractor, ILogger<HardheadElectionInteractor> log)
+        public HardheadElectionInteractor(IAwardDataAccess awardDataAccess, IHardheadDataAccess hardheadDataAccess, IHardheadElectionDataAccess hardheadElectionDataAccess, ElectionInteractor electionInteractor, ILogger<HardheadElectionInteractor> log)
         {
             _awardDataAccess= awardDataAccess;
+            _hardheadElectionDataAccess = hardheadElectionDataAccess;
             _electionInteractor = electionInteractor;
             _hardheadDataAccess= hardheadDataAccess;
             _log = log;
@@ -45,12 +48,12 @@ namespace Ez.Hress.Hardhead.UseCases
             {
                 var voter = await _electionInteractor.GetVoter(userID);
 
-                if (voter.LastElectionID == votingYearID)
+                if (voter == null || voter.LastElectionID == votingYearID)
                     return null;
 
                 awardList.Insert(0, new Award() { ID = 100, Name = "Lög Harðhausa - Nýjar og niðurfelldar reglur" });
                 awardList.Insert(1, new Award() { ID = 101, Name = "Lög Harðhausa - Reglubreytingar" });
-                awardList.Insert(2, new Award() { ID = 102, Name = "Kjósa myndir fyrir janúar kvöldið" });
+                awardList.Insert(2, new Award() { ID = 102, Name = "Mynd á uppgjörskvöld" });
 
                 return awardList.Where(a => a.ID != 363 && a.ID > voter.LastStepID).FirstOrDefault();
             }
@@ -58,6 +61,51 @@ namespace Ez.Hress.Hardhead.UseCases
             {
                 return awardList.Where(a => a.ID == 361 || a.ID == 362).FirstOrDefault();
             }
+        }
+
+        public async Task<int> SaveVote(Vote entity, int userID)
+        {
+            if (entity == null)
+                throw new ArgumentException("Entity is missing.", nameof(entity));
+
+            entity.Created = DateTime.Now;
+            entity.Validate();
+
+            var result = await _hardheadElectionDataAccess.SaveVote(entity).ConfigureAwait(false);
+
+            var voter = new VoterEntity()
+            {
+                ID = userID,
+                LastStepID = entity.EventID
+            };
+            await _electionInteractor.SaveVoter(voter);
+
+            return result;
+        }
+
+        public async Task<int> SaveVotes(IList<Vote> list, int electionID, int userID)
+        {
+            if (list == null || list.Count == 0)
+                throw new ArgumentException("Entity is missing.", nameof(list));
+
+            int result = 0;
+            foreach (var vote in list)
+            {
+                vote.EventID = electionID;
+                vote.Created = DateTime.Now;
+                vote.Validate();
+
+                result += await _hardheadElectionDataAccess.SaveVote(vote).ConfigureAwait(false);
+            }
+
+            var voter = new VoterEntity()
+            {
+                ID = userID,
+                LastStepID = electionID
+            };
+            await _electionInteractor.SaveVoter(voter);
+
+            return result;
         }
     }
 }

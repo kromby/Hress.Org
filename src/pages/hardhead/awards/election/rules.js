@@ -46,9 +46,7 @@ const Rules = (propsData) => {
             }
         }
 
-        if (!ruleList) {
-            getRules();
-        }
+        getRules();
     }, [propsData])
 
     const handleSubmit = async (event) => {
@@ -60,9 +58,9 @@ const Rules = (propsData) => {
         }
 
         try {
-            var url = config.get('path') + '/api/elections/' + propsData.ID + '/vote?code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/elections/' + propsData.ID + '/vote';
             await axios.post(url, selectedValues, {
-                headers: { 'Authorization': 'token ' + authTokens.token },
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
         } catch (e) {
             console.error(e);
@@ -90,21 +88,6 @@ const Rules = (propsData) => {
 
     return (
         <div>
-            <Post
-                id={propsData.ID}
-                title={propsData.Name}
-                description={propsData.Description}
-                date={propsData.Date}
-                dateFormatted={propsData.Year}
-                body={
-                    <section>
-                        <p>
-                            Gefðu öllum myndunum sem þú sást einkunn, smelltu síðan á <b>Ljúka</b> neðst á síðunni til að halda áfram
-                        </p>
-                    </section>
-                }
-            />
-
             {ruleList ? ruleList.map(rule =>
                 <RuleChanges
                     key={rule.ID}

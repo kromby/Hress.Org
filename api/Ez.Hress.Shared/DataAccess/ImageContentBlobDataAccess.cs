@@ -39,7 +39,7 @@ namespace Ez.Hress.Shared.DataAccess
 
         public string Prefix { get => "blob:/"; }
 
-        public async Task<byte[]> GetContent(string path)
+        public async Task<byte[]?> GetContent(string path)
         {
             try
             {

@@ -9,10 +9,8 @@ namespace Ez.Hress.Shared.UseCases
 {
     public interface IElectionDataAccess
     {
-        Task<VoterEntity> GetVoter(int userID);
+        Task<VoterEntity?> GetVoter(int userID);
 
-        //Task<int> SaveVoter(VoterEntity voter);
-
-        //Task<int> SaveVote(VoteEntity entity);
+        Task<int> SaveVoter(VoterEntity voter);
     }
 }

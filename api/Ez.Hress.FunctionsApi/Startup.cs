@@ -111,6 +111,7 @@ namespace Ez.Hress.FunctionsApi
 
             // Hardhead Election
             services.AddSingleton<HardheadElectionInteractor>();
+            services.AddSingleton<IHardheadElectionDataAccess, HardheadElectionSqlAccess>();
 
             // Hardhead - Award
             services.AddSingleton<IAwardDataAccess, AwardSqlAccess>();

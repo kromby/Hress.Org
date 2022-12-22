@@ -32,7 +32,7 @@ const HardheadBody = (propsData) => {
     return (
         [
             moviePhoto ?
-                <span key="A" className="image right"><img src={config.get('apiPath') + moviePhoto} alt={propsData.Name} /></span> : null,
+                <span key="A" className="image right"><img src={config.get('apiPath') + moviePhoto} alt={propsData.Name} style={{height: propsData.imageHeight}} /></span> : null,
             viewNight ?
                 <section key="0">
                     <h3>Kvöldið</h3>

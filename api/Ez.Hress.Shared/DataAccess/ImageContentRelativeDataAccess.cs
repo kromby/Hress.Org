@@ -12,7 +12,7 @@ namespace Ez.Hress.Shared.DataAccess
     {
         public string Prefix { get => "~/"; }
 
-        public async Task<byte[]> GetContent(string path)
+        public async Task<byte[]?> GetContent(string path)
         {
             path = path.Replace("~/", "https://hress.azurewebsites.net/");
             var client = new HttpClient();

@@ -36,7 +36,7 @@ namespace Ez.Hress.UnitTest.Shared
             // ARRANGE
             ImageEntity? entity = new(1979, "Test", "https://asdfkjasf.com") { };
             _infoMock.Setup(i => i.GetImage(It.IsAny<int>())).Returns(Task.FromResult<ImageEntity?>(entity));
-            _contentHttpMock.Setup(c => c.GetContent(It.Is<string>(entity.PhotoUrl, StringComparer.Ordinal))).Returns(Task.FromResult<byte[]>(new byte[] { new byte() }));
+            _contentHttpMock.Setup(c => c.GetContent(It.Is<string>(entity.PhotoUrl, StringComparer.Ordinal))).Returns(Task.FromResult<byte[]?>(new byte[] { new byte() }));
             var contentList = new List<IImageContentDataAccess>() { _contentHttpMock.Object, _contentBlobMock.Object, _contentRelativeMock.Object };
             var interactor = new ImageInteractor(_infoMock.Object, contentList, _log.Object);
 
@@ -45,9 +45,7 @@ namespace Ez.Hress.UnitTest.Shared
 
             // ASSERT
             Assert.NotNull(result);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             Assert.NotNull(result.Content);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             _contentHttpMock.Verify();
         }
 
@@ -57,7 +55,7 @@ namespace Ez.Hress.UnitTest.Shared
             // ARRANGE
             ImageEntity? entity = new(1979, "Test", "BLOB://asdfkjasf.com") { };
             _infoMock.Setup(i => i.GetImage(It.IsAny<int>())).Returns(Task.FromResult<ImageEntity?>(entity));
-            _contentBlobMock.Setup(c => c.GetContent(It.Is<string>(entity.PhotoUrl, StringComparer.Ordinal))).Returns(Task.FromResult<byte[]>(new byte[] { new byte() }));
+            _contentBlobMock.Setup(c => c.GetContent(It.Is<string>(entity.PhotoUrl, StringComparer.Ordinal))).Returns(Task.FromResult<byte[]?>(new byte[] { new byte() }));
             var contentList = new List<IImageContentDataAccess>() { _contentHttpMock.Object, _contentBlobMock.Object, _contentRelativeMock.Object };
             var interactor = new ImageInteractor(_infoMock.Object, contentList, _log.Object);
 
@@ -66,9 +64,7 @@ namespace Ez.Hress.UnitTest.Shared
 
             // ASSERT
             Assert.NotNull(result);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             Assert.NotNull(result.Content);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             _contentBlobMock.Verify();
         }
 
@@ -78,7 +74,7 @@ namespace Ez.Hress.UnitTest.Shared
             // ARRANGE
             ImageEntity? entity = new(1979, "Test", "~/images/external/prump.png") { };
             _infoMock.Setup(i => i.GetImage(It.IsAny<int>())).Returns(Task.FromResult<ImageEntity?>(entity));
-            _contentRelativeMock.Setup(c => c.GetContent(It.Is<string>(entity.PhotoUrl, StringComparer.Ordinal))).Returns(Task.FromResult<byte[]>(new byte[] { new byte() }));
+            _contentRelativeMock.Setup(c => c.GetContent(It.Is<string>(entity.PhotoUrl, StringComparer.Ordinal))).Returns(Task.FromResult<byte[]?>(new byte[] { new byte() }));
             var contentList = new List<IImageContentDataAccess>() { _contentHttpMock.Object, _contentBlobMock.Object, _contentRelativeMock.Object };
             var interactor = new ImageInteractor(_infoMock.Object, contentList, _log.Object);
 
@@ -87,9 +83,7 @@ namespace Ez.Hress.UnitTest.Shared
 
             // ASSERT
             Assert.NotNull(result);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
             Assert.NotNull(result.Content);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
             _contentBlobMock.Verify();
         }
     }

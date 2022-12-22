@@ -9,6 +9,13 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Ez.Hress.Shared.UseCases;
 using Ez.Hress.Hardhead.UseCases;
+using Microsoft.Azure.WebJobs.Host;
+using System.Net.Http;
+using System.Net;
+using Ez.Hress.Shared.Entities;
+using System.Collections.Generic;
+using System.Linq;
+using Ez.Hress.Hardhead.Entities;
 
 namespace Ez.Hress.FunctionsApi.Elections
 {
@@ -41,6 +48,48 @@ namespace Ez.Hress.FunctionsApi.Elections
                 return new OkObjectResult(result);
             else
                 return new NotFoundResult();
+        }
+
+        [FunctionName("electionsVote")]
+        public async Task<IActionResult> RunVote([HttpTrigger(AuthorizationLevel.Function, "post", Route = "elections/{id:int}/vote")] HttpRequest req, int id, ILogger log)
+        {
+            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunVote));
+
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            if (!isJWTValid)
+            {
+                log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunVote));
+                return new UnauthorizedResult();
+            }
+            try
+            {
+                var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                var voteList = JsonConvert.DeserializeObject<IList<Vote>>(requestBody);
+
+                if (voteList.Count == 1)
+                {
+                    var entity = voteList.First();
+                    if (entity.EventID == 0)
+                        entity.EventID = id;
+
+                    var result = await _hardheadElectionInteractor.SaveVote(entity, userID).ConfigureAwait(false);
+                    return result > 0 ? new OkResult() : throw new SystemException("Could not save vote.");
+                }
+                else
+                {
+                    var result = await _hardheadElectionInteractor.SaveVotes(voteList, id, userID).ConfigureAwait(false);
+                    return result > 0 ? new OkResult() : throw new SystemException("Could not save vote.");
+                }
+            }
+            catch (ArgumentException aex)
+            {
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, ex.Message);
+                throw;
+            }
         }
     }
 }

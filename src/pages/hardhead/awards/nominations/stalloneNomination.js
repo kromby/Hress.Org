@@ -123,8 +123,8 @@ const StalloneNomination = (propsData) => {
                                     <tr key={nomination.id}>
                                         <td>
                                             {nomination.nominee.profilePhoto ?
-                                                <Author ID={nomination.nominee.ID} Username={nomination.nominee.name} ProfilePhoto={nomination.nominee.profilePhoto.href} /> :
-                                                <Author ID={nomination.nominee.ID} Username={nomination.nominee.name} />
+                                                <Author ID={nomination.nominee.id} Username={nomination.nominee.name} ProfilePhoto={nomination.nominee.profilePhoto.href} /> :
+                                                <Author ID={nomination.nominee.id} Username={nomination.nominee.name} />
                                             }
                                         </td>
                                         <td>{nomination.description}</td>

@@ -53,7 +53,7 @@ namespace Ez.Hress.Albums.UseCases
             return await _albumDataAccess.GetAlbums();
         }
 
-        public async Task<Album> GetAlbum(int id)
+        public async Task<Album?> GetAlbum(int id)
         {
             return await _albumDataAccess.GetAlbum(id);
         }
