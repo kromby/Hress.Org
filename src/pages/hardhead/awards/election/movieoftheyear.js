@@ -85,7 +85,7 @@ const MovieOfTheYear = (propsData) => {
 
             <ul className="actions pagination">
                 <li>
-                    <a href="#" className="button large next" onClick={handleSubmit}>{"Ljúka einkunnargjöf fyrir " + propsData.Name}</a>
+                    <a href="#" className="button large next" onClick={handleSubmit}>{"Ljúka (" + propsData.Name + ")"}</a>
                     {/* <input type="submit" className="button large next" value={"Ljúka " + propsData.Name} disabled={!savingAllowed} /> */}
                 </li>
             </ul>

@@ -51,8 +51,8 @@ namespace Ez.Hress.Hardhead.UseCases
                 if (voter == null || voter.LastElectionID == votingYearID)
                     return null;
 
-                awardList.Insert(0, new Award() { ID = 100, Name = "Lög Harðhausa - Nýjar og niðurfelldar reglur" });
-                awardList.Insert(1, new Award() { ID = 101, Name = "Lög Harðhausa - Reglubreytingar" });
+                awardList.Insert(0, new Award() { ID = 100, Name = "Nýjar og niðurfelldar reglur" });
+                awardList.Insert(1, new Award() { ID = 101, Name = "Reglubreytingar" });
                 awardList.Insert(2, new Award() { ID = 102, Name = "Mynd á uppgjörskvöld" });
 
                 return awardList.Where(a => a.ID != 363 && a.ID > voter.LastStepID).FirstOrDefault();

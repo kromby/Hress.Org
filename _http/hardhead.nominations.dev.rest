@@ -14,3 +14,5 @@ X-Custom-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbG
 GET http://localhost:7072/api/hardhead/awards/nominations?type=207
 Content-Type: application/json
 X-Custom-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjU2MjA2NDA1LCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.23SIOu78T1_aGHUVVjDHxm_sNzVojA_b_bmXxiovZ-Y
+
+https://ezhressapi.azurewebsites.net/api/hardhead/awards/5284/nominations?code=JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==

@@ -100,7 +100,7 @@ const TwentyYearOldMovie = (propsData) => {
 
             <ul className="actions pagination">
                 <li>
-                    <button onClick={handleSubmit} disabled={value === -1} className="button large next">{"Ljúka kosningu um " + propsData.Name}</button>
+                    <button onClick={handleSubmit} disabled={value === -1} className="button large next">{"Kjósa " + propsData.Name}</button>
                 </li>
             </ul>
         </div>
