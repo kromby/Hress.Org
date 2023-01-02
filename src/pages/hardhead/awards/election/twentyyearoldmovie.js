@@ -72,7 +72,7 @@ const TwentyYearOldMovie = (propsData) => {
                 body={
                     <section>
                         <p>
-                            Veldu þá mynd sem þig langar til að sjá á uppgjörskvöldinu í janúar, smelltu síðan á <b>Ljúka</b> neðst á síðunni til að halda áfram
+                            Veldu þá mynd sem þig langar til að sjá á uppgjörskvöldinu í janúar, smelltu síðan á <b>Kjósa</b> neðst á síðunni til að halda áfram
                         </p>
                     </section>
                 }

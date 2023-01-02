@@ -65,9 +65,6 @@ const RulesNewOld = (propsData) => {
         tempList.push({ PollEntryID: id, Value: value });
         setSelectedValues(tempList);
 
-
-        console.log("Length");
-        console.log(tempList.filter(v => v.Value === 0).length);
         if (tempList.filter(v => v.Value === 0).length === 0) {
             setSavingAllowed(true);
         }
@@ -108,7 +105,7 @@ const RulesNewOld = (propsData) => {
                 <li>
                     {/* <a href="#" className="button large next" onClick={handleSubmit} disabled={!savingAllowed}>{"Ljúka kosningu um " + propsData.Name}</a>
                     <input type="submit" value={"Kjósa " + propsData.Name} disabled={!savingAllowed} /> */}
-                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Ljúka kosningu um " + propsData.Name}</button>
+                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa um " + propsData.Name}</button>
                 </li>
             </ul>
         </div>

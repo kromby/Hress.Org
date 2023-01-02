@@ -7,7 +7,7 @@ import App from './pages/App';
 
   function setConfig() {  
     config.set({ path: 'https://ezhressapi.azurewebsites.net', apiPath: '', imagePath: 'https://ezcontentapi.azurewebsites.net', code: 'JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==', omdb: '8ae68ed6' }, {freeze: false, environment: 'prod'});
-    config.set({ path: 'https://ezhressapi.azurewebsites.net', apiPath: 'http://192.168.86.126:7072', imagePath: 'https://ezcontentapi.azurewebsites.net', code: 'JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==', omdb: '8ae68ed6'}, {freeze: false, environment: 'hybrid2'});
+    config.set({ path: 'https://ezhressapi.azurewebsites.net', apiPath: 'http://192.168.86.166:7072', imagePath: 'https://ezcontentapi.azurewebsites.net', code: 'JRXXeaXTE5Y9WD2kVAYLu6gXknrmLlluqfTJZfo3pZfo4kkBUzf3Yw==', omdb: '8ae68ed6'}, {freeze: false, environment: 'hybrid2'});
     config.set({ path: 'http://localhost:7071', apiPath: 'http://localhost:7072', imagePath: 'https://ezcontentapi.azurewebsites.net', code: '', omdb: '8ae68ed6'}, {freeze: false, environment: 'hybrid'});
     config.set({ path: 'http://localhost:7071', apiPath: 'http://localhost:7072', imagePath: 'https://localhost:44363', code: '', omdb: '8ae68ed6'}, {freeze: false, environment: 'dev'});
     config.set({ });

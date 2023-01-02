@@ -104,7 +104,7 @@ const Rules = (propsData) => {
             <ul className="actions pagination">
                 <li>
                     {/* <a href="#" className="button large next" onClick={handleSubmit}>{"Ljúka kosningu um " + propsData.Name}</a> */}
-                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Ljúka kosningu um " + propsData.Name}</button>
+                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa um " + propsData.Name}</button>
                 </li>
             </ul>
         </div>

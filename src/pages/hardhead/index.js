@@ -7,6 +7,7 @@ import HardheadActions from './components/actions';
 // import VoteNow from './awards/election/votenow';
 import axios from "axios";
 import HardheadBody from './components/hardheadbody';
+import VoteNow from './awards/election/votenow';
 
 const Hardhead = (propsData) => {
 	const [hardheads, setHardheads] = useState();	
@@ -55,7 +56,7 @@ const Hardhead = (propsData) => {
 
 	return (
 		<div id="main">
-			{/* <VoteNow /> */}
+			<VoteNow />
 
 			{ hardheads ?
 				hardheads.map((hardhead) =>
