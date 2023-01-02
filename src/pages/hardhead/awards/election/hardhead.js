@@ -3,6 +3,7 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import Post from '../../../../components/post';
 import { useAuth } from '../../../../context/auth';
+import {isMobile} from 'react-device-detect';
 
 const HardheadOfTheYear = (propsData) => {
     const { authTokens } = useAuth();
@@ -81,7 +82,7 @@ const HardheadOfTheYear = (propsData) => {
                     <form onSubmit={handleSubmit}>
                         <div className="row gtr-uniform">
                             {users ? users.map(user =>
-                                <div className="col-4" key={user.ID} onClick={() => handleUserChange(user.ID)} >
+                                <div className={isMobile ? "col-12" : "col-4"} key={user.ID} onClick={() => handleUserChange(user.ID)} >
                                     <input type="radio" checked={selectedUser === user.ID} onChange={() => handleUserChange(user.ID)} />
                                     <label>
                                         <h3 className="author" width="50%">

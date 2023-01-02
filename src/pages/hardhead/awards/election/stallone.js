@@ -3,6 +3,7 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import Post from '../../../../components/post';
 import { useAuth } from '../../../../context/auth';
+import {isMobile} from 'react-device-detect';
 
 const Stallone = (propsData) => {
     const { authTokens } = useAuth();
@@ -85,7 +86,7 @@ const Stallone = (propsData) => {
                 <section>
                     <div className="row gtr-uniform">
                         {stallones ? stallones.map(stallone =>
-                            <div className="col-6" key={stallone.ID} onClick={() => handleChange(stallone.ID)} >
+                            <div className={isMobile ? "col-12" : "col-6"} key={stallone.ID} onClick={() => handleChange(stallone.ID)} >
                                 <input type="radio" checked={selectedUser === stallone.ID} onChange={() => handleChange(stallone.ID)} />
                                 <label>
                                     <h3 className="author" width="50%">

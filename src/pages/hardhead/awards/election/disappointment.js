@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import config from 'react-global-configuration';
 import { Post } from "../../../../components";
 import { useAuth } from "../../../../context/auth"
+import {isMobile} from 'react-device-detect';
 
 const Disappointment = (propsData) => {
     const { authTokens } = useAuth();
@@ -73,7 +74,7 @@ const Disappointment = (propsData) => {
                     <section>
                         <div className="row gtr-uniform">
                             {disappointments ? disappointments.map(nomination =>
-                                <div className="col-6" key={nomination.ID} onClick={() => handleChange(nomination.ID)} >
+                                <div className={isMobile ? "col-12" : "col-6"} key={nomination.ID} onClick={() => handleChange(nomination.ID)} >
                                     <input type="radio" checked={selectedValue === nomination.ID} onChange={() => handleChange(nomination.ID)} />
                                     <label>
                                         <h3 className="author" width="50%">
