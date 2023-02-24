@@ -14,9 +14,9 @@ Authorization: token
 GET http://localhost:7071/api/hardhead/ratings/5355
 
 ### Post rating
-POST http://localhost:7071/api/hardhead/5358/ratings
+GET http://localhost:7071/api/hardhead/5397/ratings
 Content-Type: application/json
-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNTk4ODIxMzA2LCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.Az60hJb_KDzjGHDYxlYVgb1Mh2qOYkHODMArIF90Yy0
+Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjcyNzgxMzcwLCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.OHIhGbfnT18k8ep583gN2_aXVUvm3qR2L_JbKcQu3dI
 
 {
 	"type":"REP_C_MRTNG",

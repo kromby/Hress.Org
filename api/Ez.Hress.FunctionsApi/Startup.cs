@@ -47,7 +47,7 @@ namespace Ez.Hress.FunctionsApi
         public static void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
         {
             var dbConnectionString = config["Ez.Hress.Database.ConnectionString"];
-            var contentStroageConnectionString = config["Ez.Hress.Shared.ContentStorage.ConnectionString"];
+            var contentStorageConnectionString = config["Ez.Hress.Shared.ContentStorage.ConnectionString"];
 
             var key = config["Ez.Hress.Shared.Authentication.Key"];
             var issuer = config["Ez.Hress.Shared.Authentication.Issuer"];
@@ -61,11 +61,11 @@ namespace Ez.Hress.FunctionsApi
 
             // Connection details
             services.AddSingleton(new DbConnectionInfo(dbConnectionString));
-            services.AddSingleton(new BlobConnectionInfo(contentStroageConnectionString));
+            services.AddSingleton(new BlobConnectionInfo(contentStorageConnectionString));
 
             // Clients
-            services.AddSingleton(new TableClient(contentStroageConnectionString, "HardheadNominations"));
-            services.AddSingleton(new TableClient(contentStroageConnectionString, "DinnerPartyElection"));
+            services.AddSingleton(new TableClient(contentStorageConnectionString, "HardheadNominations"));
+            services.AddSingleton(new TableClient(contentStorageConnectionString, "DinnerPartyElection"));
 
             // Authentication
             services.AddSingleton(new AuthenticationInfo(key, issuer, audience, salt));
