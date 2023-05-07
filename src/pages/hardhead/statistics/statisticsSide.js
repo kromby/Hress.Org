@@ -63,7 +63,7 @@ const StatisticsSide = (propsData) => {
                 <MiniPost title="Tölfræði" href="/hardhead/stats"
                     description={
                         <span>
-                            {getDescription(data.stats.PeriodTypeName, data.stats.GuestTypeName)}
+                            {getDescription(data.stats.PeriodTypeName, data.stats.TypeName)}
                             <br />
                             {data.stats.List[0].User.Username} - {data.stats.List[0].AttendedCount}
                             <br />
