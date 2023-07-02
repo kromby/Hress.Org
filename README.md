@@ -1,5 +1,28 @@
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+## Prerequisites
+
+### _http Folder
+Files in _http folder are for the [REST client extension](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
+
+
+In settings.json in VS Code add the following to setup environments.
+
+```
+    "rest-client.environmentVariables": {
+        "$shared": {
+        },
+        "local": {
+            "host": "http://localhost:7072",
+            "apiCode": "",
+        },
+        "production": {
+            "host": "Add the correct prod URL",
+            "apiCode": "Add the correct prodCode",
+        }
+    }
+```
+
 ## Available Scripts
 
 In the project directory, you can run:

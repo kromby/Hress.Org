@@ -1,3 +1,0 @@
-### Get access for authenticated user
-GET http://localhost:7072/api/elections/49/voters/access
-X-Custom-Authorization: token eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIyNjMwIiwiZXhwIjoxNjcwOTc4ODkzLCJpc3MiOiJIcmVzcyIsImF1ZCI6ImhyZXNzcmVhY3QuYXp1cmV3ZWJzaXRlcy5uZXQifQ.t9eteZPjW4s-m9K2lQYlGQwUYBByGEVgnnbi3Tp-D8s

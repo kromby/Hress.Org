@@ -1,1 +1,0 @@
-GET http://localhost:7071/api/hardhead/awards/5284/nominations

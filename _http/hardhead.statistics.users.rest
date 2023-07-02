@@ -1,0 +1,5 @@
+### Post nominations
+GET {{legacyHost}}/api/hardhead/statistics/users?periodType=2&code={{apiCode}}
+
+### Post nominations
+GET {{legacyHost}}/api/hardhead/statistics/users?guestType=53&periodType=2&code={{apiCode}}

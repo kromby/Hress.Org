@@ -1,0 +1,33 @@
+### Authenticate with user and pass
+# @prompt username
+# @prompt password
+
+# @name login
+POST {{host}}/api/authenticate
+Content-Type: application/json
+
+{
+	"username": "{{username}}",
+	"password": "{{password}}"
+}
+
+###
+@apiToken = {{login.response.body.*}}
+
+
+### Post nominations
+POST {{host}}/api/hardhead/awards/nominations
+Content-Type: application/json
+X-Custom-Authorization: token {{apiToken}}
+
+{
+    "description": "Kromby 101",
+    "typeID": 5284,
+    "nomineeID": 2640,
+    "createdBy": 2630
+}
+
+### Get nominations
+GET {{host}}/api/hardhead/awards/nominations?type=207
+Content-Type: application/json
+X-Custom-Authorization: token {{apiToken}}

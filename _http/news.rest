@@ -1,0 +1,20 @@
+### Get latest news
+GET {{host}}/api/news
+
+### Get news by id
+GET {{host}}/api/news/40692
+
+### Get historical news for this day
+GET {{host}}/api/news?type=ONTHISDAY
+
+### Get historical news by year
+GET {{host}}/api/news?year=2016
+
+### Get historical news by year and month
+GET {{host}}/api/news?year=2016&month=12
+
+### Get news statistics by year
+GET {{host}}/api/news/statistics/years
+
+### Get news statistics by year and month
+GET {{host}}/api/news/statistics/years/2008/months

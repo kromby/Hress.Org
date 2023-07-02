@@ -21,19 +21,19 @@ Content-Type: application/json
 }
 
 ### Get image content - HTTP
-GET http://localhost:7072/api/images/257503/content
+GET {{host}}/api/images/257503/content
 
 ### Get image content - Relative
-GET http://localhost:7072/api/images/257360/content
+GET {{host}}/api/images/257360/content
 
 ### Get image content - Blob
-GET http://localhost:7072/api/images/278506/content
+GET {{host}}/api/images/278506/content
 
 ### Get image content - faulty?
-GET http://localhost:7072/api/images/267245/content
+GET {{host}}/api/images/267245/content
 
 ### Save image
-POST http://localhost:7072/api/images
+POST {{host}}/api/images
 Content-Type: application/json
 
 {

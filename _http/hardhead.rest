@@ -1,0 +1,80 @@
+### Authenticate with user and pass
+# @prompt username
+# @prompt password
+
+# @name login
+POST {{host}}/api/authenticate
+Content-Type: application/json
+
+{
+	"username": "{{username}}",
+	"password": "{{password}}"
+}
+
+###
+@apiToken = {{login.response.body.*}}
+
+### Get movies
+ GET {{legacyHost}}/api/movies/?code={{apiCode}}
+ Content-Type: application/json
+
+ {
+	"filter": "arnold"
+ }
+
+### Get ratings with authorization
+GET {{legacyHost}}/api/hardhead/5358/ratings?code={{apiCode}}
+Authorization: token 
+
+### Get ratings without authorization
+GET {{legacyHost}}/api/hardhead/ratings/5355?code={{apiCode}}
+
+### Post rating
+GET {{legacyHost}}/api/hardhead/5397/ratings?code={{apiCode}}
+Content-Type: application/json
+Authorization: token {{apiToken}}
+
+{
+	"type":"REP_C_MRTNG",
+	"rating":"4"
+}
+
+### Get hardheads by userID
+GET {{legacyHost}}/api/hardhead?userID=2630&code={{apiCode}}
+
+### Get hardheads by dateFrom
+GET {{legacyHost}}/api/hardhead?dateFrom=1.1.2020&code={{apiCode}}
+
+### Get hardheads by nothing
+GET {{legacyHost}}/api/hardhead?code={{apiCode}}
+
+### Get hardhead actions
+GET {{legacyHost}}/api/hardhead/5358/actions?code={{apiCode}}
+Content-Type: application/json
+Authorization: token {{apiToken}}
+
+### Change hardhead
+PUT {{legacyHost}}/api/hardhead?code={{apiCode}}
+Content-Type: application/json
+Authorization: token {{apiToken}}
+
+{
+	"ID": "5370",
+	"Number": "999",
+	"Host":
+	{
+		"ID": "2630"
+	},
+	"Date": "2020-07-17",
+	"NextHostID": "2627"
+}
+
+### Post guest
+POST {{legacyHost}}/api/hardhead/5358/guests/2630?code={{apiCode}}
+Content-Type: application/json
+Authorization: token {{apiToken}}
+
+### Delete guest
+DELETE  {{legacyHost}}/api/hardhead/5358/guests/2630?code={{apiCode}}
+Content-Type: application/json
+Authorization: token {{apiToken}}
