@@ -1,13 +1,13 @@
 import { faWindows } from "@fortawesome/free-brands-svg-icons";
 import { useEffect, useState } from "react";
-import * as qs from 'query-string';
+import queryString from 'query-string';
 import { Redirect } from "react-router-dom";
 
 const LegacyRedirect = (propsData) => {
     const [path, setPath] = useState();
 
     useEffect(() => {
-        const parsed = qs.parse(propsData.location.search);
+        const parsed = queryString.parse(propsData.location.search);
 
         if (window.location.pathname.toLowerCase() === '/default/single.aspx') {
             if(parsed.Id) {

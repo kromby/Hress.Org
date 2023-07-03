@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Redirect } from "react-router-dom";
 import iframe from "react-iframe";
-import * as qs from 'query-string';
+import queryString from 'query-string';
 import { useAuth } from "../../context/auth"
 import config from 'react-global-configuration';
 import axios from "axios";
@@ -30,7 +30,7 @@ const LegacyFrame = (propsData) => {
 
         document.title = window.location.pathname + " | Hress.Org";
 
-        const parsed = qs.parse(propsData.location.search);
+        const parsed = queryString.parse(propsData.location.search);
         setIsLegacy(parsed.legacy);
         console.log("[LegacyFrame] legacy: '" + parsed.legacy + "'");
         if (parsed.legacy) {

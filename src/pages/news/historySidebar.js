@@ -3,14 +3,14 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Intro } from '../../components';
 import './historySidebar.css';
 import YearsSide from './yearsSide';
-import * as qs from 'query-string';
+import queryString from 'query-string';
 
 const HistorySidebar = (propsData) => {
     const [year, setYear] = useState();
 
     useEffect (() => {
         console.log(propsData);
-        const parsed = qs.parse(propsData.location.search);
+        const parsed = queryString.parse(propsData.location.search);
         if(parsed.year) {
             setYear(parsed.year);
         }

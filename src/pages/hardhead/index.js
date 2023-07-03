@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import config from 'react-global-configuration';
 import { Post } from '../../components';
 import HardheadRating from './components/rating.js';
-import * as qs from 'query-string';
+import queryString from 'query-string';
 import HardheadActions from './components/actions';
 // import VoteNow from './awards/election/votenow';
 import axios from "axios";
@@ -25,7 +25,7 @@ const Hardhead = (propsData) => {
 		}
 
 		const getHardheadsUrl = () => {
-			const parsed = qs.parse(propsData.location.search);
+			const parsed = queryString.parse(propsData.location.search);
 			console.log("getHardheadsUrl");
 			console.log(parsed);
 			var url;
