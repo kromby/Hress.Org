@@ -4,7 +4,7 @@ import { isMobile } from 'react-device-detect';
 import { ErrorBoundary } from "react-error-boundary";
 import axios from "axios";
 import { Post } from "../../components";
-import * as qs from 'query-string';
+import queryString from 'query-string';
 
 const HistoryNews = (propsData) => {
     const [news, setNews] = useState();
@@ -20,7 +20,7 @@ const HistoryNews = (propsData) => {
             }
         }
 
-        const parsed = qs.parse(propsData.location.search);
+        const parsed = queryString.parse(propsData.location.search);
         if (parsed.year) {
             if(parsed.month) {
                 var url = config.get("apiPath") + "/api/news/?year=" + parsed.year + "&month=" + parsed.month;   
