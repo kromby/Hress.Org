@@ -2,6 +2,20 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Prerequisites
 
+### .env file
+In the root of the project a file with the name '.env' must be created with the following configuration values.
+
+```
+    REACT_APP_API_PATH=http://localhost:7072
+
+    REACT_APP_LEGACY_API_PATH=https://ezhressapi.azurewebsites.net
+    REACT_APP_LEGACY_API_CODE=ADD CODE HERE
+
+    REACT_APP_IMAGE_PATH=https://ezcontentapi.azurewebsites.net
+
+    REACT_APP_OMDB=ADD KEY HERE
+```
+
 ### _http Folder
 Files in _http folder are for the [REST client extension](https://marketplace.visualstudio.com/items?itemName=humao.rest-client).
 
