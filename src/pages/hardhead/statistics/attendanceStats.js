@@ -13,8 +13,9 @@ const AttendanceStats = (propsData) => {
     var url = config.get('path') + '/api/hardhead/statistics/attendance?periodType=' + period + '&code=' + config.get('code');
 
     useEffect(() => {
-        const getStats = async () => {
+        const getStats = async () => { 
             try {
+                setStats(null);
                 const response = await axios.get(url);
                 setStats(response.data);
             } catch (e) {

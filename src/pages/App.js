@@ -36,6 +36,7 @@ import DinnerParty from './dinnerparties/dinnerparty';
 import Profile from './profile';
 import Albums from './albums';
 import Album from './albums/album';
+import RuleChange from './hardhead/rules/change';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();
@@ -129,8 +130,9 @@ function App(props) {
               <Route path="/hardhead/awards/year/:id" component={AwardsByYear} />
               <Route exact path="/hardhead/awards/nominations" component={Nominations} />
               <Route exact path="/hardhead/awards/election" component={Election} />
-              <Route path="/hardhead/awards/:id" component={AwardsByType} />
-              <Route path="/hardhead/rules" component={Rules} />
+              <Route path="/hardhead/awards/:id" component={AwardsByType} />              
+              <Route exact path="/hardhead/rules" component={Rules} />            
+              <Route path="/hardhead/rules/change" component={RuleChange} />  
               <Route path="/hardhead/users/:id" component={HHUsers} />
               <Route path="/hardhead/stats" component={Statistics} />
               <Route path="/hardhead/:hardheadID" component={HardheadEdit} />
