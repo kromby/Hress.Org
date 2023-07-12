@@ -11,7 +11,7 @@ const Albums = (propsData) => {
     const [albums, setAlbums] = useState();
 
     if (authTokens === undefined) {
-        return <Redirect to="/login" />
+        return <Redirect to={{ pathname: "/login", state: { from: propsData.location.pathname } }} />
     }
 
     useEffect(() => {        

@@ -31,7 +31,7 @@ const Nominations = (propsData) => {
     }, [propsData, url])
 
     if (authTokens === undefined) {
-        return <Redirect to='/hardhead' />
+        return <Redirect to={{ pathname: "/login", state: { from: propsData.location.pathname } }} />
     }
     else {
         return (

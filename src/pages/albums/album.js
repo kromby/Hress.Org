@@ -31,10 +31,8 @@ const Album = (propsData) => {
     }, [propsData]);
 
     if (authTokens === undefined) {
-        // return <Redirect to='/login' />
         console.log("User not logged in!");
-        console.log("currentpath: ", currentpath);
-        // this.context.router.push({pathname: "/login", state: { from: currentpath }});
+        return <Redirect to={{ pathname: "/login", state: { from: propsData.location.pathname } }} />
     } else {
         return (
             <div id="main">
