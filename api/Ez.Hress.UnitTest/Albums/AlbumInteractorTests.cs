@@ -46,7 +46,9 @@ namespace Ez.Hress.UnitTest.Albums
 
             var imageInteractor = new ImageInteractor(imageInfoDataAccess, imageContentDataAccesses, _logImageInteractor.Object);
 
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             var albumInteractor = new AlbumInteractor(null, imageInteractor, _logAlbumInteractor.Object);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             await albumInteractor.AddImages(46101);
         }
@@ -57,7 +59,9 @@ namespace Ez.Hress.UnitTest.Albums
             // ARRANGE
             IList<Album> albums = new List<Album>() { new Album(1, "name", "description", 10)};
             _albumDataAccessMock.Setup(a => a.GetAlbums()).Returns(Task.FromResult(albums));
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
             var albumInteractor = new AlbumInteractor(_albumDataAccessMock.Object, null, _logAlbumInteractor.Object);
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
             // ACT
             var result = await albumInteractor.GetAlbums();

@@ -164,7 +164,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
                     {
                         var winnerString = reader.GetString(reader.GetOrdinal("isWinner"));
                         var parsed = bool.TryParse(winnerString, out isWinner);
-                        isWinner = parsed ? isWinner : false;
+                        isWinner = parsed && isWinner;
                     }
                     var entity = new PartyTeam(SqlHelper.GetInt(reader, "ID"), SqlHelper.GetInt(reader, "Number"), isWinner);
                     if (!reader.IsDBNull(reader.GetOrdinal("Wine")))

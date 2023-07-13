@@ -64,7 +64,6 @@ namespace Ez.Hress.FunctionsApi
             services.AddSingleton(new BlobConnectionInfo(contentStorageConnectionString));
 
             // Clients
-            services.AddSingleton(new TableClient(contentStorageConnectionString, "HardheadNominations"));
             services.AddSingleton(new TableClient(contentStorageConnectionString, "DinnerPartyElection"));
 
             // Authentication
@@ -118,7 +117,11 @@ namespace Ez.Hress.FunctionsApi
             services.AddSingleton<AwardNominateInteractor>();
             services.AddSingleton<IAwardNominateDataAccess, AwardNominateTableDataAccess>();
             services.AddSingleton<AwardNominationInteractor>();
-            services.AddSingleton<IAwardNominationDataAccess, AwardNominateTableDataAccess>();    
+            services.AddSingleton<IAwardNominationDataAccess, AwardNominateTableDataAccess>();
+
+            // Hardhead - Rules
+            services.AddSingleton<IRuleChangeDataAccess, RuleChangeTableDataAccess>();
+            services.AddSingleton<RuleChangeInteractor>();
         }
     }
 }
