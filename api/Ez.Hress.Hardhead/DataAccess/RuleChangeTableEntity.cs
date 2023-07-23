@@ -16,6 +16,7 @@ namespace Ez.Hress.Hardhead.DataAccess
             PartitionKey = string.Empty;
             RowKey = string.Empty;
             RuleText = string.Empty;
+            Reasoning = string.Empty;
         }
 
         public RuleChangeTableEntity(RuleChange change)
@@ -24,7 +25,9 @@ namespace Ez.Hress.Hardhead.DataAccess
             RowKey = Guid.NewGuid().ToString();
 
             RuleCategoryID = change.RuleCategoryID;
+            RuleID = change.RuleID;
             RuleText = change.RuleText;
+            Reasoning = change.Reasoning;
             CreatedBy = change.InsertedBy;
         }
 
@@ -34,7 +37,9 @@ namespace Ez.Hress.Hardhead.DataAccess
         public ETag ETag { get; set; }
 
         public int RuleCategoryID { get; set; }
+        public int? RuleID { get; set; }
         public string? RuleText { get; set; }
+        public string Reasoning { get; set; }
 
         public int CreatedBy { get; set; }
     }
