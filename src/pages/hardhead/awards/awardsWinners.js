@@ -55,8 +55,8 @@ const AwardsWinners = (propsData) => {
                                 <td>{propsData.position ? winner.Year : winner.Position}</td>
                                 <td>
                                     {typeof winner.Winner.ProfilePhoto !== 'undefined' ?
-                                        <Author ID={winner.Winner.ID} Username={winner.Winner.Username} ProfilePhoto={winner.Winner.ProfilePhoto.Href} /> :
-                                        <Author ID={winner.Winner.ID} Username={winner.Winner.Username} />
+                                        <Author ID={winner.Winner.ID} Username={winner.Winner.Username} UserPath="/hardhead/users/" ProfilePhoto={winner.Winner.ProfilePhoto.Href} /> :
+                                        <Author ID={winner.Winner.ID} Username={winner.Winner.Username} UserPath="/hardhead/users/" />
                                     }
                                 </td>
 

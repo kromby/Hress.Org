@@ -20,7 +20,13 @@ Content-Type: application/json
 X-Custom-Authorization: token {{apiToken}}
 
 {
-    "ruleText": "Kromby 101",
+    "ruleText": "Kromby 101 testing testing",
     "typeID": 2,
-    "ruleCategoryID": 2552
+    "ruleCategoryID": 2552,
+    "reasoning": "æji bara"
 }
+
+### Get rule changes
+GET {{host}}/api/hardhead/rules/changes
+Content-Type: application/json
+X-Custom-Authorization: token {{apiToken}}

@@ -3,6 +3,7 @@ using Ez.Hress.Hardhead.Entities;
 using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,20 +13,47 @@ using System.Threading.Tasks;
 
 namespace Ez.Hress.Hardhead.DataAccess
 {
-    public class RuleChangeTableDataAccess : IRuleChangeDataAccess
+    public class RuleChangeTableDataAccess : IRuleDataAccess
     {
         private readonly TableClient _tableClient;
         private readonly ILogger<RuleChangeTableDataAccess> _logger;
-        
+        private readonly string _className;
+
         public RuleChangeTableDataAccess(BlobConnectionInfo connectionInfo, ILogger<RuleChangeTableDataAccess> logger)
         {
             _tableClient = new TableClient(connectionInfo.ConnectionString, "HardheadRuleChanges");
             _logger = logger;
+            _className = nameof(RuleChangeTableDataAccess);
+        }
+
+        public async Task<IList<RuleChange>> GetRuleChanges()
+        {
+            string method = nameof(GetRuleChanges);
+            _logger.LogInformation("[{Class}.{Method}] Get rule changes", _className, method);
+
+            var result = _tableClient.QueryAsync<RuleChangeTableEntity>();
+            IList<RuleChange> list = new List<RuleChange>();
+
+            await foreach (var entity in result)
+            {
+                var rulaChange = new RuleChange(Enum.Parse<RuleChangeType>(entity.PartitionKey), entity.RuleCategoryID, entity.Reasoning)
+                {
+                    Inserted = entity.Timestamp.HasValue ? entity.Timestamp.Value.LocalDateTime : DateTime.Today,
+                    InsertedBy = entity.CreatedBy,
+                    ID = entity.RowKey,
+                    RuleText = entity.RuleText,
+                    RuleID = entity.RuleID,
+                };
+                list.Add(rulaChange);
+            }
+
+            return list;
         }
 
         public async Task<int> SaveRuleChange(RuleChange ruleChange)
         {
-            _logger.LogInformation("[{Class}] Saving rule change", this.GetType().Name);
+            string method = nameof(SaveRuleChange);
+            _logger.LogInformation("[{Class}.{Method}] Saving rule change", _className, method);
 
             RuleChangeTableEntity entity = new(ruleChange);
             var response = await _tableClient.AddEntityAsync<RuleChangeTableEntity>(entity);

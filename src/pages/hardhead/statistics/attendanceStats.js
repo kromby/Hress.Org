@@ -83,8 +83,8 @@ const AttendanceStats = (propsData) => {
                                     <td>{i + 1}</td>
                                     <td>
                                         {stat.User.ProfilePhoto ?
-                                            <Author ID={stat.User.ID} Username={stat.User.Username} ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
-                                            <Author ID={stat.User.ID} Username={stat.User.Username} />
+                                            <Author ID={stat.User.ID} Username={stat.User.Username} UserPath="/hardhead/users/" ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
+                                            <Author ID={stat.User.ID} Username={stat.User.Username} UserPath="/hardhead/users/" />
                                             // <Author ID={stat.User.ID} Username={stat.User.Username} ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
                                             // <Author ID={stat.User.ID} Username={stat.User.Username} />
                                         }

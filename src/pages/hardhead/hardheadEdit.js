@@ -110,6 +110,7 @@ const HardheadEdit = (propsData) => {
 					date={hardhead.Date}
 					dateFormatted={hardhead.DateString}
 					author={hardhead.Host}
+					userPath="/hardhead/users/"
 					body={[
 						<section key="edit1">
 							<h3>Kvöldið</h3>

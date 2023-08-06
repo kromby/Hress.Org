@@ -17,10 +17,10 @@ namespace Ez.Hress.Hardhead.Entities
         }
 
         public RuleChangeType TypeID { get; set; }
+        public string TypeName => Enum.GetName(TypeID) ?? "Unknown";
 
         public int RuleCategoryID { get; set; }
         public int? RuleID { get; set; }
-
         public string? RuleText { get; set; }
 
         public string Reasoning { get; set; }

@@ -113,8 +113,8 @@ const StalloneNomination = (propsData) => {
                         <table>
                             <thead>
                                 <tr>
-                                    <td width="200px">Harðhaus</td>
-                                    <td>Útskýring</td>
+                                    <th width="200px">Harðhaus</th>
+                                    <th>Útskýring</th>
                                 </tr>
                             </thead>
                             {nominations ?

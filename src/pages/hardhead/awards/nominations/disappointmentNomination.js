@@ -113,9 +113,9 @@ const DisappointmentNomination = (propsData) => {
                         <table>
                             <thead>
                                 <tr>
-                                    <td width="200px">Harðhaus</td>
-                                    <td width="900px">Útskýring</td>
-                                    <td>Tilnefnandi</td>
+                                    <th width="200px">Harðhaus</th>
+                                    <th width="900px">Útskýring</th>
+                                    <th>Tilnefnandi</th>
                                 </tr>
                             </thead>
                             {nominations ?

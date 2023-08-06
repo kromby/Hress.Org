@@ -16,7 +16,7 @@ const HardheadSidebar = (propsData) => {
 			<section>
 				<div className="mini-posts">
 					{/* <!-- Mini Post --> */}
-					<NextHardhead/>					
+					<NextHardhead allowEdit="true"/>					
 					<AwardsSide />					
 					<StatisticSide />
 					<RulesSide />

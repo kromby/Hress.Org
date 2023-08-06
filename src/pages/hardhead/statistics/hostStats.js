@@ -85,8 +85,8 @@ const HostStats = (propsData) => {
                                     <td>{i + 1}</td>
                                     <td>
                                         {typeof stat.User.ProfilePhoto !== 'undefined' && stat.User.ProfilePhoto !== null ?
-                                            <Author ID={stat.User.ID} Username={stat.User.Username} ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
-                                            <Author ID={stat.User.ID} Username={stat.User.Username} />
+                                            <Author ID={stat.User.ID} Username={stat.User.Username} UserPath="/hardhead/users/" ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
+                                            <Author ID={stat.User.ID} Username={stat.User.Username} UserPath="/hardhead/users/" />
                                         }
                                     </td>
                                     <td>{stat.AttendedCount}</td>

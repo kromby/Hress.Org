@@ -17,6 +17,7 @@ const RuleChange = (propsData) => {
     const [reasoning, setReasoning] = useState();
     const [isSaved, setIsSaved] = useState(false);
     const [error, setError] = useState();
+    const [ruleChanges, setRuleChanges] = useState();
 
     useEffect(() => {
         const getRuleCategories = async () => {
@@ -34,6 +35,10 @@ const RuleChange = (propsData) => {
         if (!ruleCategories) {
             getRuleCategories();
         }
+
+        if (!ruleChanges) {
+            getRuleChanges();
+        }
     }, [propsData])
 
     const getRules = async (id) => {
@@ -41,6 +46,18 @@ const RuleChange = (propsData) => {
             var url = config.get('path') + '/api/hardhead/rules/' + id + '?code=' + config.get('code');
             const response = await axios.get(url);
             setRules(response.data);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
+    const getRuleChanges = async () => {
+        try {
+            var url = config.get('apiPath') + '/api/hardhead/rules/changes';
+            const response = await axios.get(url, {
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+            });
+            setRuleChanges(response.data);
         } catch (e) {
             console.error(e);
         }
@@ -99,6 +116,7 @@ const RuleChange = (propsData) => {
 
     const handleCategoryChange = (event) => {
         getRules(event.target.value);
+        setIsSaved(false);
         setSelectedCategory(event.target.value);
         setButtonEnabled(allowSaving(event.target.value, ruleText, reasoning, selectedRule));
     }
@@ -214,7 +232,30 @@ const RuleChange = (propsData) => {
                         </form>,
                         <div className="col-12" key="message">
                             {isSaved ? <b>Tilnefning skráð!<br /></b> : null}
-                        </div>
+                        </div>,
+                        <hr key="Line3" />,
+                        <div className="table-wrapper" key="Table4">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th width="200px">Tegund</th>
+                                        <th>Regla</th>
+                                        <th>Rökstuðningur</th>
+                                    </tr>
+                                </thead>
+                                {ruleChanges ?
+                                    <tbody>
+                                        {ruleChanges.map((ruleChange) =>
+                                            <tr key={ruleChange.id}>
+                                                <td>{ruleChange.typeName}</td>
+                                                <td>{ruleChange.ruleText}</td>
+                                                <td>{ruleChange.reasoning}</td>
+                                            </tr>
+                                        )}
+                                    </tbody>
+                                    : null}
+                            </table>
+                        </div>,
                     ]}
                 />
             </div >

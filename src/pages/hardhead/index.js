@@ -68,6 +68,7 @@ const Hardhead = (propsData) => {
 					date={hardhead.Date}
 					dateFormatted={hardhead.DateString}
 					author={hardhead.Host}
+					userPath="/hardhead/users/"
 					body={ <HardheadBody id={hardhead.ID} name={hardhead.Name} description={hardhead.Description} />}
 					actions={<HardheadActions id={hardhead.ID} />}
 					stats={<HardheadRating id={hardhead.ID} />}

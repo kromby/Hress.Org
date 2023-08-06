@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 
 const Author = (propsData) => {
     const [user, setUser] = useState();
+    const [userPath, setUserPath] = useState("http://www.hress.org/Gang/Single.aspx?Id=");
 
     useEffect(() => {
         const getUser = async () => {
@@ -25,6 +26,9 @@ const Author = (propsData) => {
             }
         }
 
+        if(propsData.UserPath) 
+            setUserPath(propsData.UserPath);
+
         if (!user) {
             getUser();
         }
@@ -33,7 +37,7 @@ const Author = (propsData) => {
     return (
         <div>
             {user ?
-                <a href={"http://www.hress.org/Gang/Single.aspx?Id=" + user.ID} className="author">
+                <a href={userPath + user.ID} className="author">
                     <span className="name">{user.Username}</span>
                     {user.ProfilePhoto && user.ProfilePhoto.Href ?
                         <img src={config.get('apiPath') + user.ProfilePhoto.Href} alt={user.Username} /> :

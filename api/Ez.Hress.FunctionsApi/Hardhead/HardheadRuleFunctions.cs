@@ -11,17 +11,18 @@ using Ez.Hress.Shared.UseCases;
 using Ez.Hress.Hardhead.UseCases;
 using System.Diagnostics;
 using Ez.Hress.Hardhead.Entities;
+using System.Net.Http;
 
 namespace Ez.Hress.FunctionsApi.Hardhead
 {
     public class HardheadRuleFunctions
     {
         private readonly AuthenticationInteractor _authenticationInteractor;
-        private readonly RuleChangeInteractor _ruleChangeInteractor;
+        private readonly RuleInteractor _ruleInteractor;
 
-        public HardheadRuleFunctions(AuthenticationInteractor authenticationInteractor, RuleChangeInteractor ruleChangeInteractor)
+        public HardheadRuleFunctions(AuthenticationInteractor authenticationInteractor, RuleInteractor ruleInteractor)
         {
-            _ruleChangeInteractor = ruleChangeInteractor;
+            _ruleInteractor = ruleInteractor;
             _authenticationInteractor = authenticationInteractor;
         }
 
@@ -45,9 +46,13 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             try
             {
-                if(HttpMethods.IsPost(req.Method))
+                if (HttpMethods.IsPost(req.Method))
                 {
                     return await PostRuleChange(req, userID, log);
+                }
+                else if (HttpMethods.IsGet(req.Method))
+                {
+                    return await GetRuleChanges(log);
                 }
                 else
                 {
@@ -72,6 +77,15 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             }
         }
 
+        private async Task<IActionResult> GetRuleChanges(ILogger log)
+        {
+            log.LogInformation("[HardheadRuleFunctions] GetRuleChanges");
+
+            var result = await _ruleInteractor.GetRuleChanges();
+
+            return new OkObjectResult(result);
+        }
+
         private async Task<IActionResult> PostRuleChange(HttpRequest req, int userID, ILogger log)
         {
             log.LogInformation("[HardheadRuleFunctions] PostAwardNominations");
@@ -82,7 +96,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             log.LogInformation($"[HardheadRuleFunctions] Request body: {requestBody}");
 
-            await _ruleChangeInteractor.SubmitRuleChange(change);
+            await _ruleInteractor.SubmitRuleChange(change);
             return new NoContentResult();
         }
     }
