@@ -45,10 +45,15 @@ function App(props) {
 
 
   const setTokens = (data) => {
-    localStorage.setItem("tokens", JSON.stringify(data));
-    var decodedToken = jwt.decode(data.token, { complete: true });
-    localStorage.setItem("userID", decodedToken.payload.sub);
-    setAuthTokens(data);
+    if(data) {
+      localStorage.setItem("tokens", JSON.stringify(data));
+      var decodedToken = jwt.decode(data.token, { complete: true });
+      localStorage.setItem("userID", decodedToken.payload.sub);
+      setAuthTokens(data);
+    } else {
+      setAuthTokens();
+      localStorage.removeItem("tokens");
+    }
   }
 
   const setGoogleAnalytics = () => {

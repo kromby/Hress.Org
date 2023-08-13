@@ -4,6 +4,7 @@ import { isMobile } from 'react-device-detect';
 import config from 'react-global-configuration';
 import { useAuth } from '../../context/auth';
 import axios from "axios";
+import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
 
 /**
  * Hook that alerts clicks outside of the passed ref
@@ -30,13 +31,14 @@ function useOutsideAlerter(ref, visible, callback) {
 }
 
 const Menu = (propsData) => {
-    const { authTokens } = useAuth();
+    const { authTokens, setAuthTokens } = useAuth();
     const [data, setData] = useState({ isLoading: false, menuItems: null, userID: 0 });
     const [path, setPath] = useState();
     const [loggedIn, setLoggedIn] = useState(false);
     const [links, setLinks] = useState();
     const wrapperRef = useRef(null);
     const { pathname } = useLocation();
+    const history = useHistory();
 
     useOutsideAlerter(wrapperRef, propsData.visible, propsData.onClick);
 
@@ -87,6 +89,12 @@ const Menu = (propsData) => {
             getMenuData(window.location.pathname);
         }
     }, [propsData, authTokens])
+
+    const logout = () => {
+        setAuthTokens();
+        history.push("/");
+        
+    }
 
     return (
         <section id="menu" ref={wrapperRef}>
@@ -153,7 +161,7 @@ const Menu = (propsData) => {
                                 <p>Breyttu þínum upplýsingum</p>
                             </Link> */}
                         </li>,
-                        <li key="Three">Útskráning (one day)</li>]
+                        <li key="Three"><button className="button large fit" onClick={() => logout()}>Útskráning</button></li>]
                     }
                 </ul>
             </section>
