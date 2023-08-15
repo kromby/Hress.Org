@@ -7,7 +7,7 @@ const RulesSections = (propsData) => {
 
     useEffect(() => {
         const getAwards = async () => {
-            var url = config.get('path') + '/api/hardhead/rules/' + propsData.id + '?code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/hardhead/rules/' + propsData.id;
 
             try {
                 setData({ isLoading: true });
@@ -28,8 +28,8 @@ const RulesSections = (propsData) => {
         <ol>
             {data.visible ?
                 data.rules.map((rule, i) =>
-                    <li key={rule.ID}>
-                        {rule.Name}
+                    <li key={rule.id}>
+                        {rule.name}
                     </li>
                 ) :
                 null}

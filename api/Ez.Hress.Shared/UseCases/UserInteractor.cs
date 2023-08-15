@@ -21,7 +21,7 @@ namespace Ez.Hress.Shared.UseCases
 
         public async Task<UserBasicEntity> GetUser(int id)
         {
-            _log.LogInformation($"[{nameof(UserInteractor)}] Getting user with id {id}");
+            _log.LogInformation("[{Class}] Getting user with id {id}", nameof(UserInteractor));
 
             return await _userDataAccess.GetUser(id);
         }

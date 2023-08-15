@@ -6,15 +6,12 @@
       "Function": "Information",
       "Host.Aggregator": "Information",
       "Host.Results": "Information",
-      "Ez.Hress.FunctionsApi.Startup": "Information",
-      "Ez.Hress.Hardhead.UseCases.AwardInteractor": "Information",
-      "Ez.Hress.Hardhead.DataAccess.AwardTableDataAccess": "Information"
+      "Ez.Hress.FunctionsApi.Startup": "Information"
     },
     "applicationInsights": {
       "samplingSettings": {
         "isEnabled": true,
-        "maxTelemetryItemsPerSecond": 1,
-        "excludedTypes": "Request;Exception"
+        "excludedTypes": "Request"
       }
     }
   }

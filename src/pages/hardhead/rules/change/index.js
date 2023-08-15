@@ -22,7 +22,7 @@ const RuleChange = (propsData) => {
     useEffect(() => {
         const getRuleCategories = async () => {
             try {
-                var url = config.get('path') + '/api/hardhead/rules?code=' + config.get('code');
+                var url = config.get('apiPath') + '/api/hardhead/rules';
                 const response = await axios.get(url);
                 setRuleCategories(response.data);
             } catch (e) {
@@ -43,7 +43,7 @@ const RuleChange = (propsData) => {
 
     const getRules = async (id) => {
         try {
-            var url = config.get('path') + '/api/hardhead/rules/' + id + '?code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/hardhead/rules/' + id;
             const response = await axios.get(url);
             setRules(response.data);
         } catch (e) {
@@ -183,8 +183,8 @@ const RuleChange = (propsData) => {
                                     <div className="col-12">
                                         <select id="category" name="category" onChange={(ev) => handleCategoryChange(ev)}>
                                             <option value="">- Í hvaða flokki viltu breyta reglu? -</option>
-                                            {ruleCategories.map((rule, i) =>
-                                                <option key={rule.ID} value={rule.ID}>{i + 1 + '. grein - ' + rule.Name}</option>
+                                            {ruleCategories.map((rule) =>
+                                                <option key={rule.id} value={rule.id}>{rule.number + '. grein - ' + rule.name}</option>
                                             )}
                                         </select>
                                     </div>
@@ -192,8 +192,8 @@ const RuleChange = (propsData) => {
                                         <div className="col-12">
                                             <select id="rule" name="rule" onChange={(ev) => handleRuleChange(ev)}>
                                                 <option value="">{selected === 1 ? "- Hvaða reglu viltu breyta? -" : "Hvaða reglu viltu fjarlægja?"}</option>
-                                                {rules.map((rule, i) =>
-                                                    <option key={rule.ID} value={rule.ID}>{i + 1 + ". " + rule.Name}</option>
+                                                {rules.map((rule) =>
+                                                    <option key={rule.id} value={rule.id}>{rule.parentNumber + "." + rule.number + ". " + rule.name}</option>
                                                 )}
                                             </select>
                                         </div>

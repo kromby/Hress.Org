@@ -29,6 +29,12 @@ const HardheadSidebar = (propsData) => {
 				</ul>
 			</section>
 
+			{/* <!-- About --> */}
+			<section className="blurb">
+				<h2>Um Harðhaus</h2>
+				<p>Harðhausakvöld eru haldin einu sinni í mánuði. Á kvöldinu er horft á harðhausamynd.</p>
+			</section>
+
 			<section>
 				<ul className="posts">					
 					<li>
@@ -45,15 +51,6 @@ const HardheadSidebar = (propsData) => {
 							</header>
 						</article>
 					</li>
-				</ul>
-			</section>
-
-			{/* <!-- About --> */}
-			<section className="blurb">
-				<h2>Um Harðhaus</h2>
-				<p>Harðhausakvöld eru haldin einu sinni í mánuði. Á kvöldinu er horft á harðhausamynd.</p>
-				<ul className="actions">
-					<li><a href="http://www.hress.org/Hardhead/Rules.aspx" className="button">Lestu reglurnar</a></li>
 				</ul>
 			</section>
 

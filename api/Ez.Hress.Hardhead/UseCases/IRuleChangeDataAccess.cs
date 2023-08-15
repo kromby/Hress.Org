@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Ez.Hress.Hardhead.UseCases
 {
-    public interface IRuleDataAccess
+    public interface IRuleChangeDataAccess
     {
-        Task<IList<RuleParent>> GetRules();
+        Task<int> SaveRuleChange(RuleChange ruleChange);
 
-        Task<IList<RuleChild>> GetRules(int parentId);
+        Task<IList<RuleChange>> GetRuleChanges();
     }
 }

@@ -11,12 +11,14 @@ namespace Ez.Hress.Hardhead.UseCases
     public class RuleInteractor
     {
         private readonly IRuleDataAccess _ruleDataAccess;
+        private readonly IRuleChangeDataAccess _ruleChangeDataAccess;
         private readonly ILogger<RuleInteractor> _logger;
         private readonly string _className;
 
-        public RuleInteractor(IRuleDataAccess ruleDataAccess, ILogger<RuleInteractor> logger)
+        public RuleInteractor(IRuleDataAccess ruleDataAccess, IRuleChangeDataAccess ruleChangeDataAccess, ILogger<RuleInteractor> logger)
         {
             _ruleDataAccess = ruleDataAccess;
+            _ruleChangeDataAccess = ruleChangeDataAccess;
             _logger = logger;
             _className = nameof(RuleInteractor);
         }
@@ -32,7 +34,7 @@ namespace Ez.Hress.Hardhead.UseCases
 
             _logger.LogInformation("[{Class}.{Method}] Rule type: '{typeID}' category: {categoryID}", _className, method, ruleChange.TypeID, ruleChange.RuleCategoryID);
 
-            var result = await _ruleDataAccess.SaveRuleChange(ruleChange);
+            var result = await _ruleChangeDataAccess.SaveRuleChange(ruleChange);
             return result;
         }
 
@@ -41,7 +43,20 @@ namespace Ez.Hress.Hardhead.UseCases
             string method = nameof(GetRuleChanges);
             _logger.LogInformation("[{Class}.{Method}] Getting rule changes.", _className, method);
 
-            return await _ruleDataAccess.GetRuleChanges(); 
+            return await _ruleChangeDataAccess.GetRuleChanges(); 
+        }
+
+        public async Task<IList<RuleParent>> GetRules()
+        {
+            return await _ruleDataAccess.GetRules();
+        }
+
+        public async Task<IList<RuleChild>> GetRules(int parentID)
+        {
+            if (parentID < 1)
+                throw new ArgumentException("Value can not be zero or negative.", nameof(parentID));
+
+            return await _ruleDataAccess.GetRules(parentID);
         }
     }
 }

@@ -7,7 +7,7 @@ import RulesSections from './rulesSections';
 const Rules = (propsData) => {
     const [data, setData] = useState({ rules: null, isLoading: false, visible: false })
 
-    var url = config.get('path') + '/api/hardhead/rules?code=' + config.get('code');
+    var url = config.get('apiPath') + '/api/hardhead/rules';
 
     useEffect(() => {
         const getRules = async () => {
@@ -33,11 +33,11 @@ const Rules = (propsData) => {
         <div id="main">
             {data.visible ?
                 data.rules.map((rule, i) =>
-                    <Post key={rule.ID}
-                        id={rule.ID}
-                        title={rule.Name}
+                    <Post key={rule.id}
+                        id={rule.id}
+                        title={rule.name}
                         description={(i + 1) + ". grein"}
-                        body={<RulesSections id={rule.ID} />}
+                        body={<RulesSections id={rule.id} />}
                     />)
                 : null}
         </div>

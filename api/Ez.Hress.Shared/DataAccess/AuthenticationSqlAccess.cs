@@ -23,23 +23,23 @@ namespace Ez.Hress.Shared.DataAccess
 
         public async Task<int> GetUserID(string username, string hashedPassword)
         {
+            _log.LogInformation("[{Class}] Getting user id for '{Username}'", nameof(AuthenticationSqlAccess), username);
+
             var sql = "SELECT Id, ApiPassword FROM adm_User WHERE Username = @username";
 
-            using (var connection = new SqlConnection(_connectionString))
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@username", username);
+
+            using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
             {
-                await connection.OpenAsync();
-
-                using var command = new SqlCommand(sql, connection);
-                command.Parameters.AddWithValue("@username", username);
-
-                using var reader = await command.ExecuteReaderAsync();
-                if (await reader.ReadAsync())
+                var apiPassword = reader.GetString(1);
+                if (apiPassword == hashedPassword)
                 {
-                    var apiPassword = reader.GetString(1);
-                    if (apiPassword == hashedPassword)
-                    {
-                        return reader.GetInt32(0);
-                    }
+                    return reader.GetInt32(0);
                 }
             }
 

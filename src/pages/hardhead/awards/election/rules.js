@@ -23,17 +23,17 @@ const Rules = (propsData) => {
 
     useEffect(() => {
         const getRules = async () => {
-            var url = config.get('path') + '/api/hardhead/rules?code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/hardhead/rules';
             try {
                 const response = await axios.get(url);
 
                 let temparray = [];
                 await response.data.forEach(async parent => {
-                    var childRules = await getChild(parent.SubRules.Href);
+                    var childRules = await getChild(parent.subRules.href);
 
                     let selectedArr = selectedValues;
                     childRules.forEach(element => {
-                        selectedArr.push({ EventID: element.ID, PollEntryID: 0, Value: 0 });
+                        selectedArr.push({ EventID: element.id, PollEntryID: 0, Value: 0 });
                     });
                     setSelectedValues(selectedArr);
 
@@ -90,14 +90,14 @@ const Rules = (propsData) => {
         <div>
             {ruleList ? ruleList.map(rule =>
                 <RuleChanges
-                    key={rule.ID}
-                    href={rule.Changes.Href}
-                    current={rule.Name}
-                    id={rule.ID}
-                    title={rule.ParentNumber + ". kafli " + rule.Number + ". grein"}
+                    key={rule.id}
+                    href={rule.changes.href}
+                    current={rule.name}
+                    id={rule.id}
+                    title={rule.parentNumber + ". kafli " + rule.number + ". grein"}
                     description="Reglubreyting"
-                    selectedRule={selectedValues.filter(v => v.EventID === rule.ID)[0].PollEntryID}
-                    selectedValue={selectedValues.filter(v => v.EventID === rule.ID)[0].Value}
+                    selectedRule={selectedValues.filter(v => v.EventID === rule.id)[0].PollEntryID}
+                    selectedValue={selectedValues.filter(v => v.EventID === rule.id)[0].Value}
                     onSubmit={handleChange} />
             ) : <Post title="Engar reglubreytingar" />}
 

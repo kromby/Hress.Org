@@ -30,3 +30,9 @@ X-Custom-Authorization: token {{apiToken}}
 GET {{host}}/api/hardhead/rules/changes
 Content-Type: application/json
 X-Custom-Authorization: token {{apiToken}}
+
+### Get parent rules
+GET {{host}}/api/hardhead/rules
+
+### Get child rules
+GET {{host}}/api/hardhead/rules/21690

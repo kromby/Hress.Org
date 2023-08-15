@@ -120,7 +120,8 @@ namespace Ez.Hress.FunctionsApi
             services.AddSingleton<IAwardNominationDataAccess, AwardNominateTableDataAccess>();
 
             // Hardhead - Rules
-            services.AddSingleton<IRuleDataAccess, RuleChangeTableDataAccess>();
+            services.AddSingleton<IRuleChangeDataAccess, RuleChangeTableDataAccess>();
+            services.AddSingleton<IRuleDataAccess, RuleSqlDataAccess>();
             services.AddSingleton<RuleInteractor>();
         }
     }

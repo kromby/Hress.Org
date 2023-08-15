@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Ez.Hress.Hardhead.DataAccess
 {
-    public class RuleChangeTableDataAccess : IRuleDataAccess
+    public class RuleChangeTableDataAccess : IRuleChangeDataAccess
     {
         private readonly TableClient _tableClient;
         private readonly ILogger<RuleChangeTableDataAccess> _logger;

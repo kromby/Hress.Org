@@ -12,11 +12,16 @@ using Ez.Hress.Hardhead.UseCases;
 using System.Diagnostics;
 using Ez.Hress.Hardhead.Entities;
 using System.Net.Http;
+using Ez.Hress.Hardhead.DataAccess;
+using Microsoft.Azure.WebJobs.Host;
+using System.Net;
 
 namespace Ez.Hress.FunctionsApi.Hardhead
 {
     public class HardheadRuleFunctions
     {
+        private const string _class = nameof(HardheadRuleFunctions);
+
         private readonly AuthenticationInteractor _authenticationInteractor;
         private readonly RuleInteractor _ruleInteractor;
 
@@ -26,8 +31,35 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             _authenticationInteractor = authenticationInteractor;
         }
 
-        [FunctionName("hardheadRuleFunctions")]
-        public async Task<IActionResult> Run(
+        [FunctionName("hardheadRules")]
+        public async Task<IActionResult> RunRules([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/rules/{id:int?}")] HttpRequest req, int? id, ILogger log)
+        {
+            const string method = nameof(RunRules);
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, method);
+            log.LogInformation("[{Class}.{Method}] Host: {Host}", _class, method, req.Host.Value);
+
+            if (id.HasValue)
+            {
+                var list = await _ruleInteractor.GetRules(id.Value);
+                if (list.Count <= 0)
+                    return new NotFoundResult();
+                return new OkObjectResult(list);
+            }
+            else
+            {
+                var list = await _ruleInteractor.GetRules();
+                if (list.Count <= 0)
+                    return new NotFoundResult();
+                return new OkObjectResult(list);
+            }
+        }
+
+        [FunctionName("hardheadRuleChangesFunctions")]
+        public async Task<IActionResult> RunRuleChanges(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "hardhead/rules/changes")] HttpRequest req,
             ILogger log)
         {
