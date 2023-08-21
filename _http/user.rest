@@ -23,3 +23,16 @@ X-Custom-Authorization: token {{apiToken}}
 ### Get balance sheet
 GET {{host}}/api/users/0/balancesheet
 X-Custom-Authorization: token {{apiToken}}
+
+### Get balance sheet
+# @prompt password
+# @prompt newPassword
+
+PUT {{host}}/api/users/2630/password
+X-Custom-Authorization: token {{apiToken}}
+Content-Type: application/json
+
+{
+	"password": "{{password}}",
+	"newPassword": "{{newPassword}}"
+}

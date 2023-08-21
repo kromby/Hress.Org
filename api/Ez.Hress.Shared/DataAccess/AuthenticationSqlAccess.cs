@@ -80,5 +80,49 @@ namespace Ez.Hress.Shared.DataAccess
 
             return await command.ExecuteNonQueryAsync();
         }
+
+        public async Task SavePassword(int userID, string hashedPassword)
+        {
+            _log.LogInformation("[{Class}] Changing password for user '{userID}'", nameof(AuthenticationSqlAccess), userID);
+            var sql = "UPDATE [adm_User] SET [ApiPassword] = @password WHERE Id = @userID";
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql, connection);
+
+            command.Parameters.AddWithValue("@userID", userID);
+            command.Parameters.AddWithValue("@password", hashedPassword);
+
+            int affected = await command.ExecuteNonQueryAsync();
+
+            if(affected == 0)
+            {
+                _log.LogError("[{Class}] User '{UserID}' not found", nameof(AuthenticationSqlAccess), userID);
+                throw new SystemException("User not found");
+            }
+        }
+
+        public async Task<bool> VerifyPassword(int userID, string hashedPassword)
+        {
+            _log.LogInformation("[{Class}] Verifying password for user '{userID}'", nameof(AuthenticationSqlAccess), userID);
+
+            var sql = "SELECT ApiPassword FROM adm_User WHERE Id = @userID";
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@userID", userID);
+
+            using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                var apiPassword = reader.GetString(0);
+                return (apiPassword == hashedPassword);
+            }
+
+            return false;
+        }
     }
 }

@@ -95,6 +95,32 @@ namespace Ez.Hress.Shared.UseCases
             return jwt;
         }
 
+        public async Task ChangePassword(int userID, string password, string newPassword)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                _log.LogInformation("[{Class}] Password is null or empty", _class);
+                throw new ArgumentNullException(nameof(password));
+            }
+
+            if (string.IsNullOrWhiteSpace(newPassword))
+            {
+                _log.LogInformation("[{Class}] New password is null or empty", _class);
+                throw new ArgumentNullException(nameof(newPassword));
+            }
+
+            string hashed = HashPassword(password, Encoding.UTF32.GetBytes(_authenticationInfo.Salt));
+
+            if (!await _authenticationDataAccess.VerifyPassword(userID, hashed))
+            {
+                _log.LogWarning("[{Class}] Invalid password for user '{UserID}'", _class, userID);
+                throw new UnauthorizedAccessException("Invalid password");
+            }
+
+            string hashedNew = HashPassword(newPassword, Encoding.UTF32.GetBytes(_authenticationInfo.Salt));
+            await _authenticationDataAccess.SavePassword(userID, hashedNew);
+        }
+
         public async Task<string> CreateMagicCode(int userID)
         {
             if(userID <= 0)
