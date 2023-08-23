@@ -28,7 +28,7 @@ X-Custom-Authorization: token {{apiToken}}
 # @prompt password
 # @prompt newPassword
 
-PUT {{host}}/api/users/2630/password
+PUT {{host}}/api/users/0/password
 X-Custom-Authorization: token {{apiToken}}
 Content-Type: application/json
 

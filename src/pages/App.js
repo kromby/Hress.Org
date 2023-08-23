@@ -37,6 +37,7 @@ import Profile from './profile';
 import Albums from './albums';
 import Album from './albums/album';
 import RuleChange from './hardhead/rules/change';
+import Password from './profile/password';
 
 function App(props) {
   const [authTokens, setAuthTokens] = useState();
@@ -161,7 +162,8 @@ function App(props) {
               <Route path="/mission" component={LegacyFrame} />
               <Route path="/news/history" component={HistoryNews} />
               <Route path="/news/:id" component={SingleNews} />
-              <Route path="/profile" component={Profile} />
+              <Route exact path="/profile" component={Profile} />
+              <Route path="/profile/password" component={Password} />
               <Route path="/rss" component={LegacyFrame} />
               <Route path="/yearly" component={LegacyFrame} />
               {/* <Route component={App} /> */}

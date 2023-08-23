@@ -54,6 +54,7 @@ namespace Ez.Hress.FunctionsApi.Users
                 return new UnauthorizedResult();
             }
 
+            id = id != 0 ? id : userID;
             if(userID != id)
             {
                 log.LogWarning("[{Class}.{Method}] Don't have access to that user!", _function, nameof(RunPassword));
@@ -63,7 +64,7 @@ namespace Ez.Hress.FunctionsApi.Users
             try
             {
                 var body = await req.ReadFromJsonAsync<ChangePasswordBody>();                
-                await _authenticationInteractor.ChangePassword(userID, body.Password, body.NewPassword);
+                await _authenticationInteractor.ChangePassword(id, body.Password, body.NewPassword);
                 return new AcceptedResult();
             }
             catch (ArgumentException aex)

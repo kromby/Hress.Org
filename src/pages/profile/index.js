@@ -80,6 +80,10 @@ const Profile = (propsData) => {
                             <br />
                             <br />
                             <br />
+                            <br />
+                            <p>
+                                <Link to={"/profile/password"}><h3>Breyta lykilorði</h3></Link>
+                            </p>
                             <p>
                                 <Link to={"/Gang/Profile/MyProfile.aspx?legacy=true"} target="_blank"><h3>Prófíllinn á gamla hress</h3></Link>
                             </p>
