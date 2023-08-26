@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@fortawesome/free-brands-svg-icons": "^6.2.1",
+    "@fortawesome/free-brands-svg-icons": "^6.4.2",
     "axios": "^1.4.0",
     "dotenv": "^16.3.1",
     "jsonwebtoken": "^9.0.1",
@@ -19,7 +19,8 @@
     "react-helmet": "^6.1.0",
     "react-iframe": "^1.8.5",
     "react-rating": "^2.0.5",
-    "react-router-dom": "^5.1.0",
+    "react-router-dom": "^5.3.4",
+    "react-router-dom-v5-compat": "^6.15.0",
     "react-scripts": "^5.0.1",
     "react-youtube": "^9.0.3",
     "webpack": "^5.88.2"
