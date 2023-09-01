@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
-import { CompatRouter } from 'react-router-dom-v5-compat';
+import { CompatRoute, CompatRouter } from 'react-router-dom-v5-compat';
 import jwt from 'jsonwebtoken';
 import ReactGA from 'react-ga4';
 
-import PrivateRoute from './../components/access/privateRoute';
 import { AuthContext } from './../context/auth';
 import Hardhead from './hardhead';
 import HardheadSidebar from './hardhead/sidebar';
@@ -168,23 +167,15 @@ function App(props) {
                 <Route path="/profile/password" component={Password} />
                 <Route path="/rss" component={LegacyFrame} />
                 <Route path="/yearly" component={LegacyFrame} />
-                {/* <Route component={App} /> */}
               </Switch>
 
               {/* Sidebar */}
               <Switch>
-                <Route exact path="/" component={MainSidebar} />
-                <Route exact path="/hardhead" component={HardheadSidebar} />
-                <Route exact path="/hardhead/awards" component={AwardsSidebar} />
-                <Route path="/hardhead/users/:id" component={HHUserSidebar} />
-                <Route path="/hardhead/awards/:id" /*component={AwardsSidebar}*/ />
-                <Route path="/hardhead/:hardheadID" />
-                <Route path="/hardhead/awards/year/:id" />
-                <Route path="/hardhead/awards/election" />
-                <Route path="/hardhead/awards/nominations" />
-                <Route path="/hardhead/rules" />
-                <Route path="/hardhead/stats" />
-                <Route path="/news/history" component={HistorySidebar} />
+                <CompatRoute exact path="/" component={MainSidebar} />
+                <CompatRoute exact path="/hardhead" component={HardheadSidebar} />
+                <CompatRoute exact path="/hardhead/awards" component={AwardsSidebar} />
+                <CompatRoute path="/hardhead/users/:id" component={HHUserSidebar} />
+                <CompatRoute path="/news/history" component={HistorySidebar} />
               </Switch>
             </div>
             <Menu visible={data.showMenu} onClick={() => toggleMenu(true)} />

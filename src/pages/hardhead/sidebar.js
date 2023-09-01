@@ -7,10 +7,10 @@ import StatisticSide from './statistics/statisticsSide';
 import RulesSide from './rules/rulesSide';
 import YearsSide from './components/yearsSide';
 
-const HardheadSidebar = (propsData) => {
+const HardheadSidebar = () => {
     return (
         <section id="sidebar">
-            <Intro logo="https://hress.azurewebsites.net/App_Themes/Default/Images/Logo.png" title="Harðhaus" description="" />
+            <Intro logo="/logo.png" title="Harðhaus" description="" />
 
 			{/* <!-- Mini Posts --> */}
 			<section>

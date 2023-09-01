@@ -3,7 +3,7 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import SidePost from "../../../components/sidepost";
 
-const AwardsSidebar = (propsData) => {
+const AwardsSidebar = () => {
     const [years, setYears] = useState();
 
     var url = config.get('path') + '/api/hardhead/years?code=' + config.get('code');
@@ -21,7 +21,7 @@ const AwardsSidebar = (propsData) => {
         if (!years) {
             getYears();
         }
-    }, [propsData, url])
+    }, [url])
 
     return (
         <section id="sidebar">
