@@ -14,10 +14,10 @@ const HistorySidebar = () => {
         const parsed = queryString.parse(location.search);
         if(parsed.year) {
             setYear(parsed.year);
-        }
-    }, [])
+        }        
+    }, [location])
 
-    function ErrorFallback({ error, resetErrorBoundary }) {
+    function ErrorFallback({ error }) {
         return (
             <div role="alert">
                 <p>Something went wrong:</p>
