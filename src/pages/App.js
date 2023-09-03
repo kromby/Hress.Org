@@ -166,7 +166,8 @@ function App(props) {
                 <Route exact path="/profile" component={Profile} />
                 <Route path="/profile/password" component={Password} />
                 <Route path="/rss" component={LegacyFrame} />
-                <Route path="/yearly" component={LegacyFrame} />
+                {/* <Route path="/yearly" component={LegacyFrame} /> */}
+                <CompatRoute path="/yearly" component={LegacyFrame} />
               </Switch>
 
               {/* Sidebar */}
