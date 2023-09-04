@@ -7,7 +7,7 @@ import config from 'react-global-configuration';
 import axios from "axios";
 import { useLocation } from "react-router-dom-v5-compat";
 
-const LegacyFrame = (propsData) => {
+const LegacyFrame = () => {
     const { authTokens } = useAuth();
     const [isPrivate] = useState(false);
     const [isLegacy, setIsLegacy] = useState(false);
@@ -39,7 +39,7 @@ const LegacyFrame = (propsData) => {
         if (parsed.legacy) {
             getMagicCode();
         }
-    }, [propsData])
+    }, [])
 
     if (isPrivate && authTokens === undefined) {
         return <Redirect to='/' />

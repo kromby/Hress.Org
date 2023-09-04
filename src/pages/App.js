@@ -144,29 +144,26 @@ function App(props) {
                 <Route path="/hardhead/stats" component={Statistics} />
                 <Route path="/hardhead/:hardheadID" component={HardheadEdit} />
                 <Route exact path="/login" component={Login} />
-                <Route path="/login/magic" component={Magic} />
-                {/* <Route path="/album" component={LegacyFrame} /> */}
-                <Route path="/album/:id" component={Album} />
-                <Route path="/album" component={Albums} />
-                <Route path="/chat" component={LegacyFrame} />
-                <Route path="/comic" component={LegacyFrame} />
-                {/* <Route path="/default/history" component={HistoryNews} /> */}
-                <Route path="/default/single.aspx" component={LegacyRedirect} />
-                <Route path="/default" component={LegacyFrame} />
-                <Route path="/feed" component={LegacyFrame} />
-                <Route path="/foodandredwine" component={LegacyFrame} />
-                <Route path="/dinnerparties/courses/:typeID" component={Election2022} />
-                <Route path="/dinnerparties/:id" component={DinnerParty} />
-                <Route path="/dinnerparties" component={DinnerParties} />
-                <Route path="/gang" component={LegacyFrame} />
-                <Route path="/hressgames" component={LegacyFrame} />
-                <Route path="/mission" component={LegacyFrame} />
-                <Route path="/news/history" component={HistoryNews} />
-                <Route path="/news/:id" component={SingleNews} />
-                <Route exact path="/profile" component={Profile} />
-                <Route path="/profile/password" component={Password} />
-                <Route path="/rss" component={LegacyFrame} />
-                {/* <Route path="/yearly" component={LegacyFrame} /> */}
+                <CompatRoute path="/login/magic" component={Magic} />
+                <CompatRoute path="/album/:id" component={Album} />
+                <CompatRoute path="/album" component={Albums} />
+                <CompatRoute path="/chat" component={LegacyFrame} />
+                <CompatRoute path="/comic" component={LegacyFrame} />
+                <CompatRoute path="/default/single.aspx" component={LegacyRedirect} />
+                <CompatRoute path="/default" component={LegacyFrame} />
+                <CompatRoute path="/feed" component={LegacyFrame} />
+                <CompatRoute path="/foodandredwine" component={LegacyFrame} />
+                {/* <Route path="/dinnerparties/courses/:typeID" component={Election2022} /> */}
+                <CompatRoute path="/dinnerparties/:id" component={DinnerParty} />
+                <CompatRoute path="/dinnerparties" component={DinnerParties} />
+                <CompatRoute path="/gang" component={LegacyFrame} />
+                <CompatRoute path="/hressgames" component={LegacyFrame} />
+                <CompatRoute path="/mission" component={LegacyFrame} />
+                <CompatRoute path="/news/history" component={HistoryNews} />
+                <CompatRoute path="/news/:id" component={SingleNews} />
+                <CompatRoute exact path="/profile" component={Profile} />
+                <CompatRoute path="/profile/password" component={Password} />
+                <CompatRoute path="/rss" component={LegacyFrame} />
                 <CompatRoute path="/yearly" component={LegacyFrame} />
               </Switch>
 

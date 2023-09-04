@@ -4,9 +4,10 @@ import { useAuth } from "../../context/auth"
 import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
 import axios from "axios";
 import config from 'react-global-configuration';
+import { useLocation } from "react-router-dom-v5-compat";
 
 
-const Password = (propsData) => {
+const Password = () => {
     const { authTokens } = useAuth();
     const [buttonEnabled, setButtonEnabled] = useState(false);
     const [message, setMessage] = useState();
@@ -15,8 +16,10 @@ const Password = (propsData) => {
     const [newPassword, setNewPassword] = useState();
     const [confirmPassword, setConfirmPassword] = useState();
 
+    const location = useLocation();
+
     if (authTokens === undefined) {
-        return <Redirect to={{ pathname: "/login", state: { from: propsData.location.pathname } }} />
+        return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
     }
 
     const handleSubmit = async (event) => {

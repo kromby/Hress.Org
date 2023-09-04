@@ -5,14 +5,17 @@ import { Link, Redirect } from "react-router-dom";
 import { Post } from "../../components";
 import Author from "../../components/author";
 import { useAuth } from "../../context/auth";
+import { useLocation } from "react-router-dom-v5-compat";
 
 
-const Profile = (propsData) => {
+const Profile = () => {
     const { authTokens } = useAuth();
     const [balanceSheet, setBalanceSheet] = useState();
 
+    const location = useLocation();
+
     if (authTokens === undefined) {
-        return <Redirect  to={{ pathname: "/login", state: { from: propsData.location.pathname } }} />
+        return <Redirect  to={{ pathname: "/login", state: { from: location.pathname } }} />
     }
 
     useEffect(() => {
@@ -33,7 +36,7 @@ const Profile = (propsData) => {
         if (!balanceSheet) {
             getBalanceSheet();
         }
-    }, [propsData])
+    }, [])
 
     return (
         <div id="main">
