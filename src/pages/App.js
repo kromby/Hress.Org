@@ -142,8 +142,8 @@ function App(props) {
                 <Route path="/hardhead/rules/change" component={RuleChange} />
                 <Route path="/hardhead/users/:id" component={HHUsers} />
                 <Route path="/hardhead/stats" component={Statistics} />
-                <Route path="/hardhead/:hardheadID" component={HardheadEdit} />
-                <Route exact path="/login" component={Login} />
+                <CompatRoute path="/hardhead/:hardheadID" component={HardheadEdit} />
+                <CompatRoute exact path="/login" component={Login} />
                 <CompatRoute path="/login/magic" component={Magic} />
                 <CompatRoute path="/album/:id" component={Album} />
                 <CompatRoute path="/album" component={Albums} />

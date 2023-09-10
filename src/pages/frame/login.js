@@ -6,13 +6,15 @@ import { useAuth } from '../../context/auth';
 import { Redirect } from 'react-router-dom';
 import { Post } from '../../components';
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom-v5-compat';
 
-function Login(props) {
+function Login() {
     const [isError, setIsError] = useState(false);
+    const location = useLocation();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const { authTokens, setAuthTokens } = useAuth();
-    const [referer, setReferer] = useState(props.location.state ? props.location.state.from : '/');
+    const [referer, setReferer] = useState(location.state ? location.state.from : '/');
 
     console.log("[Login] referer: " + referer);
     

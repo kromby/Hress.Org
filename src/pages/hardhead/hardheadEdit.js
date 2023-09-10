@@ -8,9 +8,12 @@ import { useAuth } from '../../context/auth';
 import MovieEdit from './components/movieEdit';
 import GuestsEdit from './components/guestsEdit';
 import { Helmet } from 'react-helmet';
+import { useLocation, useParams } from 'react-router-dom-v5-compat';
 
-const HardheadEdit = (propsData) => {
+const HardheadEdit = () => {
 	const { authTokens } = useAuth();
+	const location = useLocation();
+	const params = useParams();
 	const [hardhead, setHardhead] = useState();
 	const [users, setUsers] = useState();
 	const [nextHostID, setNextHostID] = useState();
@@ -25,12 +28,12 @@ const HardheadEdit = (propsData) => {
 
 	useEffect(() => {
 		if (authTokens === undefined) {
-			// TODO Redirect back to main page
+			return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
 		}
 
 		const getHardhead = async () => {
 			try {
-				var url = config.get('path') + '/api/hardhead/' + propsData.match.params.hardheadID + '?code=' + config.get('code');
+				var url = config.get('path') + '/api/hardhead/' + params.hardheadID + '?code=' + config.get('code');
 				const response = await axios.get(url)
 				var date = new Date(response.data.Date);
 				setHardhead(response.data);
@@ -59,16 +62,16 @@ const HardheadEdit = (propsData) => {
 		if (!users) {
 			getUsers();
 		}
-	}, [propsData, authTokens])
+	}, [params, location, authTokens])
 
 	const handleSubmit = async (event) => {
 		setButtonEnabled(false);
 		if (authTokens !== undefined) {
 			event.preventDefault();
 			try {
-				var url = config.get('path') + '/api/hardhead/' + propsData.match.params.hardheadID + '?code=' + config.get('code');
+				var url = config.get('path') + '/api/hardhead/' + params.hardheadID + '?code=' + config.get('code');
 				const response = await axios.put(url, {
-					ID: propsData.match.params.hardheadID,
+					ID: params.hardheadID,
 					Number: hardhead.Number,
 					Host: hardhead.Host,
 					Date: hardheadDate,
