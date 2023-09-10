@@ -3,14 +3,16 @@ import config from 'react-global-configuration';
 import axios from "axios";
 import { Post } from "../../components";
 import { Helmet } from "react-helmet";
+import { useParams } from "react-router-dom-v5-compat";
 
-const SingleNews = (propsData) => {
+const SingleNews = () => {
     const [news, setNews] = useState();
+    const params = useParams();
 
     useEffect(() => {
         const getNews = async () => {
 
-            var url = config.get("apiPath") + "/api/news/" + propsData.match.params.id;
+            var url = config.get("apiPath") + "/api/news/" + params.id;
             try {
                 const response = await axios.get(url);
                 setNews(response.data);
@@ -22,7 +24,7 @@ const SingleNews = (propsData) => {
         if (!news) {
             getNews();
         }
-    }, [propsData])
+    }, [])
 
 
     return (

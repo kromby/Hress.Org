@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import config from 'react-global-configuration';
 import axios from 'axios';
 import SidePost from "../../components/sidepost";
+import { useParams } from "react-router-dom-v5-compat";
 
 const YearsSide = (propsData) => {
     const [yearQS, setYearQS] = useState();
@@ -20,10 +21,8 @@ const YearsSide = (propsData) => {
             }
         }
         
-        console.log(propsData);
-        console.log("propsData.Year");
-        console.log(propsData.year);
-        // const parsed = qs.parse(propsData.location.search);
+        console.log("[YearsSide] propsData.year");
+        console.log(propsData.year);        
         if (propsData.year) {
             var url = config.get("apiPath") + "/api/news/statistics/years/" + propsData.year + "/months";   
             setYearQS(propsData.year);

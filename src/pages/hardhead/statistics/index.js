@@ -26,10 +26,10 @@ import HostStats from './hostStats';
 import ActorStats from './actorStats';
 import AttendanceStats from './attendanceStats';
 
-const Statistics  = (propsData) => {
+const Statistics  = () => {
     useEffect(() => {
         document.title = "Tölfræði Harðhausa | Hress.Org";
-    }, [propsData])
+    }, [])
 
     return (
         <div id="main">

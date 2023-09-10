@@ -5,10 +5,12 @@ import { ErrorBoundary } from "react-error-boundary";
 import axios from "axios";
 import { Post } from "../../components";
 import queryString from 'query-string';
+import { useLocation } from "react-router-dom-v5-compat";
 
-const HistoryNews = (propsData) => {
+const HistoryNews = () => {
     const [news, setNews] = useState();
     const [lastUrl, setLastUrl] = useState();
+    const location = useLocation();
 
     useEffect(() => {
         const getNews = async (url) => {
@@ -20,7 +22,7 @@ const HistoryNews = (propsData) => {
             }
         }
 
-        const parsed = queryString.parse(propsData.location.search);
+        const parsed = queryString.parse(location.search);
         if (parsed.year) {
             if(parsed.month) {
                 var url = config.get("apiPath") + "/api/news/?year=" + parsed.year + "&month=" + parsed.month;   
@@ -37,7 +39,7 @@ const HistoryNews = (propsData) => {
             setLastUrl(url);
             getNews(url);
         }
-    }, [propsData])
+    }, [location])
 
 
     return (

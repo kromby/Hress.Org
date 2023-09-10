@@ -5,13 +5,15 @@ import config from 'react-global-configuration';
 import { Post } from "../../components";
 import { Link, Redirect } from "react-router-dom";
 import { useAuth } from "../../context/auth";
+import { useLocation } from "react-router-dom-v5-compat";
 
-const Albums = (propsData) => {
+const Albums = () => {
     const { authTokens } = useAuth();
+    const location = useLocation();
     const [albums, setAlbums] = useState();
 
     if (authTokens === undefined) {
-        return <Redirect to={{ pathname: "/login", state: { from: propsData.location.pathname } }} />
+        return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
     }
 
     useEffect(() => {        
@@ -32,7 +34,7 @@ const Albums = (propsData) => {
         if (!albums) {
             getAlbums();
         }
-    }, [propsData])
+    }, [])
 
     return (
         <div id="main">

@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Post } from '../../../components';
 import Author from '../../../components/author';
 
-const GuestStats = (propsData) => {
+const GuestStats = () => {
     const [data, setData] = useState({ stats: null, isLoading: false, visible: false })
     const [pageSize, setPageSize] = useState(10);
     const [period, setPeriod] = useState("All");
@@ -28,9 +28,9 @@ const GuestStats = (propsData) => {
             getStats();
             setReload(false);
         }
-    }, [propsData, url])
+    }, [url])
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async () => {
         if (pageSize > data.stats.List.length) {
             setPageSize(10);
         } else {

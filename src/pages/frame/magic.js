@@ -4,45 +4,45 @@ import axios from "axios";
 import queryString from 'query-string';
 
 import { useAuth } from '../../context/auth';
+import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
 
-function Magic(props) {
+function Magic() {
+    const location = useLocation();
+    const navigate = useNavigate();
     const[data, setData] = useState({referer: null, code: null, isLoading: false})    
-    //const[setLoggedIn] = useState(false);
     const {setAuthTokens} = useAuth();
   
     if(data.isLoading === false) {            
         setData({isLoading: true});
         try {
-            console.log("Magic 2");
-            const parsed = queryString.parse(props.location.search);                
+            const parsed = queryString.parse(location.search);                
             var code = parsed.code;
-            console.log("Magic code:" + code);
-            console.log("Magic path:" + parsed.path);
+            console.log("[Magic] code:" + code);
+            console.log("[Magic] path:" + parsed.path);
 
             var url = config.get('path') + '/api/authenticate?code=' + config.get('code');
 
             axios.post(url, {code}).then(
                 result => {
                     if(result.data.length > 0) {
-                        console.log("Magic: setData " + result.data);                    
+                        console.log("[Magic] setData " + result.data);                    
                         setAuthTokens({ token: result.data });
-                        //setLoggedIn(true);
                         setData({code: result.data, referer: parsed.path, isLoading: false});
-                        props.history.push(parsed.path)
+                        navigate(parsed.path)
                     }
                 }
             ).catch(function (e) {                
-                console.error("Magic " + e);
-                setAuthTokens({token: null});
+                console.error("[Magic] e1 " + e);
+                setAuthTokens();
                 setData({isLoading: false});
-                props.history.push("/"); 
+                navigate("/"); 
             });
         }
         catch(e) {
-            console.error("Magic " + e);
-            setAuthTokens({token: null});
+            console.error("[Magic] e2 " + e);
+            setAuthTokens();
             setData({isLoading: false});
-            props.history.push("/");
+            navigate("/");
         }
     }
 

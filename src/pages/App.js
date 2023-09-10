@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
-import { CompatRouter } from 'react-router-dom-v5-compat';
+import { CompatRoute, CompatRouter } from 'react-router-dom-v5-compat';
 import jwt from 'jsonwebtoken';
 import ReactGA from 'react-ga4';
 
-import PrivateRoute from './../components/access/privateRoute';
 import { AuthContext } from './../context/auth';
 import Hardhead from './hardhead';
 import HardheadSidebar from './hardhead/sidebar';
@@ -133,6 +132,7 @@ function App(props) {
               {/* Main section */}
               <Switch>
                 <Route exact path="/" component={News} />
+                <CompatRoute exact path="/hardhead/films.aspx" component={LegacyFrame} />
                 <Route exact path="/hardhead" component={Hardhead} />
                 <Route exact path="/hardhead/awards" component={Awards} />
                 <Route path="/hardhead/awards/year/:id" component={AwardsByYear} />
@@ -142,49 +142,39 @@ function App(props) {
                 <Route exact path="/hardhead/rules" component={Rules} />
                 <Route path="/hardhead/rules/change" component={RuleChange} />
                 <Route path="/hardhead/users/:id" component={HHUsers} />
-                <Route path="/hardhead/stats" component={Statistics} />
-                <Route path="/hardhead/:hardheadID" component={HardheadEdit} />
-                <Route exact path="/login" component={Login} />
-                <Route path="/login/magic" component={Magic} />
-                {/* <Route path="/album" component={LegacyFrame} /> */}
-                <Route path="/album/:id" component={Album} />
-                <Route path="/album" component={Albums} />
-                <Route path="/chat" component={LegacyFrame} />
-                <Route path="/comic" component={LegacyFrame} />
-                {/* <Route path="/default/history" component={HistoryNews} /> */}
-                <Route path="/default/single.aspx" component={LegacyRedirect} />
-                <Route path="/default" component={LegacyFrame} />
-                <Route path="/feed" component={LegacyFrame} />
-                <Route path="/foodandredwine" component={LegacyFrame} />
-                <Route path="/dinnerparties/courses/:typeID" component={Election2022} />
-                <Route path="/dinnerparties/:id" component={DinnerParty} />
-                <Route path="/dinnerparties" component={DinnerParties} />
-                <Route path="/gang" component={LegacyFrame} />
-                <Route path="/hressgames" component={LegacyFrame} />
-                <Route path="/mission" component={LegacyFrame} />
-                <Route path="/news/history" component={HistoryNews} />
-                <Route path="/news/:id" component={SingleNews} />
-                <Route exact path="/profile" component={Profile} />
-                <Route path="/profile/password" component={Password} />
-                <Route path="/rss" component={LegacyFrame} />
-                <Route path="/yearly" component={LegacyFrame} />
-                {/* <Route component={App} /> */}
+                <CompatRoute path="/hardhead/stats" component={Statistics} />                
+                <CompatRoute path="/hardhead/:hardheadID" component={HardheadEdit} />                                
+                <CompatRoute exact path="/login" component={Login} />
+                <CompatRoute path="/login/magic" component={Magic} />
+                <CompatRoute path="/album/:id" component={Album} />
+                <CompatRoute path="/album" component={Albums} />
+                <CompatRoute path="/chat" component={LegacyFrame} />
+                <CompatRoute path="/comic" component={LegacyFrame} />
+                <CompatRoute path="/default/single.aspx" component={LegacyRedirect} />
+                <CompatRoute path="/default" component={LegacyFrame} />
+                <CompatRoute path="/feed" component={LegacyFrame} />
+                <CompatRoute path="/foodandredwine" component={LegacyFrame} />
+                {/* <Route path="/dinnerparties/courses/:typeID" component={Election2022} /> */}
+                <CompatRoute path="/dinnerparties/:id" component={DinnerParty} />
+                <CompatRoute path="/dinnerparties" component={DinnerParties} />
+                <CompatRoute path="/gang" component={LegacyFrame} />
+                <CompatRoute path="/hressgames" component={LegacyFrame} />
+                <CompatRoute path="/mission" component={LegacyFrame} />
+                <CompatRoute path="/news/history" component={HistoryNews} />
+                <CompatRoute path="/news/:id" component={SingleNews} />
+                <CompatRoute exact path="/profile" component={Profile} />
+                <CompatRoute path="/profile/password" component={Password} />
+                <CompatRoute path="/rss" component={LegacyFrame} />
+                <CompatRoute path="/yearly" component={LegacyFrame} />
               </Switch>
 
               {/* Sidebar */}
               <Switch>
-                <Route exact path="/" component={MainSidebar} />
-                <Route exact path="/hardhead" component={HardheadSidebar} />
-                <Route exact path="/hardhead/awards" component={AwardsSidebar} />
-                <Route path="/hardhead/users/:id" component={HHUserSidebar} />
-                <Route path="/hardhead/awards/:id" /*component={AwardsSidebar}*/ />
-                <Route path="/hardhead/:hardheadID" />
-                <Route path="/hardhead/awards/year/:id" />
-                <Route path="/hardhead/awards/election" />
-                <Route path="/hardhead/awards/nominations" />
-                <Route path="/hardhead/rules" />
-                <Route path="/hardhead/stats" />
-                <Route path="/news/history" component={HistorySidebar} />
+                <CompatRoute exact path="/" component={MainSidebar} />
+                <CompatRoute exact path="/hardhead" component={HardheadSidebar} />
+                <CompatRoute exact path="/hardhead/awards" component={AwardsSidebar} />
+                <CompatRoute path="/hardhead/users/:id" component={HHUserSidebar} />
+                <CompatRoute path="/news/history" component={HistorySidebar} />
               </Switch>
             </div>
             <Menu visible={data.showMenu} onClick={() => toggleMenu(true)} />

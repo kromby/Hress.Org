@@ -5,15 +5,17 @@ import { Post } from "../../components";
 import AlbumImages from "./albumImages";
 import { useAuth } from "../../context/auth";
 import { Redirect, useLocation } from "react-router-dom";
+import { useParams } from "react-router-dom-v5-compat";
 
-const Album = (propsData) => {
+const Album = () => {
     const { authTokens } = useAuth();
-    const { currentpath } = useLocation();
+    const location = useLocation();
+    const params = useParams();
     const [album, setAlbum] = useState();
 
     useEffect(() => {
         const getAlbum = async () => {
-            var url = config.get("apiPath") + "/api/albums/" + propsData.match.params.id;
+            var url = config.get("apiPath") + "/api/albums/" + params.id;
             try {
                 const response = await axios.get(url, {
 					headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
@@ -28,11 +30,11 @@ const Album = (propsData) => {
         if (!album) {
             getAlbum();
         }
-    }, [propsData]);
+    }, []);
 
     if (authTokens === undefined) {
         console.log("User not logged in!");
-        return <Redirect to={{ pathname: "/login", state: { from: propsData.location.pathname } }} />
+        return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
     } else {
         return (
             <div id="main">

@@ -3,7 +3,7 @@ import axios from "axios";
 import config from 'react-global-configuration';
 import { Post } from "../../components";
 
-const DinnerParties = (propsData) => {
+const DinnerParties = () => {
     const[dinners, setDinners] = useState();
 
     useEffect(() => {
@@ -23,7 +23,7 @@ const DinnerParties = (propsData) => {
         if(!dinners) {
             getDinners();
         }    
-    }, [propsData])
+    }, [])
 
     function getAssistants (guests) {
         if(guests.length === 0) {

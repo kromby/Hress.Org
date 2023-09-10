@@ -2,14 +2,16 @@ import { faWindows } from "@fortawesome/free-brands-svg-icons";
 import { useEffect, useState } from "react";
 import queryString from 'query-string';
 import { Redirect } from "react-router-dom";
+import { useLocation } from "react-router-dom-v5-compat";
 
-const LegacyRedirect = (propsData) => {
+const LegacyRedirect = () => {
     const [path, setPath] = useState();
+    const location = useLocation();
 
     useEffect(() => {
-        const parsed = queryString.parse(propsData.location.search);
+        const parsed = queryString.parse(location.search);
 
-        if (window.location.pathname.toLowerCase() === '/default/single.aspx') {
+        if (location.pathname.toLowerCase() === '/default/single.aspx') {
             if(parsed.Id) {
             setPath("/news/" + parsed.Id);
             } else if (parsed.id) {
@@ -20,16 +22,16 @@ const LegacyRedirect = (propsData) => {
                 console.error("[LegacyRedirect] No ID found in query string");
             }
         } else {
-            console.error("[LegacyRedirect] Unknown path: '" + window.location.pathname + "'");
+            console.error("[LegacyRedirect] Unknown path: '" + location.pathname + "'");
         }
-    }, [propsData])
+    }, [])
 
     if (path) {
         return <Redirect to={path} />;
     } else {
         return (
             <div id="main">
-                {window.location.pathname}
+                {location.pathname}
             </div>
         )
     }
