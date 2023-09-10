@@ -132,6 +132,7 @@ function App(props) {
               {/* Main section */}
               <Switch>
                 <Route exact path="/" component={News} />
+                <CompatRoute exact path="/hardhead/films.aspx" component={LegacyFrame} />
                 <Route exact path="/hardhead" component={Hardhead} />
                 <Route exact path="/hardhead/awards" component={Awards} />
                 <Route path="/hardhead/awards/year/:id" component={AwardsByYear} />
@@ -141,8 +142,8 @@ function App(props) {
                 <Route exact path="/hardhead/rules" component={Rules} />
                 <Route path="/hardhead/rules/change" component={RuleChange} />
                 <Route path="/hardhead/users/:id" component={HHUsers} />
-                <Route path="/hardhead/stats" component={Statistics} />
-                <CompatRoute path="/hardhead/:hardheadID" component={HardheadEdit} />
+                <CompatRoute path="/hardhead/stats" component={Statistics} />                
+                <CompatRoute path="/hardhead/:hardheadID" component={HardheadEdit} />                                
                 <CompatRoute exact path="/login" component={Login} />
                 <CompatRoute path="/login/magic" component={Magic} />
                 <CompatRoute path="/album/:id" component={Album} />

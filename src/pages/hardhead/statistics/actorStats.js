@@ -4,7 +4,7 @@ import config from 'react-global-configuration';
 import { Link } from "react-router-dom";
 import { Post } from "../../../components";
 
-const ActorStats = (propsData) => {
+const ActorStats = () => {
     const [stats, setStats] = useState();
     const [pageSize, setPageSize] = useState(10);
     const [period, setPeriod] = useState("All");
@@ -26,7 +26,7 @@ const ActorStats = (propsData) => {
             getStats();
             setReload(false);
         }
-    }, [propsData, url])
+    }, [url])
 
     const handleSubmit = async (event) => {
         console.log(stats.List.length);

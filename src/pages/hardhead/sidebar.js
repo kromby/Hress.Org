@@ -6,18 +6,19 @@ import AwardsSide from './awards/awardsSide';
 import StatisticSide from './statistics/statisticsSide';
 import RulesSide from './rules/rulesSide';
 import YearsSide from './components/yearsSide';
+import { Link } from 'react-router-dom-v5-compat';
 
 const HardheadSidebar = () => {
-    return (
-        <section id="sidebar">
-            <Intro logo="/logo.png" title="Harðhaus" description="" />
+	return (
+		<section id="sidebar">
+			<Intro logo="/logo.png" title="Harðhaus" description="" />
 
 			{/* <!-- Mini Posts --> */}
 			<section>
 				<div className="mini-posts">
 					{/* <!-- Mini Post --> */}
-					<NextHardhead allowEdit="true"/>					
-					<AwardsSide />					
+					<NextHardhead allowEdit="true" />
+					<AwardsSide />
 					<StatisticSide />
 					<RulesSide />
 				</div>
@@ -25,7 +26,7 @@ const HardheadSidebar = () => {
 			{/* <!-- Posts List --> */}
 			<section>
 				<ul className="posts">
-					<YearsSide/>
+					<YearsSide />
 				</ul>
 			</section>
 
@@ -36,11 +37,13 @@ const HardheadSidebar = () => {
 			</section>
 
 			<section>
-				<ul className="posts">					
+				<ul className="posts">
 					<li>
 						<article>
 							<header>
-								<h3><a href="http://www.hress.org/Hardhead/Films.aspx" target="_parent">Myndirnar</a></h3>
+								<Link to={"/Hardhead/films.aspx?legacy=true"} target="_blank">
+									<h3>Myndirnar</h3>
+								</Link>
 							</header>
 						</article>
 					</li>
@@ -63,10 +66,10 @@ const HardheadSidebar = () => {
 					<li><a href="#" className="icon solid fa-rss"><span className="label">RSS</span></a></li>
 					<li><a href="#" className="icon solid fa-envelope"><span className="label">Email</span></a></li> */}
 				</ul>
-				<p className="copyright">&copy; Hress.Org - Guðjón Karl Arnarson.<br/>Design: <a href="http://html5up.net">HTML5 UP</a>.</p>
+				<p className="copyright">&copy; Hress.Org - Guðjón Karl Arnarson.<br />Design: <a href="http://html5up.net">HTML5 UP</a>.</p>
 			</section>
-        </section>    
-    );
+		</section>
+	);
 }
 
 export default HardheadSidebar;

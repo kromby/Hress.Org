@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Post } from "../../../components";
 import Author from "../../../components/author";
 
-const AttendanceStats = (propsData) => {
+const AttendanceStats = () => {
     const [stats, setStats] = useState();
     const [pageSize, setPageSize] = useState(10);
     const [period, setPeriod] = useState("All");
@@ -27,7 +27,7 @@ const AttendanceStats = (propsData) => {
             getStats();
             setReload(false);
         }
-    }, [propsData, url])
+    }, [, url])
 
     const handleSubmit = async (event) => {
         console.log(stats.List.length);
