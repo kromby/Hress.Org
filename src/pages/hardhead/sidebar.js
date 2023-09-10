@@ -41,7 +41,7 @@ const HardheadSidebar = () => {
 					<li>
 						<article>
 							<header>
-								<Link to={"/Hardhead/films.aspx?legacy=true"} target="_blank">
+								<Link to={"/Hardhead/films.aspx"} target="_parent">
 									<h3>Myndirnar</h3>
 								</Link>
 							</header>
@@ -50,7 +50,9 @@ const HardheadSidebar = () => {
 					<li>
 						<article>
 							<header>
-								<h3><a href="http://www.hress.org/Hardhead/defaultold.aspx" target="_parent">Gamla harðhausasíðan</a></h3>
+								<Link to={"/Hardhead/defaultold.aspx"} target="_parent">
+									<h3>Gamla harðhausasíðan</h3>
+								</Link>
 							</header>
 						</article>
 					</li>

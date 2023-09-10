@@ -133,6 +133,7 @@ function App(props) {
               <Switch>
                 <Route exact path="/" component={News} />
                 <CompatRoute exact path="/hardhead/films.aspx" component={LegacyFrame} />
+                <CompatRoute exact path="/Hardhead/defaultold.aspx" component={LegacyFrame} />
                 <Route exact path="/hardhead" component={Hardhead} />
                 <Route exact path="/hardhead/awards" component={Awards} />
                 <Route path="/hardhead/awards/year/:id" component={AwardsByYear} />
