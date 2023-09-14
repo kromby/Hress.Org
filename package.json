@@ -19,7 +19,7 @@
     "react-helmet": "^6.1.0",
     "react-iframe": "^1.8.5",
     "react-rating": "^2.0.5",
-    "react-router-dom": "^5.3.4",
+    "react-router-dom": "^6.16.0",
     "react-router-dom-v5-compat": "^6.15.0",
     "react-scripts": "^5.0.1",
     "react-youtube": "^9.0.3",
