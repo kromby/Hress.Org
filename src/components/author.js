@@ -2,14 +2,14 @@ import axios from "axios";
 import config from 'react-global-configuration';
 import { useEffect, useState } from "react"
 
-const Author = (propsData) => {
+const Author = ({ID, Username, href, ProfilePhoto, UserPath}) => {
     const [user, setUser] = useState();
     const [userPath, setUserPath] = useState("http://www.hress.org/Gang/Single.aspx?Id=");
 
     useEffect(() => {
         const getUser = async () => {
-            if (propsData.href) {
-                var url = config.get('path') + propsData.href + '?code=' + config.get('code');
+            if (href) {
+                var url = config.get('path') + href + '?code=' + config.get('code');
                 try {
                     const response = await axios.get(url);
                 } catch (e) {
@@ -17,22 +17,22 @@ const Author = (propsData) => {
                 }
             } else {
                 setUser({
-                    ID: propsData.ID,
-                    Username: propsData.Username,
+                    ID: ID,
+                    Username: Username,
                     ProfilePhoto: {
-                        Href: propsData.ProfilePhoto
+                        Href: ProfilePhoto
                     }
                 });
             }
         }
 
-        if(propsData.UserPath) 
-            setUserPath(propsData.UserPath);
+        if(UserPath) 
+            setUserPath(UserPath);
 
         if (!user) {
             getUser();
         }
-    }, [propsData])
+    }, [ID, Username, href, ProfilePhoto, UserPath])
 
     return (
         <div>

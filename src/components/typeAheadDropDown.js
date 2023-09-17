@@ -3,21 +3,21 @@ import config from 'react-global-configuration';
 import axios from "axios";
 import './typeAheadDropDown.css';
 
-const TypeAheadDropDown = (propsData) => {
+const TypeAheadDropDown = ({minimum, defaultValue, placeholder, callback}) => {
     const [text, setText] = useState("");
     const [minLength, setMinLength] = useState(3);
     const [suggestions, setSuggestions] = useState();
-    const [placeholder, setPlaceholder] = useState("Sláðu inn gildi");    
+    const [placeholderText, setPlaceholderText] = useState("Sláðu inn gildi");    
 
     useEffect(() => {
-        if (propsData.placeholder) {
-            setPlaceholder(propsData.placeholder);
+        if (placeholder) {
+            setPlaceholderText(placeholder);
         }
-        if (!minLength && propsData.minimum) {
-            setMinLength(propsData.minimum);
+        if (!minLength && minimum) {
+            setMinLength(minimum);
         }
-        if (!text && propsData.defaultValue) {
-            setText(propsData.defaultValue);
+        if (!text && defaultValue) {
+            setText(defaultValue);
         }
     })
 
@@ -46,7 +46,7 @@ const TypeAheadDropDown = (propsData) => {
         setText(name);
         setSuggestions(null);
 
-        propsData.callback(id);
+        callback(id);
     }
 
     const renderSuggestion = () => {
@@ -71,7 +71,7 @@ const TypeAheadDropDown = (propsData) => {
 
     return (
         <div className={suggestions ? "TypeAheadDropDown" : null}>
-            <input id="name" type="text" name="name" onChange={(ev) => onTextChange(ev)} value={text} placeholder={placeholder} />
+            <input id="name" type="text" name="name" onChange={(ev) => onTextChange(ev)} value={text} placeholder={placeholderText} />
             {renderSuggestion()}
         </div>
     );

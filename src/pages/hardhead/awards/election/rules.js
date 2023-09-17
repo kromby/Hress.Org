@@ -5,17 +5,7 @@ import { Post } from "../../../../components";
 import { useAuth } from "../../../../context/auth"
 import RuleChanges from "./rulechanges";
 
-async function getChild(href) {
-    var url = config.get('path') + href + '?code=' + config.get('code');
-    try {
-        const response = await axios.get(url);
-        return response.data.filter(p => p.Changes);
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-const Rules = (propsData) => {
+const Rules = ({ID, Name, onSubmit}) => {
     const { authTokens } = useAuth();
     const [ruleList, setRuleList] = useState([]);
     const [selectedValues, setSelectedValues] = useState([]);
@@ -47,7 +37,17 @@ const Rules = (propsData) => {
         }
 
         getRules();
-    }, [propsData])
+    }, [])
+
+    async function getChild(href) {
+        var url = config.get('apiPath') + href;
+        try {
+            const response = await axios.get(url);
+            return response.data.filter(p => p.changes);
+        } catch (e) {
+            console.error(e);
+        }
+    }    
 
     const handleSubmit = async (event) => {
         setSavingAllowed(false);
@@ -58,7 +58,7 @@ const Rules = (propsData) => {
         }
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + propsData.ID + '/vote';
+            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, selectedValues, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
@@ -68,7 +68,7 @@ const Rules = (propsData) => {
             setSavingAllowed(true);
         }
 
-        propsData.onSubmit();
+        onSubmit();
     }
 
     const handleChange = async (id, changeId, value) => {
@@ -91,7 +91,7 @@ const Rules = (propsData) => {
             {ruleList ? ruleList.map(rule =>
                 <RuleChanges
                     key={rule.id}
-                    href={rule.changes.href}
+                    href={rule.changes ? rule.changes.href : null}
                     current={rule.name}
                     id={rule.id}
                     title={rule.parentNumber + ". kafli " + rule.number + ". grein"}
@@ -103,8 +103,7 @@ const Rules = (propsData) => {
 
             <ul className="actions pagination">
                 <li>
-                    {/* <a href="#" className="button large next" onClick={handleSubmit}>{"Ljúka kosningu um " + propsData.Name}</a> */}
-                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa um " + propsData.Name}</button>
+                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa um " + Name}</button>
                 </li>
             </ul>
         </div>

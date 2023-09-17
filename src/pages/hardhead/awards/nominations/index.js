@@ -5,9 +5,11 @@ import axios from "axios";
 import { useAuth } from '../../../../context/auth';
 import StalloneNomination from './stalloneNomination';
 import DisappointmentNomination from './disappointmentNomination';
+import { useLocation } from 'react-router-dom-v5-compat';
 
-const Nominations = (propsData) => {
+const Nominations = () => {
     const { authTokens } = useAuth();
+    const location = useLocation();
     const [users, setUsers] = useState();
 
     var url = config.get('path') + '/api/hardhead/5384/users?code=' + config.get('code');
@@ -28,10 +30,10 @@ const Nominations = (propsData) => {
         if (!users) {
             getUsers();
         }
-    }, [propsData, url])
+    }, [url])
 
     if (authTokens === undefined) {
-        return <Redirect to={{ pathname: "/login", state: { from: propsData.location.pathname } }} />
+        return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
     }
     else {
         return (

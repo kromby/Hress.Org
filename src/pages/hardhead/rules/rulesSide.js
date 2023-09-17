@@ -3,7 +3,7 @@ import config from 'react-global-configuration';
 import { MiniPost } from '../../../components';
 import axios from 'axios';
 
-const RulesSide = (propsData) => {
+const RulesSide = () => {
     const [data, setData] = useState({ rule: null, child: null, isLoading: false, visible: false })
 
     var url = config.get('apiPath') + '/api/hardhead/rules';
@@ -39,7 +39,7 @@ const RulesSide = (propsData) => {
         if (!data.rule) {
             getRule();
         }
-    }, [propsData, url])
+    }, [url])
 
     return (
         <div>

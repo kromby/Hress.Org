@@ -12,34 +12,42 @@ import RulesNewOld from './rulesnewold';
 import Disappointment from './disappointment';
 import { Redirect } from 'react-router-dom';
 import TwentyYearOldMovie from './twentyyearoldmovie';
+import { useLocation } from 'react-router-dom-v5-compat';
 
-const Election = (propsData) => {
+const Election = () => {
     const { authTokens } = useAuth();
+    const location = useLocation();
     const [step, setStep] = useState();
 
     if (authTokens === undefined) {
-        return <Redirect to={{ pathname: "/login", state: { from: propsData.location.pathname } }} />
+        return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
     }
 
     useEffect(() => {
         const getNextStep = async () => {
-            try {
-                var url = config.get('apiPath') + '/api/elections/49/voters/access';
-                const response = await axios.get(url, {
-                    headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
-                });
-                setStep(response.data);
-            } catch (e) {
-                console.error(e);
-            }
+            var url = config.get('apiPath') + '/api/elections/49/voters/access';
+            axios.get(url, {
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+            })
+                .then(response => setStep(response.data))
+                .catch(error => {
+                    if (error.response.status === 404) {
+                        console.log("[Election] Access not found");
+                    } else {
+                        console.error("[Election] Error getting access");
+                        console.error(error);
+                    }
+                })
         }
 
         document.title = "Harðhausakosningin | Hress.Org";
 
         getNextStep();
-    }, [propsData, authTokens])
+    }, [authTokens])
 
     const getElement = (id, name) => {
+        console.log("[Election] id: " + id);
+        console.log("[Election] name: " + name);
         if (id === 100) /*Lög og reglur - nýjar og niðurfelldar reglur*/ {
             return <RulesNewOld key={id}
                 ID={id}
@@ -100,11 +108,6 @@ const Election = (propsData) => {
     }
 
     const handleSubmit = async () => {
-        // if (authTokens === undefined) {
-        //     // TODO Redirect back to main page
-        //     return;
-        // }
-
         window.scrollTo(0, 0);
         window.parent.scrollTo(0, 0);
 
@@ -114,9 +117,14 @@ const Election = (propsData) => {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
             setStep(response.data);
-        } catch (e) {
-            setStep(null);
-            console.error(e);
+        } catch (error) {
+            if (error.response.status === 404) {
+                console.log("[Election] Access not found");
+                setStep(null);
+            } else {
+                console.error("[Election] Error getting access");
+                console.error(error);
+            }
         }
     }
 

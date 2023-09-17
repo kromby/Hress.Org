@@ -5,7 +5,7 @@ import Post from '../../../../components/post';
 import { useAuth } from '../../../../context/auth';
 import {isMobile} from 'react-device-detect';
 
-const HardheadOfTheYear = (propsData) => {
+const HardheadOfTheYear = ({ID, Name, Description, Date, Year, onSubmit}) => {
     const { authTokens } = useAuth();
     const [users, setUsers] = useState();
     const [savingAllowed, setSavingAllowed] = useState(false);
@@ -27,7 +27,7 @@ const HardheadOfTheYear = (propsData) => {
         if (!users) {
             getHardheadUsers();
         }
-    }, [propsData, url])
+    }, [url])
 
     const handleUserChange = async (event) => {
         if (authTokens === undefined) {
@@ -54,7 +54,7 @@ const HardheadOfTheYear = (propsData) => {
         }
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + propsData.ID + '/vote';
+            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, [{
                 value: selectedUser
             }], {
@@ -66,16 +66,16 @@ const HardheadOfTheYear = (propsData) => {
             setSavingAllowed(true);
         }
 
-        propsData.onSubmit();
+        onSubmit();
     }
 
     return (
         <Post
-            id={propsData.ID}
-            title={propsData.Name}
-            description={propsData.Description}
-            date={propsData.Date}
-            dateFormatted={propsData.Year}
+            id={ID}
+            title={Name}
+            description={Description}
+            date={Date}
+            dateFormatted={Year}
             body=
             {
                 <section>
@@ -102,7 +102,7 @@ const HardheadOfTheYear = (propsData) => {
                             <div className="col-12">
                                 <ul className="actions">
                                     <li>
-                                        <input type="submit" value={"Kjósa " + propsData.Name} disabled={!savingAllowed} />
+                                        <input type="submit" value={"Kjósa " + Name} disabled={!savingAllowed} />
                                     </li>
                                 </ul>
                             </div>

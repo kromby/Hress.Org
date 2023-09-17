@@ -4,25 +4,25 @@ import { useAuth } from '../../../context/auth';
 import axios from "axios";
 import Rating from 'react-rating';
 
-const HardheadRating = (propsData) => {
+const HardheadRating = ({id, nightRatingVisible, movieRatingVisible}) => {
     const { authTokens } = useAuth();
     const [data, setData] = useState({ ratings: [], isLoading: false });
-    const [nightRatingVisible, setNightRatingVisible] = useState(true);
-    const [movieRatingVisible, setMovieRatingVisible] = useState(true);
+    const [showNightRating, setShowNightRating] = useState(true);
+    const [showMovieRating, setShowMovieRating] = useState(true);
     const [lastLoggedIn, setLastLoggedIn] = useState(false);
 
     useEffect(() => {
-        if (propsData.nightRatingVisible) {
-            setNightRatingVisible(propsData.nightRatingVisible);
+        if (nightRatingVisible) {
+            setShowNightRating(nightRatingVisible);
         }
-        if (propsData.movieRatingVisible) {
-            setMovieRatingVisible(propsData.movieRatingVisible);
+        if (movieRatingVisible) {
+            setShowMovieRating(movieRatingVisible);
         }
 
         const getRatingData = async () => {
             if (authTokens !== undefined) {
                 try {
-                    var url = config.get('path') + '/api/hardhead/' + propsData.id + '/ratings?code=' + config.get('code');
+                    var url = config.get('path') + '/api/hardhead/' + id + '/ratings?code=' + config.get('code');
                     const response = await axios.get(url, {
                         headers: { 'Authorization': 'token ' + authTokens.token }
                     })
@@ -41,7 +41,7 @@ const HardheadRating = (propsData) => {
             getRatingData();
             setLastLoggedIn(loggedIn);
         }
-    }, [propsData, authTokens])
+    }, [id, nightRatingVisible, movieRatingVisible, authTokens])
 
     const getRatingText = (rate, type) => {
         if (rate === 1)
@@ -61,7 +61,7 @@ const HardheadRating = (propsData) => {
     const saveRating = async (rate, type) => {
         if (authTokens !== undefined) {
             try {
-                var url = config.get('path') + '/api/hardhead/' + propsData.id + '/ratings?code=' + config.get('code');
+                var url = config.get('path') + '/api/hardhead/' + id + '/ratings?code=' + config.get('code');
                 const response = await axios.post(url, {
                     type: type,
                     rating: rate
@@ -85,9 +85,9 @@ const HardheadRating = (propsData) => {
             }
             {data.ratings !== undefined && data.ratings.Ratings ?
                 data.ratings.Ratings.map(rating =>
-                    ((rating.Code === "REP_C_RTNG" && nightRatingVisible === true) || (rating.Code === "REP_C_MRTNG" && movieRatingVisible === true)) ?
+                    ((rating.Code === "REP_C_RTNG" && showNightRating === true) || (rating.Code === "REP_C_MRTNG" && showMovieRating === true)) ?
                         <li key={rating.Code}>
-                            <span id={rating.Code + "_" + propsData.id} />
+                            <span id={rating.Code + "_" + id} />
                             {rating.Code === "REP_C_RTNG" ?
                                 <i className="icon solid fa-beer fa-2x"></i> :
                                 <i className="icon solid fa-film fa-2x"></i>}
@@ -100,7 +100,7 @@ const HardheadRating = (propsData) => {
                                     fullSymbol="fas fa-star fa-1x"
                                     initialRating={data.ratings.Readonly ? rating.AverageRating : rating.MyRating}
                                     readonly={data.ratings.Readonly}
-                                    onHover={(rate) => document.getElementById(rating.Code + "_" + propsData.id).innerHTML = getRatingText(rate, rating.Code) || ' '}
+                                    onHover={(rate) => document.getElementById(rating.Code + "_" + id).innerHTML = getRatingText(rate, rating.Code) || ' '}
                                     onChange={(rate) => saveRating(rate, rating.Code)}
                                 />}
                         </li>

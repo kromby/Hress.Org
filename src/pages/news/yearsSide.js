@@ -4,7 +4,7 @@ import axios from 'axios';
 import SidePost from "../../components/sidepost";
 import { useParams } from "react-router-dom-v5-compat";
 
-const YearsSide = (propsData) => {
+const YearsSide = ({year}) => {
     const [yearQS, setYearQS] = useState();
     const [years, setYears] = useState();
     const [lastUrl, setLastUrl] = useState();
@@ -21,11 +21,11 @@ const YearsSide = (propsData) => {
             }
         }
         
-        console.log("[YearsSide] propsData.year");
-        console.log(propsData.year);        
-        if (propsData.year) {
-            var url = config.get("apiPath") + "/api/news/statistics/years/" + propsData.year + "/months";   
-            setYearQS(propsData.year);
+        console.log("[YearsSide] year: " + year);
+        console.log(year);        
+        if (year) {
+            var url = config.get("apiPath") + "/api/news/statistics/years/" + year + "/months";   
+            setYearQS(year);
         } else {
             var url = config.get('apiPath') + "/api/news/statistics/years";
         }        
@@ -34,7 +34,7 @@ const YearsSide = (propsData) => {
             setLastUrl(url);
             getYears(url);
         }
-    }, [propsData])
+    }, [year])
 
     return (
         <div>

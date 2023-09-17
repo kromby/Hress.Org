@@ -30,7 +30,7 @@ function useOutsideAlerter(ref, visible, callback) {
     }, [ref, visible, callback]);
 }
 
-const Menu = (propsData) => {
+const Menu = ({visible, onClick}) => {
     const { authTokens, setAuthTokens } = useAuth();
     const [data, setData] = useState({ isLoading: false, menuItems: null, userID: 0 });
     const [path, setPath] = useState();
@@ -40,7 +40,7 @@ const Menu = (propsData) => {
     const { pathname } = useLocation();
     const history = useHistory();
 
-    useOutsideAlerter(wrapperRef, propsData.visible, propsData.onClick);
+    useOutsideAlerter(wrapperRef, visible, onClick);
 
     useEffect(() => {
         const getMenuData = async (pathname) => {
@@ -88,7 +88,7 @@ const Menu = (propsData) => {
             setPath(window.location.pathname);
             getMenuData(window.location.pathname);
         }
-    }, [propsData, authTokens])
+    }, [authTokens])
 
     const logout = () => {
         setAuthTokens();
@@ -106,7 +106,7 @@ const Menu = (propsData) => {
             </section>
 
             <section>
-                <ul className="links" onClick={() => propsData.onClick()}>
+                <ul className="links" onClick={() => onClick()}>
                     {isMobile && links ? links.map(link =>
                         <li key={link.id}>
                             {link.isLegacy ?
@@ -144,12 +144,7 @@ const Menu = (propsData) => {
             </section>
 
             <section>
-                <ul className="actions stacked" onClick={() => propsData.onClick()}>
-                    {/* 
-                        {authTokens !== undefined ?
-                        <li onClick={() => propsData.onClick()}><a href="#" className="button large fit">Útskráning</a></li> :
-                        <li><a href="#" className="button large fit">Innskráning</a></li>
-                    */}
+                <ul className="actions stacked" onClick={() => onClick()}>
                     {authTokens === undefined ?
                         <li key="One"><Link className="button large fit" to={{ pathname: "/login", state: { from: pathname } }}>Innskráning</Link></li> :
                         [<li key="Two">

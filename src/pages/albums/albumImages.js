@@ -5,16 +5,16 @@ import Album from "./album";
 import { isMobile } from "react-device-detect";
 import { useAuth } from "../../context/auth";
 
-const AlbumImages = (propsData) => {
+const AlbumImages = ({url}) => {
     const { authTokens } = useAuth();
     const [images, setImages] = useState();
     const [selectedImage, setSelectedImage] = useState();
 
     useEffect(() => {
         const getImages = async () => {
-            var url = config.get("apiPath") + propsData.url;
+            var _url = config.get("apiPath") + url;
             try {
-                const response = await axios.get(url, {
+                const response = await axios.get(_url, {
 					headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
 				});
                 setImages(response.data);
@@ -26,7 +26,7 @@ const AlbumImages = (propsData) => {
         if (!images) {
             getImages();
         }
-    }, [propsData]);
+    }, [url]);
 
     const handleChange = async (id) => {
         setSelectedImage(id);

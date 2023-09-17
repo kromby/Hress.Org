@@ -4,9 +4,11 @@ import { Redirect } from "react-router-dom/cjs/react-router-dom";
 import { Post } from "../../../../components";
 import config from 'react-global-configuration';
 import axios from "axios";
+import { useLocation } from "react-router-dom-v5-compat";
 
-const RuleChange = (propsData) => {
+const RuleChange = () => {
     const { authTokens } = useAuth();
+    const location = useLocation();
     const [buttonEnabled, setButtonEnabled] = useState(false);
     const [selected, setSelected] = useState();
     const [ruleCategories, setRuleCategories] = useState();
@@ -39,7 +41,7 @@ const RuleChange = (propsData) => {
         if (!ruleChanges) {
             getRuleChanges();
         }
-    }, [propsData])
+    }, [])
 
     const getRules = async (id) => {
         try {
@@ -146,7 +148,7 @@ const RuleChange = (propsData) => {
 
 
     if (authTokens === undefined) {
-        return <Redirect to={{ pathname: "/login", state: { from: propsData.location.pathname } }} />
+        return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
     }
     else {
         return (

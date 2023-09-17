@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Post } from '../../../components';
 import RulesSections from './rulesSections';
 
-const Rules = (propsData) => {
+const Rules = () => {
     const [data, setData] = useState({ rules: null, isLoading: false, visible: false })
 
     var url = config.get('apiPath') + '/api/hardhead/rules';
@@ -27,7 +27,7 @@ const Rules = (propsData) => {
             getRules();
         }
 
-    }, [propsData, url])
+    }, [url])
 
     return (
         <div id="main">

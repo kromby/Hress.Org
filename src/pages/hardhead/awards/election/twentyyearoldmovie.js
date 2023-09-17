@@ -5,7 +5,7 @@ import { Post } from "../../../../components";
 import HardheadBody from "../../components/hardheadbody";
 import { useAuth } from "../../../../context/auth";
 
-const TwentyYearOldMovie = (propsData) => {
+const TwentyYearOldMovie = ({ID, Name, Description, Date, Year, onSubmit}) => {
     const { authTokens } = useAuth();
     const [movies, setMovies] = useState();
     const [value, setValue] = useState(-1);
@@ -25,7 +25,7 @@ const TwentyYearOldMovie = (propsData) => {
         if (!movies) {
             getMovies();
         }
-    }, [propsData]);
+    }, []);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
@@ -40,8 +40,8 @@ const TwentyYearOldMovie = (propsData) => {
         }
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + propsData.ID + '/vote';
-            await axios.post(url, [{ EventID: propsData.ID, Value: value }], {
+            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            await axios.post(url, [{ EventID: ID, Value: value }], {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
         } catch (e) {
@@ -49,7 +49,7 @@ const TwentyYearOldMovie = (propsData) => {
             alert(e);
         }
 
-        propsData.onSubmit();
+        onSubmit();
     }
 
     const handleChange = async (event) => {
@@ -64,11 +64,11 @@ const TwentyYearOldMovie = (propsData) => {
     return (
         <div>
             <Post
-                id={propsData.ID}
-                title={propsData.Name}
-                description={propsData.Description}
-                date={propsData.Date}
-                dateFormatted={propsData.Year}
+                id={ID}
+                title={Name}
+                description={Description}
+                date={Date}
+                dateFormatted={Year}
                 body={
                     <section>
                         <p>
@@ -100,7 +100,7 @@ const TwentyYearOldMovie = (propsData) => {
 
             <ul className="actions pagination">
                 <li>
-                    <button onClick={handleSubmit} disabled={value === -1} className="button large next">{"Kjósa " + propsData.Name}</button>
+                    <button onClick={handleSubmit} disabled={value === -1} className="button large next">{"Kjósa " + Name}</button>
                 </li>
             </ul>
         </div>
