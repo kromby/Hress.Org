@@ -3,11 +3,13 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import { Post } from "../../../components";
 import AwardsWinners from "./awardsWinners";
+import { useParams } from "react-router-dom-v5-compat";
 
-const AwardsByYear = (propsData) => {
+const AwardsByYear = () => {
     const [categories, setCategories] = useState();
+    const params = useParams();
 
-    var url = config.get('path') + '/api/hardhead/awards?year=' + propsData.match.params.id + '&code=' + config.get('code');
+    var url = config.get('path') + '/api/hardhead/awards?year=' + params.id + '&code=' + config.get('code');
 
     useEffect(() => {
         const getAwardsByYear = async () => {
@@ -22,7 +24,7 @@ const AwardsByYear = (propsData) => {
         if (!categories) {
             getAwardsByYear();
         }
-    }, [propsData, url])
+    }, [params, url])
 
     return (
         <div id="main">
@@ -30,7 +32,7 @@ const AwardsByYear = (propsData) => {
                 <Post key={category.ID}
                     title={category.Name}
                     description="Efstu sætin þetta ár"
-                    body={<AwardsWinners href={category.Winners.Href} year={propsData.match.params.id} position="" />}
+                    body={<AwardsWinners href={category.Winners.Href} year={params.id} position="" />}
                 />
             ) : null}
         </div>

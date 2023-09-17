@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Post } from '../../../components';
 import AwardsWinners from './awardsWinners';
 
-const Awards = (propsData) => {
+const Awards = () => {
     const [data, setData] = useState({ awards: null, isLoading: false, visible: false })
 
     var url = config.get('path') + '/api/hardhead/awards?code=' + config.get('code');
@@ -26,7 +26,7 @@ const Awards = (propsData) => {
         if (!data.awards) {
             getAwards();
         }
-    }, [propsData, url])
+    }, [url])
 
     return (
         <div id="main">

@@ -3,18 +3,18 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import Author from '../../../components/author';
 
-const AwardsWinners = (propsData) => {
+const AwardsWinners = ({href, position, year}) => {
     const [data, setData] = useState({ winners: null, isLoading: false, visible: false })
 
     useEffect(() => {
         const getAwards = async () => {
-            var url = config.get('path') + propsData.href;
+            var url = config.get('path') + href;
 
-            if (propsData.position)
-                url = url + '?position=' + propsData.position;
+            if (position)
+                url = url + '?position=' + position;
 
-            if (propsData.year)
-                url = url + '?year=' + propsData.year;
+            if (year)
+                url = url + '?year=' + year;
 
             url = url + '&code=' + config.get('code');
 
@@ -31,14 +31,14 @@ const AwardsWinners = (propsData) => {
         if (!data.winners) {
             getAwards();
         }
-    }, [propsData])
+    }, [href, position, year])
 
     return (
         <div className="table-wrapper">
             <table>
                 <thead>
                     <tr>
-                        {propsData.position ?
+                        {position ?
                             <td width="100px">Ár</td>
                             :
                             <td width="100px">Sæti</td>
@@ -52,7 +52,7 @@ const AwardsWinners = (propsData) => {
                     {data.visible ?
                         data.winners.map((winner, i) =>
                             <tr key={winner.ID}>
-                                <td>{propsData.position ? winner.Year : winner.Position}</td>
+                                <td>{position ? winner.Year : winner.Position}</td>
                                 <td>
                                     {typeof winner.Winner.ProfilePhoto !== 'undefined' ?
                                         <Author ID={winner.Winner.ID} Username={winner.Winner.Username} UserPath="/hardhead/users/" ProfilePhoto={winner.Winner.ProfilePhoto.Href} /> :
