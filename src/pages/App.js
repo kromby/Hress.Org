@@ -134,7 +134,7 @@ function App(props) {
                 <Route exact path="/" component={News} />
                 <CompatRoute exact path="/hardhead/films.aspx" component={LegacyFrame} />
                 <CompatRoute exact path="/Hardhead/defaultold.aspx" component={LegacyFrame} />
-                <Route exact path="/hardhead" component={Hardhead} />
+                <CompatRoute exact path="/hardhead" component={Hardhead} />
                 <CompatRoute exact path="/hardhead/awards" component={Awards} />
                 <CompatRoute path="/hardhead/awards/year/:id" component={AwardsByYear} />
                 <CompatRoute exact path="/hardhead/awards/nominations" component={Nominations} />
