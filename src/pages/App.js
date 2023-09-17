@@ -138,11 +138,11 @@ function App(props) {
                 <Route exact path="/hardhead/awards" component={Awards} />
                 <Route path="/hardhead/awards/year/:id" component={AwardsByYear} />
                 <Route exact path="/hardhead/awards/nominations" component={Nominations} />
-                <Route exact path="/hardhead/awards/election" component={Election} />
-                <Route path="/hardhead/awards/:id" component={AwardsByType} />
-                <Route exact path="/hardhead/rules" component={Rules} />
-                <Route path="/hardhead/rules/change" component={RuleChange} />
-                <Route path="/hardhead/users/:id" component={HHUsers} />
+                <CompatRoute exact path="/hardhead/awards/election" component={Election} />
+                <CompatRoute path="/hardhead/awards/:id" component={AwardsByType} />
+                <CompatRoute exact path="/hardhead/rules" component={Rules} />
+                <CompatRoute path="/hardhead/rules/change" component={RuleChange} />
+                <CompatRoute path="/hardhead/users/:id" component={HHUsers} />
                 <CompatRoute path="/hardhead/stats" component={Statistics} />                
                 <CompatRoute path="/hardhead/:hardheadID" component={HardheadEdit} />                                
                 <CompatRoute exact path="/login" component={Login} />

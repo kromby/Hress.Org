@@ -4,11 +4,13 @@ import axios from "axios";
 import { Post } from "../../../components";
 import YearsSide from "../components/yearsSide";
 import AwardsWinners from "./awardsWinners";
+import { useParams } from "react-router-dom-v5-compat";
 
-const AwardsByType = (propsData) => {
+const AwardsByType = () => {
     const [award, setAward] = useState();
+    const params = useParams();
 
-    var url = config.get('path') + '/api/hardhead/awards/' + propsData.match.params.id + '?code=' + config.get('code');
+    var url = config.get('path') + '/api/hardhead/awards/' + params.id + '?code=' + config.get('code');
 
     useEffect(() => {
         const getYears = async () => {
@@ -23,7 +25,7 @@ const AwardsByType = (propsData) => {
         if (!award) {
             getYears();
         }
-    }, [propsData])
+    }, [])
 
     return (
         <div id="main">

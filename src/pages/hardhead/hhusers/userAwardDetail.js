@@ -2,12 +2,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import config from 'react-global-configuration';
 
-const UserAwardDetail = (propsData) => {
+const UserAwardDetail = ({awardID, userID, name}) => {
     const [awards, setAwards] = useState();
 
     useEffect(() => {
         const getAwards = async () => {
-            var url = config.get('path') + '/api/hardhead/awards/' + propsData.awardID + '/winners?user=' + propsData.userID + '&code=' + config.get('code');
+            var url = config.get('path') + '/api/hardhead/awards/' + awardID + '/winners?user=' + userID + '&code=' + config.get('code');
             try {
                 const response = await axios.get(url);
                 if (response.data.length > 0) {
@@ -21,10 +21,10 @@ const UserAwardDetail = (propsData) => {
         if (!awards) {
             getAwards();
         }
-    }, [propsData])
+    }, [awardID, userID])
 
     return (<div>{awards ? <div>
-        <h2>{propsData.name}</h2>
+        <h2>{name}</h2>
         <div className="table-wrapper">
             <table>
                 <thead>

@@ -13,8 +13,6 @@ const HHUserSidebar = () => {
 
     useEffect(() => {
         const getUser = async () => {
-            console.log('[HHUserSidebar] params');
-            console.log(params);
             var url = config.get('path') + '/api/users/' + params.id + '/?code=' + config.get('code');
 
             try {

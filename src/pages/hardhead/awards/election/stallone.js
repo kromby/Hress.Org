@@ -5,7 +5,7 @@ import Post from '../../../../components/post';
 import { useAuth } from '../../../../context/auth';
 import {isMobile} from 'react-device-detect';
 
-const Stallone = (propsData) => {
+const Stallone = ({ID, Name, Description, Date, Year, onSubmit}) => {
     const { authTokens } = useAuth();
     const [stallones, setStallones] = useState();
     const [savingAllowed, setSavingAllowed] = useState(false);
@@ -20,7 +20,7 @@ const Stallone = (propsData) => {
 
         const getNominations = async () => {
             try {
-                var url = config.get('path') + '/api/hardhead/awards/' + propsData.ID + '/nominations?code=' + config.get('code');
+                var url = config.get('path') + '/api/hardhead/awards/' + ID + '/nominations?code=' + config.get('code');
                 const response = await axios.get(url);
                 setStallones(response.data);
             } catch (e) {
@@ -32,7 +32,7 @@ const Stallone = (propsData) => {
         if (!stallones) {
             getNominations();
         }
-    }, [propsData, url])
+    }, [ID, url])
 
     const handleChange = async (event) => {
         if (authTokens === undefined) {
@@ -62,7 +62,7 @@ const Stallone = (propsData) => {
         var voteData = [{ PollEntryID: selectedUser, Value: stallones.filter(n => n.ID === selectedUser)[0].Nominee.ID }];
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + propsData.ID + '/vote';
+            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, voteData, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
@@ -72,16 +72,16 @@ const Stallone = (propsData) => {
             setSavingAllowed(true);
         }
 
-        propsData.onSubmit();
+        onSubmit();
     }
 
     return ([
         <Post key="1"
-            id={propsData.ID}
-            title={propsData.Name}
-            description={propsData.Description}
-            date={propsData.Date}
-            dateFormatted={propsData.Year}
+            id={ID}
+            title={Name}
+            description={Description}
+            date={Date}
+            dateFormatted={Year}
             body={
                 <section>
                     <div className="row gtr-uniform">
@@ -109,7 +109,7 @@ const Stallone = (propsData) => {
         />,
         <ul key="2" className="actions pagination">
             <li>
-                <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa " + propsData.Name}</button>
+                <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa " + Name}</button>
             </li>
         </ul>
     ])

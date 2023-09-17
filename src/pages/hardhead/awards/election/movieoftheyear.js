@@ -6,7 +6,7 @@ import { useAuth } from '../../../../context/auth';
 import HardheadRating from '../../components/rating';
 import HardheadBody from '../../components/hardheadbody';
 
-const MovieOfTheYear = (propsData) => {
+const MovieOfTheYear = ({ID, Name, Description, Date, Year, onSubmit}) => {
     const { authTokens } = useAuth();
     const [nights, setNights] = useState();
 
@@ -26,7 +26,7 @@ const MovieOfTheYear = (propsData) => {
         if (!nights) {
             getHardheadUsers();
         }
-    }, [propsData, url])
+    }, [url])
 
     const handleSubmit = async (event) => {
 
@@ -39,7 +39,7 @@ const MovieOfTheYear = (propsData) => {
             var userID = localStorage.getItem("userID");
             var url = config.get('path') + "/api/elections/49/voters/" + userID + "?code=" + config.get('code');
             await axios.put(url, {
-                LastStepID: propsData.ID
+                LastStepID: ID
             }, {
                 headers: { 'Authorization': 'token ' + authTokens.token }
             });
@@ -48,17 +48,17 @@ const MovieOfTheYear = (propsData) => {
             alert(e);
         }
 
-        propsData.onSubmit();
+        onSubmit();
     }
 
     return (
         <div>
             <Post
-                id={propsData.ID}
-                title={propsData.Name}
-                description={propsData.Description}
-                date={propsData.Date}
-                dateFormatted={propsData.Year}
+                id={ID}
+                title={Name}
+                description={Description}
+                date={Date}
+                dateFormatted={Year}
                 body={
                     <section>
                         <p>
@@ -85,8 +85,7 @@ const MovieOfTheYear = (propsData) => {
 
             <ul className="actions pagination">
                 <li>
-                    <a href="#" className="button large next" onClick={handleSubmit}>{"Ljúka (" + propsData.Name + ")"}</a>
-                    {/* <input type="submit" className="button large next" value={"Ljúka " + propsData.Name} disabled={!savingAllowed} /> */}
+                    <a href="#" className="button large next" onClick={handleSubmit}>{"Ljúka (" + Name + ")"}</a>
                 </li>
             </ul>
         </div>

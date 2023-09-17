@@ -4,7 +4,7 @@ import config from 'react-global-configuration';
 import { Post } from "../../../components";
 import UserAwardDetail from "./userAwardDetail";
 
-const UserAwards = (propsData) => {
+const UserAwards = ({id}) => {
     const [awards, setAwards] = useState();
 
     useEffect(() => {
@@ -22,7 +22,7 @@ const UserAwards = (propsData) => {
         if (!awards) {
             getAwards();
         }
-    }, [propsData])
+    }, [id])
 
     return (
         <Post key={null}
@@ -31,7 +31,7 @@ const UserAwards = (propsData) => {
             description="Efstu þrjú sætin"
             body={
                 <section>
-                    {awards ? awards.map(award => <UserAwardDetail key={award.ID} awardID={award.ID} name={award.Name} userID={propsData.id} />) : null}
+                    {awards ? awards.map(award => <UserAwardDetail key={award.ID} awardID={award.ID} name={award.Name} userID={id} />) : null}
                 </section>
             }
         />

@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAuth } from "../../../../context/auth"
 import { Post } from "../../../../components";
 
-const RulesNewOld = (propsData) => {
+const RulesNewOld = ({ID, Name, onSubmit}) => {
     const { authTokens } = useAuth();
     const [rules, setRules] = useState();
     const [selectedValues, setSelectedValues] = useState([]);
@@ -31,7 +31,7 @@ const RulesNewOld = (propsData) => {
         if (!rules) {
             getRules();
         }
-    }, [propsData])
+    }, [ID])
 
     const handleSubmit = async (event) => {
         setSavingAllowed(false);
@@ -42,7 +42,7 @@ const RulesNewOld = (propsData) => {
         }
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + propsData.ID + '/vote';
+            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, selectedValues, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
@@ -52,7 +52,7 @@ const RulesNewOld = (propsData) => {
             setSavingAllowed(true);
         }
 
-        propsData.onSubmit();
+        onSubmit();
     }
 
     const handleChange = async (id, value) => {
@@ -103,9 +103,7 @@ const RulesNewOld = (propsData) => {
 
             <ul className="actions pagination">
                 <li>
-                    {/* <a href="#" className="button large next" onClick={handleSubmit} disabled={!savingAllowed}>{"Ljúka kosningu um " + propsData.Name}</a>
-                    <input type="submit" value={"Kjósa " + propsData.Name} disabled={!savingAllowed} /> */}
-                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa um " + propsData.Name}</button>
+                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa um " + Name}</button>
                 </li>
             </ul>
         </div>
