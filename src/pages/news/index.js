@@ -4,7 +4,7 @@ import axios from "axios";
 import config from 'react-global-configuration';
 import { Post } from "../../components";
 
-const News = (propsData) => {
+const News = () => {
     const[news, setNews] = useState();    
 
     useEffect(() => {
@@ -24,7 +24,7 @@ const News = (propsData) => {
         if(!news) {
             getNews();
         }
-    }, [propsData])
+    }, [])
 
     return (
         <div id="main">
