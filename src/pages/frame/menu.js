@@ -4,7 +4,7 @@ import { isMobile } from 'react-device-detect';
 import config from 'react-global-configuration';
 import { useAuth } from '../../context/auth';
 import axios from "axios";
-import { useHistory } from 'react-router-dom/cjs/react-router-dom.min';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Hook that alerts clicks outside of the passed ref
@@ -37,8 +37,8 @@ const Menu = ({visible, onClick}) => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [links, setLinks] = useState();
     const wrapperRef = useRef(null);
-    const { pathname } = useLocation();
-    const history = useHistory();
+    const location = useLocation();
+    const navigate = useNavigate();
 
     useOutsideAlerter(wrapperRef, visible, onClick);
 
@@ -85,15 +85,14 @@ const Menu = ({visible, onClick}) => {
         }
 
         if (!data.menuItems || path != window.location.pathname) {
-            setPath(window.location.pathname);
-            getMenuData(window.location.pathname);
+            setPath(location.pathname);
+            getMenuData(location.pathname);
         }
-    }, [authTokens])
+    }, [location, authTokens])
 
     const logout = () => {
         setAuthTokens();
-        history.push("/");
-        
+        navigate("/");
     }
 
     return (

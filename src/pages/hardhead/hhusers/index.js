@@ -3,7 +3,7 @@ import { useEffect, useState } from "react"
 import { Post } from "../../../components";
 import config from 'react-global-configuration';
 import UserAwards from "./userAwards";
-import { useParams } from "react-router-dom-v5-compat";
+import { useParams } from "react-router-dom";
 
 const HHUsers = () => {
     const params = useParams();

@@ -2,9 +2,8 @@ import { useEffect, useState } from "react"
 import config from 'react-global-configuration';
 import axios from "axios";
 import { Post } from "../../../components";
-import YearsSide from "../components/yearsSide";
 import AwardsWinners from "./awardsWinners";
-import { useParams } from "react-router-dom-v5-compat";
+import { useParams } from "react-router-dom";
 
 const AwardsByType = () => {
     const [award, setAward] = useState();

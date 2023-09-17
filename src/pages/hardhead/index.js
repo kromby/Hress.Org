@@ -8,7 +8,7 @@ import HardheadActions from './components/actions';
 import axios from "axios";
 import HardheadBody from './components/hardheadbody';
 import VoteNow from './awards/election/votenow';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
 
 const Hardhead = () => {
 	const location = useLocation();

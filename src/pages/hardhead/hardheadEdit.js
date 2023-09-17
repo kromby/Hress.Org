@@ -8,12 +8,13 @@ import { useAuth } from '../../context/auth';
 import MovieEdit from './components/movieEdit';
 import GuestsEdit from './components/guestsEdit';
 import { Helmet } from 'react-helmet';
-import { useLocation, useParams } from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const HardheadEdit = () => {
 	const { authTokens } = useAuth();
 	const location = useLocation();
 	const params = useParams();
+	const navigate = useNavigate();
 	const [hardhead, setHardhead] = useState();
 	const [users, setUsers] = useState();
 	const [nextHostID, setNextHostID] = useState();
@@ -28,7 +29,8 @@ const HardheadEdit = () => {
 
 	useEffect(() => {
 		if (authTokens === undefined) {
-			return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
+			navigate("/login", { state: { from: location.pathname } });
+			return;
 		}
 
 		const getHardhead = async () => {
@@ -66,29 +68,25 @@ const HardheadEdit = () => {
 
 	const handleSubmit = async (event) => {
 		setButtonEnabled(false);
-		if (authTokens !== undefined) {
-			event.preventDefault();
-			try {
-				var url = config.get('path') + '/api/hardhead/' + params.hardheadID + '?code=' + config.get('code');
-				const response = await axios.put(url, {
-					ID: params.hardheadID,
-					Number: hardhead.Number,
-					Host: hardhead.Host,
-					Date: hardheadDate,
-					Description: description,
-					NextHostID: nextHostID
-				}, {
-					headers: { 'Authorization': 'token ' + authTokens.token },
-				});
-				setData({ saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate });
-				console.log(response);
-			} catch (e) {
-				console.error(e);
-				alert("Ekki tókst að vista kvöld.");
-				setButtonEnabled(true);
-			}
-		} else {
-			// TODO: redirect to main page
+		event.preventDefault();
+		try {
+			var url = config.get('path') + '/api/hardhead/' + params.hardheadID + '?code=' + config.get('code');
+			const response = await axios.put(url, {
+				ID: params.hardheadID,
+				Number: hardhead.Number,
+				Host: hardhead.Host,
+				Date: hardheadDate,
+				Description: description,
+				NextHostID: nextHostID
+			}, {
+				headers: { 'Authorization': 'token ' + authTokens.token },
+			});
+			setData({ saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate });
+			console.log(response);
+		} catch (e) {
+			console.error(e);
+			alert("Ekki tókst að vista kvöld.");
+			setButtonEnabled(true);
 		}
 	}
 

@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import config from 'react-global-configuration';
 import axios from 'axios';
 import SidePost from "../../components/sidepost";
-import { useParams } from "react-router-dom-v5-compat";
 
 const YearsSide = ({year}) => {
     const [yearQS, setYearQS] = useState();

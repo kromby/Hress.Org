@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { Post } from "../../components";
 import { useAuth } from "../../context/auth"
-import { Redirect } from "react-router-dom/cjs/react-router-dom.min";
 import axios from "axios";
 import config from 'react-global-configuration';
-import { useLocation } from "react-router-dom-v5-compat";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 
 
 const Password = () => {
@@ -17,10 +17,14 @@ const Password = () => {
     const [confirmPassword, setConfirmPassword] = useState();
 
     const location = useLocation();
+    const navigate = useNavigate();
 
-    if (authTokens === undefined) {
-        return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
-    }
+    useEffect(() => {
+        if (authTokens === undefined) {
+            navigate("/login", {state: { from: location.pathname }} );
+                return;
+        }
+    })
 
     const handleSubmit = async (event) => {
         setButtonEnabled(false);

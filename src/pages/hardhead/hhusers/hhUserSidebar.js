@@ -4,7 +4,7 @@ import config from 'react-global-configuration';
 import { MiniPost } from '../../../components';
 import LastFilm from "./lastfilm";
 import { Helmet } from "react-helmet";
-import { useParams } from "react-router-dom-v5-compat";
+import { useParams } from "react-router-dom";
 
 const HHUserSidebar = () => {
     const [user, setUser] = useState();

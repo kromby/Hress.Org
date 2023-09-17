@@ -3,17 +3,17 @@ import config from 'react-global-configuration';
 import axios from "axios";
 import { useAuth } from '../../../context/auth';
 import TypeAheadDropDown from '../../../components/typeAheadDropDown';
-import { useLocation, useParams } from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const MovieEdit = ({ id }) => {
     const { authTokens } = useAuth();
     const params = useParams();
     const location = useLocation();
+    const navigate = useNavigate();
     const [data, setData] = useState({ visible: false, saving: false })
     const [buttonEnabled, setButtonEnabled] = useState(false);
     const [imagePath, setImagePath] = useState("");
     const [imageGetEnabled, setImageGetEnabled] = useState(false);
-    // const [omdbData, setOmdbData] = useState();
     const [actor, setActor] = useState("");
     const [movieName, setMovieName] = useState("");
     const [imdbUrl, setImdbUrl] = useState("");
@@ -28,7 +28,8 @@ const MovieEdit = ({ id }) => {
 
     useEffect(() => {
         if (authTokens === undefined) {
-            return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
+            navigate("/login", {state: { from: location.pathname }} );
+            return;
         }
 
         const getMovieData = async () => {

@@ -27,7 +27,7 @@ const Navigation = () => {
             setLoggedIn(authTokens != undefined);
             getLinks();
         }
-    }, [url])
+    }, [loggedIn, authTokens, links, url])
 
     return (
         <nav className="links">

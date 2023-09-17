@@ -3,7 +3,7 @@ import config from 'react-global-configuration';
 import axios from "axios";
 import { Post } from "../../components";
 import { Helmet } from "react-helmet";
-import { useParams } from "react-router-dom-v5-compat";
+import { useParams } from "react-router-dom";
 
 const SingleNews = () => {
     const [news, setNews] = useState();

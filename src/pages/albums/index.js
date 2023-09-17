@@ -3,20 +3,22 @@ import { ErrorBoundary } from "react-error-boundary";
 import axios from "axios";
 import config from 'react-global-configuration';
 import { Post } from "../../components";
-import { Link, Redirect } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
-import { useLocation } from "react-router-dom-v5-compat";
+import { useLocation } from "react-router-dom";
 
 const Albums = () => {
     const { authTokens } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
     const [albums, setAlbums] = useState();
-
-    if (authTokens === undefined) {
-        return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
-    }
-
+ 
     useEffect(() => {        
+        if (authTokens === undefined) {
+            navigate("/login", {state: { from: location.pathname }} );
+            return;
+        }
+
         const getAlbums = async () => {
             var url = config.get("apiPath") + "/api/albums";
             try {

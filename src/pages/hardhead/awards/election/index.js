@@ -10,20 +10,23 @@ import NightOfTheYear from './nightoftheyear';
 import Rules from './rules';
 import RulesNewOld from './rulesnewold';
 import Disappointment from './disappointment';
-import { Redirect } from 'react-router-dom';
 import TwentyYearOldMovie from './twentyyearoldmovie';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Election = () => {
     const { authTokens } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
     const [step, setStep] = useState();
 
-    if (authTokens === undefined) {
-        return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
-    }
+
 
     useEffect(() => {
+        if (authTokens === undefined) {
+            navigate("/login", { state: { from: location.pathname } });
+            return;
+        }
+
         const getNextStep = async () => {
             var url = config.get('apiPath') + '/api/elections/49/voters/access';
             axios.get(url, {

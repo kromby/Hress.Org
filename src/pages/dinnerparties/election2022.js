@@ -5,7 +5,7 @@ import axios from "axios";
 import {isMobile} from 'react-device-detect';
 import { Post } from "../../components";
 import { useAuth } from "../../context/auth";
-import { useParams } from "react-router-dom-v5-compat";
+import { useParams } from "react-router-dom";
 
 const Election2022 = () => {
     const { authTokens } = useAuth();
