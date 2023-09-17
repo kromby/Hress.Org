@@ -8,10 +8,9 @@ import { useLocation, useNavigate } from "react-router-dom";
 const LegacyFrame = () => {
     const { authTokens } = useAuth();
     const navigate = useNavigate();
-    const [isPrivate] = useState(false);
-    const [isLegacy, setIsLegacy] = useState(false);
-
     const location = useLocation();
+    const [isPrivate] = useState(false);
+    const [isLegacy, setIsLegacy] = useState(false);    
 
     useEffect(() => {
         console.log("[LegacyFrame] Href: '" + location.pathname + "'");
@@ -27,8 +26,8 @@ const LegacyFrame = () => {
                 if (authTokens) {
                     const response = await axios.post(url, {}, {
                         headers: { "X-Custom-Authorization": "token " + authTokens.token }
-                    });
-                    location.replace("https://hress.azurewebsites.net/magic/?code=" + response.data + "&path=" + location.pathname)
+                    });                    
+                    window.location.replace("https://hress.azurewebsites.net/magic/?code=" + response.data + "&path=" + location.pathname);
                 }
             } catch (e) {
                 console.error(e);
