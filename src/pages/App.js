@@ -39,7 +39,7 @@ import Album from './albums/album';
 import RuleChange from './hardhead/rules/change';
 import Password from './profile/password';
 
-function App(props) {
+function App() {
   const [authTokens, setAuthTokens] = useState();
   const [data, setData] = useState({ showMenu: false });
   const TRACKING_ID = "G-Z6HJ4VPZTN";

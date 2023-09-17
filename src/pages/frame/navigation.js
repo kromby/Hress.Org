@@ -5,7 +5,7 @@ import config from 'react-global-configuration';
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/auth";
 
-const Navigation = (propsData) => {
+const Navigation = () => {
     const { authTokens } = useAuth();
     const [links, setLinks] = useState();
     const [loggedIn, setLoggedIn] = useState(false);
@@ -27,7 +27,7 @@ const Navigation = (propsData) => {
             setLoggedIn(authTokens != undefined);
             getLinks();
         }
-    }, [propsData, url])
+    }, [url])
 
     return (
         <nav className="links">

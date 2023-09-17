@@ -4,9 +4,9 @@ import axios from "axios";
 import MiniPost from '../../../components/minipost';
 import HardheadActions from './actions';
 
-const NextHardhead = (propsData) => {
+const NextHardhead = ({allowEdit}) => {
     const[hardhead, setHardhead] = useState();
-    const[allowEdit, setAllowEdit] = useState(false);
+    const[editEnabled, setEditEnabled] = useState(false);
 
     var url = config.get('path') + '/api/hardhead?code=' + config.get('code');		
 
@@ -24,18 +24,18 @@ const NextHardhead = (propsData) => {
             }
         };
 
-        setAllowEdit(propsData.allowEdit);
+        setEditEnabled(allowEdit);
 
         if(!hardhead) {
             getNextHardhead();
         }
-    }, [propsData, url])
+    }, [allowEdit, url])
 
     return (
         <div>
             {hardhead ? 
                 <MiniPost title="Næsta harðhausakvöld" 
-                    description={<span>{hardhead.Host.Username}<br/><br/>{allowEdit ? <HardheadActions id={hardhead.ID}/>:null}</span>}
+                    description={<span>{hardhead.Host.Username}<br/><br/>{editEnabled ? <HardheadActions id={hardhead.ID}/>:null}</span>}
                     dateString={hardhead.DateString} 
                     date={hardhead.Date}
                     userHref={"/hardhead/users/" + hardhead.Host.ID}

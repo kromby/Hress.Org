@@ -3,13 +3,13 @@ import axios from 'axios';
 import config from 'react-global-configuration';
 import { MiniPost } from "../../../components";
 
-const LastFilm = (propsData) => {
+const LastFilm = ({userID}) => {
     const [hardhead, setHardhead] = useState();
     const [movie, setMovie] = useState();
 
     useEffect(() => {
         const getLastHardhead = async () => {
-            var url = config.get('path') + '/api/hardhead?userID=' + propsData.userID + '&code=' + config.get('code');
+            var url = config.get('path') + '/api/hardhead?userID=' + userID + '&code=' + config.get('code');
 
             try {
                 const response = await axios.get(url);
@@ -34,7 +34,7 @@ const LastFilm = (propsData) => {
         if (!hardhead) {
             getLastHardhead();
         }
-    }, [propsData])
+    }, [userID])
 
     return (<div>
         {hardhead ?

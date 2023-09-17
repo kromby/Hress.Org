@@ -6,13 +6,13 @@ import config from "react-global-configuration";
 import { isMobile } from "react-device-detect";
 import UserImage from "../../components/users/userimage";
 
-const Teams = (propsData) => {
+const Teams = ({id}) => {
     const [teams, setTeams] = useState();
     var isFirst = true;
 
     useEffect(() => {
         const getTeams = async () => {
-            var url = config.get("apiPath") + "/api/dinnerparties/" + propsData.id + "/teams";
+            var url = config.get("apiPath") + "/api/dinnerparties/" + id + "/teams";
             try {
                 const response = await axios.get(url);
                 setTeams(response.data);
@@ -24,7 +24,7 @@ const Teams = (propsData) => {
         if (!teams) {
             getTeams();
         }
-    }, [propsData])
+    }, [id])
 
     function displayHr() {
         if (isFirst) {

@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 
-const RulesSections = (propsData) => {
+const RulesSections = ({id}) => {
     const [data, setData] = useState({ rules: null, isLoading: false, visible: false })
 
     useEffect(() => {
         const getAwards = async () => {
-            var url = config.get('apiPath') + '/api/hardhead/rules/' + propsData.id;
+            var url = config.get('apiPath') + '/api/hardhead/rules/' + id;
 
             try {
                 setData({ isLoading: true });
@@ -22,7 +22,7 @@ const RulesSections = (propsData) => {
         if (!data.rules) {
             getAwards();
         }
-    }, [propsData])
+    }, [id])
 
     return (
         <ol>

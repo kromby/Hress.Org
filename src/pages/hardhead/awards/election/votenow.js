@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { Post } from '../../../../components';
 import { useAuth } from '../../../../context/auth';
 
-const VoteNow = (propsData) => {
+const VoteNow = () => {
     const { authTokens } = useAuth();
 
     return (
