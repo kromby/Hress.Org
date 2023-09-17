@@ -145,7 +145,7 @@ const Menu = ({visible, onClick}) => {
             <section>
                 <ul className="actions stacked" onClick={() => onClick()}>
                     {authTokens === undefined ?
-                        <li key="One"><Link className="button large fit" to={{ pathname: "/login", state: { from: pathname } }}>Innskráning</Link></li> :
+                        <li key="One"><Link className="button large fit" to={{ pathname: "login", state: { from: location.pathname } }}>Innskráning</Link></li> :
                         [<li key="Two">
                             <Link to={"/Profile"}>
                                 <h3>Prófíll</h3>
