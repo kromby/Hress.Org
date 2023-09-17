@@ -3,11 +3,12 @@ import config from 'react-global-configuration';
 import axios from "axios";
 import { useAuth } from '../../../context/auth';
 import UserImage from '../../../components/users/userimage';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const GuestsEdit = ({ hardheadID, users }) => {
     const { authTokens } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
     const [guests, setGuests] = useState();
 
     const getGuests = async () => {
@@ -28,7 +29,8 @@ const GuestsEdit = ({ hardheadID, users }) => {
 
     useEffect(() => {
         if (authTokens === undefined) {
-            return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
+            navigate("/login", {state: { from: location.pathname }} );
+            return;
         }
 
         if (!guests) {

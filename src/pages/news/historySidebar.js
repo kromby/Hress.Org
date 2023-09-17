@@ -4,7 +4,7 @@ import { Intro } from '../../components';
 import './historySidebar.css';
 import YearsSide from './yearsSide';
 import queryString from 'query-string';
-import { useLocation } from "react-router-dom-v5-compat";
+import { useLocation } from "react-router-dom";
 
 const HistorySidebar = () => {
     const [year, setYear] = useState();

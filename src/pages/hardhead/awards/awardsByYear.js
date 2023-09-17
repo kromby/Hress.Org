@@ -3,7 +3,7 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import { Post } from "../../../components";
 import AwardsWinners from "./awardsWinners";
-import { useParams } from "react-router-dom-v5-compat";
+import { useParams } from "react-router-dom";
 
 const AwardsByYear = () => {
     const [categories, setCategories] = useState();

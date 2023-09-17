@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../../../../context/auth"
-import { Redirect } from "react-router-dom/cjs/react-router-dom";
 import { Post } from "../../../../components";
 import config from 'react-global-configuration';
 import axios from "axios";
-import { useLocation } from "react-router-dom-v5-compat";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const RuleChange = () => {
     const { authTokens } = useAuth();
     const location = useLocation();
+    const navigate = useNavigate();
     const [buttonEnabled, setButtonEnabled] = useState(false);
     const [selected, setSelected] = useState();
     const [ruleCategories, setRuleCategories] = useState();
@@ -22,6 +22,11 @@ const RuleChange = () => {
     const [ruleChanges, setRuleChanges] = useState();
 
     useEffect(() => {
+        if (authTokens === undefined) {
+            navigate("/login", { state: { from: location.pathname } });
+            return;
+        }
+
         const getRuleCategories = async () => {
             try {
                 var url = config.get('apiPath') + '/api/hardhead/rules';
@@ -147,122 +152,120 @@ const RuleChange = () => {
     }
 
 
-    if (authTokens === undefined) {
-        return <Redirect to={{ pathname: "/login", state: { from: location.pathname } }} />
-    }
-    else {
-        return (
-            <div id="main">
-                <Post
-                    title="tillaga að Reglubreytingu"
-                    description="Komdu með frábæra hugmynd til þess að flækja reglur Harðhausa"
-                    body={[
 
-                        <div className="row gtr-uniform" key="first">
-                            <div className="col-4" onClick={() => handleTypeChange(1)}>
-                                <input type="radio" checked={selected === 1} onChange={() => handleChange(1)} />
-                                <label>
-                                    Reglubreyting
-                                </label>
-                            </div>
-                            <div className="col-4" onClick={() => handleTypeChange(2)}>
-                                <input type="radio" checked={selected === 2} onChange={() => handleChange(2)} />
-                                <label>
-                                    Ný regla
-                                </label>
-                            </div>
-                            <div className="col-4" onClick={() => handleTypeChange(3)}>
-                                <input type="radio" checked={selected === 3} onChange={() => handleChange(3)} />
-                                <label>
-                                    Fjarlægja reglu
-                                </label>
-                            </div>
-                        </div>,
-                        <hr key="Line2" />,
-                        <form onSubmit={handleSubmit} key="Form1">
-                            {selected ?
-                                <div className="row gtr-uniform">
+
+    return (
+        <div id="main">
+            <Post
+                title="tillaga að Reglubreytingu"
+                description="Komdu með frábæra hugmynd til þess að flækja reglur Harðhausa"
+                body={[
+
+                    <div className="row gtr-uniform" key="first">
+                        <div className="col-4" onClick={() => handleTypeChange(1)}>
+                            <input type="radio" checked={selected === 1} onChange={() => handleChange(1)} />
+                            <label>
+                                Reglubreyting
+                            </label>
+                        </div>
+                        <div className="col-4" onClick={() => handleTypeChange(2)}>
+                            <input type="radio" checked={selected === 2} onChange={() => handleChange(2)} />
+                            <label>
+                                Ný regla
+                            </label>
+                        </div>
+                        <div className="col-4" onClick={() => handleTypeChange(3)}>
+                            <input type="radio" checked={selected === 3} onChange={() => handleChange(3)} />
+                            <label>
+                                Fjarlægja reglu
+                            </label>
+                        </div>
+                    </div>,
+                    <hr key="Line2" />,
+                    <form onSubmit={handleSubmit} key="Form1">
+                        {selected ?
+                            <div className="row gtr-uniform">
+                                <div className="col-12">
+                                    <select id="category" name="category" onChange={(ev) => handleCategoryChange(ev)}>
+                                        <option value="">- Í hvaða flokki viltu breyta reglu? -</option>
+                                        {ruleCategories.map((rule) =>
+                                            <option key={rule.id} value={rule.id}>{rule.number + '. grein - ' + rule.name}</option>
+                                        )}
+                                    </select>
+                                </div>
+                                {rules && (selected === 1 || selected === 3) ?
                                     <div className="col-12">
-                                        <select id="category" name="category" onChange={(ev) => handleCategoryChange(ev)}>
-                                            <option value="">- Í hvaða flokki viltu breyta reglu? -</option>
-                                            {ruleCategories.map((rule) =>
-                                                <option key={rule.id} value={rule.id}>{rule.number + '. grein - ' + rule.name}</option>
+                                        <select id="rule" name="rule" onChange={(ev) => handleRuleChange(ev)}>
+                                            <option value="">{selected === 1 ? "- Hvaða reglu viltu breyta? -" : "Hvaða reglu viltu fjarlægja?"}</option>
+                                            {rules.map((rule) =>
+                                                <option key={rule.id} value={rule.id}>{rule.parentNumber + "." + rule.number + ". " + rule.name}</option>
                                             )}
                                         </select>
                                     </div>
-                                    {rules && (selected === 1 || selected === 3) ?
-                                        <div className="col-12">
-                                            <select id="rule" name="rule" onChange={(ev) => handleRuleChange(ev)}>
-                                                <option value="">{selected === 1 ? "- Hvaða reglu viltu breyta? -" : "Hvaða reglu viltu fjarlægja?"}</option>
-                                                {rules.map((rule) =>
-                                                    <option key={rule.id} value={rule.id}>{rule.parentNumber + "." + rule.number + ". " + rule.name}</option>
-                                                )}
-                                            </select>
-                                        </div>
-                                        : null}
+                                    : null}
 
-                                    {selected === 1 || selected === 2 ?
-                                        <div className="col-12">
-                                            <textarea
-                                                name="ruleText"
-                                                rows="2"
-                                                onChange={(ev) => handleTextChange(ev)}
-                                                defaultValue={ruleText}
-                                                placeholder={selected === 1 ? "Hvernig viltu hafa regluna eftir breytingu?" : "Hvernig viltu hafa nýju regluna?"}
-                                            />
-                                        </div>
-                                        : null}
+                                {selected === 1 || selected === 2 ?
                                     <div className="col-12">
                                         <textarea
-                                            name="reasoning"
+                                            name="ruleText"
                                             rows="2"
-                                            onChange={(ev) => handleReasoningChange(ev)}
-                                            defaultValue={reasoning}
-                                            // placeholder={selected === 1 ? "Hvernig viltu hafa regluna eftir breytingu?" : "Hvernig viltu hafa nýju regluna?"}
-                                            placeholder="Rökstuddu breytinguna!"
+                                            onChange={(ev) => handleTextChange(ev)}
+                                            defaultValue={ruleText}
+                                            placeholder={selected === 1 ? "Hvernig viltu hafa regluna eftir breytingu?" : "Hvernig viltu hafa nýju regluna?"}
                                         />
                                     </div>
-                                    <div className="col-12">
-                                        {error ? <b>{error}<br /></b> : null}
-                                        <button
-                                            tooltip="Leggja fram reglubreytingu"
-                                            className="button large"
-                                            disabled={!buttonEnabled}>Leggja til</button>
-                                    </div>
-                                </div>
-                                : null}
-                        </form>,
-                        <div className="col-12" key="message">
-                            {isSaved ? <b>Tilnefning skráð!<br /></b> : null}
-                        </div>,
-                        <hr key="Line3" />,
-                        <div className="table-wrapper" key="Table4">
-                            <table>
-                                <thead>
-                                    <tr>
-                                        <th width="200px">Tegund</th>
-                                        <th>Regla</th>
-                                        <th>Rökstuðningur</th>
-                                    </tr>
-                                </thead>
-                                {ruleChanges ?
-                                    <tbody>
-                                        {ruleChanges.map((ruleChange) =>
-                                            <tr key={ruleChange.id}>
-                                                <td>{ruleChange.typeName}</td>
-                                                <td>{ruleChange.ruleText}</td>
-                                                <td>{ruleChange.reasoning}</td>
-                                            </tr>
-                                        )}
-                                    </tbody>
                                     : null}
-                            </table>
-                        </div>,
-                    ]}
-                />
-            </div >
-        )
-    }
+                                <div className="col-12">
+                                    <textarea
+                                        name="reasoning"
+                                        rows="2"
+                                        onChange={(ev) => handleReasoningChange(ev)}
+                                        defaultValue={reasoning}
+                                        // placeholder={selected === 1 ? "Hvernig viltu hafa regluna eftir breytingu?" : "Hvernig viltu hafa nýju regluna?"}
+                                        placeholder="Rökstuddu breytinguna!"
+                                    />
+                                </div>
+                                <div className="col-12">
+                                    {error ? <b>{error}<br /></b> : null}
+                                    <button
+                                        tooltip="Leggja fram reglubreytingu"
+                                        className="button large"
+                                        disabled={!buttonEnabled}>Leggja til</button>
+                                </div>
+                            </div>
+                            : null}
+                    </form>,
+                    <div className="col-12" key="message">
+                        {isSaved ? <b>Tilnefning skráð!<br /></b> : null}
+                    </div>,
+                    <hr key="Line3" />,
+                    <div className="table-wrapper" key="Table4">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th width="200px">Tegund</th>
+                                    <th>Regla</th>
+                                    <th>Rökstuðningur</th>
+                                </tr>
+                            </thead>
+                            {ruleChanges ?
+                                <tbody>
+                                    {ruleChanges.map((ruleChange) =>
+                                        <tr key={ruleChange.id}>
+                                            <td>{ruleChange.typeName}</td>
+                                            <td>{ruleChange.ruleText}</td>
+                                            <td>{ruleChange.reasoning}</td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                                : null}
+                        </table>
+                    </div>,
+                ]}
+            />
+        </div >
+    )
+
 }
 
 export default RuleChange;

@@ -1,14 +1,13 @@
 import { useEffect, useState } from "react";
-import { Redirect } from "react-router-dom";
-import iframe from "react-iframe";
 import queryString from 'query-string';
 import { useAuth } from "../../context/auth"
 import config from 'react-global-configuration';
 import axios from "axios";
-import { useLocation } from "react-router-dom-v5-compat";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const LegacyFrame = () => {
     const { authTokens } = useAuth();
+    const navigate = useNavigate();
     const [isPrivate] = useState(false);
     const [isLegacy, setIsLegacy] = useState(false);
 
@@ -16,6 +15,11 @@ const LegacyFrame = () => {
 
     useEffect(() => {
         console.log("[LegacyFrame] Href: '" + location.pathname + "'");
+
+        if (isPrivate && authTokens === undefined) {
+            navigate("/login", { state: { from: location.pathname } });
+            return;
+        }
 
         const getMagicCode = async () => {
             try {
@@ -41,11 +45,9 @@ const LegacyFrame = () => {
         }
     }, [])
 
-    if (isPrivate && authTokens === undefined) {
-        return <Redirect to='/' />
-    } else if (isLegacy) {
+    if (isLegacy) {
         return (<div id="main">
-            Þú verður fljótlega færð(ur) yfir á á gamla Hressleikann!<br/>
+            Þú verður fljótlega færð(ur) yfir á á gamla Hressleikann!<br />
             {"https://hress.azurewebsites.net" + location.pathname}
         </div>)
     } else {

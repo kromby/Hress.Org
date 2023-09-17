@@ -23,11 +23,14 @@ const Navigation = () => {
             }
         }
 
+        console.log("[Navigation] loggedIn: " + loggedIn);
+        console.log("[Navigation] (authTokens != undefined): " + (authTokens != undefined));
+
         if (!links || loggedIn != (authTokens != undefined)) {
             setLoggedIn(authTokens != undefined);
             getLinks();
         }
-    }, [url])
+    }, [loggedIn, authTokens, links, url])
 
     return (
         <nav className="links">

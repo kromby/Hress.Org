@@ -6,7 +6,7 @@ import AwardsSide from './awards/awardsSide';
 import StatisticSide from './statistics/statisticsSide';
 import RulesSide from './rules/rulesSide';
 import YearsSide from './components/yearsSide';
-import { Link } from 'react-router-dom-v5-compat';
+import { Link } from 'react-router-dom';
 
 const HardheadSidebar = () => {
 	return (

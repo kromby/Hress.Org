@@ -4,7 +4,7 @@ import axios from "axios";
 import queryString from 'query-string';
 
 import { useAuth } from '../../context/auth';
-import { useLocation, useNavigate } from 'react-router-dom-v5-compat';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function Magic() {
     const location = useLocation();

@@ -3,10 +3,9 @@ import axios from 'axios';
 import config from 'react-global-configuration';
 
 import { useAuth } from '../../context/auth';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Post } from '../../components';
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom-v5-compat';
+import { useLocation } from 'react-router-dom';
 
 function Login() {
     const [isError, setIsError] = useState(false);
@@ -50,7 +49,7 @@ function Login() {
 
     if (authTokens !== undefined) {
         console.log("[Login] referer: " + referer);
-        return <Redirect to={referer} />
+        return <Navigate to={referer}/>;
     }
 
     return (

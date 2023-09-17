@@ -7,7 +7,7 @@ import UserImage from "../../components/users/userimage";
 import DinnerMenu from "./dinnermenu";
 import { isMobile } from "react-device-detect";
 import Teams from "./teams";
-import { useParams } from "react-router-dom-v5-compat";
+import { useParams } from "react-router-dom";
 
 const DinnerParty = () => {
     const params = useParams();

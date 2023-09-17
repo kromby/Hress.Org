@@ -5,7 +5,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import axios from "axios";
 import { Post } from "../../components";
 import queryString from 'query-string';
-import { useLocation } from "react-router-dom-v5-compat";
+import { useLocation } from "react-router-dom";
 
 const HistoryNews = () => {
     const [news, setNews] = useState();
