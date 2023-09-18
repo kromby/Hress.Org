@@ -3,14 +3,15 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import Post from '../../../../components/post';
 import { useAuth } from '../../../../context/auth';
+import {isMobile} from 'react-device-detect';
 
-const HardheadOfTheYear = (propsData) => {
+const HardheadOfTheYear = ({ID, Name, Description, Date, Year, onSubmit}) => {
     const { authTokens } = useAuth();
     const [users, setUsers] = useState();
     const [savingAllowed, setSavingAllowed] = useState(false);
     const [selectedUser, setSelectedUser] = useState();
 
-    var url = config.get('path') + '/api/hardhead/' + '5370' + '/users?attended=8&code=' + config.get('code');
+    var url = config.get('path') + '/api/hardhead/' + '5384' + '/users?attended=8&code=' + config.get('code');
 
     useEffect(() => {
         const getHardheadUsers = async () => {
@@ -26,7 +27,7 @@ const HardheadOfTheYear = (propsData) => {
         if (!users) {
             getHardheadUsers();
         }
-    }, [propsData, url])
+    }, [url])
 
     const handleUserChange = async (event) => {
         if (authTokens === undefined) {
@@ -53,11 +54,11 @@ const HardheadOfTheYear = (propsData) => {
         }
 
         try {
-            var url = config.get('path') + '/api/elections/' + propsData.ID + '/vote?code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, [{
                 value: selectedUser
             }], {
-                headers: { 'Authorization': 'token ' + authTokens.token },
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
         } catch (e) {
             console.error(e);
@@ -65,23 +66,23 @@ const HardheadOfTheYear = (propsData) => {
             setSavingAllowed(true);
         }
 
-        propsData.onSubmit();
+        onSubmit();
     }
 
     return (
         <Post
-            id={propsData.ID}
-            title={propsData.Name}
-            description={propsData.Description}
-            date={propsData.Date}
-            dateFormatted={propsData.Year}
+            id={ID}
+            title={Name}
+            description={Description}
+            date={Date}
+            dateFormatted={Year}
             body=
             {
                 <section>
                     <form onSubmit={handleSubmit}>
                         <div className="row gtr-uniform">
                             {users ? users.map(user =>
-                                <div className="col-4" key={user.ID} onClick={() => handleUserChange(user.ID)} >
+                                <div className={isMobile ? "col-12" : "col-4"} key={user.ID} onClick={() => handleUserChange(user.ID)} >
                                     <input type="radio" checked={selectedUser === user.ID} onChange={() => handleUserChange(user.ID)} />
                                     <label>
                                         <h3 className="author" width="50%">
@@ -101,7 +102,7 @@ const HardheadOfTheYear = (propsData) => {
                             <div className="col-12">
                                 <ul className="actions">
                                     <li>
-                                        <input type="submit" value={"Kjósa " + propsData.Name} disabled={!savingAllowed} />
+                                        <input type="submit" value={"Kjósa " + Name} disabled={!savingAllowed} />
                                     </li>
                                 </ul>
                             </div>

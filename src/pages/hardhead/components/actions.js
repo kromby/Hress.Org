@@ -3,7 +3,7 @@ import config from 'react-global-configuration';
 import { useAuth } from '../../../context/auth';
 import axios from "axios";
 
-const HardheadActions = (propsData) => {
+const HardheadActions = ({id}) => {
     const { authTokens } = useAuth();
     const [data, setData] = useState({ actions: [], isLoading: false, visible: false });
     const [lastLoggedIn, setLastLoggedIn] = useState(false);
@@ -12,7 +12,7 @@ const HardheadActions = (propsData) => {
         const getActions = async () => {
             if (authTokens !== undefined) {
                 try {
-                    var url = config.get('path') + '/api/hardhead/' + propsData.id + '/actions?code=' + config.get('code');
+                    var url = config.get('path') + '/api/hardhead/' + id + '/actions?code=' + config.get('code');
                     const response = await axios.get(url, {
                         headers: { 'Authorization': 'token ' + authTokens.token }
                     })
@@ -32,7 +32,7 @@ const HardheadActions = (propsData) => {
             getActions();
             setLastLoggedIn(loggedIn);
         }
-    }, [propsData, authTokens])
+    }, [id, authTokens])
 
     return (
         <ul className="actions">

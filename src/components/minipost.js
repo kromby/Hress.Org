@@ -2,26 +2,26 @@ import React from 'react';
 import './post.css';
 import { Link } from 'react-router-dom';
 
-const MiniPost = (propsData) => {
+const MiniPost = ({title, description, date, dateString, href, imageText, imageSource, imageHref, userText, userPhoto, userHref}) => {
     return (
         <article className="mini-post">
             <header>
                 <h3>                    
-                    {propsData.href ? 
-                        propsData.href.startsWith("http") ?
-                        <a href={propsData.href} target="_parent">{propsData.title}</a>
+                    {href ? 
+                        href.startsWith("http") ?
+                        <a href={href} target="_parent">{title}</a>
                         : 
-                        <Link to={propsData.href}>{propsData.title}</Link>
-                    : propsData.title }
+                        <Link to={href}>{title}</Link>
+                    : title }
                 </h3>
-                {propsData.description ? <span className="published">{propsData.description}</span> : null }
-                <time className="published" dateTime={propsData.date}>{propsData.dateString}</time>
-                <a href={propsData.userHref} className="author"><img src={propsData.userPhoto} alt={propsData.userText} /></a>
+                {description ? <span className="published">{description}</span> : null }
+                <time className="published" dateTime={date}>{dateString}</time>
+                <a href={userHref} className="author"><img src={userPhoto} alt={userText} /></a>
             </header>
-            {propsData.imageSource ?
-                propsData.imageHref ?            
-                    <Link to={propsData.imageHref} className="image"><img src={propsData.imageSource} alt={propsData.imageText} /></Link> :
-                    <img src={propsData.imageSource} alt={propsData.imageText} /> :
+            {imageSource ?
+                imageHref ?            
+                    <Link to={imageHref} className="image"><img src={imageSource} alt={imageText} /></Link> :
+                    <img src={imageSource} alt={imageText} /> :
             null
             }
         </article>

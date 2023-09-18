@@ -97,7 +97,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             if (!req.Query.ContainsKey("type"))
             {
-                throw new ArgumentNullException("Type query parameter is required.");
+                throw new ArgumentNullException(nameof(req), "Type query parameter is required.");
             }
 
             if (!int.TryParse(req.Query["type"], out int typeID))

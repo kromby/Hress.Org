@@ -10,38 +10,47 @@ import NightOfTheYear from './nightoftheyear';
 import Rules from './rules';
 import RulesNewOld from './rulesnewold';
 import Disappointment from './disappointment';
+import TwentyYearOldMovie from './twentyyearoldmovie';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const Election = (propsData) => {
+const Election = () => {
     const { authTokens } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
     const [step, setStep] = useState();
 
-    //var url = config.get('path') + '/api/hardhead/awards?code=' + config.get('code');	    
+
 
     useEffect(() => {
         if (authTokens === undefined) {
-            // TODO Redirect back to main page
-            alert("Þú þarft að skrá þig inn");
+            navigate("/login", { state: { from: location.pathname } });
             return;
         }
 
         const getNextStep = async () => {
-            try {
-                var url = config.get('path') + '/api/elections/49/voters/access?code=' + config.get('code');
-                const response = await axios.get(url, {
-                    headers: { 'Authorization': 'token ' + authTokens.token },
-                });
-                setStep(response.data);
-            } catch (e) {
-                console.error(e);
-            }
+            var url = config.get('apiPath') + '/api/elections/49/voters/access';
+            axios.get(url, {
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+            })
+                .then(response => setStep(response.data))
+                .catch(error => {
+                    if (error.response.status === 404) {
+                        console.log("[Election] Access not found");
+                    } else {
+                        console.error("[Election] Error getting access");
+                        console.error(error);
+                    }
+                })
         }
 
-        if (!step) {
-            getNextStep();
-        }
-    }, [propsData, authTokens])
+        document.title = "Harðhausakosningin | Hress.Org";
+
+        getNextStep();
+    }, [authTokens])
 
     const getElement = (id, name) => {
+        console.log("[Election] id: " + id);
+        console.log("[Election] name: " + name);
         if (id === 100) /*Lög og reglur - nýjar og niðurfelldar reglur*/ {
             return <RulesNewOld key={id}
                 ID={id}
@@ -50,6 +59,12 @@ const Election = (propsData) => {
             />
         } else if (id === 101) /*Lög og reglur - breytingar*/ {
             return <Rules key={id}
+                ID={id}
+                Name={name}
+                onSubmit={handleSubmit}
+            />
+        } else if (id === 102) /* Mynd fyrir uppgjörskvöldið */ {
+            return <TwentyYearOldMovie key={id}
                 ID={id}
                 Name={name}
                 onSubmit={handleSubmit}
@@ -96,30 +111,30 @@ const Election = (propsData) => {
     }
 
     const handleSubmit = async () => {
-        if (authTokens === undefined) {
-            // TODO Redirect back to main page
-            return;
-        }
-
         window.scrollTo(0, 0);
         window.parent.scrollTo(0, 0);
 
         try {
-            var url = config.get('path') + '/api/elections/49/voters/access?code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/elections/49/voters/access';
             const response = await axios.get(url, {
-                headers: { 'Authorization': 'token ' + authTokens.token },
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
             setStep(response.data);
-        } catch (e) {
-            console.error(e);
-            alert(e);
+        } catch (error) {
+            if (error.response.status === 404) {
+                console.log("[Election] Access not found");
+                setStep(null);
+            } else {
+                console.error("[Election] Error getting access");
+                console.error(error);
+            }
         }
     }
 
     return (
         <div id="main">
             {step ?
-                getElement(step.ID, step.Name)
+                getElement(step.id, step.name)
                 : <Post id="0" title="Kosningu lokið" />}
         </div>
     )

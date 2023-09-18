@@ -7,13 +7,15 @@ import UserImage from "../../components/users/userimage";
 import DinnerMenu from "./dinnermenu";
 import { isMobile } from "react-device-detect";
 import Teams from "./teams";
+import { useParams } from "react-router-dom";
 
-const DinnerParty = (propsData) => {
+const DinnerParty = () => {
+    const params = useParams();
     const [dinner, setDinner] = useState();
 
     useEffect(() => {
         const getDinner = async () => {
-            var url = config.get("apiPath") + "/api/dinnerparties/" + propsData.match.params.id;
+            var url = config.get("apiPath") + "/api/dinnerparties/" + params.id;
             try {
                 const response = await axios.get(url);
                 setDinner(response.data);
@@ -28,23 +30,7 @@ const DinnerParty = (propsData) => {
         if (!dinner) {
             getDinner();
         }
-    }, [propsData])
-
-    function getAssistants(guests) {
-        console.log("[dinnerparties] guest.length: ", guests.length);
-        if (guests.length === 0) {
-            return "Að þessu sinni voru engir aðstoðarkokkar."
-        }
-        if (guests.length === 1) {
-            return guests[0].role + " í þetta skiptið var " + guests[0].name + ".";
-        }
-        if (guests.length === 2) {
-            return "Aðstoðarkokkar í þetta skiptið voru " + guests[0].name + " og " + guests[1].name + ".";
-        }
-        else {
-            return "Aðstoðarkokkar voru " + guests.map(guest => guest.name).join(", ") + ".";
-        }
-    }
+    }, [])
 
     return (
         <div id="main">
@@ -61,7 +47,6 @@ const DinnerParty = (propsData) => {
                             id={dinner.id}
                             href={"/dinnerparties/" + dinner.id}
                             title={dinner.name}
-                            // description={"Kvöld númer " + dinner.number}
                             author={dinner.guests[0] ? dinner.guests[0].user : null}
                             date={dinner.date}
                             dateFormatted={dinner.dateString}

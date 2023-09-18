@@ -1,38 +1,43 @@
-import { faWindows } from "@fortawesome/free-brands-svg-icons";
 import { useEffect, useState } from "react";
-import * as qs from 'query-string';
-import { Redirect } from "react-router-dom";
+import queryString from 'query-string';
+import { useLocation, useNavigate } from "react-router-dom";
 
-const LegacyRedirect = (propsData) => {
-    const [path, setPath] = useState();
+const LegacyRedirect = () => {
+    const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        const parsed = qs.parse(propsData.location.search);
+        const parsed = queryString.parse(location.search);
 
-        if (window.location.pathname.toLowerCase() === '/default/single.aspx') {
-            if(parsed.Id) {
-            setPath("/news/" + parsed.Id);
+        var path;
+
+        if (location.pathname.toLowerCase() === '/default/single.aspx') {
+            if (parsed.Id) {
+                path = "/news/" + parsed.Id;
             } else if (parsed.id) {
-                setPath("/news/" + parsed.id);
+                path = "/news/" + parsed.id;
             } else if (parsed.ID) {
-                setPath("/news/" + parsed.ID);
+                path = "/news/" + parsed.ID;
             } else {
                 console.error("[LegacyRedirect] No ID found in query string");
             }
         } else {
-            console.error("[LegacyRedirect] Unknown path: '" + window.location.pathname + "'");
+            console.error("[LegacyRedirect] Unknown path: '" + location.pathname + "'");
         }
-    }, [propsData])
 
-    if (path) {
-        return <Redirect to={path} />;
-    } else {
-        return (
-            <div id="main">
-                {window.location.pathname}
-            </div>
-        )
-    }
+        console.log("[LegacyRedirect] path: " + path);
+
+        if (path) {
+            navigate(path, { state: { from: location.pathname } });
+            return;
+        }
+    }, [])
+
+    return (
+        <div id="main">
+            {location.pathname}
+        </div>
+    )
 }
 
 export default LegacyRedirect;

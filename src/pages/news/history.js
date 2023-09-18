@@ -4,11 +4,13 @@ import { isMobile } from 'react-device-detect';
 import { ErrorBoundary } from "react-error-boundary";
 import axios from "axios";
 import { Post } from "../../components";
-import * as qs from 'query-string';
+import queryString from 'query-string';
+import { useLocation } from "react-router-dom";
 
-const HistoryNews = (propsData) => {
+const HistoryNews = () => {
     const [news, setNews] = useState();
     const [lastUrl, setLastUrl] = useState();
+    const location = useLocation();
 
     useEffect(() => {
         const getNews = async (url) => {
@@ -20,7 +22,7 @@ const HistoryNews = (propsData) => {
             }
         }
 
-        const parsed = qs.parse(propsData.location.search);
+        const parsed = queryString.parse(location.search);
         if (parsed.year) {
             if(parsed.month) {
                 var url = config.get("apiPath") + "/api/news/?year=" + parsed.year + "&month=" + parsed.month;   
@@ -37,7 +39,7 @@ const HistoryNews = (propsData) => {
             setLastUrl(url);
             getNews(url);
         }
-    }, [propsData])
+    }, [location])
 
 
     return (
@@ -65,7 +67,7 @@ const HistoryNews = (propsData) => {
                                     </span> : null}
                                 <span dangerouslySetInnerHTML={{ __html: news.content }} />
                             </p>}
-                        image={isMobile || news.imageAlign === 4 ? config.get('apiPath') + news.image.href : null}
+                        image={isMobile || news.imageAlign === 4 ? config.get('apiPath') + news.image.href + "?width=1400": null}
                         actions={<p />}
                     />) : null}
             </div>

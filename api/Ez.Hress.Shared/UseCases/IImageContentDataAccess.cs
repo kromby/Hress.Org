@@ -9,7 +9,7 @@ namespace Ez.Hress.Shared.UseCases
 {
     public interface IImageContentDataAccess
     {
-        Task<byte[]> GetContent(string path);
+        Task<byte[]?> GetContent(string path);
 
         string Prefix { get; }
 

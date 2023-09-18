@@ -3,15 +3,29 @@ import config from "react-global-configuration";
 import axios from "axios";
 import { Post } from "../../components";
 import AlbumImages from "./albumImages";
+import { useAuth } from "../../context/auth";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
-const Album = (propsData) => {
+const Album = () => {
+    const { authTokens } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
+    const params = useParams();
     const [album, setAlbum] = useState();
 
     useEffect(() => {
+        if (authTokens === undefined) {
+            navigate("/login", { state: { from: location.pathname } });
+            return;
+        }
+
         const getAlbum = async () => {
-            var url = config.get("apiPath") + "/api/albums/" + propsData.match.params.id;
+            var url = config.get("apiPath") + "/api/albums/" + params.id;
             try {
-                const response = await axios.get(url);
+                const response = await axios.get(url, {
+                    headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                });
                 setAlbum(response.data);
                 document.title = "Myndir - " + response.data.name + " | Hress.Org";
             } catch (e) {
@@ -22,7 +36,8 @@ const Album = (propsData) => {
         if (!album) {
             getAlbum();
         }
-    }, [propsData]);
+    }, []);
+
 
     return (
         <div id="main">

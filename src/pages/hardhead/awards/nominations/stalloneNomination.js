@@ -5,8 +5,8 @@ import axios from "axios";
 import { Post } from '../../../../components';
 import Author from '../../../../components/author';
 
-const StalloneNomination = (propsData) => {
-    const {authTokens} = useAuth();
+const StalloneNomination = ({ Type, Users }) => {
+    const { authTokens } = useAuth();
     const [buttonEnabled, setButtonEnabled] = useState(false);
     const [users, setUsers] = useState();
     const [nominations, setNominations] = useState();
@@ -16,23 +16,29 @@ const StalloneNomination = (propsData) => {
     const [error, setError] = useState();
 
     useEffect(() => {
-        setUsers(propsData.Users);
+        setUsers(Users);
 
         document.title = "Tilnefna Stallone | Hress.Org";
 
         if (!nominations) {
             getNominations();
         }
-    }, [propsData])
+    }, [Users])
 
     const getNominations = async () => {
-        try {
-            var getUrl = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + propsData.Type;
-            const response = await axios.get(getUrl, { headers: { 'X-Custom-Authorization': 'token ' + authTokens.token } });
-            setNominations(response.data);
-        } catch (e) {
-            console.error(e);
-        }
+        var getUrl = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + Type;
+        axios.get(getUrl, {
+            headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+        })
+            .then(response => setNominations(response.data))
+            .catch(error => {
+                if (error.response.status === 404) {
+                    console.log("[StalloneNomination] No nominations not found");
+                } else {
+                    console.error("[StalloneNomination] Error getting access");
+                    console.error(error);
+                }
+            })
     }
 
     const handleSubmit = async (event) => {
@@ -42,7 +48,7 @@ const StalloneNomination = (propsData) => {
         try {
             var postUrl = config.get('apiPath') + '/api/hardhead/awards/nominations';
             const response = await axios.post(postUrl, {
-                typeID: propsData.Type,
+                typeID: Type,
                 description: description,
                 nomineeID: nominee
             }, {
@@ -51,7 +57,7 @@ const StalloneNomination = (propsData) => {
             setIsSaved(true);
             setDescription("");
             setNominee("");
-            getNominations();                        
+            getNominations();
         } catch (e) {
             console.error(e);
             if (e.response && e.response.status === 400) {
@@ -76,67 +82,67 @@ const StalloneNomination = (propsData) => {
         setIsSaved(false);
         setError("");
         return true;
-    }    
+    }
 
     return (
-            <Post
-                title="Stallone ársins"
-                description="Tilnefndu Harðhaus fyrir frábært afrek"
-                body={[
-                    <form onSubmit={handleSubmit} key="Form1">
-                        <div className="row gtr-uniform">
-                            <div className="col-6 col-12-xsmall">
-                                {users ?
-                                    <select id="category" name="category" onChange={(ev) => handleNomineeChange(ev)}>
-                                        <option value="">- Hvaða Harðhaus vilt þú tilnefna? -</option>
-                                        {users.sort((a, b) => a.Name.toLowerCase() > b.Name.toLowerCase() ? 1 : -1).map(user =>
-                                            <option key={user.ID} value={user.ID}>
-                                                {user.Name}
-                                            </option>
-                                        )}
-                                    </select>
-                                    : null}
-                            </div>
-                            <div className="col-12">
-                                <textarea name="Lýsing" rows="3" onChange={(ev) => handleDescriptionChange(ev)} defaultValue={description} placeholder="Fyrir hvað vilt þú tilnefna?" />
-                            </div>
-                            <div className="col-12">
-                                {isSaved ? <b>Tilnefning skráð!<br /></b> : null}
-                                {error ? <b>{error}<br /></b> : null}
-                                <button tooltip="Tilnefna" className="button large" disabled={!buttonEnabled}>Tilnefna</button>
-                            </div>
+        <Post
+            title="Stallone ársins"
+            description="Tilnefndu Harðhaus fyrir frábært afrek"
+            body={[
+                <form onSubmit={handleSubmit} key="Form1">
+                    <div className="row gtr-uniform">
+                        <div className="col-6 col-12-xsmall">
+                            {users ?
+                                <select id="category" name="category" onChange={(ev) => handleNomineeChange(ev)}>
+                                    <option value="">- Hvaða Harðhaus vilt þú tilnefna? -</option>
+                                    {users.sort((a, b) => a.Name.toLowerCase() > b.Name.toLowerCase() ? 1 : -1).map(user =>
+                                        <option key={user.ID} value={user.ID}>
+                                            {user.Name}
+                                        </option>
+                                    )}
+                                </select>
+                                : null}
                         </div>
-                    </form>,
-                    <hr key="Line2"/>,
-                    <h3 key="Header3">Skráðar tilnefningar</h3>,                        
-                    <div className="table-wrapper" key="Table4">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <td width="200px">Harðhaus</td>
-                                    <td>Útskýring</td>
-                                </tr>
-                            </thead>
-                            {nominations ?
-                            <tbody>                                
+                        <div className="col-12">
+                            <textarea name="Lýsing" rows="3" onChange={(ev) => handleDescriptionChange(ev)} defaultValue={description} placeholder="Fyrir hvað vilt þú tilnefna?" />
+                        </div>
+                        <div className="col-12">
+                            {isSaved ? <b>Tilnefning skráð!<br /></b> : null}
+                            {error ? <b>{error}<br /></b> : null}
+                            <button tooltip="Tilnefna" className="button large" disabled={!buttonEnabled}>Tilnefna</button>
+                        </div>
+                    </div>
+                </form>,
+                <hr key="Line2" />,
+                <h3 key="Header3">Skráðar tilnefningar</h3>,
+                <div className="table-wrapper" key="Table4">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="200px">Harðhaus</th>
+                                <th>Útskýring</th>
+                            </tr>
+                        </thead>
+                        {nominations ?
+                            <tbody>
                                 {nominations.map((nomination) =>
                                     <tr key={nomination.id}>
                                         <td>
                                             {nomination.nominee.profilePhoto ?
-                                                <Author ID={nomination.nominee.ID} Username={nomination.nominee.name} ProfilePhoto={nomination.nominee.profilePhoto.href} /> :
-                                                <Author ID={nomination.nominee.ID} Username={nomination.nominee.name} />
+                                                <Author ID={nomination.nominee.id} Username={nomination.nominee.name} ProfilePhoto={nomination.nominee.profilePhoto.href} /> :
+                                                <Author ID={nomination.nominee.id} Username={nomination.nominee.name} />
                                             }
                                         </td>
                                         <td>{nomination.description}</td>
                                     </tr>
                                 )}
                             </tbody>
-                            : null }
-                        </table>                            
-                    </div>
-                ]}
-            />
-    )    
+                            : null}
+                    </table>
+                </div>
+            ]}
+        />
+    )
 }
 
 export default StalloneNomination;

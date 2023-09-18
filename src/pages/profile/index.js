@@ -1,16 +1,27 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import config from 'react-global-configuration';
+import { Link, useNavigate } from "react-router-dom";
 import { Post } from "../../components";
 import Author from "../../components/author";
 import { useAuth } from "../../context/auth";
+import { useLocation } from "react-router-dom";
 
 
-const Profile = (propsData) => {
+const Profile = () => {
     const { authTokens } = useAuth();
+    const navigate = useNavigate();
     const [balanceSheet, setBalanceSheet] = useState();
 
+    const location = useLocation();
+
+
     useEffect(() => {
+        if (authTokens === undefined) {
+            navigate("/login", {state: { from: location.pathname }} );
+                return;
+        }
+        
         const getBalanceSheet = async () => {
             var url = config.get("apiPath") + "/api/users/0/balancesheet";
             try {
@@ -28,7 +39,7 @@ const Profile = (propsData) => {
         if (!balanceSheet) {
             getBalanceSheet();
         }
-    }, [propsData])
+    }, [])
 
     return (
         <div id="main">
@@ -75,6 +86,10 @@ const Profile = (propsData) => {
                             <br />
                             <br />
                             <br />
+                            <br />
+                            <p>
+                                <Link to={"/profile/password"}><h3>Breyta lykilorði</h3></Link>
+                            </p>
                             <p>
                                 <Link to={"/Gang/Profile/MyProfile.aspx?legacy=true"} target="_blank"><h3>Prófíllinn á gamla hress</h3></Link>
                             </p>

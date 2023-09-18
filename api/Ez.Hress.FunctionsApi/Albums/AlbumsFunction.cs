@@ -8,14 +8,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Ez.Hress.Albums.UseCases;
+using Ez.Hress.Shared.UseCases;
 
 namespace Ez.Hress.FunctionsApi.Albums
 {
     public class AlbumsFunction
     {
         private readonly AlbumInteractor _albumInteractor;
-        public AlbumsFunction(AlbumInteractor albumInteractor)
+        private readonly AuthenticationInteractor _authenticationInteractor;
+        public AlbumsFunction(AuthenticationInteractor authenticationInteractor, AlbumInteractor albumInteractor)
         {
+            _authenticationInteractor = authenticationInteractor;
             _albumInteractor = albumInteractor;
         }
 
@@ -25,6 +28,13 @@ namespace Ez.Hress.FunctionsApi.Albums
             int? id, ILogger log)
         {
             log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbums));
+
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            if (!isJWTValid)
+            {
+                log.LogInformation($"[RunMagic] JWT is not valid!");
+                return new UnauthorizedResult();
+            }
 
             if (id.HasValue)
             {
@@ -51,6 +61,13 @@ namespace Ez.Hress.FunctionsApi.Albums
             int albumID, ILogger log)
         {
             log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbumImages));
+
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            if (!isJWTValid)
+            {
+                log.LogInformation($"[RunMagic] JWT is not valid!");
+                return new UnauthorizedResult();
+            }
 
             var list = await _albumInteractor.GetImages(albumID);
             return new OkObjectResult(list);

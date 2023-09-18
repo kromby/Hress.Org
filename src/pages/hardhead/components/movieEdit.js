@@ -3,15 +3,17 @@ import config from 'react-global-configuration';
 import axios from "axios";
 import { useAuth } from '../../../context/auth';
 import TypeAheadDropDown from '../../../components/typeAheadDropDown';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-const MovieEdit = (propsData) => {
+const MovieEdit = ({ id }) => {
     const { authTokens } = useAuth();
+    const params = useParams();
+    const location = useLocation();
+    const navigate = useNavigate();
     const [data, setData] = useState({ visible: false, saving: false })
-    //const [movie, setMovie] = useState();
     const [buttonEnabled, setButtonEnabled] = useState(false);
     const [imagePath, setImagePath] = useState("");
     const [imageGetEnabled, setImageGetEnabled] = useState(false);
-    const [omdbData, setOmdbData] = useState();
     const [actor, setActor] = useState("");
     const [movieName, setMovieName] = useState("");
     const [imdbUrl, setImdbUrl] = useState("");
@@ -22,19 +24,21 @@ const MovieEdit = (propsData) => {
     const [movieKills, setMovieKills] = useState();
     const [hardheadKills, setHardheadKills] = useState();
 
-    var movieUrl = config.get("path") + "/api/movies/" + propsData.id + "?code=" + config.get("code");
+    var movieUrl = config.get("path") + "/api/movies/" + id + "?code=" + config.get("code");
 
     useEffect(() => {
-        const getMovieData = async () => {
-            try {
-                const response = await axios.get(movieUrl);
+        if (authTokens === undefined) {
+            navigate("/login", {state: { from: location.pathname }} );
+            return;
+        }
 
+        const getMovieData = async () => {
+            axios.get(movieUrl).then(response => {
                 if (response.data !== undefined) {
                     if (response.data.YoutubeUrl) {
                         response.data.YoutubeUrl = "https://www.youtube.com/watch?v=" + response.data.YoutubeUrl;
                     }
 
-                    //setMovie(response.data);
                     setID(response.data.ID);
                     setMovieName(response.data.Name);
                     setActor(response.data.Actor);
@@ -46,23 +50,25 @@ const MovieEdit = (propsData) => {
                     setMovieKills(response.data.MovieKillCount);
                     setHardheadKills(response.data.HardheadKillCount);
                 }
-            }
-            catch (e) {
-                console.error("Error getting movie.");
-                console.error(e);
-                //setMovie({});
-                setData({ visible: false });
-            }
+            })
+                .catch(error => {
+                    if (error.response.status === 404) {
+                        console.log("[MovieEdit] Movie not found");
+                    } else {
+                        console.error("[MovieEdit] Error getting movie.");
+                        console.log(error);
+                        setData({ visible: false });
+                    }
+                });
         };
 
         getMovieData();
-    }, [propsData, movieUrl])
+    }, [params, movieUrl])
 
     const handleSubmit = async (event) => {
         event.preventDefault();
         setButtonEnabled(false);
         setData({ visible: data.visible, saved: false });
-        //console.log(movie);
         if (authTokens !== undefined) {
             event.preventDefault();
             try {
@@ -80,31 +86,27 @@ const MovieEdit = (propsData) => {
                     headers: { 'Authorization': 'token ' + authTokens.token },
                 });
                 setData({ saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate, saving: false });
-
-                console.log(response);
             } catch (e) {
+                console.error("[MovieEdit] Error saving movie.");
                 console.error(e);
-                alert("Ekki tókst að vista kvöld.");
                 setData({ visible: data.visible, saving: false });
                 setButtonEnabled(true);
             }
-        } else {
-            // TODO: redirect to main page
         }
-
     }
 
-    const handleActorChange = (event) => { console.log(event.target.value); setActor(event.target.value); setButtonEnabled(true); }
+    const handleActorChange = (event) => { setActor(event.target.value); setButtonEnabled(true); }
     const handleImdbChange = (event) => { setImdbUrl(event.target.value); setButtonEnabled(true); }
     const handleYoutubeChange = (event) => { setYoutubeUrl(event.target.value); setButtonEnabled(true); }
     const handleReasonChange = (event) => { setReason(event.target.value); setButtonEnabled(true); }
     const handlePosterChange = (event) => { setImagePath(event.target.value); setImageGetEnabled(event.target.value.length > 6 && movieName.length > 1); }
     const handleMovieKillsChange = (event) => { setMovieKills(event.target.value); setButtonEnabled(true); }
-    const handleHardhaedKillsChanges = (event) => {setHardheadKills(event.target.value); setButtonEnabled(true);}
+    const handleHardhaedKillsChanges = (event) => { setHardheadKills(event.target.value); setButtonEnabled(true); }
 
     const movieCallback = async (imdbId) => {
         try {
             const response = await axios.get("https://www.omdbapi.com/?apikey=" + config.get("omdb") + "&i=" + imdbId);
+            console.log("[MovieEdit] Response from omdbapi");
             console.log(response);
 
             setMovieName(response.data.Title);
@@ -116,8 +118,9 @@ const MovieEdit = (propsData) => {
             }
             setImageGetEnabled(true);
             setButtonEnabled(true);
-            setOmdbData(response.data);            
+            setOmdbData(response.data);
         } catch (e) {
+            console.error("[MovieEdit] Error getting data from omdbapi");
             console.error(e);
         }
     }
@@ -135,12 +138,8 @@ const MovieEdit = (propsData) => {
                 const response = await axios.post(config.get('imagePath') + '/api/Images', {
                     source: useImagePath,
                     name: movieName
-                }, {
-                    // headers: { 'Authorization': 'token ' + authTokens.token },
                 });
-                console.log(response);
                 if (response.status === 201) {
-                    console.log(response.data);
                     if (response.data) {
                         setPosterPhotoID(response.data.id)
                         setImagePath("/api/Images/" + response.data.id + "/content");
@@ -148,8 +147,8 @@ const MovieEdit = (propsData) => {
                     }
                 }
             } catch (e) {
+                console.error("[MovieEdit] Error saving new movie poster");
                 console.error(e);
-                alert("Ekki tókst að sækja mynd.");
                 setImageGetEnabled(true);
             }
         }
@@ -168,32 +167,20 @@ const MovieEdit = (propsData) => {
                 : null}
             <form onSubmit={handleSubmit}>
                 <div className="row gtr-uniform">
-                    {/* <div className="col-6 col-12-xsmall">
-                        <input id="name" type="text" name="name" onChange={(ev) => handleMovieChange(ev)} defaultValue={movie ? movie.Name : null} placeholder="Nafn myndar" />
-                        <ul>
-                            {omdbData && omdbData.Search ? 
-                            omdbData.Search.map(m => 
-                            <li key={m.imdbID}>
-                                {m.Title} ({m.Year})
-                                <img src={m.Poster} alt={m.Title} />
-                                </li>)
-                             : null}
-                        </ul>
-                    </div> */}
                     <div className="col-6 col-12-xsmall">
                         <TypeAheadDropDown defaultValue={movieName} placeholder="Nafn myndar" callback={(id) => movieCallback(id)} />
                     </div>
                     <div className="col-6 col-12-xsmall">
-                        <input id="actor" type="text" name="actor" onChange={(ev) => handleActorChange(ev)} value={actor} placeholder="Harðhaus" />
+                        <input id="actor" type="text" name="actor" onChange={(ev) => handleActorChange(ev)} defaultValue={actor} placeholder="Harðhaus" />
                     </div>
                     <div className="col-6 col-12-xsmall">
-                        <input id="movieKills" type="text" name="movieKills" onChange={(ev) => handleMovieKillsChange(ev)} value={movieKills} placeholder="Heildardráp" /> 
+                        <input id="movieKills" type="text" name="movieKills" onChange={(ev) => handleMovieKillsChange(ev)} defaultValue={movieKills} placeholder="Heildardráp" />
                     </div>
                     <div className="col-6 col-12-xsmall">
-                        <input id="hardheadKills" type="text" name="hardheadKills" onChange={(ev) => handleHardhaedKillsChanges(ev)} value={hardheadKills} placeholder="Harðhausadráp" />
+                        <input id="hardheadKills" type="text" name="hardheadKills" onChange={(ev) => handleHardhaedKillsChanges(ev)} defaultValue={hardheadKills} placeholder="Harðhausadráp" />
                     </div>
                     <div className="col-12">
-                        <input id="imdb" type="text" name="imdb" onChange={(ev) => handleImdbChange(ev)} value={imdbUrl} placeholder="Slóð á IMDB" />
+                        <input id="imdb" type="text" name="imdb" onChange={(ev) => handleImdbChange(ev)} defaultValue={imdbUrl} placeholder="Slóð á IMDB" />
                     </div>
                     <div className="col-12">
                         <input id="youtube" type="text" name="youtube" onChange={(ev) => handleYoutubeChange(ev)} defaultValue={youtubeUrl} placeholder="Slóð á trailer á Youtube" />
@@ -202,7 +189,7 @@ const MovieEdit = (propsData) => {
                         <textarea name="reason" rows="3" onChange={(ev) => handleReasonChange(ev)} defaultValue={reason} placeholder="Ástæða fyrir mynd?" />
                     </div>
                     <div className="col-8 col-12-xsmall">
-                        <input id="poster" type="text" name="poster" onChange={(ev) => handlePosterChange(ev)} value={imagePath} placeholder="Slóð á poster" />
+                        <input id="poster" type="text" name="poster" onChange={(ev) => handlePosterChange(ev)} defaultValue={imagePath} placeholder="Slóð á poster" />
                     </div>
                     <div className="col-4 col-12-xsmall">
                         <button tooltip="Sækja mynd" className="button small" disabled={!imageGetEnabled} onClick={(ev) => getPostImage(ev, undefined)}>Sækja mynd</button>

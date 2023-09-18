@@ -2,9 +2,11 @@ import React, {useState, useEffect} from 'react';
 import config from 'react-global-configuration';
 import axios from "axios";
 import MiniPost from '../../../components/minipost';
+import HardheadActions from './actions';
 
-const NextHardhead = (propsData) => {
+const NextHardhead = ({allowEdit}) => {
     const[hardhead, setHardhead] = useState();
+    const[editEnabled, setEditEnabled] = useState(false);
 
     var url = config.get('path') + '/api/hardhead?code=' + config.get('code');		
 
@@ -22,16 +24,18 @@ const NextHardhead = (propsData) => {
             }
         };
 
+        setEditEnabled(allowEdit);
+
         if(!hardhead) {
             getNextHardhead();
         }
-    }, [propsData, url])
+    }, [allowEdit, url])
 
     return (
         <div>
             {hardhead ? 
                 <MiniPost title="Næsta harðhausakvöld" 
-                    description={hardhead.Host.Username}
+                    description={<span>{hardhead.Host.Username}<br/><br/>{editEnabled ? <HardheadActions id={hardhead.ID}/>:null}</span>}
                     dateString={hardhead.DateString} 
                     date={hardhead.Date}
                     userHref={"/hardhead/users/" + hardhead.Host.ID}

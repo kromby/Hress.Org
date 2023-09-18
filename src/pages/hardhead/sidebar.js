@@ -6,18 +6,19 @@ import AwardsSide from './awards/awardsSide';
 import StatisticSide from './statistics/statisticsSide';
 import RulesSide from './rules/rulesSide';
 import YearsSide from './components/yearsSide';
+import { Link } from 'react-router-dom';
 
-const HardheadSidebar = (propsData) => {
-    return (
-        <section id="sidebar">
-            <Intro logo="https://hress.azurewebsites.net/App_Themes/Default/Images/Logo.png" title="Harðhaus" description="" />
+const HardheadSidebar = () => {
+	return (
+		<section id="sidebar">
+			<Intro logo="/logo.png" title="Harðhaus" description="" />
 
 			{/* <!-- Mini Posts --> */}
 			<section>
 				<div className="mini-posts">
 					{/* <!-- Mini Post --> */}
-					<NextHardhead/>					
-					<AwardsSide />					
+					<NextHardhead allowEdit="true" />
+					<AwardsSide />
 					<StatisticSide />
 					<RulesSide />
 				</div>
@@ -25,26 +26,7 @@ const HardheadSidebar = (propsData) => {
 			{/* <!-- Posts List --> */}
 			<section>
 				<ul className="posts">
-					<YearsSide/>
-				</ul>
-			</section>
-
-			<section>
-				<ul className="posts">					
-					<li>
-						<article>
-							<header>
-								<h3><a href="http://www.hress.org/Hardhead/Films.aspx" target="_parent">Myndirnar</a></h3>
-							</header>
-						</article>
-					</li>
-					<li>
-						<article>
-							<header>
-								<h3><a href="http://www.hress.org/Hardhead/defaultold.aspx" target="_parent">Gamla harðhausasíðan</a></h3>
-							</header>
-						</article>
-					</li>
+					<YearsSide />
 				</ul>
 			</section>
 
@@ -52,8 +34,28 @@ const HardheadSidebar = (propsData) => {
 			<section className="blurb">
 				<h2>Um Harðhaus</h2>
 				<p>Harðhausakvöld eru haldin einu sinni í mánuði. Á kvöldinu er horft á harðhausamynd.</p>
-				<ul className="actions">
-					<li><a href="http://www.hress.org/Hardhead/Rules.aspx" className="button">Lestu reglurnar</a></li>
+			</section>
+
+			<section>
+				<ul className="posts">
+					<li>
+						<article>
+							<header>
+								<Link to={"/Hardhead/films.aspx"} target="_parent">
+									<h3>Myndirnar</h3>
+								</Link>
+							</header>
+						</article>
+					</li>
+					<li>
+						<article>
+							<header>
+								<Link to={"/Hardhead/defaultold.aspx"} target="_parent">
+									<h3>Gamla harðhausasíðan</h3>
+								</Link>
+							</header>
+						</article>
+					</li>
 				</ul>
 			</section>
 
@@ -66,10 +68,10 @@ const HardheadSidebar = (propsData) => {
 					<li><a href="#" className="icon solid fa-rss"><span className="label">RSS</span></a></li>
 					<li><a href="#" className="icon solid fa-envelope"><span className="label">Email</span></a></li> */}
 				</ul>
-				<p className="copyright">&copy; Hress.Org - Guðjón Karl Arnarson.<br/>Design: <a href="http://html5up.net">HTML5 UP</a>.</p>
+				<p className="copyright">&copy; Hress.Org - Guðjón Karl Arnarson.<br />Design: <a href="http://html5up.net">HTML5 UP</a>.</p>
 			</section>
-        </section>    
-    );
+		</section>
+	);
 }
 
 export default HardheadSidebar;

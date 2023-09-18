@@ -1,67 +1,47 @@
-import React, { Component } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import config from 'react-global-configuration';
 import UserImage from '../../../components/users/userimage';
+import axios from "axios";
 
-export default class Guests extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            isLoaded: false,
-            error: null,
-            guests: null
-        };
-    }
+const Guests = ({ hardheadID }) => {
+    const [error, setError] = useState();
+    const [guests, setGuests] = useState();
 
-    componentDidMount() {
-        if (!this.state.guests) {
-            this.getData(this.props.hardheadID);
+    useEffect(() => {
+        const getGuests = async () => {
+            var url = config.get('path') + '/api/hardhead/' + hardheadID + '/guests?code=' + config.get('code');
+
+            axios.get(url)
+                .then((response) => setGuests(response.data))
+                .catch((ex) => {
+                    if (ex.response.status !== 404) {
+                        setError(ex);
+                        console.log("[Guests] Error retrieving guests");
+                    }
+                })
         }
-    }
 
-    getData(id) {
-        var url = config.get('path') + '/api/hardhead/' + id + '/guests?code=' + config.get('code');
+        if (!guests) {
+            getGuests();
+        }
+    }, [hardheadID])
 
-        fetch(url, {
-            method: 'GET'
-        })
-            .then(res => res.json())
-            .then((result) => {
-                this.setState({ error: null, isLoaded: true, guests: result });
-            },
-                (error) => {
-                    this.setState({ isLoaded: true, error: error });
-                });
-    }
-
-    render() {
-        const { error, isLoaded, guests } = this.state;
-
-        if (error) {
-            return (
-                <div id="main">
-                    {/* {error} */}
-                </div>
-            )
-        } else if (!isLoaded) {
-            return (
-                <div id="main">Loading</div>
-            )
-        } else {
-            return (
-                <section>
-                    <h3>Gestir</h3>
-                    <div className="row gtr-uniform">
-                        {guests.map(guest =>
-                            <div className="col-2 align-center" key={guest.ID}>
-                                {typeof guest.ProfilePhoto !== 'undefined' ?
-                                    <UserImage id={guest.ID} username={guest.Username} profilePhoto={guest.ProfilePhoto.Href} /> :
-                                    <UserImage id={guest.ID} username={guest.Username} />
-                                }
-                            </div>
-                        )}
+    return (
+        <section>
+            <h3>Gestir</h3>
+            <div className="row gtr-uniform">
+                {guests ? guests.map(guest =>
+                    <div className="col-2 align-center" key={guest.ID}>
+                        {typeof guest.ProfilePhoto !== 'undefined' ?
+                            <UserImage id={guest.ID} username={guest.Username} profilePhoto={guest.ProfilePhoto.Href} /> :
+                            <UserImage id={guest.ID} username={guest.Username} />
+                        }
                     </div>
-                </section>
-            )
-        }
-    }
+                ) : null}
+                {error ? error : null}
+            </div>
+        </section>
+    )
 }
+
+export default Guests;

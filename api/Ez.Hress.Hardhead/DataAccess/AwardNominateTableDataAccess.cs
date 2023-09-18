@@ -2,6 +2,7 @@
 using Azure.Data.Tables;
 using Ez.Hress.Hardhead.Entities;
 using Ez.Hress.Hardhead.UseCases;
+using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -13,22 +14,22 @@ namespace Ez.Hress.Hardhead.DataAccess
 {
     public class AwardNominateTableDataAccess : IAwardNominateDataAccess, IAwardNominationDataAccess
     {
-        private readonly ILogger<AwardNominateTableDataAccess> _log;
+        private readonly ILogger<AwardNominateTableDataAccess> _logger;
         private readonly TableClient _tableClient;
 
-        public AwardNominateTableDataAccess(TableClient client, ILogger<AwardNominateTableDataAccess> log)
+        public AwardNominateTableDataAccess(BlobConnectionInfo connectionInfo, ILogger<AwardNominateTableDataAccess> log)
         {
-            _log = log;
-            _tableClient = client;
+            _logger = log;
+            _tableClient = new TableClient(connectionInfo.ConnectionString, "HardheadNominations");
         }
 
         public async Task<int> SaveNomination(Nomination nomination)
         {
-            _log.LogInformation("[{Class}] Saving nomination", this.GetType().Name);
+            _logger.LogInformation("[{Class}] Saving nomination", this.GetType().Name);
 
             NominationTableEntity entity = new(nomination);
-            await _tableClient.AddEntityAsync<NominationTableEntity>(entity);
-            return 1;
+            var response = await _tableClient.AddEntityAsync<NominationTableEntity>(entity);
+            return response.IsError ? 0 : 1;
         }
 
         public Task<IList<Nomination>> GetNominations(int typeID)
@@ -38,8 +39,11 @@ namespace Ez.Hress.Hardhead.DataAccess
 
             foreach(var entity in result)
             {
-                var nomination = new Nomination(int.Parse(entity.PartitionKey), entity.NomineeID, entity.Description) { InsertedBy = entity.CreatedBy };
-                nomination.ID = entity.RowKey;
+                var nomination = new Nomination(int.Parse(entity.PartitionKey), entity.NomineeID, entity.Description)
+                {
+                    InsertedBy = entity.CreatedBy,
+                    ID = entity.RowKey
+                };
                 nomination.Nominee.Name = entity.NomineeName;
                 if(entity.NomineeImageID.HasValue)
                     nomination.Nominee.ProfilePhotoId = entity.NomineeImageID.Value;                

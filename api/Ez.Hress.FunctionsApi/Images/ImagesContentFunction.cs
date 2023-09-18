@@ -61,13 +61,19 @@ namespace Ez.Hress.FunctionsApi.Images
         {
             log.LogInformation("[{Class}] C# HTTP trigger function processed a request.", nameof(RunImagesContent));
 
-            bool isThumb = false;
+            int width = 0;
             if (!string.IsNullOrWhiteSpace(req.Query["thumb"]))
             {
-                _ = bool.TryParse(req.Query["thumb"], out isThumb);
+                _ = bool.TryParse(req.Query["thumb"], out bool isThumb);
+                width = isThumb ? 250 : 0;
             }
 
-            var entity = await _imageInteractor.GetContent(id, isThumb);
+            if (!string.IsNullOrWhiteSpace(req.Query["width"]))
+            {
+                _ = int.TryParse(req.Query["width"], out width);
+            }
+
+            var entity = await _imageInteractor.GetContent(id, width);
 
             if (entity == null || entity.Content == null)
             {

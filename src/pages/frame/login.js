@@ -3,18 +3,22 @@ import axios from 'axios';
 import config from 'react-global-configuration';
 
 import { useAuth } from '../../context/auth';
-import { Redirect } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { Post } from '../../components';
+import { useLocation } from 'react-router-dom';
 
-function Login(props) {
+function Login() {
     const [isError, setIsError] = useState(false);
+    const location = useLocation();
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const { authTokens, setAuthTokens } = useAuth();
-    const [referer, setReferer] = useState(props.location.state ? props.location.state.from : '/');
+    const [referer, setReferer] = useState(location.state ? location.state.from : '/');
 
+    console.log("[Login] referer: " + referer);
+    
     const postLogin = async () => {
-        console.log("[Login] postLogin()");
+        console.log("[Login] postLogin()");        
         var url = config.get('apiPath') + '/api/authenticate';
         try {
             const result = await axios.post(url, { username, password });
@@ -45,7 +49,7 @@ function Login(props) {
 
     if (authTokens !== undefined) {
         console.log("[Login] referer: " + referer);
-        return <Redirect to={referer} />
+        return <Navigate to={referer}/>;
     }
 
     return (

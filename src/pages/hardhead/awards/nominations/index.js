@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import { Redirect } from 'react-router-dom'
 import config from 'react-global-configuration';
 import axios from "axios";
 import { useAuth } from '../../../../context/auth';
 import StalloneNomination from './stalloneNomination';
 import DisappointmentNomination from './disappointmentNomination';
+import { useLocation } from 'react-router-dom';
 
-const Nominations = (propsData) => {
+const Nominations = () => {
     const { authTokens } = useAuth();
+    const location = useLocation();
     const [users, setUsers] = useState();
 
     var url = config.get('path') + '/api/hardhead/5384/users?code=' + config.get('code');
 
     useEffect(() => {
+        if (authTokens === undefined) {
+            navigate("/login", { state: { from: location.pathname } });
+            return;
+        }
+
         const getUsers = async () => {
             try {
                 var userID = localStorage.getItem("userID");
@@ -28,19 +34,14 @@ const Nominations = (propsData) => {
         if (!users) {
             getUsers();
         }
-    }, [propsData, url])
+    }, [url])
 
-    if (authTokens === undefined) {
-        return <Redirect to='/hardhead' />
-    }
-    else {
-        return (
-            <div id="main">
-                <StalloneNomination Users={users} Type="5284" />
-                <DisappointmentNomination Users={users} Type="360" />
-            </div>
-        )
-    }
+    return (
+        <div id="main">
+            <StalloneNomination Users={users} Type="5284" />
+            <DisappointmentNomination Users={users} Type="360" />
+        </div>
+    )
 }
 
 export default Nominations;

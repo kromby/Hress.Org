@@ -3,20 +3,21 @@ import { ErrorBoundary } from "react-error-boundary";
 import { Intro } from '../../components';
 import './historySidebar.css';
 import YearsSide from './yearsSide';
-import * as qs from 'query-string';
+import queryString from 'query-string';
+import { useLocation } from "react-router-dom";
 
-const HistorySidebar = (propsData) => {
+const HistorySidebar = () => {
     const [year, setYear] = useState();
+    const location = useLocation();
 
     useEffect (() => {
-        console.log(propsData);
-        const parsed = qs.parse(propsData.location.search);
+        const parsed = queryString.parse(location.search);
         if(parsed.year) {
             setYear(parsed.year);
-        }
-    }, [propsData])
+        }        
+    }, [location])
 
-    function ErrorFallback({ error, resetErrorBoundary }) {
+    function ErrorFallback({ error }) {
         return (
             <div role="alert">
                 <p>Something went wrong:</p>
@@ -27,22 +28,11 @@ const HistorySidebar = (propsData) => {
 
     return (
         <section id="sidebar">
-            <Intro logo="https://hress.azurewebsites.net/App_Themes/Default/Images/Logo.png" title="Hress.Org" description="þar sem hressleikinn býr" />
-
+            <Intro logo="/logo.png" title="Hress.Org" description="þar sem hressleikinn býr" />
             <ErrorBoundary
                 FallbackComponent={ErrorFallback}
-                onReset={() => {
-                    // reset the state of your app so the error doesn't happen again
-                }}
-            >
-                {/* <!-- Mini Posts --> */}
-                {/* <section>
-				<div className="mini-posts">
-					<!-- Mini Post -->
-				</div>
-			</section> */}
-
-                {/* <!-- Posts List --> */}
+                onReset={() => { /* reset the state of your app so the error doesn't happen again */ }}
+            >                
                 <section>
                     <ul className="posts">
                         <YearsSide year={year} />

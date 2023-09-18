@@ -1,0 +1,20 @@
+### Authenticate with user and pass
+# @prompt username
+# @prompt password
+
+# @name login
+POST {{host}}/api/authenticate
+Content-Type: application/json
+
+{
+	"username": "{{username}}",
+	"password": "{{password}}"
+}
+
+###
+@apiToken = {{login.response.body.*}}
+
+
+### Get access for authenticated user
+GET {{host}}/api/elections/49/voters/access
+X-Custom-Authorization: token {{apiToken}}

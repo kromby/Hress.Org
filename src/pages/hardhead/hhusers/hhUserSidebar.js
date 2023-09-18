@@ -4,14 +4,16 @@ import config from 'react-global-configuration';
 import { MiniPost } from '../../../components';
 import LastFilm from "./lastfilm";
 import { Helmet } from "react-helmet";
+import { useParams } from "react-router-dom";
 
-const HHUserSidebar = (propsData) => {
+const HHUserSidebar = () => {
     const [user, setUser] = useState();
     const [stats, setStats] = useState();
+    const params = useParams();
 
     useEffect(() => {
         const getUser = async () => {
-            var url = config.get('path') + '/api/users/' + propsData.match.params.id + '/?code=' + config.get('code');
+            var url = config.get('path') + '/api/users/' + params.id + '/?code=' + config.get('code');
 
             try {
                 const response = await axios.get(url);
@@ -22,7 +24,7 @@ const HHUserSidebar = (propsData) => {
         }
 
         const getStats = async () => {
-            var url = config.get('path') + '/api/hardhead/statistics/users/' + propsData.match.params.id + '?periodType=All&code=' + config.get('code');
+            var url = config.get('path') + '/api/hardhead/statistics/users/' + params.id + '?periodType=All&code=' + config.get('code');
 
             try {
                 const response = await axios.get(url);
@@ -39,7 +41,7 @@ const HHUserSidebar = (propsData) => {
         if (!stats) {
             getStats();
         }
-    }, [propsData])
+    }, [])
 
     return (
         <Helmet key="helmet">
@@ -77,7 +79,7 @@ const HHUserSidebar = (propsData) => {
                     // userText={data.awards.Winner.Username} 
                     />
 
-                    <LastFilm userID={propsData.match.params.id} />
+                    <LastFilm userID={params.id} />
 
                     {/* <!-- Mini Post --> */}
                     {/* <article class="mini-post">

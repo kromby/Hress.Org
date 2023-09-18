@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Post } from '../../../components';
 import Author from '../../../components/author';
 
-const HostStats = (propsData) => {
+const HostStats = () => {
     const [data, setData] = useState({ stats: null, isLoading: false, visible: false })
     const [pageSize, setPageSize] = useState(10);
     const [period, setPeriod] = useState("All");
@@ -28,7 +28,7 @@ const HostStats = (propsData) => {
             getStats();
             setReload(false);
         }
-    }, [propsData, url])
+    }, [url])
 
     const handleSubmit = async (event) => {
         console.log(data.stats.List.length);
@@ -85,8 +85,8 @@ const HostStats = (propsData) => {
                                     <td>{i + 1}</td>
                                     <td>
                                         {typeof stat.User.ProfilePhoto !== 'undefined' && stat.User.ProfilePhoto !== null ?
-                                            <Author ID={stat.User.ID} Username={stat.User.Username} ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
-                                            <Author ID={stat.User.ID} Username={stat.User.Username} />
+                                            <Author ID={stat.User.ID} Username={stat.User.Username} UserPath="/hardhead/users/" ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
+                                            <Author ID={stat.User.ID} Username={stat.User.Username} UserPath="/hardhead/users/" />
                                         }
                                     </td>
                                     <td>{stat.AttendedCount}</td>

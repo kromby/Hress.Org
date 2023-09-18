@@ -4,6 +4,7 @@ import { isMobile } from 'react-device-detect';
 import config from 'react-global-configuration';
 import { useAuth } from '../../context/auth';
 import axios from "axios";
+import { useNavigate } from 'react-router-dom';
 
 /**
  * Hook that alerts clicks outside of the passed ref
@@ -29,16 +30,17 @@ function useOutsideAlerter(ref, visible, callback) {
     }, [ref, visible, callback]);
 }
 
-const Menu = (propsData) => {
-    const { authTokens } = useAuth();
+const Menu = ({visible, onClick}) => {
+    const { authTokens, setAuthTokens } = useAuth();
     const [data, setData] = useState({ isLoading: false, menuItems: null, userID: 0 });
     const [path, setPath] = useState();
     const [loggedIn, setLoggedIn] = useState(false);
     const [links, setLinks] = useState();
     const wrapperRef = useRef(null);
-    const { pathname } = useLocation();
+    const location = useLocation();
+    const navigate = useNavigate();
 
-    useOutsideAlerter(wrapperRef, propsData.visible, propsData.onClick);
+    useOutsideAlerter(wrapperRef, visible, onClick);
 
     useEffect(() => {
         const getMenuData = async (pathname) => {
@@ -83,10 +85,15 @@ const Menu = (propsData) => {
         }
 
         if (!data.menuItems || path != window.location.pathname) {
-            setPath(window.location.pathname);
-            getMenuData(window.location.pathname);
+            setPath(location.pathname);
+            getMenuData(location.pathname);
         }
-    }, [propsData, authTokens])
+    }, [location, authTokens])
+
+    const logout = () => {
+        setAuthTokens();
+        navigate("/");
+    }
 
     return (
         <section id="menu" ref={wrapperRef}>
@@ -98,7 +105,7 @@ const Menu = (propsData) => {
             </section>
 
             <section>
-                <ul className="links" onClick={() => propsData.onClick()}>
+                <ul className="links" onClick={() => onClick()}>
                     {isMobile && links ? links.map(link =>
                         <li key={link.id}>
                             {link.isLegacy ?
@@ -136,14 +143,9 @@ const Menu = (propsData) => {
             </section>
 
             <section>
-                <ul className="actions stacked" onClick={() => propsData.onClick()}>
-                    {/* 
-                        {authTokens !== undefined ?
-                        <li onClick={() => propsData.onClick()}><a href="#" className="button large fit">Útskráning</a></li> :
-                        <li><a href="#" className="button large fit">Innskráning</a></li>
-                    */}
+                <ul className="actions stacked" onClick={() => onClick()}>
                     {authTokens === undefined ?
-                        <li key="One"><Link className="button large fit" to={{ pathname: "/login", state: { from: pathname } }}>Innskráning</Link></li> :
+                        <li key="One"><Link className="button large fit" to={{ pathname: "login", state: { from: location.pathname } }}>Innskráning</Link></li> :
                         [<li key="Two">
                             <Link to={"/Profile"}>
                                 <h3>Prófíll</h3>
@@ -153,7 +155,7 @@ const Menu = (propsData) => {
                                 <p>Breyttu þínum upplýsingum</p>
                             </Link> */}
                         </li>,
-                        <li key="Three">Útskráning (one day)</li>]
+                        <li key="Three"><button className="button large fit" onClick={() => logout()}>Útskráning</button></li>]
                     }
                 </ul>
             </section>

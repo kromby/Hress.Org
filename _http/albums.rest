@@ -1,0 +1,28 @@
+### Authenticate with user and pass
+# @prompt username
+# @prompt password
+
+# @name login
+POST {{host}}/api/authenticate
+Content-Type: application/json
+
+{
+	"username": "{{username}}",
+	"password": "{{password}}"
+}
+
+###
+@apiToken = {{login.response.body.*}}
+
+### Get all albums
+GET {{host}}/api/albums
+X-Custom-Authorization: token {{apiToken}}
+
+### Get album by id
+GET {{host}}/api/albums/46048
+X-Custom-Authorization: token {{apiToken}}
+
+
+### Get images for an album
+GET {{host}}/api/albums/46048/images
+X-Custom-Authorization: token {{apiToken}}

@@ -1,0 +1,26 @@
+### Authenticate with user and pass
+# @prompt username
+# @prompt password
+
+# @name login
+POST {{host}}/api/authenticate
+Content-Type: application/json
+
+{
+	"username": "{{username}}",
+	"password": "{{password}}"
+}
+
+###
+@apiToken = {{login.response.body.*}}
+
+
+### Getting menu root - unauthorized
+GET {{host}}/api/menus
+
+### Getting menu root - authorized
+GET {{host}}/api/menus
+X-Custom-Authorization: token {{apiToken}}
+
+### Get menu item by navigate URL
+GET {{host}}/api/menus?navigateUrl=~/hardhead&fetchChildren=true

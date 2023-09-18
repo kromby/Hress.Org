@@ -12,6 +12,7 @@ namespace Ez.Hress.Shared.UseCases
 {
     public class AuthenticationInteractor
     {
+        private const string _class = nameof(AuthenticationInteractor);
         private readonly AuthenticationInfo _authenticationInfo;
         private readonly IAuthenticationDataAccess _authenticationDataAccess;
         private readonly ILogger<AuthenticationInteractor> _log;
@@ -33,13 +34,13 @@ namespace Ez.Hress.Shared.UseCases
         {
             if (string.IsNullOrWhiteSpace(scheme) || string.IsNullOrWhiteSpace(value))
             {
-                _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Scheme or token value is missing. Scheme: '{scheme}'");
+                _log.LogInformation("[{Class}] Scheme or token value is missing. Scheme: '{Scheme}'", _class, scheme);
                 return new Tuple<bool, int>(false, -1);
             }
 
             if (scheme.Trim().ToLower() != "token")
             {
-                _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Scheme is not token. Scheme: '{scheme}'");
+                _log.LogInformation("[{Class}] Scheme is not token. Scheme: '{Scheme}'", _class, scheme);
                 return new Tuple<bool, int>(false, -1);
             }
 
@@ -48,7 +49,7 @@ namespace Ez.Hress.Shared.UseCases
                 var userIdString = DecryptToken(value);
                 if (string.IsNullOrWhiteSpace(userIdString))
                 {
-                    _log.LogInformation($"[{nameof(AuthenticationInteractor)}] UserId is missing. userIdString: '{userIdString}'");
+                    _log.LogInformation("[{Class}] UserId is missing. userIdString: '{userIdString}'", _class, userIdString);
                     return new Tuple<bool, int>(false, -1);
                 }
 
@@ -56,7 +57,7 @@ namespace Ez.Hress.Shared.UseCases
             }
             catch (Exception ex)
             {
-                _log.LogError(ex, $"[{nameof(AuthenticationInteractor)}] Error in GetUserIdFromToken(..)");
+                _log.LogError(ex, "[{Class}] Error in GetUserIdFromToken(..)", _class);
                 return new Tuple<bool, int>(false, -1);
             }
         }
@@ -65,13 +66,13 @@ namespace Ez.Hress.Shared.UseCases
         {
             if(string.IsNullOrWhiteSpace(username))
             {
-                _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Username is null or empty");
+                _log.LogInformation("[{Class}] Username is null or empty", _class);
                 throw new ArgumentNullException(nameof(username));
             }
 
             if(string.IsNullOrWhiteSpace(password))
             {
-                _log.LogInformation($"[{nameof(AuthenticationInteractor)}] Password is null or empty");
+                _log.LogInformation("[{Class}] Password is null or empty", _class);
                 throw new ArgumentNullException(nameof(password));
             }
 
@@ -81,7 +82,7 @@ namespace Ez.Hress.Shared.UseCases
             
             if(userID <= 0)
             {
-                _log.LogWarning($"[{nameof(AuthenticationInteractor)}] User '{username}' not authenticated.");
+                _log.LogWarning("[{Class}] User '{username}' not authenticated.", _class, username);
                 throw new UnauthorizedAccessException();
             }
 
@@ -94,10 +95,36 @@ namespace Ez.Hress.Shared.UseCases
             return jwt;
         }
 
+        public async Task ChangePassword(int userID, string password, string newPassword)
+        {
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                _log.LogInformation("[{Class}] Password is null or empty", _class);
+                throw new ArgumentNullException(nameof(password));
+            }
+
+            if (string.IsNullOrWhiteSpace(newPassword))
+            {
+                _log.LogInformation("[{Class}] New password is null or empty", _class);
+                throw new ArgumentNullException(nameof(newPassword));
+            }
+
+            string hashed = HashPassword(password, Encoding.UTF32.GetBytes(_authenticationInfo.Salt));
+
+            if (!await _authenticationDataAccess.VerifyPassword(userID, hashed))
+            {
+                _log.LogWarning("[{Class}] Invalid password for user '{UserID}'", _class, userID);
+                throw new UnauthorizedAccessException("Invalid password");
+            }
+
+            string hashedNew = HashPassword(newPassword, Encoding.UTF32.GetBytes(_authenticationInfo.Salt));
+            await _authenticationDataAccess.SavePassword(userID, hashedNew);
+        }
+
         public async Task<string> CreateMagicCode(int userID)
         {
             if(userID <= 0)
-                throw new ArgumentException(nameof(userID), "UserID must be greater than 0");
+                throw new ArgumentException("UserID must be greater than 0", nameof(userID));
 
             var code = Guid.NewGuid().ToString("N");
             int affected = await _authenticationDataAccess.SaveMagicCode(userID, code, DateTime.Now.AddSeconds(60));
@@ -106,7 +133,7 @@ namespace Ez.Hress.Shared.UseCases
             return code;
         }
 
-        private string HashPassword(string password, byte[] salt)
+        private static string HashPassword(string password, byte[] salt)
         {
             return Convert.ToBase64String(KeyDerivation.Pbkdf2(password, salt, KeyDerivationPrf.HMACSHA512, 10000, 256/8));
         }
@@ -129,7 +156,7 @@ namespace Ez.Hress.Shared.UseCases
                     ValidAudience = _authenticationInfo.Audience
                 };
 
-                if (!(handler.ValidateToken(token, validations, out var tokenSecure).Identity is ClaimsIdentity identity))
+                if (handler.ValidateToken(token, validations, out var tokenSecure).Identity is not ClaimsIdentity identity)
                 {
                     throw new Exception("boom - Identity is not valid");
                 }

@@ -3,7 +3,7 @@ import config from 'react-global-configuration';
 import axios from "axios";
 import YouTube from 'react-youtube';
 
-const Movie = (propsData) => {
+const Movie = ({id, photoPostback}) => {
     const [movieData, setMovieData] = useState({ movie: null })
     const [trailerOpen, setTrailerOpen] = useState(false);
 
@@ -15,7 +15,7 @@ const Movie = (propsData) => {
         }
     };
 
-    var movieUrl = config.get("path") + "/api/movies/" + propsData.id + "?code=" + config.get("code");
+    var movieUrl = config.get("path") + "/api/movies/" + id + "?code=" + config.get("code");
 
     useEffect(() => {
         const getMovieData = async () => {
@@ -25,7 +25,7 @@ const Movie = (propsData) => {
                 if (response.data !== undefined) {
                     setMovieData({ movie: response.data });
                     if (response.data.PosterPhoto) {
-                        propsData.photoPostback(response.data.PosterPhoto.Href);
+                        photoPostback(response.data.PosterPhoto.Href);
                     }
                 }
             }
@@ -39,7 +39,7 @@ const Movie = (propsData) => {
         if (!movieData.movie) {
             getMovieData();
         }
-    }, [propsData, movieUrl])
+    }, [id, photoPostback, movieUrl])
 
     const toggleTrailer = async () => {
         setTrailerOpen(!trailerOpen);

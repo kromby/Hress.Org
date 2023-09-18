@@ -10,8 +10,8 @@ namespace Ez.Hress.Hardhead.UseCases
 {
     public class AwardNominationInteractor
     {
-        private IAwardNominationDataAccess _awardDataAccess;
-        private ILogger<AwardNominationInteractor> _log;
+        private readonly IAwardNominationDataAccess _awardDataAccess;
+        private readonly ILogger<AwardNominationInteractor> _log;
 
         public AwardNominationInteractor(IAwardNominationDataAccess dataAccess, ILogger<AwardNominationInteractor> log)
         {
@@ -21,7 +21,7 @@ namespace Ez.Hress.Hardhead.UseCases
 
         public async Task<IList<Nomination>> GetNominations(int typeID, int excludedUserID)
         {
-            _log.LogInformation($"[{nameof(AwardNominationInteractor)}] Getting nominations for type {typeID}");
+            _log.LogInformation("[{Class}] Getting nominations for type {typeID}", nameof(AwardNominationInteractor), typeID);
 
             var list = await _awardDataAccess.GetNominations(typeID);
 

@@ -3,14 +3,16 @@ import config from 'react-global-configuration';
 import axios from "axios";
 import { Post } from "../../components";
 import { Helmet } from "react-helmet";
+import { useParams } from "react-router-dom";
 
-const SingleNews = (propsData) => {
+const SingleNews = () => {
     const [news, setNews] = useState();
+    const params = useParams();
 
     useEffect(() => {
         const getNews = async () => {
 
-            var url = config.get("apiPath") + "/api/news/" + propsData.match.params.id;
+            var url = config.get("apiPath") + "/api/news/" + params.id;
             try {
                 const response = await axios.get(url);
                 setNews(response.data);
@@ -22,7 +24,7 @@ const SingleNews = (propsData) => {
         if (!news) {
             getNews();
         }
-    }, [propsData])
+    }, [])
 
 
     return (
@@ -48,7 +50,7 @@ const SingleNews = (propsData) => {
                         dateFormatted={news.insertedString}
                         author={news.author}
                         body={<span dangerouslySetInnerHTML={{ __html: news.content }} />}
-                        image={news.image && news.image.id ? config.get('apiPath') + news.image.href : null}
+                        image={news.image && news.image.id ? config.get('apiPath') + news.image.href + "?width=1400" : null}
                         actions={<p />}
                     />
                 ] : null}

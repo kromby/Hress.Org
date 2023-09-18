@@ -3,16 +3,28 @@ import { ErrorBoundary } from "react-error-boundary";
 import axios from "axios";
 import config from 'react-global-configuration';
 import { Post } from "../../components";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "../../context/auth";
+import { useLocation } from "react-router-dom";
 
-const Albums = (propsData) => {
+const Albums = () => {
+    const { authTokens } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
     const [albums, setAlbums] = useState();
+ 
+    useEffect(() => {        
+        if (authTokens === undefined) {
+            navigate("/login", {state: { from: location.pathname }} );
+            return;
+        }
 
-    useEffect(() => {
         const getAlbums = async () => {
             var url = config.get("apiPath") + "/api/albums";
             try {
-                const response = await axios.get(url);
+                const response = await axios.get(url, {
+                    headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                });
                 setAlbums(response.data);
             } catch (e) {
                 console.error(e);
@@ -24,7 +36,7 @@ const Albums = (propsData) => {
         if (!albums) {
             getAlbums();
         }
-    }, [propsData])
+    }, [])
 
     return (
         <div id="main">

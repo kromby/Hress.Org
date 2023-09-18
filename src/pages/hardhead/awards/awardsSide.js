@@ -3,7 +3,7 @@ import config from 'react-global-configuration';
 import { MiniPost } from '../../../components';
 import axios from 'axios';
 
-const AwardsSide = (propsData) => {
+const AwardsSide = () => {
     const [data, setData] = useState({ awards: null, isLoading: false, visible: false })
 
     var url = config.get('path') + '/api/hardhead/awards/364/winners?position=1&code=' + config.get('code');
@@ -23,7 +23,7 @@ const AwardsSide = (propsData) => {
         if (!data.awards) {
             getAwards();
         }
-    }, [propsData, url])
+    }, [url])
 
     return (
         <div>

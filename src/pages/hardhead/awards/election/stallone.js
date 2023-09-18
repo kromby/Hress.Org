@@ -3,13 +3,13 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import Post from '../../../../components/post';
 import { useAuth } from '../../../../context/auth';
+import {isMobile} from 'react-device-detect';
 
-const Stallone = (propsData) => {
+const Stallone = ({ID, Name, Description, Date, Year, onSubmit}) => {
     const { authTokens } = useAuth();
-    const [users, setUsers] = useState();
+    const [stallones, setStallones] = useState();
     const [savingAllowed, setSavingAllowed] = useState(false);
     const [selectedUser, setSelectedUser] = useState();
-    const [text, setText] = useState();
     const [userID, setUserID] = useState();
 
     var url = config.get('path') + '/api/hardhead/5384/users?code=' + config.get('code');
@@ -18,54 +18,40 @@ const Stallone = (propsData) => {
 
         setUserID(localStorage.getItem("userID"));
 
-        const getHardheadUsers = async () => {
+        const getNominations = async () => {
             try {
+                var url = config.get('path') + '/api/hardhead/awards/' + ID + '/nominations?code=' + config.get('code');
                 const response = await axios.get(url);
-                setUsers(response.data);
+                setStallones(response.data);
             } catch (e) {
                 console.error(e);
                 alert(e);
             }
         }
 
-        if (!users) {
-            getHardheadUsers();
+        if (!stallones) {
+            getNominations();
         }
-    }, [propsData, url])
+    }, [ID, url])
 
-    const handleUserChange = async (event) => {
+    const handleChange = async (event) => {
         if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
             return;
         }
 
-        if (event.target.value !== "") {
-            setSelectedUser(event.target.value);
-            setSavingAllowed(text !== undefined && event.target.value !== undefined);
-        }
-        else {
-            setSelectedUser(undefined);
-            setSavingAllowed(false);
-        }
-    }
-
-    const handleTextChange = async (event) => {
-        if (authTokens === undefined) {
-            alert("Þú þarf að skrá þig inn");
+        var userID = localStorage.getItem("userID");
+        if (event == userID) {
+            alert("Ætlar þú í alvöru að kjósa sjálfan þig, það er ekki mjög Harðhausalegt.");
             return;
         }
 
-        if (event.target.value.trim() !== "") {
-            setText(event.target.value);
-            setSavingAllowed(event.target.value !== undefined && selectedUser !== undefined);
-        } else {
-            setText(undefined);
-            setSavingAllowed(false);
-        }
 
+        setSelectedUser(event);
+        setSavingAllowed(true);
     }
 
-    const handelSubmit = async (event) => {
+    const handleSubmit = async (event) => {
         setSavingAllowed(false);
         event.preventDefault();
         if (authTokens === undefined) {
@@ -73,13 +59,12 @@ const Stallone = (propsData) => {
             return;
         }
 
+        var voteData = [{ PollEntryID: selectedUser, Value: stallones.filter(n => n.ID === selectedUser)[0].Nominee.ID }];
+
         try {
-            var url = config.get('path') + '/api/elections/' + propsData.ID + '/vote?code=' + config.get('code');
-            await axios.post(url, [{
-                value: selectedUser,
-                description: text
-            }], {
-                headers: { 'Authorization': 'token ' + authTokens.token },
+            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            await axios.post(url, voteData, {
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
         } catch (e) {
             console.error(e);
@@ -87,48 +72,47 @@ const Stallone = (propsData) => {
             setSavingAllowed(true);
         }
 
-        propsData.onSubmit();
+        onSubmit();
     }
 
-    return (
-        <Post
-            id={propsData.ID}
-            title={propsData.Name}
-            description={propsData.Description}
-            date={propsData.Date}
-            dateFormatted={propsData.Year}
-            body=
-            {
+    return ([
+        <Post key="1"
+            id={ID}
+            title={Name}
+            description={Description}
+            date={Date}
+            dateFormatted={Year}
+            body={
                 <section>
-                    <form onSubmit={handelSubmit}>
-                        <div className="row gtr-uniform">
-                            <div className="col-12">
-                                <select name="demo-category" id="demo-category" onChange={(ev) => handleUserChange(ev)}>
-                                    <option value="">- Veldu {propsData.Name} -</option>
-                                    {users ?
-                                        users.map(user =>
-                                            user.ID != userID ?
-                                                <option key={user.ID} value={user.ID}>{user.Name}</option>
-                                                : null
-                                        ) : null}
-                                </select>
+                    <div className="row gtr-uniform">
+                        {stallones ? stallones.map(stallone =>
+                            <div className={isMobile ? "col-12" : "col-6"} key={stallone.ID} onClick={() => handleChange(stallone.ID)} >
+                                <input type="radio" checked={selectedUser === stallone.ID} onChange={() => handleChange(stallone.ID)} />
+                                <label>
+                                    <h3 className="author" width="50%">
+                                        {stallone.Nominee.ProfilePhoto ?
+                                            <img src={config.get("apiPath") + stallone.Nominee.ProfilePhoto.Href} alt={stallone.Nominee.Username} />
+                                            : null}
+                                        &nbsp;&nbsp;&nbsp;
+                                        <b>{stallone.Nominee.Username}</b>
+                                    </h3>
+                                </label>
+                                <br />
+                                {stallone.Name}
+                                <br />
+                                <br />
                             </div>
-                            <div className="col-12">
-                                <textarea name="demo-message" id="demo-message" placeholder="Skrifaðu rökstuðning fyrir valinu" rows="3" onChange={(ev) => handleTextChange(ev)}></textarea>
-                            </div>
-                            <div className="col-12">
-                                <ul className="actions">
-                                    <li>
-                                        <input type="submit" value={"Kjósa " + propsData.Name} disabled={!savingAllowed} />
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </form>
+                        ) : null}
+                    </div>
                 </section>
             }
-        />
-    )
+        />,
+        <ul key="2" className="actions pagination">
+            <li>
+                <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa " + Name}</button>
+            </li>
+        </ul>
+    ])
 }
 
 export default Stallone;

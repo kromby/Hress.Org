@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAuth } from "../../../../context/auth"
 import { Post } from "../../../../components";
 
-const RulesNewOld = (propsData) => {
+const RulesNewOld = ({ID, Name, onSubmit}) => {
     const { authTokens } = useAuth();
     const [rules, setRules] = useState();
     const [selectedValues, setSelectedValues] = useState([]);
@@ -31,7 +31,7 @@ const RulesNewOld = (propsData) => {
         if (!rules) {
             getRules();
         }
-    }, [propsData])
+    }, [ID])
 
     const handleSubmit = async (event) => {
         setSavingAllowed(false);
@@ -42,9 +42,9 @@ const RulesNewOld = (propsData) => {
         }
 
         try {
-            var url = config.get('path') + '/api/elections/' + propsData.ID + '/vote?code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, selectedValues, {
-                headers: { 'Authorization': 'token ' + authTokens.token },
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
         } catch (e) {
             console.error(e);
@@ -52,7 +52,7 @@ const RulesNewOld = (propsData) => {
             setSavingAllowed(true);
         }
 
-        propsData.onSubmit();
+        onSubmit();
     }
 
     const handleChange = async (id, value) => {
@@ -65,9 +65,6 @@ const RulesNewOld = (propsData) => {
         tempList.push({ PollEntryID: id, Value: value });
         setSelectedValues(tempList);
 
-
-        console.log("Length");
-        console.log(tempList.filter(v => v.Value === 0).length);
         if (tempList.filter(v => v.Value === 0).length === 0) {
             setSavingAllowed(true);
         }
@@ -106,9 +103,7 @@ const RulesNewOld = (propsData) => {
 
             <ul className="actions pagination">
                 <li>
-                    {/* <a href="#" className="button large next" onClick={handleSubmit} disabled={!savingAllowed}>{"Ljúka kosningu um " + propsData.Name}</a>
-                    <input type="submit" value={"Kjósa " + propsData.Name} disabled={!savingAllowed} /> */}
-                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Ljúka kosningu um " + propsData.Name}</button>
+                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa um " + Name}</button>
                 </li>
             </ul>
         </div>

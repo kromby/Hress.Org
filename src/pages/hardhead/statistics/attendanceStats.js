@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Post } from "../../../components";
 import Author from "../../../components/author";
 
-const AttendanceStats = (propsData) => {
+const AttendanceStats = () => {
     const [stats, setStats] = useState();
     const [pageSize, setPageSize] = useState(10);
     const [period, setPeriod] = useState("All");
@@ -13,8 +13,9 @@ const AttendanceStats = (propsData) => {
     var url = config.get('path') + '/api/hardhead/statistics/attendance?periodType=' + period + '&code=' + config.get('code');
 
     useEffect(() => {
-        const getStats = async () => {
+        const getStats = async () => { 
             try {
+                setStats(null);
                 const response = await axios.get(url);
                 setStats(response.data);
             } catch (e) {
@@ -26,7 +27,7 @@ const AttendanceStats = (propsData) => {
             getStats();
             setReload(false);
         }
-    }, [propsData, url])
+    }, [, url])
 
     const handleSubmit = async (event) => {
         console.log(stats.List.length);
@@ -82,8 +83,8 @@ const AttendanceStats = (propsData) => {
                                     <td>{i + 1}</td>
                                     <td>
                                         {stat.User.ProfilePhoto ?
-                                            <Author ID={stat.User.ID} Username={stat.User.Username} ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
-                                            <Author ID={stat.User.ID} Username={stat.User.Username} />
+                                            <Author ID={stat.User.ID} Username={stat.User.Username} UserPath="/hardhead/users/" ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
+                                            <Author ID={stat.User.ID} Username={stat.User.Username} UserPath="/hardhead/users/" />
                                             // <Author ID={stat.User.ID} Username={stat.User.Username} ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
                                             // <Author ID={stat.User.ID} Username={stat.User.Username} />
                                         }

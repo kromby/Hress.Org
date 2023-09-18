@@ -3,10 +3,10 @@ import config from 'react-global-configuration';
 import { MiniPost } from '../../../components';
 import axios from 'axios';
 
-const RulesSide = (propsData) => {
+const RulesSide = () => {
     const [data, setData] = useState({ rule: null, child: null, isLoading: false, visible: false })
 
-    var url = config.get('path') + '/api/hardhead/rules?code=' + config.get('code');
+    var url = config.get('apiPath') + '/api/hardhead/rules';
 
     useEffect(() => {
         var id = 0;
@@ -21,9 +21,9 @@ const RulesSide = (propsData) => {
                 const random = Math.round(min + Math.random() * (max - min));
 
                 setData({ rule: response.data[random], isLoading: false, visible: true });
-                id = response.data[random].ID;
+                id = response.data[random].id;
 
-                var childUrl = config.get('path') + '/api/hardhead/rules/' + id + '?code=' + config.get('code');
+                var childUrl = config.get('apiPath') + '/api/hardhead/rules/' + id;
                 const childResponse = await axios.get(childUrl);
 
                 min = 0;
@@ -39,7 +39,7 @@ const RulesSide = (propsData) => {
         if (!data.rule) {
             getRule();
         }
-    }, [propsData, url])
+    }, [url])
 
     return (
         <div>
@@ -49,9 +49,9 @@ const RulesSide = (propsData) => {
                     href="/hardhead/rules"
                     description={
                         <span>
-                            <u>{data.rule.Name}</u>
+                            <u>{data.rule.name}</u>
                             <br />
-                            {data.child ? data.child.Name : null}
+                            {data.child ? data.child.name : null}
                         </span>
                     }
                 />

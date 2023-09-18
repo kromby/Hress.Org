@@ -3,42 +3,47 @@ import config from 'react-global-configuration';
 import axios from "axios";
 import { useAuth } from '../../../context/auth';
 import UserImage from '../../../components/users/userimage';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const GuestsEdit = (propsData) => {
+const GuestsEdit = ({ hardheadID, users }) => {
     const { authTokens } = useAuth();
+    const location = useLocation();
+    const navigate = useNavigate();
     const [guests, setGuests] = useState();
-    const [users, setUsers] = useState();
 
     const getGuests = async () => {
-        try {
-            var url = config.get('path') + '/api/hardhead/' + propsData.hardheadID + '/guests?code=' + config.get('code')
-            const response = await axios.get(url);
-            setGuests(response.data);
-        } catch (e) {
-            console.error(e);
-        }
+        var url = config.get('path') + '/api/hardhead/' + hardheadID + '/guests?code=' + config.get('code')
+        axios.get(url)
+            .then(response => {
+                setGuests(response.data);
+            })
+            .catch(error => {
+                if (error.response.status === 404) {
+                    console.log("[GuestsEdit] Guests not found for Hardhead: " + hardheadID);
+                } else {
+                    console.error("[GuestsEdit] Error retrieving guests for Hardhead: " + hardheadID);
+                    console.error(error);
+                }
+            })
     }
 
     useEffect(() => {
         if (authTokens === undefined) {
-            // TODO Redirect back to main page
+            navigate("/login", {state: { from: location.pathname }} );
+            return;
         }
-
-        setUsers(propsData.users);
 
         if (!guests) {
             getGuests();
         }
-    }, [propsData, authTokens])
+    }, [hardheadID, authTokens])
 
     const handleGuestChange = async (event) => {
         if (authTokens !== undefined) {
             event.preventDefault();
             try {
-                console.log(propsData.hardheadID);
                 var guestID = event.target.value;
-                console.log(guestID);
-                var url = config.get('path') + '/api/hardhead/' + propsData.hardheadID + '/guests/' + guestID + '?code=' + config.get('code');
+                var url = config.get('path') + '/api/hardhead/' + hardheadID + '/guests/' + guestID + '?code=' + config.get('code');
                 const response = await axios.post(url, {}, {
                     headers: { 'Authorization': 'token ' + authTokens.token },
                 });
@@ -47,14 +52,10 @@ const GuestsEdit = (propsData) => {
                 setUsers(users.filter(u => {
                     return u.ID != guestID;
                 }));
-
-                console.log(response);
             } catch (e) {
+                console.error("[GuestsEdit] Ekki tókst að bæta gest við.");
                 console.error(e);
-                alert("Ekki tókst að bæta gest við.");
             }
-        } else {
-            // TODO: redirect to main page
         }
     }
 

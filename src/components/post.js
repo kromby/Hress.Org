@@ -25,13 +25,13 @@ export default class Post extends Component {
                         <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>
                         {this.props.author && this.props.author.ID ?
                             this.props.author.ProfilePhoto ?
-                                <Author ID={this.props.author.ID} Username={this.props.author.Username} ProfilePhoto={this.props.author.ProfilePhoto.Href} /> :
-                                <Author ID={this.props.author.ID} Username={this.props.author.Username} />
+                                <Author ID={this.props.author.ID} Username={this.props.author.Username} UserPath={this.props.userPath} ProfilePhoto={this.props.author.ProfilePhoto.Href} /> :
+                                <Author ID={this.props.author.ID} Username={this.props.author.Username} UserPath={this.props.userPath} />
                             : null}
                         {this.props.author && this.props.author.id ?
                             this.props.author.profilePhoto ?
-                                <Author ID={this.props.author.id} Username={this.props.author.username} ProfilePhoto={this.props.author.profilePhoto.href} /> :
-                                <Author ID={this.props.author.id} Username={this.props.author.username} />
+                                <Author ID={this.props.author.id} Username={this.props.author.username} UserPath={this.props.userPath} ProfilePhoto={this.props.author.profilePhoto.href} /> :
+                                <Author ID={this.props.author.id} Username={this.props.author.username} UserPath={this.props.userPath} />
                             : null}
                     </div>
                 </header>

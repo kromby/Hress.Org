@@ -12,7 +12,7 @@ namespace Ez.Hress.Shared.DataAccess
     {
         public string Prefix { get => "http"; }
 
-        public async Task<byte[]> GetContent(string path)
+        public async Task<byte[]?> GetContent(string path)
         {
             //path = path.Replace("http://", "https://");
             var client = new HttpClient();

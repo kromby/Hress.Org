@@ -1,0 +1,40 @@
+### Authenticate with user and pass
+# @prompt username
+# @prompt password
+
+# @name login
+POST {{host}}/api/authenticate?code={{apiCode}}
+Content-Type: application/json
+
+{
+	"username": "{{username}}",
+	"password": "{{password}}"
+}
+
+###
+@apiToken = {{login.response.body.*}}
+
+
+### Get all dinner parties
+GET {{host}}/api/dinnerParties
+
+### Get a single dinner party
+GET {{host}}/api/dinnerParties/5304
+
+### Get all courses for a single dinner party
+GET {{host}}/api/dinnerParties/5304/courses
+
+### Get all courses by typeID
+GET {{host}}/api/dinnerparties/courses/191
+
+### Get redwine teams
+GET {{host}}/api/dinnerparties/5383/teams
+
+### Post vote on course
+POST {{host}}/api/dinnerparties/courses/999
+Content-Type: application/json
+X-Custom-Authorization: token {{apiToken}}
+
+{
+    "courseID": 9979
+}

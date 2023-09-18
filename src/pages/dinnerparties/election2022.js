@@ -5,16 +5,18 @@ import axios from "axios";
 import {isMobile} from 'react-device-detect';
 import { Post } from "../../components";
 import { useAuth } from "../../context/auth";
+import { useParams } from "react-router-dom";
 
-const Election2022 = (propsData) => {
+const Election2022 = () => {
     const { authTokens } = useAuth();
+    const params = useParams();
     const [courses, setCourses] = useState();
     const [selected, setSelected] = useState();
     const [savingAllowed, setSavingAllowed] = useState(false);
     const [message, setMessage] = useState();
     const { pathname } = useLocation();
 
-    var url = config.get("apiPath") + "/api/dinnerparties/courses/" + propsData.match.params.typeID;
+    var url = config.get("apiPath") + "/api/dinnerparties/courses/" + params.typeID;
 
     useEffect(() => {
         const getCourses = async () => {
@@ -31,7 +33,7 @@ const Election2022 = (propsData) => {
         if (!courses) {
             getCourses();
         }
-    }, [propsData, url]);
+    }, [params, url]);
 
     const handleChange = async (event) => {
         setSelected(event);

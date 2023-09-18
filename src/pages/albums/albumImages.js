@@ -3,16 +3,20 @@ import config from "react-global-configuration";
 import axios from "axios";
 import Album from "./album";
 import { isMobile } from "react-device-detect";
+import { useAuth } from "../../context/auth";
 
-const AlbumImages = (propsData) => {
+const AlbumImages = ({url}) => {
+    const { authTokens } = useAuth();
     const [images, setImages] = useState();
     const [selectedImage, setSelectedImage] = useState();
 
     useEffect(() => {
         const getImages = async () => {
-            var url = config.get("apiPath") + propsData.url;
+            var _url = config.get("apiPath") + url;
             try {
-                const response = await axios.get(url);
+                const response = await axios.get(_url, {
+					headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+				});
                 setImages(response.data);
             } catch (e) {
                 console.error(e);
@@ -22,7 +26,7 @@ const AlbumImages = (propsData) => {
         if (!images) {
             getImages();
         }
-    }, [propsData]);
+    }, [url]);
 
     const handleChange = async (id) => {
         setSelectedImage(id);
@@ -33,15 +37,15 @@ const AlbumImages = (propsData) => {
         <section>
             <div className="box alt">
                 <div className="row gtr-uniform">
-                    <div class="col-12">
-                        <span class="image album">
-                            <img src={config.get("apiPath") + "/api/images/" + selectedImage + "/content"} alt="" />
+                    <div className="col-12">
+                        <span className="image album">
+                            <img src={config.get("apiPath") + "/api/images/" + selectedImage + "/content?width=1400"} alt="" />
                         </span>
                     </div>
                     {images ? images.map(image =>
-                        <div className={isMobile ? "col-3" : "col-2"}>
+                        <div className={isMobile ? "col-3" : "col-2"} key={image.id}>
                             <span className="image fit" key={image.id}>
-                                <img src={config.get("apiPath") + "/api/images/" + image.id + "/content"} alt={image.name} onClick={() => handleChange(image.id)} />
+                                <img src={config.get("apiPath") + "/api/images/" + image.id + "/content?width=250"} alt={image.name} onClick={() => handleChange(image.id)} />
                             </span>
                         </div>
                     ) : null}

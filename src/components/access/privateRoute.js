@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
+import { Route, Navigate } from 'react-router-dom';
 import { useAuth } from './../../context/auth';
 
 function PrivateRoute({ component: Component, ...rest }) {
@@ -12,7 +12,7 @@ function PrivateRoute({ component: Component, ...rest }) {
           authTokens ? (
             <Component {...props} />
           ) : (
-            <Redirect  to={{ pathname: "/login?authTokens=" + authTokens, state: { referer: props.location } }} />
+            <Navigate to={"/login?authTokens=" + authTokens} state={{ referer: props.location }} />
           )
         }
       />

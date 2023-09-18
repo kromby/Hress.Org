@@ -5,17 +5,7 @@ import { Post } from "../../../../components";
 import { useAuth } from "../../../../context/auth"
 import RuleChanges from "./rulechanges";
 
-async function getChild(href) {
-    var url = config.get('path') + href + '?code=' + config.get('code');
-    try {
-        const response = await axios.get(url);
-        return response.data.filter(p => p.Changes);
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-const Rules = (propsData) => {
+const Rules = ({ID, Name, onSubmit}) => {
     const { authTokens } = useAuth();
     const [ruleList, setRuleList] = useState([]);
     const [selectedValues, setSelectedValues] = useState([]);
@@ -23,17 +13,17 @@ const Rules = (propsData) => {
 
     useEffect(() => {
         const getRules = async () => {
-            var url = config.get('path') + '/api/hardhead/rules?code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/hardhead/rules';
             try {
                 const response = await axios.get(url);
 
                 let temparray = [];
                 await response.data.forEach(async parent => {
-                    var childRules = await getChild(parent.SubRules.Href);
+                    var childRules = await getChild(parent.subRules.href);
 
                     let selectedArr = selectedValues;
                     childRules.forEach(element => {
-                        selectedArr.push({ EventID: element.ID, PollEntryID: 0, Value: 0 });
+                        selectedArr.push({ EventID: element.id, PollEntryID: 0, Value: 0 });
                     });
                     setSelectedValues(selectedArr);
 
@@ -46,10 +36,18 @@ const Rules = (propsData) => {
             }
         }
 
-        if (!ruleList) {
-            getRules();
+        getRules();
+    }, [])
+
+    async function getChild(href) {
+        var url = config.get('apiPath') + href;
+        try {
+            const response = await axios.get(url);
+            return response.data.filter(p => p.changes);
+        } catch (e) {
+            console.error(e);
         }
-    }, [propsData])
+    }    
 
     const handleSubmit = async (event) => {
         setSavingAllowed(false);
@@ -60,9 +58,9 @@ const Rules = (propsData) => {
         }
 
         try {
-            var url = config.get('path') + '/api/elections/' + propsData.ID + '/vote?code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, selectedValues, {
-                headers: { 'Authorization': 'token ' + authTokens.token },
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
         } catch (e) {
             console.error(e);
@@ -70,7 +68,7 @@ const Rules = (propsData) => {
             setSavingAllowed(true);
         }
 
-        propsData.onSubmit();
+        onSubmit();
     }
 
     const handleChange = async (id, changeId, value) => {
@@ -90,38 +88,22 @@ const Rules = (propsData) => {
 
     return (
         <div>
-            <Post
-                id={propsData.ID}
-                title={propsData.Name}
-                description={propsData.Description}
-                date={propsData.Date}
-                dateFormatted={propsData.Year}
-                body={
-                    <section>
-                        <p>
-                            Gefðu öllum myndunum sem þú sást einkunn, smelltu síðan á <b>Ljúka</b> neðst á síðunni til að halda áfram
-                        </p>
-                    </section>
-                }
-            />
-
             {ruleList ? ruleList.map(rule =>
                 <RuleChanges
-                    key={rule.ID}
-                    href={rule.Changes.Href}
-                    current={rule.Name}
-                    id={rule.ID}
-                    title={rule.ParentNumber + ". kafli " + rule.Number + ". grein"}
+                    key={rule.id}
+                    href={rule.changes ? rule.changes.href : null}
+                    current={rule.name}
+                    id={rule.id}
+                    title={rule.parentNumber + ". kafli " + rule.number + ". grein"}
                     description="Reglubreyting"
-                    selectedRule={selectedValues.filter(v => v.EventID === rule.ID)[0].PollEntryID}
-                    selectedValue={selectedValues.filter(v => v.EventID === rule.ID)[0].Value}
+                    selectedRule={selectedValues.filter(v => v.EventID === rule.id)[0].PollEntryID}
+                    selectedValue={selectedValues.filter(v => v.EventID === rule.id)[0].Value}
                     onSubmit={handleChange} />
             ) : <Post title="Engar reglubreytingar" />}
 
             <ul className="actions pagination">
                 <li>
-                    {/* <a href="#" className="button large next" onClick={handleSubmit}>{"Ljúka kosningu um " + propsData.Name}</a> */}
-                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Ljúka kosningu um " + propsData.Name}</button>
+                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa um " + Name}</button>
                 </li>
             </ul>
         </div>

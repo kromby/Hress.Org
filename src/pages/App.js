@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Switch, Link } from 'react-router-dom';
+import { BrowserRouter, Link, Routes, Route } from 'react-router-dom';
 import jwt from 'jsonwebtoken';
 import ReactGA from 'react-ga4';
 
-import PrivateRoute from './../components/access/privateRoute';
 import { AuthContext } from './../context/auth';
 import Hardhead from './hardhead';
 import HardheadSidebar from './hardhead/sidebar';
@@ -31,23 +30,29 @@ import { Helmet } from 'react-helmet';
 import HistoryNews from './news/history';
 import HistorySidebar from './news/historySidebar';
 import DinnerParties from './dinnerparties';
-import Election2022 from './dinnerparties/election2022';
 import DinnerParty from './dinnerparties/dinnerparty';
 import Profile from './profile';
 import Albums from './albums';
 import Album from './albums/album';
+import RuleChange from './hardhead/rules/change';
+import Password from './profile/password';
 
-function App(props) {
+function App() {
   const [authTokens, setAuthTokens] = useState();
   const [data, setData] = useState({ showMenu: false });
   const TRACKING_ID = "G-Z6HJ4VPZTN";
 
 
   const setTokens = (data) => {
-    localStorage.setItem("tokens", JSON.stringify(data));
-    var decodedToken = jwt.decode(data.token, { complete: true });
-    localStorage.setItem("userID", decodedToken.payload.sub);
-    setAuthTokens(data);
+    if (data) {
+      localStorage.setItem("tokens", JSON.stringify(data));
+      var decodedToken = jwt.decode(data.token, { complete: true });
+      localStorage.setItem("userID", decodedToken.payload.sub);
+      setAuthTokens(data);
+    } else {
+      setAuthTokens();
+      localStorage.removeItem("tokens");
+    }
   }
 
   const setGoogleAnalytics = () => {
@@ -101,7 +106,7 @@ function App(props) {
         <meta property="og:url" key="og:url" content={window.location.href} />
       </Helmet>
       <div className={data.class}>
-        <Router>
+        <BrowserRouter>
           <div id="wrapper" >
             <header id="header">
               <h1><Link to="/">Hress.Org</Link></h1>
@@ -122,62 +127,78 @@ function App(props) {
             </header>
 
             {/* Main section */}
-            <Switch>
-              <Route exact path="/" component={News} />
-              <Route exact path="/hardhead" component={Hardhead} />
-              <Route exact path="/hardhead/awards" component={Awards} />
-              <Route path="/hardhead/awards/year/:id" component={AwardsByYear} />
-              <Route exact path="/hardhead/awards/nominations" component={Nominations} />
-              <Route exact path="/hardhead/awards/election" component={Election} />
-              <Route path="/hardhead/awards/:id" component={AwardsByType} />
-              <Route path="/hardhead/rules" component={Rules} />
-              <Route path="/hardhead/users/:id" component={HHUsers} />
-              <Route path="/hardhead/stats" component={Statistics} />
-              <Route path="/hardhead/:hardheadID" component={HardheadEdit} />
-              <Route exact path="/login" component={Login} />
-              <Route path="/login/magic" component={Magic} />
-              {/* <Route path="/album" component={LegacyFrame} /> */}
-              <Route path="/album/:id" component={Album} />
-              <Route path="/album" component={Albums} />              
-              <Route path="/chat" component={LegacyFrame} />
-              <Route path="/comic" component={LegacyFrame} />
-              {/* <Route path="/default/history" component={HistoryNews} /> */}
-              <Route path="/default/single.aspx" component={LegacyRedirect} />              
-              <Route path="/default" component={LegacyFrame} />
-              <Route path="/feed" component={LegacyFrame} />
-              <Route path="/foodandredwine" component={LegacyFrame} />
-              <Route path="/dinnerparties/courses/:typeID" component={Election2022} />
-              <Route path="/dinnerparties/:id" component={DinnerParty} />
-              <Route path="/dinnerparties" component={DinnerParties} />
-              <Route path="/gang" component={LegacyFrame} />
-              <Route path="/hressgames" component={LegacyFrame} />
-              <Route path="/mission" component={LegacyFrame} />
-              <Route path="/news/history" component={HistoryNews} />
-              <Route path="/news/:id" component={SingleNews} />
-              <Route path="/profile" component={Profile} />
-              <Route path="/rss" component={LegacyFrame} />
-              <Route path="/yearly" component={LegacyFrame} />
-              {/* <Route component={App} /> */}
-            </Switch>
+            <Routes>
+              <Route exact path="/" element={<News />} />
+              <Route path="album">
+                <Route path="" element={<Albums />} />
+                <Route path=":id" element={<Album />} />
+              </Route>
+              <Route path="hardhead">
+                <Route path="" element={<Hardhead />} />
+                <Route path=":hardheadID" element={<HardheadEdit />} />
+                <Route path="awards">
+                  <Route path="" element={<Awards />} />
+                  <Route path=":id" element={<AwardsByType />} />
+                  <Route path="election" element={<Election />} />
+                  <Route path="nominations" element={<Nominations />} />
+                  <Route path="year">
+                    <Route path=":id" element={<AwardsByYear />} />
+                  </Route>
+                </Route>
+                <Route path="rules">
+                  <Route path="" element={<Rules />} />
+                  <Route path="change" element={<RuleChange />} />
+                </Route>
+                <Route path="stats" element={<Statistics />} />
+                <Route path="users">
+                  <Route path=":id" element={<HHUsers />} />
+                </Route>
+                <Route path="films.aspx" element={<LegacyFrame />} />
+                <Route path="defaultold.aspx" element={<LegacyFrame />} />
+              </Route>
+              <Route path="login">
+                <Route exact path="" element={<Login />} />
+                <Route path="magic" element={<Magic />} />
+              </Route>
+              <Route path="chat" element={<LegacyFrame />} />
+              <Route path="comic" element={<LegacyFrame />} />
+              <Route path="default">
+                <Route path="" element={<LegacyFrame />} />
+                <Route path="single.aspx" element={<LegacyRedirect />} />
+              </Route>
+              <Route path="feed" element={<LegacyFrame />} />
+              <Route path="foodandredwine" element={<LegacyFrame />} />
+              <Route path="dinnerparties">
+                <Route path="" element={<DinnerParties />} />
+                <Route path=":id" element={<DinnerParty />} />
+                {/* <Route path="dinnerparties/courses/:typeID" element={<Election2022/>} /> */}
+              </Route>
+              <Route path="gang" element={<LegacyFrame />} />
+              <Route path="hressgames" element={<LegacyFrame />} />
+              <Route path="mission" element={<LegacyFrame />} />
+              <Route path="news">
+                <Route path=":id" element={<SingleNews />} />
+                <Route path="history" element={<HistoryNews />} />
+              </Route>
+              <Route path="profile">
+                <Route path="" element={<Profile />} />
+                <Route path="password" element={<Password />} />
+              </Route>
+              <Route path="rss" element={<LegacyFrame />} />
+              <Route path="yearly" element={<LegacyFrame />} />
+            </Routes>
 
             {/* Sidebar */}
-            <Switch>
-              <Route exact path="/" component={MainSidebar} />
-              <Route exact path="/hardhead" component={HardheadSidebar} />
-              <Route exact path="/hardhead/awards" component={AwardsSidebar} />
-              <Route path="/hardhead/users/:id" component={HHUserSidebar} />
-              <Route path="/hardhead/awards/:id" /*component={AwardsSidebar}*/ />
-              <Route path="/hardhead/:hardheadID" />
-              <Route path="/hardhead/awards/year/:id" />
-              <Route path="/hardhead/awards/election" />
-              <Route path="/hardhead/awards/nominations" />
-              <Route path="/hardhead/rules" />
-              <Route path="/hardhead/stats" />
-              <Route path="/news/history" component={HistorySidebar} />
-            </Switch>
+            <Routes>
+              <Route exact path="/" element={<MainSidebar />} />
+              <Route exact path="hardhead" element={<HardheadSidebar />} />
+              <Route exact path="hardhead/awards" element={<AwardsSidebar />} />
+              <Route path="hardhead/users/:id" element={<HHUserSidebar />} />
+              <Route path="news/history" element={<HistorySidebar />} />
+            </Routes>
           </div>
           <Menu visible={data.showMenu} onClick={() => toggleMenu(true)} />
-        </Router>
+        </BrowserRouter>
       </div>
     </AuthContext.Provider>
   );

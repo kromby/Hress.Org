@@ -42,6 +42,8 @@ namespace Ez.Hress.Administration.DataAccess
 
         private async Task<IList<T>> GetComponents<T>(string navigateUrl, bool parentIdRequired, int? parentId, string typeCode, bool includePrivate)
         {
+            _log.LogInformation("[{Class}] Getting components {NavigateUrl}", nameof(MenuSqlDataAccess), navigateUrl);
+
             var sql = @"SELECT	component.Id, component.Name, component.Description, component.NavigateUrl, component.IsPublic, component.IsLegacy, componentType.Shortcode
                         FROM	adm_Component component
                         JOIN	gen_Type componentType ON component.TypeId = componentType.Id
@@ -50,61 +52,55 @@ namespace Ez.Hress.Administration.DataAccess
 
             if(!includePrivate)
             {
-                sql = sql + " AND component.IsPublic = 1";
+                sql += " AND component.IsPublic = 1";
             }
 
-            using (var connection = new SqlConnection(_connectionString))
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand();
+            command.Connection = connection;
+
+            command.Parameters.Add(new SqlParameter("componentType", typeCode));
+
+            if (parentIdRequired)
             {
-                await connection.OpenAsync();
+                sql += " AND component.ParentId IS NOT NULL ";
+            }
 
-                using (var command = new SqlCommand())
+            if (!string.IsNullOrEmpty(navigateUrl))
+            {
+                sql += " AND component.NavigateUrl = @navigateUrl ";
+                command.Parameters.Add(new SqlParameter("navigateUrl", navigateUrl));
+            }
+
+            if (parentId.HasValue)
+            {
+                sql += " AND component.ParentId = @parentId ";
+                command.Parameters.Add(new SqlParameter("parentId", parentId.Value));
+            }
+
+            command.CommandText = sql + " ORDER BY component.Sort";
+
+            var list = new List<T>();
+
+            var reader = await command.ExecuteReaderAsync();
+            while (reader.Read())
+            {
+                T? component = (T?)Activator.CreateInstance(typeof(T));
+                if (component != null)
                 {
-                    command.Connection = connection;
-
-                    command.Parameters.Add(new SqlParameter("componentType", typeCode));
-
-                    if (parentIdRequired)
-                    {
-                        sql += " AND component.ParentId IS NOT NULL ";
-                    }
-
-                    if (!string.IsNullOrEmpty(navigateUrl))
-                    {
-                        sql += " AND component.NavigateUrl = @navigateUrl ";
-                        command.Parameters.Add(new SqlParameter("navigateUrl", navigateUrl));
-                    }
-
-                    if (parentId.HasValue)
-                    {
-                        sql += " AND component.ParentId = @parentId ";
-                        command.Parameters.Add(new SqlParameter("parentId", parentId.Value));
-                    }
-
-                    command.CommandText = sql + " ORDER BY component.Sort";
-
-                    var list = new List<T>();
-
-                    var reader = await command.ExecuteReaderAsync();
-                    while (reader.Read())
-                    {
-                        T? component = (T?)Activator.CreateInstance(typeof(T));
-                        if (component != null)
-                        {
-                            ParseComponent<T>(reader, component);
-                            list.Add(component);
-                        }
-                    }
-
-                    return list;
+                    ParseComponent<T>(reader, component);
+                    list.Add(component);
                 }
             }
+
+            return list;
         }
 
         private static void ParseComponent<T>(SqlDataReader reader, T item)
         {
-            var entity = item as ComponentEntity;
-
-            if (entity == null)
+            if (item is not ComponentEntity entity)
                 return;
 
             entity.ID = reader.GetInt32(reader.GetOrdinal("Id"));

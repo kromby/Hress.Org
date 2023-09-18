@@ -3,7 +3,7 @@ import config from 'react-global-configuration';
 import { MiniPost } from '../../../components';
 import axios from 'axios';
 
-const StatisticsSide = (propsData) => {
+const StatisticsSide = () => {
     const [data, setData] = useState({ stats: null, isLoading: false, visible: false })
 
     useEffect(() => {
@@ -31,7 +31,7 @@ const StatisticsSide = (propsData) => {
         if (!data.stats) {
             getAwards();
         }
-    }, [propsData])
+    }, [])
 
     const getDescription = (period, guest) => {
         var description = "gestur";
@@ -63,7 +63,7 @@ const StatisticsSide = (propsData) => {
                 <MiniPost title="Tölfræði" href="/hardhead/stats"
                     description={
                         <span>
-                            {getDescription(data.stats.PeriodTypeName, data.stats.GuestTypeName)}
+                            {getDescription(data.stats.PeriodTypeName, data.stats.TypeName)}
                             <br />
                             {data.stats.List[0].User.Username} - {data.stats.List[0].AttendedCount}
                             <br />

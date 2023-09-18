@@ -8,9 +8,13 @@ import { useAuth } from '../../context/auth';
 import MovieEdit from './components/movieEdit';
 import GuestsEdit from './components/guestsEdit';
 import { Helmet } from 'react-helmet';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-const HardheadEdit = (propsData) => {
+const HardheadEdit = () => {
 	const { authTokens } = useAuth();
+	const location = useLocation();
+	const params = useParams();
+	const navigate = useNavigate();
 	const [hardhead, setHardhead] = useState();
 	const [users, setUsers] = useState();
 	const [nextHostID, setNextHostID] = useState();
@@ -25,12 +29,13 @@ const HardheadEdit = (propsData) => {
 
 	useEffect(() => {
 		if (authTokens === undefined) {
-			// TODO Redirect back to main page
+			navigate("/login", { state: { from: location.pathname } });
+			return;
 		}
 
 		const getHardhead = async () => {
 			try {
-				var url = config.get('path') + '/api/hardhead/' + propsData.match.params.hardheadID + '?code=' + config.get('code');
+				var url = config.get('path') + '/api/hardhead/' + params.hardheadID + '?code=' + config.get('code');
 				const response = await axios.get(url)
 				var date = new Date(response.data.Date);
 				setHardhead(response.data);
@@ -59,33 +64,29 @@ const HardheadEdit = (propsData) => {
 		if (!users) {
 			getUsers();
 		}
-	}, [propsData, authTokens])
+	}, [params, location, authTokens])
 
 	const handleSubmit = async (event) => {
 		setButtonEnabled(false);
-		if (authTokens !== undefined) {
-			event.preventDefault();
-			try {
-				var url = config.get('path') + '/api/hardhead/' + propsData.match.params.hardheadID + '?code=' + config.get('code');
-				const response = await axios.put(url, {
-					ID: propsData.match.params.hardheadID,
-					Number: hardhead.Number,
-					Host: hardhead.Host,
-					Date: hardheadDate,
-					Description: description,
-					NextHostID: nextHostID
-				}, {
-					headers: { 'Authorization': 'token ' + authTokens.token },
-				});
-				setData({ saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate });
-				console.log(response);
-			} catch (e) {
-				console.error(e);
-				alert("Ekki tókst að vista kvöld.");
-				setButtonEnabled(true);
-			}
-		} else {
-			// TODO: redirect to main page
+		event.preventDefault();
+		try {
+			var url = config.get('path') + '/api/hardhead/' + params.hardheadID + '?code=' + config.get('code');
+			const response = await axios.put(url, {
+				ID: params.hardheadID,
+				Number: hardhead.Number,
+				Host: hardhead.Host,
+				Date: hardheadDate,
+				Description: description,
+				NextHostID: nextHostID
+			}, {
+				headers: { 'Authorization': 'token ' + authTokens.token },
+			});
+			setData({ saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate });
+			console.log(response);
+		} catch (e) {
+			console.error(e);
+			alert("Ekki tókst að vista kvöld.");
+			setButtonEnabled(true);
 		}
 	}
 
@@ -110,6 +111,7 @@ const HardheadEdit = (propsData) => {
 					date={hardhead.Date}
 					dateFormatted={hardhead.DateString}
 					author={hardhead.Host}
+					userPath="/hardhead/users/"
 					body={[
 						<section key="edit1">
 							<h3>Kvöldið</h3>

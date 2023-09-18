@@ -3,7 +3,7 @@ import config from 'react-global-configuration';
 import axios from 'axios';
 import SidePost from '../../../components/sidepost';
 
-const YearsSide = (propsData) => {
+const YearsSide = () => {
     const [data, setData] = useState({ years: null, isLoading: false, visible: false });
 
     var url = config.get('path') + '/api/hardhead/years?code=' + config.get('code');
@@ -24,7 +24,7 @@ const YearsSide = (propsData) => {
         if (!data.years) {
             getYears();
         }
-    }, [propsData, url])
+    }, [url])
 
     return (
         <div>

@@ -3,25 +3,25 @@ import config from 'react-global-configuration';
 import Guests from "./guests";
 import Movie from "./movie";
 
-const HardheadBody = (propsData) => {
+const HardheadBody = ({id, Name, description, viewNight, viewMovie, viewGuests, imageHeight}) => {
     const [moviePhoto, setMoviePhoto] = useState();
-    const [viewNight, setViewNight] = useState(true);
-    const [viewMovie, setViewMovie] = useState(true);
-    const [viewGuests, setViewGuests] = useState(true);
+    const [showNight, setShowNight] = useState(true);
+    const [showMovie, setShowMovie] = useState(true);
+    const [showGuests, setShowGuests] = useState(true);
 
     useEffect(() => {
-        if (propsData.viewNight !== undefined) {
-            setViewNight(propsData.viewNight);
+        if (viewNight !== undefined) {
+            setShowNight(viewNight);
         }
 
-        if(propsData.viewMovie !== undefined) {
-            setViewMovie(propsData.viewMovie);
+        if(viewMovie !== undefined) {
+            setShowMovie(viewMovie);
         }
 
-        if(propsData.viewGuests !== undefined) {
-            setViewGuests(propsData.viewGuests);
+        if(viewGuests !== undefined) {
+            setShowGuests(viewGuests);
         }
-    }, [propsData])
+    }, [viewNight, viewMovie, viewGuests])
 
     const photoPostback = async (src) => {
         if (src) {
@@ -32,16 +32,16 @@ const HardheadBody = (propsData) => {
     return (
         [
             moviePhoto ?
-                <span key="A" className="image right"><img src={config.get('apiPath') + moviePhoto} alt={propsData.Name} /></span> : null,
-            viewNight ?
+                <span key="A" className="image right"><img src={config.get('apiPath') + moviePhoto} alt={Name} style={{height: imageHeight}} /></span> : null,
+                showNight ?
                 <section key="0">
                     <h3>Kvöldið</h3>
                     <p>
-                        {propsData.description ? propsData.description : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}
+                        {description ? description : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}
                     </p>
                 </section> : null,
-            viewMovie ? <Movie key="1" id={propsData.id} photoPostback={photoPostback} /> : null,
-            viewGuests ? <Guests key="2" hardheadID={propsData.id} /> : null,
+            showMovie ? <Movie key="1" id={id} photoPostback={photoPostback} /> : null,
+            showGuests ? <Guests key="2" hardheadID={id} /> : null,
             <p key="3"></p>,
         ]
     )

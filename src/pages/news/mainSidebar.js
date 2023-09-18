@@ -3,13 +3,12 @@ import NextHardhead from '../hardhead/components/nexthardhead';
 import './mainSidebar.css';
 import OnThisDay from './onthisday';
 
-const MainSidebar = (propsData) => {
+const MainSidebar = () => {
 
     return (
         <section id="sidebar">
-            <Intro logo="https://hress.azurewebsites.net/App_Themes/Default/Images/Logo.png" title="Hress.Org" description="þar sem hressleikinn býr" />
+            <Intro logo="/logo.png" title="Hress.Org" description="þar sem hressleikinn býr" />
 
-            {/* <!-- Mini Posts --> */}
 			<section>
 				<div className="mini-posts">
 					{/* <!-- Mini Post --> */}

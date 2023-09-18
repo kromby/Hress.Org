@@ -6,11 +6,11 @@ import { useAuth } from '../../../../context/auth';
 import HardheadRating from '../../components/rating';
 import HardheadBody from '../../components/hardheadbody';
 
-const MovieOfTheYear = (propsData) => {
+const MovieOfTheYear = ({ID, Name, Description, Date, Year, onSubmit}) => {
     const { authTokens } = useAuth();
     const [nights, setNights] = useState();
 
-    var url = config.get('path') + '/api/hardhead?parentID=5370&attended=8&code=' + config.get('code');
+    var url = config.get('path') + '/api/hardhead?parentID=5384&attended=8&code=' + config.get('code');
 
     useEffect(() => {
         const getHardheadUsers = async () => {
@@ -26,7 +26,7 @@ const MovieOfTheYear = (propsData) => {
         if (!nights) {
             getHardheadUsers();
         }
-    }, [propsData, url])
+    }, [url])
 
     const handleSubmit = async (event) => {
 
@@ -39,7 +39,7 @@ const MovieOfTheYear = (propsData) => {
             var userID = localStorage.getItem("userID");
             var url = config.get('path') + "/api/elections/49/voters/" + userID + "?code=" + config.get('code');
             await axios.put(url, {
-                LastStepID: propsData.ID
+                LastStepID: ID
             }, {
                 headers: { 'Authorization': 'token ' + authTokens.token }
             });
@@ -48,17 +48,17 @@ const MovieOfTheYear = (propsData) => {
             alert(e);
         }
 
-        propsData.onSubmit();
+        onSubmit();
     }
 
     return (
         <div>
             <Post
-                id={propsData.ID}
-                title={propsData.Name}
-                description={propsData.Description}
-                date={propsData.Date}
-                dateFormatted={propsData.Year}
+                id={ID}
+                title={Name}
+                description={Description}
+                date={Date}
+                dateFormatted={Year}
                 body={
                     <section>
                         <p>
@@ -76,7 +76,7 @@ const MovieOfTheYear = (propsData) => {
                     date={hardhead.Date}
                     dateFormatted={hardhead.DateString}
                     // body= { <Movie id={hardhead.ID}/> }
-                    body={<HardheadBody id={hardhead.ID} name={hardhead.Name} description={hardhead.Description} viewNight={false} viewGuests={false} />}
+                    body={<HardheadBody id={hardhead.ID} name={hardhead.Name} description={hardhead.Description} viewNight={false} viewGuests={false} imageHeight={"270px"} />}
                     actions={<ul className="actions"></ul>}
                     stats={<HardheadRating id={hardhead.ID} nightRatingVisible="false" />}
                 />
@@ -85,8 +85,7 @@ const MovieOfTheYear = (propsData) => {
 
             <ul className="actions pagination">
                 <li>
-                    <a href="#" className="button large next" onClick={handleSubmit}>{"Ljúka einkunnargjöf fyrir " + propsData.Name}</a>
-                    {/* <input type="submit" className="button large next" value={"Ljúka " + propsData.Name} disabled={!savingAllowed} /> */}
+                    <a href="#" className="button large next" onClick={handleSubmit}>{"Ljúka (" + Name + ")"}</a>
                 </li>
             </ul>
         </div>

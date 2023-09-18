@@ -6,9 +6,9 @@ namespace Ez.Hress.Hardhead.UseCases
 {
     public class AwardNominateInteractor
     {
-        private IAwardNominateDataAccess _awardDataAccess;
-        private ILogger<AwardNominateInteractor> _log;
-        private IUserInteractor _userInteractor;
+        private readonly IAwardNominateDataAccess _awardDataAccess;
+        private readonly ILogger<AwardNominateInteractor> _log;
+        private readonly IUserInteractor _userInteractor;
 
         public AwardNominateInteractor(IAwardNominateDataAccess dataAccess, IUserInteractor userInteractor, ILogger<AwardNominateInteractor> log)
         {
@@ -27,7 +27,7 @@ namespace Ez.Hress.Hardhead.UseCases
 
             nomination.Nominee = await _userInteractor.GetUser(nomination.Nominee.ID);
 
-            _log.LogInformation($"[{nameof(AwardNominateInteractor)}] Nominating {nomination.Nominee.Username} in group {nomination.TypeID} for {nomination.Description} by {nomination.InsertedBy}");
+            _log.LogInformation("[{Class}] Nominating {Username} in group {TypeID} for {Description} by {InsertedBy}", nameof(AwardNominateInteractor), nomination.Nominee.Username, nomination.TypeID, nomination.Description, nomination.InsertedBy);
 
             var result = await _awardDataAccess.SaveNomination(nomination);
             return result;
