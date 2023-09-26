@@ -63,6 +63,16 @@ namespace Ez.Hress.Hardhead.UseCases
             }
         }
 
+        public async Task SaveVoter(int userID, int electionID)
+        {
+            var voter = new VoterEntity()
+            {
+                ID = userID,
+                LastStepID = electionID
+            };
+            await _electionInteractor.SaveVoter(voter);
+        }
+
         public async Task<int> SaveVote(Vote entity, int userID)
         {
             if (entity == null)
@@ -72,13 +82,7 @@ namespace Ez.Hress.Hardhead.UseCases
             entity.Validate();
 
             var result = await _hardheadElectionDataAccess.SaveVote(entity).ConfigureAwait(false);
-
-            var voter = new VoterEntity()
-            {
-                ID = userID,
-                LastStepID = entity.EventID
-            };
-            await _electionInteractor.SaveVoter(voter);
+            await SaveVoter(userID, entity.EventID);
 
             return result;
         }
@@ -98,12 +102,7 @@ namespace Ez.Hress.Hardhead.UseCases
                 result += await _hardheadElectionDataAccess.SaveVote(vote).ConfigureAwait(false);
             }
 
-            var voter = new VoterEntity()
-            {
-                ID = userID,
-                LastStepID = electionID
-            };
-            await _electionInteractor.SaveVoter(voter);
+            await SaveVoter(userID, electionID);
 
             return result;
         }

@@ -40,13 +40,16 @@ Authorization: token {{apiToken}}
 }
 
 ### Get hardheads by userID
-GET {{legacyHost}}/api/hardhead?userID=2630&code={{apiCode}}
+GET {{host}}/api/hardhead?userID=2634
 
 ### Get hardheads by dateFrom
-GET {{legacyHost}}/api/hardhead?dateFrom=1.1.2020&code={{apiCode}}
+GET {{host}}/api/hardhead?dateFrom=1.1.2023
 
-### Get hardheads by nothing
-GET {{legacyHost}}/api/hardhead?code={{apiCode}}
+### Get hardheads by parent
+GET {{host}}/api/hardhead?parentid=5384
+
+### Get hardheads by nothing - next hardhead
+GET {{host}}/api/hardhead
 
 ### Get hardhead actions
 GET {{legacyHost}}/api/hardhead/5358/actions?code={{apiCode}}

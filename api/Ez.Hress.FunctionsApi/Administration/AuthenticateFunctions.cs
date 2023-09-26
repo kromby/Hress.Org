@@ -9,12 +9,14 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using Ez.Hress.Shared.UseCases;
+using System.Net;
 
 namespace Ez.Hress.FunctionsApi.Administration
 {
     public class AuthenticateFunctions
     {
         private readonly AuthenticationInteractor _authenticationInteractor;
+        private readonly string _class = nameof(AuthenticateFunctions);
 
         public AuthenticateFunctions(AuthenticationInteractor authenticationInteractor)
         {
@@ -29,38 +31,50 @@ namespace Ez.Hress.FunctionsApi.Administration
             var stopwatch = new Stopwatch();
             stopwatch.Start();
             
-            log.LogInformation("[RunAuthenticate] C# HTTP trigger function processed a request.");
-
+            log.LogInformation("[{Class}.RunAuthenticate] C# HTTP trigger function processed a request.", _class);
             string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            AuthenticateBody body = JsonConvert.DeserializeObject<AuthenticateBody>(requestBody);
-
-            log.LogInformation($"[RunAuthenticate] Request username: {body.Username}");
-            log.LogInformation($"[RunAuthenticate] Request IP Address: {req.HttpContext.Connection.RemoteIpAddress.MapToIPv4()}");
+            AuthenticateBody body = JsonConvert.DeserializeObject<AuthenticateBody>(requestBody);            
+            log.LogInformation("[{Class}.RunAuthenticate] Request IP Address: {IPAddress}", _class, req.HttpContext.Connection.RemoteIpAddress.MapToIPv4());
 
             try
             {
-                var jwt = await _authenticationInteractor.Login(body.Username, body.Password, req.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString());
-                return new OkObjectResult(jwt);
+                if (!string.IsNullOrWhiteSpace(body.Username))
+                {
+                    log.LogInformation("[{Class}.RunAuthenticate] Authenticate by username: {Username}", _class, body.Username);
+                    var jwt = await _authenticationInteractor.Login(body.Username, body.Password, req.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString());
+                    return new OkObjectResult(jwt);
+                }
+                else if(!string.IsNullOrWhiteSpace(body.Code))
+                {
+                    log.LogInformation("[{Class}.RunAuthenticate] Authenticate by code", _class, body.Username);
+                    var jwt = await _authenticationInteractor.Login(body.Code, req.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString());
+                    return new OkObjectResult(jwt);
+                }
+                else
+                {
+                    log.LogWarning("[{Class}.RunAuthenticate] Authenticate function processed a request with no username or code.", _class);
+                    return new UnauthorizedResult();
+                }
             }
             catch (ArgumentException aex)
             {
-                log.LogError(aex, "[RunAuthenticate] Invalid input");
+                log.LogError(aex, "[{Class}.RunAuthenticate] Invalid input", _class);
                 return new BadRequestObjectResult(aex.Message);
             }
             catch(UnauthorizedAccessException uaex)
             {
-                log.LogError(uaex, "[RunAuthenticate] Unauthorized");
+                log.LogError(uaex, "[{Class}.RunAuthenticate] Unauthorized", _class);
                 return new UnauthorizedResult();
             }
             catch (Exception ex)
             {
-                log.LogError(ex, "[RunAuthenticate] Unhandled error");
+                log.LogError(ex, "[{Class}.RunAuthenticate] Unhandled error", _class);
                 throw;
             }
             finally
             {
                 stopwatch.Stop();
-                log.LogInformation($"[RunAuthenticate] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+                log.LogInformation("[{Class}.RunAuthenticate] Elapsed: {Elapsed} ms.", _class, stopwatch.ElapsedMilliseconds);
             }
         }
 

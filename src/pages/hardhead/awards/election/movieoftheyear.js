@@ -36,12 +36,9 @@ const MovieOfTheYear = ({ID, Name, Description, Date, Year, onSubmit}) => {
         }
 
         try {
-            var userID = localStorage.getItem("userID");
-            var url = config.get('path') + "/api/elections/49/voters/" + userID + "?code=" + config.get('code');
-            await axios.put(url, {
-                LastStepID: ID
-            }, {
-                headers: { 'Authorization': 'token ' + authTokens.token }
+            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            await axios.post(url, [], {
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token }
             });
         } catch (e) {
             console.error(e);

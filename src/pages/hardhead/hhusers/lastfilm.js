@@ -9,12 +9,12 @@ const LastFilm = ({userID}) => {
 
     useEffect(() => {
         const getLastHardhead = async () => {
-            var url = config.get('path') + '/api/hardhead?userID=' + userID + '&code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/hardhead?userID=' + userID;
 
             try {
                 const response = await axios.get(url);
                 setHardhead(response.data[0]);
-                getLastMovie(response.data[0].ID);
+                getLastMovie(response.data[0].id);
             } catch (e) {
                 console.error(e);
             }
@@ -39,10 +39,10 @@ const LastFilm = ({userID}) => {
     return (<div>
         {hardhead ?
             <MiniPost
-                title={"Nýjasta harðhausakvöld: " + hardhead.Number}
-                description={<span>{hardhead.GuestCount + " gestir"}<br /><br />{hardhead.Description ? hardhead.Description : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}</span>}
-                date={hardhead.Date}
-                dateString={hardhead.DateString}
+                title={"Nýjasta harðhausakvöld: " + hardhead.number}
+                description={<span>{hardhead.guestCount + " gestir"}<br /><br />{hardhead.description ? hardhead.description : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}</span>}
+                date={hardhead.date}
+                dateString={hardhead.dateString}
                 imageSource={movie ? config.get('apiPath') + movie.PosterPhoto.Href : null}
             /> : null}
     </div>);

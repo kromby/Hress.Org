@@ -35,28 +35,26 @@ namespace Ez.Hress.Shared.DataAccess
             _log.LogInformation("[{Method}] userID: {userID}", nameof(GetVoter), userID);
             _log.LogInformation("[{Method}] Executing SQL: '{SQL}'", nameof(GetVoter), sql);
 
-            using (var connection = new SqlConnection(_connectionString))
+            using var connection = new SqlConnection(_connectionString);
+            connection.Open();
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("userid", userID));
+
+            var reader = await command.ExecuteReaderAsync();
+            while (reader.Read())
             {
-                connection.Open();
-
-                using var command = new SqlCommand(sql, connection);
-                command.Parameters.Add(new SqlParameter("userid", userID));
-
-                var reader = await command.ExecuteReaderAsync();
-                while (reader.Read())
+                var entity = new VoterEntity()
                 {
-                    var entity = new VoterEntity()
-                    {
-                        ID = reader.GetInt32(reader.GetOrdinal("Id")),
-                        Username = reader.GetString(reader.GetOrdinal("Username")),
-                        LastElectionID = SqlHelper.GetNullableDecimalToInt(reader, "lastYearVoted"),
-                        LastStepID = SqlHelper.GetNullableDecimalToInt(reader, "lastStep"),
-                        Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
-                        Updated = SqlHelper.GetDateTimeNullable(reader, "Updated")
-                    };
+                    ID = reader.GetInt32(reader.GetOrdinal("Id")),
+                    Username = reader.GetString(reader.GetOrdinal("Username")),
+                    LastElectionID = SqlHelper.GetNullableDecimalToInt(reader, "lastYearVoted"),
+                    LastStepID = SqlHelper.GetNullableDecimalToInt(reader, "lastStep"),
+                    Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
+                    Updated = SqlHelper.GetDateTimeNullable(reader, "Updated")
+                };
 
-                    return entity;
-                }
+                return entity;
             }
 
             return null;

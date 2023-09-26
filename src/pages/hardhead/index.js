@@ -4,10 +4,9 @@ import { Post } from '../../components';
 import HardheadRating from './components/rating.js';
 import queryString from 'query-string';
 import HardheadActions from './components/actions';
-// import VoteNow from './awards/election/votenow';
 import axios from "axios";
 import HardheadBody from './components/hardheadbody';
-import VoteNow from './awards/election/votenow';
+// import VoteNow from './awards/election/votenow';
 import { useLocation } from 'react-router-dom';
 
 const Hardhead = () => {
@@ -30,16 +29,16 @@ const Hardhead = () => {
 			const parsed = queryString.parse(location.search);			
 			var url;
 			if (parsed.parentID) {
-				url = config.get('path') + '/api/hardhead?parentID=' + parsed.parentID + '&code=' + config.get('code');
+				url = config.get('apiPath') + '/api/hardhead?parentID=' + parsed.parentID;
 			} else if (parsed.userID) {
-				url = config.get('path') + '/api/hardhead?userID=' + parsed.userID + '&code=' + config.get('code');
+				url = config.get('apiPath') + '/api/hardhead?userID=' + parsed.userID;
 			} else if(parsed.query) {
-				url = config.get('path') + '/api/movies?filter=' + parsed.query + '&code=' + config.get('code');
+				url = config.get('apiPath') + '/api/movies?filter=' + parsed.query;
 			}
 			else {
 				var currentDate = new Date();
 				currentDate.setMonth(currentDate.getMonth() - 5);
-				url = config.get('path') + '/api/hardhead?dateFrom=' + (currentDate.getMonth() + 1) + '.1.' + currentDate.getFullYear() + '&code=' + config.get('code');
+				url = config.get('apiPath') + '/api/hardhead?dateFrom=' + (currentDate.getMonth() + 1) + '.1.' + currentDate.getFullYear();
 			}
 			console.log("[Hardhead] getHardheadsUrl url: " + url);
 			return url;
@@ -62,17 +61,17 @@ const Hardhead = () => {
 			{ hardheads ?
 				hardheads.map((hardhead) =>
 				<Post
-					key={hardhead.ID}
-					id={hardhead.ID}
-					title={hardhead.Name}
-					description={hardhead.GuestCount ? hardhead.GuestCount + " gestir" : null}
-					date={hardhead.Date}
-					dateFormatted={hardhead.DateString}
-					author={hardhead.Host}
+					key={hardhead.id}
+					id={hardhead.id}
+					title={hardhead.name}
+					description={hardhead.guestCount ? hardhead.guestCount + " gestir" : null}
+					date={hardhead.date}
+					dateFormatted={hardhead.dateString}
+					author={hardhead.host}
 					userPath="/hardhead/users/"
-					body={ <HardheadBody id={hardhead.ID} name={hardhead.Name} description={hardhead.Description} />}
-					actions={<HardheadActions id={hardhead.ID} />}
-					stats={<HardheadRating id={hardhead.ID} />}
+					body={ <HardheadBody id={hardhead.id} name={hardhead.name} description={hardhead.description} />}
+					actions={<HardheadActions id={hardhead.id} />}
+					stats={<HardheadRating id={hardhead.id} />}
 				/>
 			) : null}
 		</div>

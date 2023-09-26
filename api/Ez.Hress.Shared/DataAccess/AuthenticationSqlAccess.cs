@@ -46,6 +46,22 @@ namespace Ez.Hress.Shared.DataAccess
             return -1;
         }
 
+        public async Task<int> GetUserID(string magicCode)
+        {
+            var sql = @"SELECT	magic.InsertedBy
+                        FROM	adm_MagicCode magic
+                        WHERE	magic.Code = @code
+	                        AND magic.Deleted > GetDate()
+	                        AND magic.DeletedBy IS NULL";
+
+            using var connection = new SqlConnection(_connectionString);
+            connection.Open();
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("code", magicCode));
+            return Convert.ToInt32(await command.ExecuteScalarAsync());
+        }
+
         public async Task SaveLoginInformation(int userId, string ipAddress)
         {
             var sql = @"UPDATE adm_User

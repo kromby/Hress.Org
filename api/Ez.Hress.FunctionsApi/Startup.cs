@@ -54,7 +54,8 @@ namespace Ez.Hress.FunctionsApi
             var audience = config["Ez.Hress.Shared.Authentication.Audience"];
             var salt = config["Ez.Hress.Shared.Authentication.Salt"];
 
-            services.AddMvcCore().AddNewtonsoftJson(options => {
+            services.AddMvcCore().AddNewtonsoftJson(options =>
+            {
                 options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
             });
@@ -106,7 +107,12 @@ namespace Ez.Hress.FunctionsApi
             services.AddSingleton<IElectionDataAccess, ElectionSqlAccess>();
 
             // Hardhead
-            services.AddSingleton<IHardheadDataAccess, HardheadSqlAccess> ();
+            services.AddSingleton<HardheadInteractor>();
+            services.AddSingleton<IHardheadDataAccess, HardheadSqlAccess>();
+
+            // Hardhead - Movie
+            services.AddSingleton<MovieInteractor>();
+            services.AddSingleton<IMovieDataAccess, MovieSqlAccess>();
 
             // Hardhead Election
             services.AddSingleton<HardheadElectionInteractor>();

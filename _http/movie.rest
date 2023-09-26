@@ -25,3 +25,6 @@ Authorization: token {{apiToken}}
     "ImdbUrl":"imdb.com",
     "YoutubeUrl": "youtube.com/watch?v=Uq4qyHi3sYM"
 }
+
+### Get movies by filter
+GET {{host}}/api/movies/?filter=die

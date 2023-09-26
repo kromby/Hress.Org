@@ -20,7 +20,7 @@ function Magic() {
             console.log("[Magic] code:" + code);
             console.log("[Magic] path:" + parsed.path);
 
-            var url = config.get('path') + '/api/authenticate?code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/authenticate';
 
             axios.post(url, {code}).then(
                 result => {

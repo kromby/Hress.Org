@@ -66,7 +66,12 @@ namespace Ez.Hress.FunctionsApi.Elections
                 var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var voteList = JsonConvert.DeserializeObject<IList<Vote>>(requestBody);
 
-                if (voteList.Count == 1)
+                if(voteList.Count == 0)
+                {
+                    await _hardheadElectionInteractor.SaveVoter(userID, id);
+                    return new OkResult();
+                }
+                else if (voteList.Count == 1)
                 {
                     var entity = voteList.First();
                     if (entity.EventID == 0)

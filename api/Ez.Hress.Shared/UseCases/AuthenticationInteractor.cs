@@ -95,6 +95,31 @@ namespace Ez.Hress.Shared.UseCases
             return jwt;
         }
 
+        public async Task<string> Login(string code, string ipAddress)
+        {
+            if (string.IsNullOrWhiteSpace(code))
+            {
+                _log.LogInformation("[{Class}] Code is null or empty", _class);
+                throw new ArgumentNullException(nameof(code));
+            }
+
+            var userID = await _authenticationDataAccess.GetUserID(code);
+
+            if (userID <= 0)
+            {
+                _log.LogWarning("[{Class}] Code is not valid.", _class);
+                throw new UnauthorizedAccessException();
+            }
+
+            var loginTask = _authenticationDataAccess.SaveLoginInformation(userID, ipAddress);
+
+            var jwt = GetToken(userID.ToString());
+
+            loginTask.Wait();
+
+            return jwt;
+        }
+
         public async Task ChangePassword(int userID, string password, string newPassword)
         {
             if (string.IsNullOrWhiteSpace(password))

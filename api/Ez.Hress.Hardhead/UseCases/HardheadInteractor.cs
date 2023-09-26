@@ -1,0 +1,51 @@
+﻿using Ez.Hress.Hardhead.Entities;
+using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Ez.Hress.Hardhead.UseCases
+{
+    public class HardheadInteractor
+    {
+        private readonly IHardheadDataAccess _hardheadDataAccess;
+        private readonly ILogger<HardheadInteractor> _log;
+        private readonly string _class = nameof(HardheadInteractor);
+        public HardheadInteractor(IHardheadDataAccess hardheadDataAccess, ILogger<HardheadInteractor> log)
+        {
+            _hardheadDataAccess = hardheadDataAccess;
+            _log = log;
+        }
+
+        public async Task<IList<HardheadNight>> GetHardheads(DateTime fromDate)
+        {
+            _log.LogInformation("[{Class}] Getting all Hardheads from '{from}' until now", _class, fromDate);
+            return await _hardheadDataAccess.GetHardheads(fromDate, DateTime.Now.AddDays(-1));
+        }
+
+        public async Task<IList<HardheadNight>> GetHardheads(int parentID)
+        {
+            _log.LogInformation("[{Class}] Getting all Hardheads for parent '{ParentID}'", _class, parentID);
+            return await _hardheadDataAccess.GetHardheads(parentID);
+        }
+
+        public async Task<IList<HardheadNight>> GetNextHardhead()
+        {
+            var list = await _hardheadDataAccess.GetHardheads(DateTime.Now.AddDays(-1), DateTime.Now.AddMonths(2));
+            return list;
+        }
+
+        public async Task<IList<HardheadNight>> GetHardheads(int userID, UserType type)
+        {
+            var idList = await _hardheadDataAccess.GetHardheadIDsByHostOrGuest(userID, type).ConfigureAwait(false);
+
+            if (idList != null && idList.Any())
+            {
+                return await _hardheadDataAccess.GetHardheads(idList).ConfigureAwait(false);
+            }
+            return new List<HardheadNight>();
+        }
+    }
+}

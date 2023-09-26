@@ -23,6 +23,92 @@ namespace Ez.Hress.Hardhead.DataAccess
             _log = log;
         }
 
+        public async Task<IList<HardheadNight>> GetHardheads(DateTime fromDate, DateTime toDate)
+        {
+            _log.LogInformation("[{Class}] Getting hardhead between dates '{From}' and '{To}'.", nameof(HardheadSqlAccess), fromDate, toDate);
+            var sql = @"SELECT	night.Id, night.Number, night.Date, host.UserId, summary.TextValue 'Description', hressUser.Username, userPhoto.ImageId, COUNT(guest.ID) 'GuestCount', night.ParentId 'YearID'
+                        FROM    rep_Event night
+                        JOIN	rep_User host ON host.EventId = night.Id AND host.TypeId = 53
+                        JOIN	adm_User hressUser ON host.UserId = hressUser.Id
+                        JOIN	rep_User guest ON guest.EventId = night.Id
+                        LEFT OUTER JOIN	upf_Image userPhoto ON hressUser.Id = userPhoto.UserId AND userPhoto.TypeId = 14
+                        LEFT OUTER JOIN	rep_Text summary ON summary.EventId = night.Id AND summary.TypeId = 37
+                        WHERE	night.TypeId = 49 AND night.Date > @dateFrom AND night.Date <= @dateTo
+                        GROUP BY night.Id, night.Number, night.Date, host.UserId, summary.TextValue, hressUser.Username, userPhoto.ImageId, night.ParentId
+                        ORDER BY night.Date DESC";
+            _log.LogInformation("[{Class}] SQL '{SQL}'.", nameof(HardheadSqlAccess), sql);
+
+            IList<HardheadNight> list = new List<HardheadNight>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                using var command = new SqlCommand(sql, connection);
+                command.Parameters.Add(new SqlParameter("typeId", 49));
+                command.Parameters.Add(new SqlParameter("dateFrom", fromDate));
+                command.Parameters.Add(new SqlParameter("dateTo", toDate));
+
+                var reader = await command.ExecuteReaderAsync();
+                ParseHardhead(list, reader);
+            }
+            return list;
+        }
+
+        public async Task<IList<HardheadNight>> GetHardheads(int parentID)
+        {
+            var sql = @"SELECT	night.Id, night.Number, night.Date, host.UserId, summary.TextValue 'Description', hressUser.Username, userPhoto.ImageId, COUNT(guest.ID) 'GuestCount', night.ParentId 'YearID'
+                        FROM    rep_Event night
+                        JOIN	rep_User host ON host.EventId = night.Id AND host.TypeId = 53
+                        JOIN	adm_User hressUser ON host.UserId = hressUser.Id
+                        JOIN	rep_User guest ON guest.EventId = night.Id
+                        LEFT OUTER JOIN	upf_Image userPhoto ON hressUser.Id = userPhoto.UserId AND userPhoto.TypeId = 14
+                        LEFT OUTER JOIN	rep_Text summary ON summary.EventId = night.Id AND summary.TypeId = 37
+                        WHERE	night.TypeId = 49 AND night.ParentId = @parentID
+                        GROUP BY night.Id, night.Number, night.Date, host.UserId, summary.TextValue, hressUser.Username, userPhoto.ImageId, night.ParentId
+                        ORDER BY night.Date DESC";
+
+            IList<HardheadNight> list = new List<HardheadNight>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                using var command = new SqlCommand(sql, connection);
+                command.Parameters.Add(new SqlParameter("typeId", 49));
+                command.Parameters.Add(new SqlParameter("parentID", parentID));
+
+                var reader = await command.ExecuteReaderAsync();
+                ParseHardhead(list, reader);
+            }
+            return list;
+        }
+
+        private static void ParseHardhead(IList<HardheadNight> list, SqlDataReader reader)
+        {
+            while (reader.Read())
+            {
+                var hardhead = new HardheadNight(Convert.ToInt32(reader["Id"]),
+                    Convert.ToInt32(reader["Number"]),
+                    new UserBasicEntity()
+                    {
+                        ID = reader.GetInt32(reader.GetOrdinal("UserId")),
+                        Username = reader.GetString(reader.GetOrdinal("Username"))
+                    })
+                {
+                    Date = Convert.ToDateTime(reader["Date"]),
+                    Description = reader["Description"] != DBNull.Value ? reader.GetString(reader.GetOrdinal("Description")) : null,
+                    GuestCount = reader.GetInt32(reader.GetOrdinal("GuestCount")),
+                };
+
+                if (!reader.IsDBNull(reader.GetOrdinal("ImageId")))
+                    hardhead.Host.ProfilePhotoId = reader.GetInt32(reader.GetOrdinal("ImageId"));
+
+                if (!reader.IsDBNull(reader.GetOrdinal("YearID")))
+                    hardhead.YearID = reader.GetInt32(reader.GetOrdinal("YearID"));
+
+                list.Add(hardhead);
+            }
+        }
+
         public async Task<IList<HardheadUser>> GetHardheadUsers(int yearID)
         {
             var sql = @"SELECT	usr.Id, usr.Username, usr.Inserted, uimg.ImageId, COUNT(usr.Id) attended
@@ -69,6 +155,76 @@ namespace Ez.Hress.Hardhead.DataAccess
             }
 
             return userList;
+        }
+
+        public async Task<IList<HardheadNight>> GetHardheads(IList<int> idList)
+        {
+            var sql = @"SELECT	night.Id, night.Number, night.Date, host.UserId, summary.TextValue 'Description', hressUser.Username, userPhoto.ImageId, COUNT(guest.ID) 'GuestCount', night.ParentId 'YearID'
+                        FROM    rep_Event night
+                        JOIN	rep_User host ON host.EventId = night.Id AND host.TypeId = 53
+                        JOIN	adm_User hressUser ON host.UserId = hressUser.Id
+                        JOIN	rep_User guest ON guest.EventId = night.Id
+                        LEFT OUTER JOIN	upf_Image userPhoto ON hressUser.Id = userPhoto.UserId AND userPhoto.TypeId = 14
+                        LEFT OUTER JOIN	rep_Text summary ON summary.EventId = night.Id AND summary.TypeId = 37
+                        WHERE	night.Id IN ({0})
+                        GROUP BY night.Id, night.Number, night.Date, host.UserId, summary.TextValue, hressUser.Username, userPhoto.ImageId, night.ParentId
+                        ORDER BY night.Date DESC";
+
+            var list = new List<HardheadNight>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+                using var command = new SqlCommand(sql, connection);
+
+                var sb = new StringBuilder();
+                int i = 0;
+                foreach (var id in idList)
+                {
+                    var param = string.Format("@id{0}", i++);
+                    sb.Append(param);
+                    sb.Append(", ");
+                    command.Parameters.AddWithValue(param, id);
+                }
+
+                command.CommandText = string.Format(sql, sb.ToString().Trim(new char[] { ' ', ',' }));
+
+                var reader = await command.ExecuteReaderAsync();
+                ParseHardhead(list, reader);
+            }
+            return list;
+        }
+
+        public async Task<IList<int>> GetHardheadIDsByHostOrGuest(int userID, UserType type)
+        {
+            var sql = @"SELECT	hardhead.EventId
+                        FROM	rep_User hardhead
+                        JOIN	rep_Event night ON night.TypeId = 49 AND night.Id = hardhead.EventId
+                        WHERE	hardhead.UserId = @userID";
+
+            if (type == UserType.guest)
+            {
+                sql += " AND hardhead.TypeId = 52";
+            }
+            else if (type == UserType.host)
+            {
+                sql += " AND hardhead.TypeId = 53";
+            }
+
+            var list = new List<int>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                using var command = new SqlCommand(sql, connection);
+                command.Parameters.Add(new SqlParameter("userID", userID));
+
+                var reader = await command.ExecuteReaderAsync();
+                while (reader.Read())
+                {
+                    list.Add(reader.GetInt32(0));
+                }
+            }
+            return list;
         }
     }
 }
