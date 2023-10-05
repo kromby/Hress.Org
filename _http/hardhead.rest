@@ -39,6 +39,9 @@ Authorization: token {{apiToken}}
 	"rating":"4"
 }
 
+### Get Hardhead by ID
+GET {{host}}/api/hardhead/5397
+
 ### Get hardheads by userID
 GET {{host}}/api/hardhead?userID=2634
 

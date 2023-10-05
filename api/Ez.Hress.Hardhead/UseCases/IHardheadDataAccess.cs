@@ -11,7 +11,7 @@ namespace Ez.Hress.Hardhead.UseCases
     {       
         Task<IList<HardheadUser>> GetHardheadUsers(int yearID);
 
-        //Task<HardheadNight> GetHardhead(int ID);
+        Task<HardheadNight?> GetHardhead(int id);
 
         Task<IList<HardheadNight>> GetHardheads(DateTime fromDate, DateTime toDate);
 

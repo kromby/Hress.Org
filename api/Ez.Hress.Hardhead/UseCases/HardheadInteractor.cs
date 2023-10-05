@@ -19,6 +19,12 @@ namespace Ez.Hress.Hardhead.UseCases
             _log = log;
         }
 
+        public async Task<HardheadNight?> GetHardhead(int id)
+        {
+            _log.LogInformation("[{Class}] Getting Hardhead '{ID}'", _class, id);
+            return await _hardheadDataAccess.GetHardhead(id);
+        }
+
         public async Task<IList<HardheadNight>> GetHardheads(DateTime fromDate)
         {
             _log.LogInformation("[{Class}] Getting all Hardheads from '{from}' until now", _class, fromDate);

@@ -226,5 +226,33 @@ namespace Ez.Hress.Hardhead.DataAccess
             }
             return list;
         }
+
+        public async Task<HardheadNight?> GetHardhead(int id)
+        {
+            var sql = @"SELECT	night.Id, night.Number, night.Date, host.UserId, summary.TextValue 'Description', hressUser.Username, userPhoto.ImageId, COUNT(guest.ID) 'GuestCount', night.ParentId 'YearID'
+                        FROM    rep_Event night
+                        JOIN	rep_User host ON host.EventId = night.Id AND host.TypeId = 53
+                        JOIN	adm_User hressUser ON host.UserId = hressUser.Id
+                        JOIN	rep_User guest ON guest.EventId = night.Id
+                        LEFT OUTER JOIN	upf_Image userPhoto ON hressUser.Id = userPhoto.UserId AND userPhoto.TypeId = 14
+                        LEFT OUTER JOIN	rep_Text summary ON summary.EventId = night.Id AND summary.TypeId = 37
+                        WHERE	night.TypeId = 49 AND night.Id = @ID
+                        GROUP BY night.Id, night.Number, night.Date, host.UserId, summary.TextValue, hressUser.Username, userPhoto.ImageId, night.ParentId
+                        ORDER BY night.Date DESC";
+
+            var list = new List<HardheadNight>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                using var command = new SqlCommand(sql, connection);
+                command.Parameters.Add(new SqlParameter("typeId", 49));
+                command.Parameters.Add(new SqlParameter("ID", id));
+
+                var reader = await command.ExecuteReaderAsync();
+                ParseHardhead(list, reader);
+            }
+            return list.Count == 1 ? list.First() : null;
+        }
     }
 }

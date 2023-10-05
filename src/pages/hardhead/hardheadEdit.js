@@ -7,7 +7,6 @@ import axios from "axios";
 import { useAuth } from '../../context/auth';
 import MovieEdit from './components/movieEdit';
 import GuestsEdit from './components/guestsEdit';
-import { Helmet } from 'react-helmet';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const HardheadEdit = () => {
@@ -23,10 +22,6 @@ const HardheadEdit = () => {
 	const [data, setData] = useState({ isLoaded: false, hardhead: null, description: null, hardheadDate: new Date(), saved: false });
 	const [buttonEnabled, setButtonEnabled] = useState(false);
 
-	// this.handleSubmit = this.handleSubmit.bind(this);
-	// this.handleDescriptionChange = this.handleDescriptionChange.bind(this);
-	// this.handleDateChange = this.handleDateChange.bind(this);
-
 	useEffect(() => {
 		if (authTokens === undefined) {
 			navigate("/login", { state: { from: location.pathname } });
@@ -35,12 +30,12 @@ const HardheadEdit = () => {
 
 		const getHardhead = async () => {
 			try {
-				var url = config.get('path') + '/api/hardhead/' + params.hardheadID + '?code=' + config.get('code');
+				var url = config.get('apiPath') + '/api/hardhead/' + params.hardheadID;
 				const response = await axios.get(url)
-				var date = new Date(response.data.Date);
+				var date = new Date(response.data.date);
 				setHardhead(response.data);
 				setDate(date);
-				setDescription(response.data.Description)
+				setDescription(response.data.description)
 				setData({ error: null, isLoaded: true, visible: true, minDate: new Date(date.getFullYear(), date.getMonth(), 1), maxDate: new Date(date.getFullYear(), date.getMonth() + 1, 0) });
 			} catch (e) {
 				console.error(e);
@@ -97,20 +92,14 @@ const HardheadEdit = () => {
 	return (
 		<div id="main">
 			{data.visible ?
-				<Helmet key="helmet">
-					<title>Harðhaus #{hardhead.Name} | Hress.Org</title>
-					<meta name="description" content={"Harðhaus #" + hardhead.Name} />
-					<meta property="og:title" content={"Harðhaus #" + hardhead.Name} />
-				</Helmet> : null}
-			{data.visible ?
 				<Post
-					key={hardhead.ID}
-					id={hardhead.ID}
-					title={hardhead.Name}
-					description={hardhead.GuestCount + " gestir"}
-					date={hardhead.Date}
-					dateFormatted={hardhead.DateString}
-					author={hardhead.Host}
+					key={hardhead.id}
+					id={hardhead.id}
+					title={hardhead.name}
+					description={hardhead.guestCount + " gestir"}
+					date={hardhead.date}
+					dateFormatted={hardhead.dateString}
+					author={hardhead.host}
 					userPath="/hardhead/users/"
 					body={[
 						<section key="edit1">
@@ -133,7 +122,7 @@ const HardheadEdit = () => {
 											: null}
 									</div>
 									<div className="col-12">
-										<textarea name="Lýsing" rows="3" onChange={(ev) => handleDescriptionChange(ev)} defaultValue={hardhead.Description} placeholder="Lýstu kvöldinu" />
+										<textarea name="Lýsing" rows="3" onChange={(ev) => handleDescriptionChange(ev)} defaultValue={hardhead.description} placeholder="Lýstu kvöldinu" />
 									</div>
 									<div className="col-12">
 										{data.saved ? <b>Kvöld vistað!<br /></b> : null}
@@ -142,18 +131,9 @@ const HardheadEdit = () => {
 								</div>
 							</form>
 						</section>,
-						<MovieEdit key="edit2" id={hardhead.ID} />,
-						<GuestsEdit key="edit3" hardheadID={hardhead.ID} users={users} />
+						<MovieEdit key="edit2" id={hardhead.id} />,
+						<GuestsEdit key="edit3" hardheadID={hardhead.id} users={users} />
 					]}
-				// actions={
-				// 	<ul className="actions">
-				// 		<li>
-				// 			<button tooltip="Vista" className="button large">Vista</button>
-				// 		</li>							
-				// 	</ul>
-				// }
-				// bottom={  }
-				// stats={<HardheadRating id={hardhead.ID} />}	
 				/>
 				: null}
 		</div>

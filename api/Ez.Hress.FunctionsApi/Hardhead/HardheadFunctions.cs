@@ -46,8 +46,11 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             {
                 if(id.HasValue)
                 {
-                    // Get by ID
-                    throw new NotImplementedException();
+                    var entity = await _hardheadInteractor.GetHardhead(id.Value);
+                    if (entity == null)
+                        return new NotFoundResult();
+
+                    return new OkObjectResult(entity);
                 }
 
                 IList<HardheadNight> list = new List<HardheadNight>();
