@@ -65,16 +65,16 @@ const HardheadEdit = () => {
 		setButtonEnabled(false);
 		event.preventDefault();
 		try {
-			var url = config.get('path') + '/api/hardhead/' + params.hardheadID + '?code=' + config.get('code');
+			var url = config.get('apiPath') + '/api/hardhead/' + params.hardheadID;
 			const response = await axios.put(url, {
 				ID: params.hardheadID,
-				Number: hardhead.Number,
-				Host: hardhead.Host,
+				Number: hardhead.number,
+				Host: hardhead.host,
 				Date: hardheadDate,
 				Description: description,
 				NextHostID: nextHostID
 			}, {
-				headers: { 'Authorization': 'token ' + authTokens.token },
+				headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
 			});
 			setData({ saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate });
 			console.log(response);

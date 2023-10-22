@@ -36,6 +36,7 @@ import Albums from './albums';
 import Album from './albums/album';
 import RuleChange from './hardhead/rules/change';
 import Password from './profile/password';
+import DinnerPartySidebar from './dinnerparties/sidebar';
 
 function App() {
   const [authTokens, setAuthTokens] = useState();
@@ -191,6 +192,7 @@ function App() {
             {/* Sidebar */}
             <Routes>
               <Route exact path="/" element={<MainSidebar />} />
+              <Route path="dinnerparties" element={<DinnerPartySidebar />}/>
               <Route exact path="hardhead" element={<HardheadSidebar />} />
               <Route exact path="hardhead/awards" element={<AwardsSidebar />} />
               <Route path="hardhead/users/:id" element={<HHUserSidebar />} />

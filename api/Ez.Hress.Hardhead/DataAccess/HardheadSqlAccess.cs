@@ -5,6 +5,7 @@ using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
@@ -227,7 +228,7 @@ namespace Ez.Hress.Hardhead.DataAccess
             return list;
         }
 
-        public async Task<HardheadNight?> GetHardhead(int id)
+        public async Task<HardheadNight> GetHardhead(int id)
         {
             var sql = @"SELECT	night.Id, night.Number, night.Date, host.UserId, summary.TextValue 'Description', hressUser.Username, userPhoto.ImageId, COUNT(guest.ID) 'GuestCount', night.ParentId 'YearID'
                         FROM    rep_Event night
@@ -252,7 +253,46 @@ namespace Ez.Hress.Hardhead.DataAccess
                 var reader = await command.ExecuteReaderAsync();
                 ParseHardhead(list, reader);
             }
-            return list.Count == 1 ? list.First() : null;
+            return list.Count == 1 ? list.First() : new HardheadNight(0, 0, new UserBasicEntity());
+        }
+
+        public async Task<bool> AlterHardhead(HardheadNight hardhead)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand("UpdateHardhead", connection) { CommandType = CommandType.StoredProcedure };
+            command.Parameters.AddWithValue("hhID", hardhead.ID);
+            command.Parameters.AddWithValue("hhDate", hardhead.Date);
+            command.Parameters.AddWithValue("Description", hardhead.Description ?? string.Empty);
+            command.Parameters.AddWithValue("updatedDate", hardhead.Updated);
+            command.Parameters.AddWithValue("updatedBy", hardhead.UpdatedBy);
+
+            var affected = await command.ExecuteNonQueryAsync();
+
+            if (affected == 1)
+                return true;
+
+            return false;
+        }
+
+        public async Task<bool> CreateHardhead(int hostID, DateTime nextDate, int currentUserID, DateTime changeDate)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand("CreateHardhead", connection) { CommandType = CommandType.StoredProcedure };
+            command.Parameters.AddWithValue("hostID", hostID);
+            command.Parameters.AddWithValue("hhDate", nextDate);
+            command.Parameters.AddWithValue("createdDate", changeDate);
+            command.Parameters.AddWithValue("createdBy", currentUserID);
+
+            var affected = await command.ExecuteNonQueryAsync();
+
+            if (affected == 1)
+                return true;
+
+            return false;
         }
     }
 }

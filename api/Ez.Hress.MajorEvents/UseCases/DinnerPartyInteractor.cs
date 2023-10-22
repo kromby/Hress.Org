@@ -14,17 +14,25 @@ namespace Ez.Hress.MajorEvents.UseCases
             _log = logger;
         }
     
-        public async Task<IList<DinnerParty>> GetDinnerParties()
+        public async Task<IList<DinnerParty>> GetDinnerParties(bool includeGuests, int top)
         {
             _log.LogInformation("[{Class}] GetDinnerParties", GetType().Name);
             var list = await _dinnerDataAccess.GetAll();
 
-            foreach(var item in list)
+            if(top > 0)
             {
-                item.Guests = await _dinnerDataAccess.GetGuests(item.ID, 197);
+                list = list.Take<DinnerParty>(top).ToList();
+            }
 
-                if(item.Guests.Count > 1 && item.Guests.First().ID == 2663)
-                    item.Guests = item.Guests.OrderBy(item => item.ID).ToList();
+            if (includeGuests)
+            {
+                foreach (var item in list)
+                {
+                    item.Guests = await _dinnerDataAccess.GetGuests(item.ID, 197);
+
+                    if (item.Guests.Count > 1 && item.Guests.First().ID == 2663)
+                        item.Guests = item.Guests.OrderBy(item => item.ID).ToList();
+                }
             }
 
             return list;

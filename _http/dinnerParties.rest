@@ -16,7 +16,7 @@ Content-Type: application/json
 
 
 ### Get all dinner parties
-GET {{host}}/api/dinnerParties
+GET {{host}}/api/dinnerParties?includeGuests=true&top=5
 
 ### Get a single dinner party
 GET {{host}}/api/dinnerParties/5304

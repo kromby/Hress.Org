@@ -13,6 +13,8 @@ using Microsoft.VisualBasic;
 using System.Collections;
 using Ez.Hress.Hardhead.Entities;
 using System.Collections.Generic;
+using System.Net;
+using System.Reflection.Metadata.Ecma335;
 
 namespace Ez.Hress.FunctionsApi.Hardhead
 {
@@ -35,28 +37,43 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             var method = nameof(Run);
             log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
 
-            if (HttpMethods.IsPut(req.Method)) {
+            if (HttpMethods.IsPut(req.Method))
+            {
                 var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
                 if (!isJWTValid)
                 {
                     log.LogInformation("[{Class}.{Function}]  JWT is not valid!", _class, method);
                     return new UnauthorizedResult();
                 }
-            } else // GET
-            {
-                if(id.HasValue)
-                {
-                    var entity = await _hardheadInteractor.GetHardhead(id.Value);
-                    if (entity == null)
-                        return new NotFoundResult();
 
+                try
+                {
+                    HardheadNight night = await req.ReadFromJsonAsync<HardheadNight>();
+                    await _hardheadInteractor.SaveHardhead(night, userID);
+                    return new OkResult();
+                }
+                catch (JsonReaderException jrex)
+                {
+                    log.LogWarning("[{Class}.{Function}] PUT - Can't parse request body: {body}, exception: {exception}", _class, method, await req.ReadAsStringAsync(), jrex.Message);
+                    return new BadRequestResult();
+                }
+                catch (ArgumentException aex)
+                {
+                    return new BadRequestObjectResult(aex.Message);
+                }
+            }
+            else // GET
+            {
+                if (id.HasValue)
+                {
+                    var entity = await _hardheadInteractor.GetHardhead(id.Value);                  
                     return new OkObjectResult(entity);
                 }
 
                 IList<HardheadNight> list = new List<HardheadNight>();
-                if(!req.QueryString.HasValue)
+                if (!req.QueryString.HasValue)
                 {
-                    list = await _hardheadInteractor.GetNextHardhead();                    
+                    list = await _hardheadInteractor.GetNextHardhead();
                 }
 
                 if (req.Query.ContainsKey("dateFrom"))
@@ -68,7 +85,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                     }
                 }
 
-                if(req.Query.ContainsKey("parentID"))
+                if (req.Query.ContainsKey("parentID"))
                 {
                     if (int.TryParse(req.Query["parentID"], out int parentID))
                     {
@@ -86,18 +103,6 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
                 return new OkObjectResult(list);
             }
-
-            string name = req.Query["name"];
-
-            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            dynamic data = JsonConvert.DeserializeObject(requestBody);
-            name ??= data?.name;
-
-            string responseMessage = string.IsNullOrEmpty(name)
-                ? "This HTTP triggered function executed successfully. Pass a name in the query string or in the request body for a personalized response."
-                : $"Hello, {name}. This HTTP triggered function executed successfully.";
-
-            return new OkObjectResult(responseMessage);
         }
     }
 }

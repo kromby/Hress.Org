@@ -47,7 +47,9 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                 else
                 {
                     log.LogInformation("[{Function}] Getting a all dinner parties.", nameof(RunDinnerParties));
-                    var dinnerParties = await _dinnerPartyInteractor.GetDinnerParties();
+                    _ = int.TryParse(req.Query["top"], out int top);
+                    _ = bool.TryParse(req.Query["includeGuests"], out bool includeGuests);
+                    var dinnerParties = await _dinnerPartyInteractor.GetDinnerParties(includeGuests, top);
                     return new OkObjectResult(dinnerParties);
                 }
             }
