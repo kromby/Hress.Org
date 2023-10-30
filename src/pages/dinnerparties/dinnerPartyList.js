@@ -9,7 +9,7 @@ const DinnerPartyList = ({ dinnerParties }) => {
                     <SidePost
                         title={dinnerParty.location}
                         dateString={"Árið " + dinnerParty.year}
-                        href={dinnerParty.id}
+                        href={"/dinnerparties/" + dinnerParty.id}
                     />
                 </li>) : null}
         </div>
