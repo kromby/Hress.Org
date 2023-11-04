@@ -16,7 +16,7 @@ const GuestCountSide = ({ dinnerParties }) => {
                 description={
                     <ol>
                         {parties ? parties.sort((a, b) => a.guestCount < b.guestCount ? 1 : -1).slice(0,5).map((dinnerParty) =>
-                            <li>{"Árið " + dinnerParty.year + " " + dinnerParty.location + " - Gestir: " + dinnerParty.guestCount}</li>
+                            <li key={dinnerParty.id}>{"Árið " + dinnerParty.year + " " + dinnerParty.location + " - Gestir: " + dinnerParty.guestCount}</li>
                         ) : null}                        
                     </ol>
                 }

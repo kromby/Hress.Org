@@ -5,6 +5,7 @@ import axios from "axios";
 import DinnerPartyList from "./dinnerPartyList";
 import GuestCountSide from "./guestCountSide";
 import { ErrorBoundary } from "react-error-boundary";
+import TotalGuestsSide from "./totalGuestsSide";
 
 const DinnerPartySidebar = () => {
     const [dinnerParties, setDinnerParties] = useState();
@@ -43,6 +44,7 @@ const DinnerPartySidebar = () => {
                 <section>
                     <div className="mini-posts">
                         {/* <!-- Mini Post --> */}
+                        <TotalGuestsSide dinnerParties={dinnerParties} />
                         <GuestCountSide dinnerParties={dinnerParties} />
                     </div>
                 </section>
