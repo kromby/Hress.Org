@@ -1,5 +1,5 @@
 import React from 'react';
-import { Intro } from '../../components';
+import { Intro, MiniPost } from '../../components';
 import './sidebar.css';
 import NextHardhead from './components/nexthardhead';
 import AwardsSide from './awards/awardsSide';
@@ -18,6 +18,10 @@ const HardheadSidebar = () => {
 				<div className="mini-posts">
 					{/* <!-- Mini Post --> */}
 					<NextHardhead allowEdit="true" />
+					<MiniPost 
+						title="Harðhausabústaður"
+						dateString="19. janúar"						
+					/>
 					<AwardsSide />
 					<StatisticSide />
 					<RulesSide />
