@@ -50,7 +50,7 @@ const StalloneNomination = ({ Type, Users }) => {
             const response = await axios.post(postUrl, {
                 typeID: Type,
                 description: description,
-                nomineeID: nominee
+                nomineeID: nominee,
             }, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });

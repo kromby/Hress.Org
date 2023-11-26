@@ -6,11 +6,6 @@ using Ez.Hress.Shared.Entities;
 using Ez.Hress.Shared.UseCases;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ez.Hress.UnitTest.Albums
 {
@@ -50,7 +45,7 @@ namespace Ez.Hress.UnitTest.Albums
             var albumInteractor = new AlbumInteractor(null, imageInteractor, _logAlbumInteractor.Object);
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
-            await albumInteractor.AddImages(46101);
+            await albumInteractor.AddImages(46114);
         }
 
         [Fact]

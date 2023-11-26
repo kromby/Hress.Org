@@ -1,10 +1,5 @@
 ﻿using Ez.Hress.Hardhead.Entities;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Ez.Hress.Hardhead.UseCases
 {
@@ -25,7 +20,12 @@ namespace Ez.Hress.Hardhead.UseCases
 
             var list = await _awardDataAccess.GetNominations(typeID);
 
-            return list.Where(x => x.Nominee.ID != excludedUserID).ToList();
+            if (typeID == 5284)
+            {
+                return list.Where(x => x.Nominee.ID != excludedUserID).ToList();
+            }
+
+            return list;
         }
     }
 }
