@@ -24,12 +24,12 @@ namespace Ez.Hress.Albums.UseCases
         }
 
         public async Task AddImages(int albumID)
-        {
+        {            
             var list = Directory.GetFiles(@"C:\Temp\hress photos\MogR2023");
 
             var name = "Matar- og Rauðvínskvöld 2023";
 
-            StringBuilder sql = new StringBuilder();
+            StringBuilder sql = new();
 
             foreach (var imagePath in list)
             {
@@ -50,6 +50,7 @@ namespace Ez.Hress.Albums.UseCases
 
         public async Task<IList<Album>> GetAlbums()
         {
+            _log.LogInformation("GetAlbums");
             return await _albumDataAccess.GetAlbums();
         }
 

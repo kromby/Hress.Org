@@ -188,5 +188,42 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                 log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunTeams), stopwatch.ElapsedMilliseconds);
             }
         }
+
+        [FunctionName("dinnerPartiesWinners")]
+        public async Task<IActionResult> RunWinners([HttpTrigger(AuthorizationLevel.Function, "get", Route ="dinnerparties/statistic")] HttpRequest req,
+            ILogger log)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunWinners));
+
+            try
+            {
+                switch(req.Query["type"])
+                {
+                    case "winners":
+                        var result = await _dinnerPartyInteractor.GetWinnerStatistics();
+                        return new OkObjectResult(result);
+                    default:
+                        throw new ArgumentException("Query parameter type is missing or invalid.");
+                }
+            }
+            catch (ArgumentException aex)
+            {
+                log.LogError(aex, "[{Function}] Invalid input", nameof(RunWinners));
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "[{Function}] Unhandled error", nameof(RunWinners));
+                throw;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunWinners), stopwatch.ElapsedMilliseconds);
+            }
+        }
     }    
 }

@@ -89,6 +89,11 @@ namespace Ez.Hress.MajorEvents.UseCases
         //    throw new NotImplementedException();
         //}
 
+        public async Task<IList<PartyWinner>> GetWinnerStatistics()
+        {
+            return await _dinnerDataAccess.GetWinnerStatistic();
+        }
+
         public async Task SaveVote(Vote vote)
         {
             await _dinnerDataAccess.SaveVote(vote);

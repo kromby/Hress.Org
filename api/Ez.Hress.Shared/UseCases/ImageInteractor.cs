@@ -71,16 +71,14 @@ namespace Ez.Hress.Shared.UseCases
 
                     imageObject.Mutate(i => i.Resize(new Size(useWidth, 0)));
 
-                    using (var ms = new MemoryStream())
-                    {
-                        imageObject.SaveAsJpeg(ms);
-                        content = ms.ToArray();
-                    }
+                    using var ms = new MemoryStream();
+                    imageObject.SaveAsJpeg(ms);
+                    content = ms.ToArray();
                 }
             }
             catch(Exception ex)
             {
-                _log.LogError(ex, ex.Message);
+                _log.LogError(ex, "[{Class}], {Message}", nameof(ImageInteractor), ex.Message);
             }
 
             image.Content = content;
@@ -107,24 +105,16 @@ namespace Ez.Hress.Shared.UseCases
             }
 
             int typeID = 0;
-            switch (entity.Container)
+            typeID = entity.Container switch
             {
-                case ImageContainer.Album:
-                    typeID = 20;
-                    break;
-                case ImageContainer.ATVR:
-                    typeID = 25;
-                    break;
-                case ImageContainer.News:
-                    typeID = 19;
-                    break;
-                case ImageContainer.Profile:
-                    typeID = 24;
-                    break;
-                default: // Hardhead, Other
-                    typeID = 26;
-                    break;
+                ImageContainer.Album => 20,
+                ImageContainer.ATVR => 25,
+                ImageContainer.News => 19,
+                ImageContainer.Profile => 24,
+                // Hardhead, Other
+                _ => 26,
             };
+            ;
 
             if (entity.ID == 0)
             {

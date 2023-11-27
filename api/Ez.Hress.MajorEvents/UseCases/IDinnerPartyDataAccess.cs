@@ -23,6 +23,8 @@ namespace Ez.Hress.MajorEvents.UseCases
 
         Task<IList<PartyUser>> GetChildUsers(int partyID);
 
+        Task<IList<PartyWinner>> GetWinnerStatistic();
+
         Task SaveVote(Vote vote);
     }
 }

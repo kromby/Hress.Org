@@ -335,6 +335,40 @@ namespace Ez.Hress.MajorEvents.DataAccess
             return list;
         }
 
+        public async Task<IList<PartyWinner>> GetWinnerStatistic()
+        {
+            var sql = @"SELECT	usr.Id, usr.Username, COUNT(usr.Id) WinCount
+                        FROM	rep_Text textWinner
+                        JOIN	rep_Event team ON textWinner.EventId = team.Id
+                        JOIN	rep_User member ON team.Id = member.EventId
+                        JOIN	adm_User usr ON member.UserId = usr.Id
+                        WHERE	textWinner.TypeId = 200
+                        GROUP BY usr.Id, usr.Username
+                        ORDER BY COUNT(usr.Id) DESC";
+
+            _log.LogInformation("[{Class}] GetWinnerStatistic", this.GetType().Name);
+            _log.LogInformation("[{Class}] Executing SQL: {sql}", this.GetType().Name, sql);
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql);
+            command.Connection = connection;
+
+            var list = new List<PartyWinner>();
+
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (reader.Read())
+                {
+                    PartyWinner winner = new(SqlHelper.GetInt(reader, "Id"), reader.GetString(reader.GetOrdinal("Username")), SqlHelper.GetInt(reader, "WinCount"));
+                    list.Add(winner);
+                }
+            }
+
+            return list;
+        }
+
         public async Task SaveVote(Vote vote)
         {
             _log.LogInformation("[{Class}] SaveVote", this.GetType().Name);

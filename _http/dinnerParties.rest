@@ -22,7 +22,7 @@ GET {{host}}/api/dinnerParties?includeGuests=true&top=5
 GET {{host}}/api/dinnerParties/5304
 
 ### Get all courses for a single dinner party
-GET {{host}}/api/dinnerParties/5304/courses
+GET {{host}}/api/dinnerParties/5410/courses
 
 ### Get all courses by typeID
 GET {{host}}/api/dinnerparties/courses/191
@@ -38,3 +38,6 @@ X-Custom-Authorization: token {{apiToken}}
 {
     "courseID": 9979
 }
+
+### Get winner statistic
+GET {{host}}/api/dinnerparties/statistic?type=winners
