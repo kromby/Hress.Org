@@ -218,8 +218,8 @@ namespace Ez.Hress.MajorEvents.DataAccess
                         FROM	rep_Text txt
 						JOIN	gen_Type typ ON txt.TypeId = typ.Id
                         WHERE	txt.EventId = @partyID
-							AND	txt.TypeId IN (191, 192, 193, 223)
-                        ORDER BY txt.TypeId";
+							AND	txt.TypeId IN (191, 192, 193, 223, 224)
+                        ORDER BY typ.Description";
 
             _log.LogInformation("[{Class}] GetCoursesByTypeId", this.GetType().Name);
             _log.LogInformation("[{Class}] Executing SQL: {sql}", this.GetType().Name, sql);
