@@ -6,8 +6,9 @@ import config from "react-global-configuration";
 import { isMobile } from "react-device-detect";
 import UserImage from "../../components/users/userimage";
 
-const Teams = ({id}) => {
+const Teams = ({ id }) => {
     const [teams, setTeams] = useState();
+    const [showAnswers, setShowAnswers] = useState(false);
     var isFirst = true;
 
     useEffect(() => {
@@ -34,6 +35,10 @@ const Teams = ({id}) => {
         return true;
     }
 
+    const handleChange = async () => {
+        setShowAnswers(!showAnswers);
+    }
+
     if (teams && teams.length > 0) {
         return (
             <Post key="teams"
@@ -43,10 +48,9 @@ const Teams = ({id}) => {
                         {teams.map(team =>
                             <div key={team.id}>
                                 {displayHr() ? <hr /> : null}
-                                <h2>{"Lið #" + team.number}</h2>
+                                <h2>{"Lið #" + team.number} {team.isWinner ? "(Sigurliðið)" : null}</h2>
                                 {team.isWinner || team.wine ?
                                     <blockquote>
-                                        {team.isWinner ? [<b>Sigurliðið</b>, <br key="2" />] : null}
                                         {team.wine ? <span dangerouslySetInnerHTML={{ __html: team.wine }} /> : null}
                                     </blockquote> : null}
                                 <div className="row gtr-uniform">
@@ -59,8 +63,37 @@ const Teams = ({id}) => {
                                         </div>
                                     )}
                                 </div>
+                                {team.quizQuestions ?
+                                    <div className="row gtr-uniform">
+                                        <div className="col-12">
+                                            <br />
+                                            <h4>Spurningar</h4>
+                                            <ol>
+                                                {team.quizQuestions.map(question =>
+                                                    <li key={question.id}>
+                                                        {question.question}
+                                                        {showAnswers ?
+                                                            <blockquote>
+                                                                {question.answer}
+                                                            </blockquote> : null
+                                                        }
+                                                    </li>
+                                                )}
+                                            </ol>
+                                        </div>
+                                    </div>
+                                    : null}
                             </div>
                         )}
+                        {id >= 5410 ?
+                            <div className="row gtr-uniform">
+                                <div className="col-12">
+                                    <br />
+                                    <input type="checkbox" id="cbx" checked={showAnswers} onChange={() => handleChange()} />
+                                    <label htmlFor="cbx">Sýna svör við öllum spurningum</label>
+                                </div>
+                            </div> : null
+                        }
                     </section>
                 }
             />

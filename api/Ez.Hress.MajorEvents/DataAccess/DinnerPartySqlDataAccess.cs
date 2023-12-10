@@ -136,10 +136,11 @@ namespace Ez.Hress.MajorEvents.DataAccess
 
         public async Task<IList<PartyTeam>> GetChilds(int partyID)
         {
-            const string sql = @"SELECT	team.Id, team.Number, wine.TextValue 'Wine', winner.TextValue 'IsWinner'
+            const string sql = @"SELECT	team.Id, team.Number, wine.TextValue 'Wine', winner.TextValue 'IsWinner', CAST(CASE WHEN LEN(quiz.TextValue) > 0 THEN 1 ELSE 0 END AS bit) hasQuiz
                                 FROM	rep_Event team
                                 LEFT OUTER JOIN	rep_Text wine ON wine.EventId = team.Id AND wine.TypeId = 128
                                 LEFT OUTER JOIN	rep_Text winner ON winner.EventId = team.Id AND winner.TypeId = 200
+								LEFT OUTER JOIN	(SELECT q.EventId, MAX(q.TextValue) TextValue FROM rep_Text q WHERE q.TypeId = 122 GROUP BY q.EventId) quiz ON quiz.EventId = team.Id
                                 WHERE	team.ParentId = @partyID
                                 ORDER BY team.Number";
 
@@ -171,6 +172,8 @@ namespace Ez.Hress.MajorEvents.DataAccess
                     {
                         entity.Wine = reader.GetString(reader.GetOrdinal("Wine"));
                     }
+
+                    entity.HasQuiz = SqlHelper.GetBool(reader, "HasQuiz");
 
                     list.Add(entity);
                 }
@@ -329,6 +332,37 @@ namespace Ez.Hress.MajorEvents.DataAccess
                 {
                     PartyUser guest = new(SqlHelper.GetInt(reader, "UserId"), partyID, reader.GetString(reader.GetOrdinal("Username")), SqlHelper.GetInt(reader, "ImageID"), reader.GetString(reader.GetOrdinal("Name")));
                     list.Add(guest);
+                }
+            }
+
+            return list;
+        }
+
+        public async Task<IList<PartyQuiz>> GetQuizQuestions(int teamID)
+        {
+            var sql = @"SELECT	question.Id, question.TextValue 'question', answer.TextValue 'answer'
+                        FROM	rep_Text question
+                        JOIN	rep_Text answer ON question.Id = answer.ParentId
+                        WHERE	question.EventId = @teamID
+	                        AND question.TypeId = 122";
+
+            _log.LogInformation("[{Class}] GetQuizQuestions", this.GetType().Name);
+            _log.LogInformation("[{Class}] Executing SQL: {sql}", this.GetType().Name, sql);
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql);
+            command.Connection = connection;
+            command.Parameters.AddWithValue("teamID", teamID);
+            var list = new List<PartyQuiz>();
+
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (reader.Read())
+                {
+                    PartyQuiz quiz = new(SqlHelper.GetInt(reader, "Id"), reader.GetString(reader.GetOrdinal("Question")), reader.GetString(reader.GetOrdinal("Answer")));
+                    list.Add(quiz);
                 }
             }
 

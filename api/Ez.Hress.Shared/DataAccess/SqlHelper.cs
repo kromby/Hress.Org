@@ -9,6 +9,13 @@ namespace Ez.Hress.Shared.DataAccess
 {
     public static class SqlHelper
     {
+
+        public static bool GetBool(SqlDataReader reader, string columnName)
+        {
+            int columnIndex = reader.GetOrdinal(columnName);
+            return (reader.IsDBNull(columnIndex) ? false : reader.GetBoolean(columnIndex)); 
+        }
+
         public static int GetInt(SqlDataReader reader, string columnName)
         {
             int columnIndex = reader.GetOrdinal(columnName);

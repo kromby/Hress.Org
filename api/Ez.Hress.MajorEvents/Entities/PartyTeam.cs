@@ -25,5 +25,9 @@ namespace Ez.Hress.MajorEvents.Entities
         public bool IsWinner { get; set; }
 
         public IList<PartyUser> Members { get; set; }
+
+        public bool HasQuiz { get; set; }
+
+        public IList<PartyQuiz> QuizQuestions { get; set; }
     }
 }

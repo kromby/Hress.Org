@@ -79,6 +79,10 @@ namespace Ez.Hress.MajorEvents.UseCases
             foreach(var team in teams)
             {
                 team.Members = users.Where(m => m.ParentID == team.ID).ToList();
+                if (team.HasQuiz)
+                {
+                    team.QuizQuestions = await _dinnerDataAccess.GetQuizQuestions(team.ID);
+                }
             }
 
             return teams;

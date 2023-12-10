@@ -28,7 +28,7 @@ GET {{host}}/api/dinnerParties/5410/courses
 GET {{host}}/api/dinnerparties/courses/191
 
 ### Get redwine teams
-GET {{host}}/api/dinnerparties/5383/teams
+GET {{host}}/api/dinnerparties/5410/teams
 
 ### Post vote on course
 POST {{host}}/api/dinnerparties/courses/999
