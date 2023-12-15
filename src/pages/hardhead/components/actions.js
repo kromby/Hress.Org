@@ -12,9 +12,9 @@ const HardheadActions = ({id}) => {
         const getActions = async () => {
             if (authTokens !== undefined) {
                 try {
-                    var url = config.get('path') + '/api/hardhead/' + id + '/actions?code=' + config.get('code');
+                    var url = `${config.get('apiPath')}/api/hardhead/${id}/actions`;
                     const response = await axios.get(url, {
-                        headers: { 'Authorization': 'token ' + authTokens.token }
+                        headers: { 'X-Custom-Authorization': 'token ' + authTokens.token }
                     })
                     setData({ actions: response.data, isLoading: false, visible: true })
                 }
@@ -38,8 +38,8 @@ const HardheadActions = ({id}) => {
         <ul className="actions">
             {data.visible ?
                 data.actions.map(action =>
-                    <li key={action.Link.Href}>
-                        <a href={action.Link.Href} tooltip={action.Description} className="button large">{action.Name}</a>
+                    <li key={action.link.href}>
+                        <a href={action.link.href} tooltip={action.description} className="button large">{action.name}</a>
                     </li>) : null
             }
         </ul>

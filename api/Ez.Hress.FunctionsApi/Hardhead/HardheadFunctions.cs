@@ -15,6 +15,9 @@ using Ez.Hress.Hardhead.Entities;
 using System.Collections.Generic;
 using System.Net;
 using System.Reflection.Metadata.Ecma335;
+using Ez.Hress.Hardhead.DataAccess;
+using Microsoft.Azure.WebJobs.Host;
+using System.Net.Http;
 
 namespace Ez.Hress.FunctionsApi.Hardhead
 {
@@ -102,6 +105,31 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                 }
 
                 return new OkObjectResult(list);
+            }
+        }
+
+        [FunctionName("hardheadActions")]
+        public async Task<IActionResult> RunActions([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/{id:int}/actions")] HttpRequest req, int id, ILogger log)
+        {
+            var method = nameof(RunActions);
+            log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
+
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            if (!isJWTValid)
+            {
+                log.LogInformation("[{Class}.{Function}]  JWT is not valid!", _class, method);
+                return new UnauthorizedResult();
+            }
+
+            try
+            {
+                var result = await _hardheadInteractor.GetActions(id, userID);
+                return new OkObjectResult(result);
+            }
+            catch (Exception ex)
+            {
+                log.LogError("Internal error", ex);
+                throw;
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using Ez.Hress.Hardhead.Entities;
+using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -88,6 +89,23 @@ namespace Ez.Hress.Hardhead.UseCases
                         throw new SystemException("Creating new hardhead failed");
                 }
             }
+        }
+
+        public async Task<IList<ComponentEntity>> GetActions(int hardheadID, int userID)
+        {
+            var actionsTask = _hardheadDataAccess.GetActions(hardheadID);
+            var hardhead = await _hardheadDataAccess.GetHardhead(hardheadID).ConfigureAwait(false);
+            if (userID == hardhead.Host.ID || userID == 2630)
+            {
+                actionsTask.Wait();
+                return actionsTask.Result;
+            }
+
+            return new List<ComponentEntity>();
+
+            //Some ideas regarding implementation
+            //To start with the only action will be change the hardhead
+            //Future actions could be "I was there", "Tilnefna vonbrigði"...
         }
     }
 }

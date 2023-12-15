@@ -294,5 +294,20 @@ namespace Ez.Hress.Hardhead.DataAccess
 
             return false;
         }
+
+        public Task<IList<ComponentEntity>> GetActions(int hardheadID)
+        {
+            IList<ComponentEntity> list = new List<ComponentEntity>
+            {
+                new ComponentEntity()
+                {
+                    ID = 9000,
+                    Name = "Breyta",
+                    Description = "Settu inn nýjar upplýsingar um harðhausakvöldið",
+                    Link = new HrefEntity() { ID = 9000, Href = string.Format("/hardhead/{0}/edit", hardheadID) }
+                }
+            };
+            return Task.Run(() => { return list; });
+        }
     }
 }

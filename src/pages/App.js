@@ -136,7 +136,8 @@ function App() {
               </Route>
               <Route path="hardhead">
                 <Route path="" element={<Hardhead />} />
-                <Route path=":hardheadID" element={<HardheadEdit />} />
+                <Route path=":hardheadID" element={<Hardhead />} />
+                <Route path=":hardheadID/edit" element={<HardheadEdit />} />
                 <Route path="awards">
                   <Route path="" element={<Awards />} />
                   <Route path=":id" element={<AwardsByType />} />

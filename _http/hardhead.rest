@@ -55,9 +55,9 @@ GET {{host}}/api/hardhead?parentid=5384
 GET {{host}}/api/hardhead
 
 ### Get hardhead actions
-GET {{legacyHost}}/api/hardhead/5358/actions?code={{apiCode}}
+GET {{host}}/api/hardhead/5358/actions
 Content-Type: application/json
-Authorization: token {{apiToken}}
+X-Custom-Authorization: token {{apiToken}}
 
 ### Change hardhead
 PUT {{legacyHost}}/api/hardhead?code={{apiCode}}

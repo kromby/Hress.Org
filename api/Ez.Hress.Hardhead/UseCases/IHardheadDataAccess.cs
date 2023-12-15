@@ -1,4 +1,5 @@
 ﻿using Ez.Hress.Hardhead.Entities;
+using Ez.Hress.Shared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,5 +25,7 @@ namespace Ez.Hress.Hardhead.UseCases
         Task<bool> AlterHardhead(HardheadNight hardhead);
 
         Task<bool> CreateHardhead(int hostID, DateTime nextDate, int currentUserID, DateTime changeDate);
+
+        Task<IList<ComponentEntity>> GetActions(int hardheadID);
     }
 }
