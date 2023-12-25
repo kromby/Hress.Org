@@ -6,11 +6,11 @@ import { useAuth } from '../../../../context/auth';
 import HardheadRating from '../../components/rating';
 import HardheadBody from '../../components/hardheadbody';
 
-const NightOfTheYear = ({ID, Name, Description, Date, Year, onSubmit}) => {
+const NightOfTheYear = ({ID, Name, Href, Description, Date, Year, onSubmit}) => {
     const { authTokens } = useAuth();
     const [nights, setNights] = useState();
 
-    var url = config.get('path') + '/api/hardhead?parentID=5384&attended=8&code=' + config.get('code');
+    var url = config.get('path') + Href + '&code=' + config.get('code');
 
     useEffect(() => {
         const getHardheadUsers = async () => {

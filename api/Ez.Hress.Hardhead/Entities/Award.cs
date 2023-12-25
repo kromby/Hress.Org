@@ -21,6 +21,8 @@ namespace Ez.Hress.Hardhead.Entities
             }
         }
 
+        public string? Href { get; set; }
+
         //public IList<YearEntity> Years { get; set; }
     }
 }

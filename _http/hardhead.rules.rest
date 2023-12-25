@@ -31,8 +31,11 @@ GET {{host}}/api/hardhead/rules/changes
 Content-Type: application/json
 X-Custom-Authorization: token {{apiToken}}
 
+### Get rule changes - legacy
+GET {{legacyHost}}/api/hardhead/rules/changes?code={{apiCode}}
+
 ### Get parent rules
 GET {{host}}/api/hardhead/rules
 
 ### Get child rules
-GET {{host}}/api/hardhead/rules/21690
+GET {{host}}/api/hardhead/rules/21717

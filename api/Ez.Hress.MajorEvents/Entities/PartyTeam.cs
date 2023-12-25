@@ -16,6 +16,7 @@ namespace Ez.Hress.MajorEvents.Entities
             IsWinner = isWinner;
 
             Members = new List<PartyUser>();
+            QuizQuestions = new List<PartyQuiz>();
         }
 
         public int Number { get; set; }

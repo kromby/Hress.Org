@@ -56,7 +56,14 @@ namespace Ez.Hress.Hardhead.UseCases
             if (parentID < 1)
                 throw new ArgumentException("Value can not be zero or negative.", nameof(parentID));
 
-            return await _ruleDataAccess.GetRules(parentID);
+            var list = await _ruleDataAccess.GetRules(parentID);
+
+            foreach (var rule in list)
+            {
+                rule.ChangeCount = await _ruleChangeDataAccess.GetRuleChangeCount(rule.ID);
+            }
+
+            return list;
         }
     }
 }

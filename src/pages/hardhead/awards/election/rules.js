@@ -91,7 +91,9 @@ const Rules = ({ID, Name, onSubmit}) => {
             {ruleList ? ruleList.map(rule =>
                 <RuleChanges
                     key={rule.id}
-                    href={rule.changes ? rule.changes.href : null}
+                    href={rule.changes ? rule.changes.href : null}              
+                    date={rule.inserted}      
+                    dateFormatted={new Date(rule.inserted).getFullYear()}
                     current={rule.name}
                     id={rule.id}
                     title={rule.parentNumber + ". kafli " + rule.number + ". grein"}

@@ -47,12 +47,21 @@ namespace Ez.Hress.FunctionsApi
         public static void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
         {
             var dbConnectionString = config["Ez.Hress.Database.ConnectionString"];
-            var contentStorageConnectionString = config["Ez.Hress.Shared.ContentStorage.ConnectionString"];
+            DbConnectionInfo dbConnectionInfo = new(dbConnectionString);
+            var contentStorageConnectionString = config["Ez.Hress.Shared.ContentStorage.ConnectionString"];            
 
             var key = config["Ez.Hress.Shared.Authentication.Key"];
             var issuer = config["Ez.Hress.Shared.Authentication.Issuer"];
             var audience = config["Ez.Hress.Shared.Authentication.Audience"];
             var salt = config["Ez.Hress.Shared.Authentication.Salt"];
+
+            IConfigurationDataAccess configurationDataAccess = new ConfigurationSqlAccess(dbConnectionInfo);
+            config = new ConfigurationBuilder()
+                .AddConfiguration(config)
+                .Add(new HressConfigurationSource(configurationDataAccess))
+                .Build();
+
+            services.AddSingleton<IConfiguration>(config);
 
             services.AddMvcCore().AddNewtonsoftJson(options =>
             {
@@ -61,7 +70,7 @@ namespace Ez.Hress.FunctionsApi
             });
 
             // Connection details
-            services.AddSingleton(new DbConnectionInfo(dbConnectionString));
+            services.AddSingleton(dbConnectionInfo);
             services.AddSingleton(new BlobConnectionInfo(contentStorageConnectionString));
 
             // Clients

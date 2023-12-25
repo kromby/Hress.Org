@@ -4,7 +4,7 @@ import config from 'react-global-configuration';
 import { Post } from "../../../../components";
 import { useAuth } from "../../../../context/auth";
 
-const RuleChanges = ({id, title, href, description, current, selectedValue, selectedRule, onSubmit}) => {
+const RuleChanges = ({id, title, href, date, dateFormatted, description, current, selectedValue, selectedRule, onSubmit}) => {
     const { authTokens } = useAuth();
     const [changes, setChanges] = useState();
     const [value, setValue] = useState(-1);
@@ -53,6 +53,8 @@ const RuleChanges = ({id, title, href, description, current, selectedValue, sele
             id={id}
             title={title}
             description={description}
+            date={date}
+            dateFormatted={dateFormatted}
             body={
                 <section>
                     <div onClick={() => handleChange(-1)}>
