@@ -73,8 +73,13 @@ namespace Ez.Hress.FunctionsApi
             services.AddSingleton(dbConnectionInfo);
             services.AddSingleton(new BlobConnectionInfo(contentStorageConnectionString));
 
+            // Types
+            services.AddSingleton<ITypeDataAccess, TypeSqlAccess>();
+            services.AddSingleton<ITypeInteractor, TypeInteractor>();
+
             // Clients
             services.AddSingleton(new TableClient(contentStorageConnectionString, "DinnerPartyElection"));
+            services.AddSingleton(new TableClient(contentStorageConnectionString, "HardheadVotes"));
 
             // Authentication
             services.AddSingleton(new AuthenticationInfo(key, issuer, audience, salt));
@@ -113,7 +118,8 @@ namespace Ez.Hress.FunctionsApi
 
             // Election (Shared)
             services.AddSingleton<ElectionInteractor>();
-            services.AddSingleton<IElectionDataAccess, ElectionSqlAccess>();
+            services.AddSingleton<IElectionVoterDataAccess, ElectionSqlAccess>();
+            services.AddSingleton<IElectionVoteDataAccess, ElectionVoteTableAccess>();
 
             // Hardhead
             services.AddSingleton<HardheadInteractor>();

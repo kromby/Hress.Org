@@ -64,7 +64,7 @@ namespace Ez.Hress.FunctionsApi.Elections
             try
             {
                 var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                var voteList = JsonConvert.DeserializeObject<IList<Vote>>(requestBody);
+                var voteList = JsonConvert.DeserializeObject<IList<VoteEntity>>(requestBody);
 
                 if(voteList.Count == 0)
                 {
@@ -74,11 +74,11 @@ namespace Ez.Hress.FunctionsApi.Elections
                 else if (voteList.Count == 1)
                 {
                     var entity = voteList.First();
-                    if (entity.EventID == 0)
-                        entity.EventID = id;
+                    if (entity.StepID == 0)
+                        entity.StepID = id;
 
                     var result = await _hardheadElectionInteractor.SaveVote(entity, userID).ConfigureAwait(false);
-                    return result > 0 ? new OkResult() : throw new SystemException("Could not save vote.");
+                    return result ? new OkResult() : throw new SystemException("Could not save vote.");
                 }
                 else
                 {

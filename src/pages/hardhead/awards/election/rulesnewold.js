@@ -12,7 +12,7 @@ const RulesNewOld = ({ ID, Name, onSubmit }) => {
 
     useEffect(() => {
         const getRules = async () => {
-            var url = `${config.get('apiPath')}/api/hardhead/rules/changes`;
+            var url = `${config.get('apiPath')}/api/hardhead/rules/changes?type=209`;
             try {
                 const response = await axios.get(url, {
                     headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
@@ -82,6 +82,12 @@ const RulesNewOld = ({ ID, Name, onSubmit }) => {
                     description={rule.ruleText}
                     body={
                         <section>
+                            {rule.reasoning ?
+                                <div>
+                                    <h4>Rökstuðningur</h4>
+                                    <i>{rule.reasoning}</i>
+                                </div> : null}
+                            <br />
                             <div onClick={() => handleChange(rule.id, 1)}>
                                 <input
                                     type="radio"
@@ -90,7 +96,7 @@ const RulesNewOld = ({ ID, Name, onSubmit }) => {
                                     onChange={() => handleChange(rule.id, 1)} />
                                 <label>Samþykkja</label>
                             </div>
-                            <div onClick={() => handleChange(rule.ID, -1)}>
+                            <div onClick={() => handleChange(rule.id, -1)}>
                                 <input
                                     type="radio"
                                     radioGroup={"id_" + rule.id}

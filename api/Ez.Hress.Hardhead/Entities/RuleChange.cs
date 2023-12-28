@@ -17,7 +17,7 @@ namespace Ez.Hress.Hardhead.Entities
         }
 
         public RuleChangeType TypeID { get; set; }
-        public string TypeName => Enum.GetName(TypeID) ?? "Unknown";
+        public string? TypeName { get; set; }
 
         public int RuleCategoryID { get; set; }
         public int? RuleID { get; set; }
@@ -40,8 +40,8 @@ namespace Ez.Hress.Hardhead.Entities
                     if (string.IsNullOrWhiteSpace(RuleText) || RuleText.Length < 16)
                         throw new ArgumentException("Must be at least 16 characters", nameof(RuleText));
                     break;
-                case RuleChangeType.Create:                    
-                    if(string.IsNullOrWhiteSpace(RuleText) || RuleText.Length < 16)
+                case RuleChangeType.Create:
+                    if (string.IsNullOrWhiteSpace(RuleText) || RuleText.Length < 16)
                         throw new ArgumentException("Must be at least 16 characters", nameof(RuleText));
                     break;
                 case RuleChangeType.Delete:
@@ -55,9 +55,9 @@ namespace Ez.Hress.Hardhead.Entities
 
     public enum RuleChangeType
     {
-        None,
-        Update,
-        Create,
-        Delete
+        None = 0,
+        Update = 210,
+        Create = 209,
+        Delete = 211
     }
 }

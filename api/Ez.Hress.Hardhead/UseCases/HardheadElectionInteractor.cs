@@ -15,15 +15,13 @@ namespace Ez.Hress.Hardhead.UseCases
     {
         private readonly ElectionInteractor _electionInteractor;
         private readonly IHardheadDataAccess _hardheadDataAccess;
-        private readonly IHardheadElectionDataAccess _hardheadElectionDataAccess;
         private readonly IAwardDataAccess _awardDataAccess;
         private readonly ILogger<HardheadElectionInteractor> _log;
         private readonly IConfiguration _config;
 
-        public HardheadElectionInteractor(IAwardDataAccess awardDataAccess, IHardheadDataAccess hardheadDataAccess, IHardheadElectionDataAccess hardheadElectionDataAccess, ElectionInteractor electionInteractor, IConfiguration config, ILogger<HardheadElectionInteractor> log)
+        public HardheadElectionInteractor(IAwardDataAccess awardDataAccess, IHardheadDataAccess hardheadDataAccess, ElectionInteractor electionInteractor, IConfiguration config, ILogger<HardheadElectionInteractor> log)
         {
             _awardDataAccess= awardDataAccess;
-            _hardheadElectionDataAccess = hardheadElectionDataAccess;
             _electionInteractor = electionInteractor;
             _hardheadDataAccess= hardheadDataAccess;
             _config = config;
@@ -80,7 +78,7 @@ namespace Ez.Hress.Hardhead.UseCases
 
         private static Award? GetNextElectionStep(int lastStepID, int twentyYearOldID, IList<Award> awardList)
         {
-            awardList.Insert(0, new Award() { ID = 100, Name = "Nýjar og niðurfelldar reglur" });
+            awardList.Insert(0, new Award() { ID = 100, Name = "Nýjar reglur" });
             awardList.Insert(1, new Award() { ID = 101, Name = "Reglubreytingar" });
             awardList.Insert(2, new Award() { ID = 102, Name = "Mynd á uppgjörskvöld", Href=$"/api/hardhead?parentID={twentyYearOldID}" });
 
@@ -97,21 +95,23 @@ namespace Ez.Hress.Hardhead.UseCases
             await _electionInteractor.SaveVoter(voter);
         }
 
-        public async Task<int> SaveVote(Vote entity, int userID)
+        public async Task<bool> SaveVote(VoteEntity entity, int userID)
         {
             if (entity == null)
                 throw new ArgumentException("Entity is missing.", nameof(entity));
 
-            entity.Created = DateTime.Now;
             entity.Validate();
 
-            var result = await _hardheadElectionDataAccess.SaveVote(entity).ConfigureAwait(false);
-            await SaveVoter(userID, entity.EventID);
+            var result = await _electionInteractor.SaveVote(entity);
+            if (!result)
+                return result;
+
+            await SaveVoter(userID, entity.StepID);
 
             return result;
         }
 
-        public async Task<int> SaveVotes(IList<Vote> list, int electionID, int userID)
+        public async Task<int> SaveVotes(IList<VoteEntity> list, int stepID, int userID)
         {
             if (list == null || list.Count == 0)
                 throw new ArgumentException("Entity is missing.", nameof(list));
@@ -119,14 +119,17 @@ namespace Ez.Hress.Hardhead.UseCases
             int result = 0;
             foreach (var vote in list)
             {
-                vote.EventID = electionID;
-                vote.Created = DateTime.Now;
+                vote.StepID = stepID;
                 vote.Validate();
 
-                result += await _hardheadElectionDataAccess.SaveVote(vote).ConfigureAwait(false);
+                if(await _electionInteractor.SaveVote(vote))
+                    result++;
             }
 
-            await SaveVoter(userID, electionID);
+            if (result == 0)
+                return 0;
+
+            await SaveVoter(userID, stepID);
 
             return result;
         }

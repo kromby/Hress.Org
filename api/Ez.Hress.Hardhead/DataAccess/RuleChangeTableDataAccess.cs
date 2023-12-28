@@ -67,7 +67,7 @@ namespace Ez.Hress.Hardhead.DataAccess
             string method = nameof(GetRuleChangeCount);
             _logger.LogInformation("[{Class}.{Method}] Get rule change count for rule {ruleID}", _className, method, ruleID);
 
-            var result = _tableClient.QueryAsync<RuleChangeTableEntity>(rc => rc.PartitionKey == "Update" && rc.RuleID == ruleID);
+            var result = _tableClient.QueryAsync<RuleChangeTableEntity>(rc => (rc.PartitionKey == "Update" || rc.PartitionKey == "Delete") && rc.RuleID == ruleID);
 
             int count = 0;
             await foreach(var entity in result)

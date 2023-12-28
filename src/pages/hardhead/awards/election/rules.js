@@ -23,7 +23,7 @@ const Rules = ({ID, Name, onSubmit}) => {
 
                     let selectedArr = selectedValues;
                     childRules.forEach(element => {
-                        selectedArr.push({ EventID: element.id, PollEntryID: 0, Value: 0 });
+                        selectedArr.push({ RuleID: element.id, Value: 0 });
                     });
                     setSelectedValues(selectedArr);
 
@@ -71,14 +71,14 @@ const Rules = ({ID, Name, onSubmit}) => {
         onSubmit();
     }
 
-    const handleChange = async (id, changeId, value) => {
+    const handleChange = async (id, changeId, newValue) => {
         if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
             return;
         }
 
-        var tempList = selectedValues.filter(v => v.EventID !== id);
-        tempList.push({ EventID: id, PollEntryID: changeId, Value: value });
+        var tempList = selectedValues.filter(v => v.RuleID !== id);
+        tempList.push({ ID: changeId, Value: newValue, RuleID: id });
         setSelectedValues(tempList);
 
         if (tempList.filter(v => v.Value === 0).length === 0) {
@@ -97,9 +97,9 @@ const Rules = ({ID, Name, onSubmit}) => {
                     current={rule.name}
                     id={rule.id}
                     title={rule.parentNumber + ". kafli " + rule.number + ". grein"}
-                    description="Reglubreyting"
-                    selectedRule={selectedValues.filter(v => v.EventID === rule.id)[0].PollEntryID}
-                    selectedValue={selectedValues.filter(v => v.EventID === rule.id)[0].Value}
+                    description="Reglubreytingar"
+                    selectedRule={selectedValues.filter(v => v.RuleID === rule.id)[0].ID}
+                    selectedValue={selectedValues.filter(v => v.RuleID === rule.id)[0].Value}
                     onSubmit={handleChange} />
             ) : <Post title="Engar reglubreytingar" />}
 

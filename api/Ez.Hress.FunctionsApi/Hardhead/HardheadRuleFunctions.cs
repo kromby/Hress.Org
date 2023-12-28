@@ -15,6 +15,7 @@ using System.Net.Http;
 using Ez.Hress.Hardhead.DataAccess;
 using Microsoft.Azure.WebJobs.Host;
 using System.Net;
+using System.Diagnostics.Eventing.Reader;
 
 namespace Ez.Hress.FunctionsApi.Hardhead
 {
@@ -58,7 +59,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             }
         }
 
-        [FunctionName("hardheadRuleChangesFunctions")]
+        [FunctionName("hardheadRuleChanges")]
         public async Task<IActionResult> RunRuleChanges(
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "hardhead/rules/changes")] HttpRequest req,
             ILogger log)
@@ -84,7 +85,10 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                 }
                 else if (HttpMethods.IsGet(req.Method))
                 {
-                    return await GetRuleChanges(log);
+                    if (int.TryParse(req.Query["type"], out int typeID))
+                        return await GetRuleChanges(typeID, log);
+                    else
+                        return await GetRuleChanges(log);
                 }
                 else
                 {
@@ -107,6 +111,45 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                 stopwatch.Stop();
                 log.LogInformation($"[HardheadRuleFunctions] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
             }
+        }
+
+        [FunctionName("hardheadRuleIDChanges")]
+        public async Task<IActionResult> RunRuleIDChanges([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/rules/{id:int}/changes")] HttpRequest req, int id, ILogger log)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            log.LogInformation("[{Class}.{Method}] Host: {Host}", _class, "RunRuleIDChanges", req.Host.Value);
+
+            try
+            {
+                var list = await _ruleInteractor.GetRuleChangesByRule(id);
+                return list.Count > 0 ? new OkObjectResult(list) : new NotFoundResult();
+            }
+            catch (ArgumentException aex)
+            {
+                log.LogError(aex, "[HardheadRuleFunctions] Invalid input");
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "[HardheadRuleFunctions] Unhandled error");
+                throw;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                log.LogInformation($"[HardheadRuleFunctions] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+            }
+        }
+
+        private async Task<IActionResult> GetRuleChanges(int typeID, ILogger log)
+        {
+            log.LogInformation("[HardheadRuleFunctions] GetRuleChanges typeID: {typeID}", typeID);
+
+            var result = await _ruleInteractor.GetRuleChanges(typeID);
+
+            return new OkObjectResult(result);
         }
 
         private async Task<IActionResult> GetRuleChanges(ILogger log)

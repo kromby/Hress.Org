@@ -12,11 +12,11 @@ const RuleChanges = ({id, title, href, date, dateFormatted, description, current
 
     useEffect(() => {
         const getChanges = async () => {
-            var url = config.get('path') + href + '?code=' + config.get('code');
+            var url = config.get('apiPath') + href;
             try {
                 const response = await axios.get(url);
                 setChanges(response.data);
-                setFallbackRule(response.data[0].ID);
+                setFallbackRule(response.data[0].id);
             } catch (e) {
                 console.error(e);
             }
@@ -60,14 +60,16 @@ const RuleChanges = ({id, title, href, date, dateFormatted, description, current
                     <div onClick={() => handleChange(-1)}>
                         <input type="radio" radioGroup={"id_" + id} checked={selectedValue === -1} onChange={() => handleChange(-1)} />
                         <label>
-                            <u>Núverandi:</u> {current}
+                            <u>Núverandi</u> {current}
                         </label>
                     </div>
                     {changes ? changes.map(change =>
-                        <div key={change.ID} onClick={() => handleChange(change.ID)}>
-                            <input type="radio" radioGroup={"id_" + id} checked={selectedRule === change.ID && selectedValue === 1} onChange={() => handleChange(change.ID)} />
+                        <div key={change.id} onClick={() => handleChange(change.id)}>
+                            <input type="radio" radioGroup={"id_" + id} checked={selectedRule === change.id && selectedValue === 1} onChange={() => handleChange(change.id)} />
                             <label>
-                                {change.Description}
+                                <u>{change.typeName}{change.ruleText ? ":": ""}</u> {change.ruleText}
+                                <br/>
+                                <i>{change.reasoning ? <u>Rökstuðningur:</u> : null} {change.reasoning}</i>
                             </label>
                         </div>
                     ) : null}

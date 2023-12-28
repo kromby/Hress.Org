@@ -27,7 +27,7 @@ X-Custom-Authorization: token {{apiToken}}
 }
 
 ### Get rule changes
-GET {{host}}/api/hardhead/rules/changes
+GET {{host}}/api/hardhead/rules/changes?type=209
 Content-Type: application/json
 X-Custom-Authorization: token {{apiToken}}
 

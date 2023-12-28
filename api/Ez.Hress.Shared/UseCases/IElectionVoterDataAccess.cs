@@ -7,10 +7,10 @@ using System.Threading.Tasks;
 
 namespace Ez.Hress.Shared.UseCases
 {
-    public interface IElectionDataAccess
+    public interface IElectionVoterDataAccess
     {
         Task<VoterEntity?> GetVoter(int userID);
 
-        Task<int> SaveVoter(VoterEntity voter);
+        Task<int> SaveVoter(VoterEntity voter);        
     }
 }
