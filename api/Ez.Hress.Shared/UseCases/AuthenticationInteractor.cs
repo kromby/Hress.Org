@@ -205,7 +205,7 @@ namespace Ez.Hress.Shared.UseCases
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationInfo.Key));
             var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
-            var token = new JwtSecurityToken(_authenticationInfo.Issuer, _authenticationInfo.Audience, claims, expires: DateTime.Now.AddMinutes(240), signingCredentials: creds);
+            var token = new JwtSecurityToken(_authenticationInfo.Issuer, _authenticationInfo.Audience, claims, expires: DateTime.Now.AddDays(7), signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }        

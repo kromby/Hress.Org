@@ -5,7 +5,7 @@ import { Post } from "../../../../components";
 import HardheadBody from "../../components/hardheadbody";
 import { useAuth } from "../../../../context/auth";
 
-const TwentyYearOldMovie = ({ID, Name, Description, Date, Year, onSubmit}) => {
+const TwentyYearOldMovie = ({ID, Name, Href, onSubmit}) => {
     const { authTokens } = useAuth();
     const [movies, setMovies] = useState();
     const [value, setValue] = useState(-1);
@@ -13,7 +13,7 @@ const TwentyYearOldMovie = ({ID, Name, Description, Date, Year, onSubmit}) => {
     useEffect(() => {
         const getMovies = async () => {
             // TODO: Get parent ID from somewhere or just change every year ;)
-            var url = config.get('path') + '/api/hardhead?parentID=4696&attended=8&code=' + config.get('code');
+            var url = config.get('path') + Href + '&code=' + config.get('code');
             try {
                 const response = await axios.get(url);
                 setMovies(response.data);
@@ -66,9 +66,6 @@ const TwentyYearOldMovie = ({ID, Name, Description, Date, Year, onSubmit}) => {
             <Post
                 id={ID}
                 title={Name}
-                description={Description}
-                date={Date}
-                dateFormatted={Year}
                 body={
                     <section>
                         <p>

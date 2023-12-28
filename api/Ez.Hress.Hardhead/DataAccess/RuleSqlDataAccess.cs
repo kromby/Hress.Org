@@ -67,9 +67,8 @@ namespace Ez.Hress.Hardhead.DataAccess
             var parent = parentList.Where(r => r.ID == parentId).First();
 
 
-            var sql = @"SELECT	t.Id, t.TextValue, t.Inserted, t.InsertedBy, COUNT(pe.Id) 'ChangeCount'
+            var sql = @"SELECT	t.Id, t.TextValue, t.Inserted, t.InsertedBy
                         FROM	rep_Text t
-						LEFT OUTER JOIN rep_PollEntry pe ON t.Id = pe.EventTextId AND pe.ElectionTypeId = 210
                         WHERE	t.ParentId = @parentId AND t.TypeId = 70
 						GROUP BY t.Id, t.TextValue, t.Inserted, t.InsertedBy
                         ORDER BY t.Inserted";
@@ -94,7 +93,6 @@ namespace Ez.Hress.Hardhead.DataAccess
                         ID = reader.GetInt32(reader.GetOrdinal("Id")),
                         Name = reader.GetString(reader.GetOrdinal("TextValue")),
                         Inserted = reader.GetDateTime(reader.GetOrdinal("Inserted")),
-                        ChangeCount = reader.GetInt32(reader.GetOrdinal("ChangeCount")),
                         Number = i,
                         ParentNumber = parent.Number
                     };

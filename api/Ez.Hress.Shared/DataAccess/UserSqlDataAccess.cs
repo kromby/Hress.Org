@@ -27,6 +27,7 @@ namespace Ez.Hress.Shared.DataAccess
                         FROM adm_User usr
                         LEFT JOIN upf_Image uimg ON usr.Id = uimg.UserId AND uimg.TypeId = 14
                         WHERE usr.Id = @userID";
+            _log.LogInformation("[{Class}] GetUser id: {ID} sql: {SQL}", nameof(UserSqlDataAccess), id, sql);
 
             UserBasicEntity user = new();
 
@@ -34,24 +35,20 @@ namespace Ez.Hress.Shared.DataAccess
             {
                 await connection.OpenAsync();
 
-                using (var command = new SqlCommand(sql, connection))
-                {
-                    command.Parameters.AddWithValue("userID", id);
-                    
-                    using (var reader = await command.ExecuteReaderAsync())
-                    {
-                        if (await reader.ReadAsync())
-                        {
-                            user.ID = reader.GetInt32(reader.GetOrdinal("Id"));
-                            user.Name = reader.GetString(reader.GetOrdinal("Username"));
-                            user.Username = reader.GetString(reader.GetOrdinal("Username"));
-                            user.Inserted = reader.GetDateTime(reader.GetOrdinal("Inserted"));
+                using var command = new SqlCommand(sql, connection);
+                command.Parameters.AddWithValue("userID", id);
 
-                            if (!reader.IsDBNull(reader.GetOrdinal("ImageId")))
-                            {
-                                user.ProfilePhotoId = reader.GetInt32(reader.GetOrdinal("ImageId"));
-                            }
-                        }
+                using var reader = await command.ExecuteReaderAsync();
+                if (await reader.ReadAsync())
+                {
+                    user.ID = reader.GetInt32(reader.GetOrdinal("Id"));
+                    user.Name = reader.GetString(reader.GetOrdinal("Username"));
+                    user.Username = reader.GetString(reader.GetOrdinal("Username"));
+                    user.Inserted = reader.GetDateTime(reader.GetOrdinal("Inserted"));
+
+                    if (!reader.IsDBNull(reader.GetOrdinal("ImageId")))
+                    {
+                        user.ProfilePhotoId = reader.GetInt32(reader.GetOrdinal("ImageId"));
                     }
                 }
             }

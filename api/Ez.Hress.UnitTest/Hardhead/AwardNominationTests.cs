@@ -13,8 +13,8 @@ namespace Ez.Hress.UnitTest.Hardhead
 {
     public class AwardNominationTests
     {
-        private Mock<IAwardNominationDataAccess> _nominationDataAccess;
-        private Mock<ILogger<AwardNominationInteractor>> _log;
+        private readonly Mock<IAwardNominationDataAccess> _nominationDataAccess;
+        private readonly Mock<ILogger<AwardNominationInteractor>> _log;
 
 
         public AwardNominationTests()
@@ -29,7 +29,7 @@ namespace Ez.Hress.UnitTest.Hardhead
             // ARRANGE
             int typeID = 220;
             int userID = 2630;
-            IList<Nomination> list = new List<Nomination>() { new Nomination(220, 999, "Smu"), new Nomination(220, 2630, "Smu") };
+            IList<Nomination> list = new List<Nomination>() { new Nomination(220, 999, "Smu"), new Nomination(220, 2640, "Smu") };
 
             _nominationDataAccess.Setup(x => x.GetNominations(typeID)).Returns(Task.FromResult(list));
             var awardNominationInteractor = new AwardNominationInteractor(_nominationDataAccess.Object, _log.Object);

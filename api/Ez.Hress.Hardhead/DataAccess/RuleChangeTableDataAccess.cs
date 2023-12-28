@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -24,7 +25,7 @@ namespace Ez.Hress.Hardhead.DataAccess
             _tableClient = new TableClient(connectionInfo.ConnectionString, "HardheadRuleChanges");
             _logger = logger;
             _className = nameof(RuleChangeTableDataAccess);
-        }
+        }        
 
         public async Task<IList<RuleChange>> GetRuleChanges()
         {
@@ -43,6 +44,7 @@ namespace Ez.Hress.Hardhead.DataAccess
                     ID = entity.RowKey,
                     RuleText = entity.RuleText,
                     RuleID = entity.RuleID,
+                    Name = entity.Name
                 };
                 list.Add(rulaChange);
             }
@@ -58,6 +60,22 @@ namespace Ez.Hress.Hardhead.DataAccess
             RuleChangeTableEntity entity = new(ruleChange);
             var response = await _tableClient.AddEntityAsync<RuleChangeTableEntity>(entity);
             return response.IsError ? 0 : 1;
+        }
+
+        public async Task<int> GetRuleChangeCount(int ruleID)
+        {
+            string method = nameof(GetRuleChangeCount);
+            _logger.LogInformation("[{Class}.{Method}] Get rule change count for rule {ruleID}", _className, method, ruleID);
+
+            var result = _tableClient.QueryAsync<RuleChangeTableEntity>(rc => (rc.PartitionKey == "Update" || rc.PartitionKey == "Delete") && rc.RuleID == ruleID);
+
+            int count = 0;
+            await foreach(var entity in result)
+            {
+                count++;
+            }
+
+            return count;
         }
     }
 }

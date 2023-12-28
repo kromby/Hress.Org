@@ -1,4 +1,5 @@
 ﻿using Ez.Hress.Hardhead.Entities;
+using Ez.Hress.Shared.UseCases;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -12,13 +13,15 @@ namespace Ez.Hress.Hardhead.UseCases
     {
         private readonly IRuleDataAccess _ruleDataAccess;
         private readonly IRuleChangeDataAccess _ruleChangeDataAccess;
+        private readonly ITypeInteractor _typeInteractor;
         private readonly ILogger<RuleInteractor> _logger;
         private readonly string _className;
 
-        public RuleInteractor(IRuleDataAccess ruleDataAccess, IRuleChangeDataAccess ruleChangeDataAccess, ILogger<RuleInteractor> logger)
+        public RuleInteractor(IRuleDataAccess ruleDataAccess, IRuleChangeDataAccess ruleChangeDataAccess, ITypeInteractor typeInteractor, ILogger<RuleInteractor> logger)
         {
             _ruleDataAccess = ruleDataAccess;
             _ruleChangeDataAccess = ruleChangeDataAccess;
+            _typeInteractor = typeInteractor;
             _logger = logger;
             _className = nameof(RuleInteractor);
         }
@@ -38,12 +41,54 @@ namespace Ez.Hress.Hardhead.UseCases
             return result;
         }
 
+        public async Task<IList<RuleChange>> GetRuleChanges(int typeID)
+        {
+            string method = nameof(GetRuleChanges);
+            _logger.LogInformation("[{Class}.{Method}] Getting rule changes.", _className, method);
+
+            var allRuleChanges = await _ruleChangeDataAccess.GetRuleChanges();
+            IList<RuleChange> filteredChanges = allRuleChanges.Where(c => c.TypeID == Enum.Parse<RuleChangeType>(typeID.ToString())).ToList();
+
+            foreach(var entity in filteredChanges)
+            {
+                var type = await _typeInteractor.GetEzType((int)entity.TypeID);
+                entity.TypeName = type.Name;
+            }
+
+            return filteredChanges;
+        }
+
         public async Task<IList<RuleChange>> GetRuleChanges()
         {
             string method = nameof(GetRuleChanges);
             _logger.LogInformation("[{Class}.{Method}] Getting rule changes.", _className, method);
 
-            return await _ruleChangeDataAccess.GetRuleChanges(); 
+            var allRuleChanges = await _ruleChangeDataAccess.GetRuleChanges();
+
+            foreach (var entity in allRuleChanges)
+            {
+                var type = await _typeInteractor.GetEzType((int)entity.TypeID);
+                entity.TypeName = type.Name;
+            }
+
+            return allRuleChanges;
+        }
+
+        public async Task<IList<RuleChange>> GetRuleChangesByRule(int ruleID)
+        {
+            string method = nameof(GetRuleChanges);
+            _logger.LogInformation("[{Class}.{Method}] Getting rule changes ruleID: {RuleID}", _className, method, ruleID);
+
+            var allRuleChanges = await _ruleChangeDataAccess.GetRuleChanges();
+            IList<RuleChange> filteredChanges = allRuleChanges.Where(c => c.RuleID == ruleID).ToList();
+
+            foreach (var entity in filteredChanges)
+            {
+                var type = await _typeInteractor.GetEzType((int)entity.TypeID);
+                entity.TypeName = type.Name;
+            }
+
+            return filteredChanges;
         }
 
         public async Task<IList<RuleParent>> GetRules()
@@ -56,7 +101,14 @@ namespace Ez.Hress.Hardhead.UseCases
             if (parentID < 1)
                 throw new ArgumentException("Value can not be zero or negative.", nameof(parentID));
 
-            return await _ruleDataAccess.GetRules(parentID);
+            var list = await _ruleDataAccess.GetRules(parentID);
+
+            foreach (var rule in list)
+            {
+                rule.ChangeCount = await _ruleChangeDataAccess.GetRuleChangeCount(rule.ID);
+            }
+
+            return list;
         }
     }
 }

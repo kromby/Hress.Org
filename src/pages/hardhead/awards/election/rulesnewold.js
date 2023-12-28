@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAuth } from "../../../../context/auth"
 import { Post } from "../../../../components";
 
-const RulesNewOld = ({ID, Name, onSubmit}) => {
+const RulesNewOld = ({ ID, Name, onSubmit }) => {
     const { authTokens } = useAuth();
     const [rules, setRules] = useState();
     const [selectedValues, setSelectedValues] = useState([]);
@@ -12,14 +12,16 @@ const RulesNewOld = ({ID, Name, onSubmit}) => {
 
     useEffect(() => {
         const getRules = async () => {
-            var url = config.get('path') + '/api/hardhead/rules/changes?code=' + config.get('code');
+            var url = `${config.get('apiPath')}/api/hardhead/rules/changes?type=209`;
             try {
-                const response = await axios.get(url);
+                const response = await axios.get(url, {
+                    headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                });
                 setRules(response.data);
 
                 var arr = [];
                 response.data.forEach(element => {
-                    arr.push({ PollEntryID: element.ID, Value: 0 });
+                    arr.push({ ID: element.id, Value: 0 });
                 });
                 setSelectedValues(arr);
             } catch (e) {
@@ -61,8 +63,8 @@ const RulesNewOld = ({ID, Name, onSubmit}) => {
             return;
         }
 
-        var tempList = selectedValues.filter(v => v.PollEntryID !== id);
-        tempList.push({ PollEntryID: id, Value: value });
+        var tempList = selectedValues.filter(v => v.ID !== id);
+        tempList.push({ ID: id, Value: value });
         setSelectedValues(tempList);
 
         if (tempList.filter(v => v.Value === 0).length === 0) {
@@ -74,26 +76,32 @@ const RulesNewOld = ({ID, Name, onSubmit}) => {
         <div>
             {rules ? rules.map(rule =>
                 <Post
-                    key={rule.ID}
-                    id={rule.ID}
-                    title={rule.ElectionType.Name + " " + rule.Name}
-                    description={rule.Description}
+                    key={rule.id}
+                    id={rule.id}
+                    title={`${rule.typeName} ${rule.name}`}
+                    description={rule.ruleText}
                     body={
                         <section>
-                            <div onClick={() => handleChange(rule.ID, 1)}>
+                            {rule.reasoning ?
+                                <div>
+                                    <h4>Rökstuðningur</h4>
+                                    <i>{rule.reasoning}</i>
+                                </div> : null}
+                            <br />
+                            <div onClick={() => handleChange(rule.id, 1)}>
                                 <input
                                     type="radio"
-                                    radioGroup={"id_" + rule.ID}
-                                    checked={selectedValues.filter(v => v.PollEntryID === rule.ID)[0] ? selectedValues.filter(v => v.PollEntryID === rule.ID)[0].Value === 1 : false}
-                                    onChange={() => handleChange(rule.ID, 1)} />
+                                    radioGroup={"id_" + rule.id}
+                                    checked={selectedValues.filter(v => v.ID === rule.id)[0] ? selectedValues.filter(v => v.ID === rule.id)[0].Value === 1 : false}
+                                    onChange={() => handleChange(rule.id, 1)} />
                                 <label>Samþykkja</label>
                             </div>
-                            <div onClick={() => handleChange(rule.ID, -1)}>
+                            <div onClick={() => handleChange(rule.id, -1)}>
                                 <input
                                     type="radio"
-                                    radioGroup={"id_" + rule.ID}
-                                    checked={selectedValues.filter(v => v.PollEntryID === rule.ID)[0] ? selectedValues.filter(v => v.PollEntryID === rule.ID)[0].Value === -1 : false}
-                                    onChange={() => handleChange(rule.ID, -1)} />
+                                    radioGroup={"id_" + rule.id}
+                                    checked={selectedValues.filter(v => v.ID === rule.id)[0] ? selectedValues.filter(v => v.ID === rule.id)[0].Value === -1 : false}
+                                    onChange={() => handleChange(rule.id, -1)} />
                                 <label>Hafna</label>
                             </div>
                         </section>

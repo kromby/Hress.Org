@@ -46,6 +46,7 @@ namespace Ez.Hress.Albums.UseCases
             }
 
             var smu = sql.ToString();
+            _log.LogInformation("SQL: {SQL}", smu);
         }
 
         public async Task<IList<Album>> GetAlbums()

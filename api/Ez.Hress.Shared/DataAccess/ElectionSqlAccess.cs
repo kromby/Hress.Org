@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Ez.Hress.Shared.DataAccess
 {
-    public class ElectionSqlAccess : IElectionDataAccess
+    public class ElectionSqlAccess : IElectionVoterDataAccess
     {
         private readonly ILogger<ElectionSqlAccess> _log;
         private readonly string _connectionString;

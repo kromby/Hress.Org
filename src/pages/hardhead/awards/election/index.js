@@ -48,7 +48,7 @@ const Election = () => {
         getNextStep();
     }, [authTokens])
 
-    const getElement = (id, name) => {
+    const getElement = (id, name, href) => {
         console.log("[Election] id: " + id);
         console.log("[Election] name: " + name);
         if (id === 100) /*Lög og reglur - nýjar og niðurfelldar reglur*/ {
@@ -67,6 +67,7 @@ const Election = () => {
             return <TwentyYearOldMovie key={id}
                 ID={id}
                 Name={name}
+                Href={href}
                 onSubmit={handleSubmit}
             />
         } else if (id === 360) /*Vonbrigði*/ {
@@ -80,12 +81,14 @@ const Election = () => {
                 key={id}
                 ID={id}
                 Name={name}
+                Href={href}
                 onSubmit={handleSubmit}
             />
         } else if (id === 362) {
             return <NightOfTheYear key={id}
                 ID={id}
                 Name={name}
+                Href={href}
                 onSubmit={handleSubmit}
             />
         } else if (id === 363) /*Nýliði*/ {
@@ -134,7 +137,7 @@ const Election = () => {
     return (
         <div id="main">
             {step ?
-                getElement(step.id, step.name)
+                getElement(step.id, step.name, step.href)
                 : <Post id="0" title="Kosningu lokið" />}
         </div>
     )

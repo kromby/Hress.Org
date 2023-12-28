@@ -12,5 +12,7 @@ namespace Ez.Hress.Hardhead.UseCases
         Task<int> SaveRuleChange(RuleChange ruleChange);
 
         Task<IList<RuleChange>> GetRuleChanges();
+
+        Task<int> GetRuleChangeCount(int ruleID);
     }
 }

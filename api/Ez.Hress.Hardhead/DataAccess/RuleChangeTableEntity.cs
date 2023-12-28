@@ -17,6 +17,7 @@ namespace Ez.Hress.Hardhead.DataAccess
             RowKey = string.Empty;
             RuleText = string.Empty;
             Reasoning = string.Empty;
+            Name = string.Empty;
         }
 
         public RuleChangeTableEntity(RuleChange change)
@@ -29,6 +30,7 @@ namespace Ez.Hress.Hardhead.DataAccess
             RuleText = change.RuleText;
             Reasoning = change.Reasoning;
             CreatedBy = change.InsertedBy;
+            Name = change.Name ?? "";
         }
 
         public string PartitionKey { get; set; }
@@ -36,6 +38,7 @@ namespace Ez.Hress.Hardhead.DataAccess
         public DateTimeOffset? Timestamp { get; set; }
         public ETag ETag { get; set; }
 
+        public string Name { get; set; }
         public int RuleCategoryID { get; set; }
         public int? RuleID { get; set; }
         public string? RuleText { get; set; }
