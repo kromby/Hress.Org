@@ -31,7 +31,7 @@ namespace Ez.Hress.UnitTest.Shared
             var interactor = new TypeInteractor(_typeDataAccessMock.Object, _typeLog.Object);
 
             // ACT
-            var result = await interactor.GetTypes();
+            var result = await interactor.GetEzTypes();
 
             // ASSERT
             Assert.NotNull(result);

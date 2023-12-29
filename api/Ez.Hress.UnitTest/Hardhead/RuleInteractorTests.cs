@@ -38,8 +38,10 @@ namespace Ez.Hress.UnitTest.Hardhead
                 new RuleChange(RuleChangeType.Update, 21717, "Óþarfi því í reglu 5.6"),
             };
             _ruleChangeDataAccessMock.Setup(rc => rc.GetRuleChanges()).Returns(Task.FromResult(list));
-            RuleInteractor interactor = new(_ruleDataAccessMock.Object, _ruleChangeDataAccessMock.Object, _typeInteractorMock.Object, _ruleInteractorLogMock.Object);
             int typeID = 209;
+            _typeInteractorMock.Setup(t => t.GetEzType(typeID)).Returns(Task.FromResult(new Hress.Shared.Entities.TypeEntity(typeID, "Unit test", "UNIT-TEST")));
+            RuleInteractor interactor = new(_ruleDataAccessMock.Object, _ruleChangeDataAccessMock.Object, _typeInteractorMock.Object, _ruleInteractorLogMock.Object);
+            
 
             // ACT
             var result = await interactor.GetRuleChanges(typeID);
