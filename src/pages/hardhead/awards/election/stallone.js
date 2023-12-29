@@ -12,16 +12,17 @@ const Stallone = ({ID, Name, Description, Date, Year, onSubmit}) => {
     const [selectedUser, setSelectedUser] = useState();
     const [userID, setUserID] = useState();
 
-    var url = config.get('path') + '/api/hardhead/5384/users?code=' + config.get('code');
-
     useEffect(() => {
 
         setUserID(localStorage.getItem("userID"));
 
         const getNominations = async () => {
             try {
-                var url = config.get('path') + '/api/hardhead/awards/' + ID + '/nominations?code=' + config.get('code');
-                const response = await axios.get(url);
+                // var url = config.get('path') + '/api/hardhead/awards/' + ID + '/nominations?code=' + config.get('code');
+                var url = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + ID;
+                const response = await axios.get(url, {
+                    headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                });
                 setStallones(response.data);
             } catch (e) {
                 console.error(e);
@@ -32,7 +33,7 @@ const Stallone = ({ID, Name, Description, Date, Year, onSubmit}) => {
         if (!stallones) {
             getNominations();
         }
-    }, [ID, url])
+    }, [ID])
 
     const handleChange = async (event) => {
         if (authTokens === undefined) {
@@ -59,7 +60,7 @@ const Stallone = ({ID, Name, Description, Date, Year, onSubmit}) => {
             return;
         }
 
-        var voteData = [{ PollEntryID: selectedUser, Value: stallones.filter(n => n.ID === selectedUser)[0].Nominee.ID }];
+        var voteData = [{ id: selectedUser, Value: stallones.filter(n => n.id === selectedUser)[0].nominee.id }];
 
         try {
             var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
@@ -86,19 +87,19 @@ const Stallone = ({ID, Name, Description, Date, Year, onSubmit}) => {
                 <section>
                     <div className="row gtr-uniform">
                         {stallones ? stallones.map(stallone =>
-                            <div className={isMobile ? "col-12" : "col-6"} key={stallone.ID} onClick={() => handleChange(stallone.ID)} >
-                                <input type="radio" checked={selectedUser === stallone.ID} onChange={() => handleChange(stallone.ID)} />
+                            <div className={isMobile ? "col-12" : "col-6"} key={stallone.id} onClick={() => handleChange(stallone.id)} >
+                                <input type="radio" checked={selectedUser === stallone.id} onChange={() => handleChange(stallone.id)} />
                                 <label>
                                     <h3 className="author" width="50%">
-                                        {stallone.Nominee.ProfilePhoto ?
-                                            <img src={config.get("apiPath") + stallone.Nominee.ProfilePhoto.Href} alt={stallone.Nominee.Username} />
+                                        {stallone.nominee.profilePhoto ?
+                                            <img src={config.get("apiPath") + stallone.nominee.profilePhoto.href} alt={stallone.nominee.name} />
                                             : null}
                                         &nbsp;&nbsp;&nbsp;
-                                        <b>{stallone.Nominee.Username}</b>
+                                        <b>{stallone.nominee.name}</b>
                                     </h3>
                                 </label>
                                 <br />
-                                {stallone.Name}
+                                {stallone.description}
                                 <br />
                                 <br />
                             </div>

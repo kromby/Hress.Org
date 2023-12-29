@@ -13,9 +13,11 @@ const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
 
     useEffect(() => {
         const getNominations = async () => {
-            var url = config.get('path') + '/api/hardhead/awards/' + ID + '/nominations?code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + ID;
             try {
-                const response = await axios.get(url);
+                const response = await axios.get(url, {
+                    headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                });
                 setDisappointments(response.data);
             } catch (e) {
                 console.error(e);
@@ -36,7 +38,7 @@ const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
             return;
         }
 
-        var voteData = [{ PollEntryID: selectedValue, Value: disappointments.filter(n => n.ID === selectedValue)[0].Nominee.ID }];
+        var voteData = [{ id: selectedValue, Value: disappointments.filter(n => n.id === selectedValue)[0].nominee.id }];
 
         try {
             var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
@@ -74,24 +76,24 @@ const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
                     <section>
                         <div className="row gtr-uniform">
                             {disappointments ? disappointments.map(nomination =>
-                                <div className={isMobile ? "col-12" : "col-6"} key={nomination.ID} onClick={() => handleChange(nomination.ID)} >
-                                    <input type="radio" checked={selectedValue === nomination.ID} onChange={() => handleChange(nomination.ID)} />
+                                <div className={isMobile ? "col-12" : "col-6"} key={nomination.id} onClick={() => handleChange(nomination.id)} >
+                                    <input type="radio" checked={selectedValue === nomination.id} onChange={() => handleChange(nomination.id)} />
                                     <label>
                                         <h3 className="author" width="50%">
-                                            {nomination.Nominee.ProfilePhoto ?
-                                                <img src={config.get("apiPath") + nomination.Nominee.ProfilePhoto.Href} alt={nomination.Nominee.Username} />
+                                            {nomination.nominee.profilePhoto ?
+                                                <img src={config.get("apiPath") + nomination.nominee.profilePhoto.href} alt={nomination.nominee.name} />
                                                 : null}
                                             &nbsp;&nbsp;&nbsp;
-                                            <b>{nomination.Nominee.Username}</b>
+                                            <b>{nomination.nominee.name}</b>
                                         </h3>
                                     </label>
                                     <br />
-                                    {nomination.Name}
+                                    {nomination.description}
                                     <br />
                                     <br />
                                     <u>Brot á eftirfarandi reglu:</u>
                                     <br />
-                                    {nomination.AffectedRule}
+                                    {nomination.affectedRule}
                                     <br />
                                     <br />
                                 </div>

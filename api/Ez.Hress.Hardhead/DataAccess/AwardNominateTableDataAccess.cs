@@ -49,6 +49,7 @@ namespace Ez.Hress.Hardhead.DataAccess
                     nomination.Nominee.ProfilePhotoId = entity.NomineeImageID.Value;                
                 if (entity.Timestamp.HasValue)
                     nomination.Inserted = entity.Timestamp.Value.LocalDateTime;
+                nomination.AffectedRule = entity.AffectedRule;
                 list.Add(nomination);
             }
 

@@ -44,5 +44,7 @@ namespace Ez.Hress.Hardhead.DataAccess
         public int? NomineeImageID { get; set; }
         public string Description { get; set; }
         public int CreatedBy { get; set; }
+
+        public string? AffectedRule { get; set; }
     }
 }

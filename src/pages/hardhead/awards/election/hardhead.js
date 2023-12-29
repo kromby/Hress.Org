@@ -5,13 +5,13 @@ import Post from '../../../../components/post';
 import { useAuth } from '../../../../context/auth';
 import {isMobile} from 'react-device-detect';
 
-const HardheadOfTheYear = ({ID, Name, Description, Date, Year, onSubmit}) => {
+const HardheadOfTheYear = ({ID, Name, Description, Date, Year, Href, onSubmit}) => {
     const { authTokens } = useAuth();
     const [users, setUsers] = useState();
     const [savingAllowed, setSavingAllowed] = useState(false);
     const [selectedUser, setSelectedUser] = useState();
 
-    var url = config.get('path') + '/api/hardhead/' + '5384' + '/users?attended=8&code=' + config.get('code');
+    var url = config.get('path') + Href + '&code=' + config.get('code');
 
     useEffect(() => {
         const getHardheadUsers = async () => {

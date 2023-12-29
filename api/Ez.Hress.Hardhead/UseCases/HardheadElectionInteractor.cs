@@ -59,6 +59,7 @@ namespace Ez.Hress.Hardhead.UseCases
 
             awardList.First(a => a.ID == 361).Href = $"/api/hardhead?parentID={votingYearID}";
             awardList.First(a => a.ID == 362).Href = $"/api/hardhead?parentID={votingYearID}";
+            awardList.First(a => a.ID == 364).Href = $"/api/hardhead/{votingYearID}/users?attended=8";
 
             if (user.Attended >= requiredNightCount)
             {
@@ -80,7 +81,7 @@ namespace Ez.Hress.Hardhead.UseCases
         {
             awardList.Insert(0, new Award() { ID = 100, Name = "Nýjar reglur" });
             awardList.Insert(1, new Award() { ID = 101, Name = "Reglubreytingar" });
-            awardList.Insert(2, new Award() { ID = 102, Name = "Mynd á uppgjörskvöld", Href=$"/api/hardhead?parentID={twentyYearOldID}" });
+            awardList.Insert(2, item: new Award() { ID = 102, Name = "Mynd á uppgjörskvöld", Href=$"/api/hardhead?parentID={twentyYearOldID}" });
 
             return awardList.FirstOrDefault(a => a.ID != 363 && a.ID > lastStepID);
         }

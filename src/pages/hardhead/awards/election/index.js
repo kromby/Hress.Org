@@ -101,6 +101,7 @@ const Election = () => {
                 key={id}
                 ID={id}
                 Name={name}
+                Href={href}
                 onSubmit={handleSubmit}
             />
         } else if (id === 5284) {

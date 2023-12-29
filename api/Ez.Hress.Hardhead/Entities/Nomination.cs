@@ -24,6 +24,8 @@ namespace Ez.Hress.Hardhead.Entities
 
         public string Description { get; set; }
 
+        public string? AffectedRule { get; set; }
+
         public void Validate()
         {
             if (string.IsNullOrEmpty(Description))
