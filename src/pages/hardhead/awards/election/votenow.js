@@ -12,7 +12,7 @@ const VoteNow = () => {
                 <Post
                     id="0"
                     title="Harðhausakosningin"
-                    dateFormatted="2022"
+                    dateFormatted="2023"
                     body={
                         <section>
                             <p>
