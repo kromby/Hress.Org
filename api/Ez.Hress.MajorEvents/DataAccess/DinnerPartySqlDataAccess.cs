@@ -23,7 +23,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
             _connectionString = connectionInfo.ConnectionString;
             _tableClient = clients.Where(t => t.Name == "DinnerPartyElection").First();
             _log = log;
-        }
+        }        
 
         public async Task<IList<DinnerParty>> GetAll()
         {
@@ -292,7 +292,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
             return list;
         }
 
-        public async Task<IList<PartyUser>> GetGuests(int partyID, int? typeID)
+        public async Task<IList<PartyUser>> GetGuests(int partyID, int? typeID)        
         {
             string typeWhere = string.Empty;
             if (typeID.HasValue)
@@ -332,6 +332,41 @@ namespace Ez.Hress.MajorEvents.DataAccess
                 {
                     PartyUser guest = new(SqlHelper.GetInt(reader, "UserId"), partyID, reader.GetString(reader.GetOrdinal("Username")), SqlHelper.GetInt(reader, "ImageID"), reader.GetString(reader.GetOrdinal("Name")));
                     list.Add(guest);
+                }
+            }
+
+            return list;
+        }
+
+        public async Task<IList<HrefEntity>> GetAlbums(int partyID)
+        {
+            var sql = @"SELECT	tx.TextValue
+                        FROM	rep_Text tx
+                        WHERE	tx.EventId = @id
+                        AND	tx.TypeId = 190";
+
+            _log.LogInformation("[{Class}] GetAlbums SQL: {sql}", this.GetType().Name, sql);
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql);
+            command.Connection = connection;
+
+            command.Parameters.AddWithValue("id", partyID);
+
+            var list = new List<HrefEntity>();
+            using(var reader = await command.ExecuteReaderAsync())
+            {
+                while(reader.Read())
+                {
+                    HrefEntity entity = new();
+                    if(!reader.IsDBNull(reader.GetOrdinal("TextValue")))
+                    {
+                        entity.ID = int.Parse(reader.GetString(reader.GetOrdinal("TextValue")));
+                        entity.Href = $"/album/{entity.ID}";
+                        list.Add(entity);
+                    }                    
                 }
             }
 

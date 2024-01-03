@@ -1,4 +1,5 @@
 ﻿using Ez.Hress.MajorEvents.Entities;
+using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace Ez.Hress.MajorEvents.UseCases
@@ -42,22 +43,22 @@ namespace Ez.Hress.MajorEvents.UseCases
         {
             var dinnerPartyTask = _dinnerDataAccess.GetById(id);
             var guestsTask = _dinnerDataAccess.GetGuests(id, null);
+            var albumsTask = _dinnerDataAccess.GetAlbums(id);
 
             var dinnerParty = await dinnerPartyTask;
-            guestsTask.Wait();
+            if (dinnerParty == null) 
+                return null;
 
-            if (dinnerParty != null)
-            {                
-                dinnerParty.Guests = guestsTask.Result;
+            guestsTask.Wait();            
+            dinnerParty.Guests = guestsTask.Result;
+            albumsTask.Wait();
+            if(albumsTask.Result != null && albumsTask.Result.Count > 0)
+            {
+                dinnerParty.Albums = albumsTask.Result;
             }
 
             return dinnerParty;
         }
-
-        //public async void GetGuests(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
 
         public async Task<IList<Course>> GetCourses(int partyID)
         {

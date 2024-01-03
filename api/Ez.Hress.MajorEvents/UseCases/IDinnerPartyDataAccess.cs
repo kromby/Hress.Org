@@ -19,6 +19,8 @@ namespace Ez.Hress.MajorEvents.UseCases
         
         Task<IList<Dish>> GetCoursesByTypeId(int typeID);
 
+        Task<IList<HrefEntity>> GetAlbums(int partyID);
+
         Task<IList<PartyTeam>> GetChilds(int partyID);
 
         Task<IList<PartyUser>> GetChildUsers(int partyID);

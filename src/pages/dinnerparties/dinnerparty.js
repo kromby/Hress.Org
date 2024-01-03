@@ -85,6 +85,16 @@ const DinnerParty = () => {
                                             </div>
                                         )}
                                     </div>
+                                    <br />
+
+                                    <h3>Myndir</h3>
+                                    <div className="row gtr-uniform">
+                                        {dinner.albums.map((album, i) =>
+                                            <div className={isMobile ? "col-12 align-center" : "col-12 align-center"} key={album.id}>
+                                                <a href={album.href}>Skoða albúm #{i + 1}</a>
+                                            </div>
+                                        )}
+                                    </div>                                    
                                 </section>
                             ]}
                         />,
