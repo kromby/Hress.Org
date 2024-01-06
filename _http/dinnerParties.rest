@@ -19,7 +19,7 @@ Content-Type: application/json
 GET {{host}}/api/dinnerParties?includeGuests=true&top=5
 
 ### Get a single dinner party
-GET {{host}}/api/dinnerParties/5140
+GET {{host}}/api/dinnerParties/5396
 
 ### Get all courses for a single dinner party
 GET {{host}}/api/dinnerParties/5410/courses
@@ -28,7 +28,7 @@ GET {{host}}/api/dinnerParties/5410/courses
 GET {{host}}/api/dinnerparties/courses/191
 
 ### Get redwine teams
-GET {{host}}/api/dinnerparties/5410/teams
+GET {{host}}/api/dinnerparties/5140/teams
 
 ### Post vote on course
 POST {{host}}/api/dinnerparties/courses/999

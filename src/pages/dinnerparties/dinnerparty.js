@@ -7,7 +7,8 @@ import UserImage from "../../components/users/userimage";
 import DinnerMenu from "./dinnermenu";
 import { isMobile } from "react-device-detect";
 import Teams from "./teams";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import Preview from "../albums/preview";
 
 const DinnerParty = () => {
     const params = useParams();
@@ -87,14 +88,23 @@ const DinnerParty = () => {
                                     </div>
                                     <br />
 
+                                    {dinner.albums && dinner.albums.length > 0 ?
                                     <h3>Myndir</h3>
-                                    <div className="row gtr-uniform">
-                                        {dinner.albums.map((album, i) =>
-                                            <div className={isMobile ? "col-12 align-center" : "col-12 align-center"} key={album.id}>
-                                                <a href={album.href}>Skoða albúm #{i + 1}</a>
+                                    : null }
+                                    {dinner.albums.map(album =>
+                                        <div className="row gtr-uniform">
+                                            <div className={isMobile ? "col-12" : "col-4"} key={album.id}>
+                                                <h4>
+                                                    <Link to={"/album/" + album.id}>{album.name}</Link>
+                                                </h4>
+                                                {album.description}
                                             </div>
-                                        )}
-                                    </div>                                    
+                                            <div className={isMobile ? "col-12" : "col-8"} key={album.id}>
+                                                <Preview url={album.href} />
+                                            </div>
+                                            <p/>
+                                        </div>
+                                    )}
                                 </section>
                             ]}
                         />,

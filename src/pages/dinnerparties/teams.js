@@ -63,7 +63,7 @@ const Teams = ({ id }) => {
                                         </div>
                                     )}
                                 </div>
-                                {team.quizQuestions ?
+                                {team.quizQuestions && team.quizQuestions.length > 0 ?
                                     <div className="row gtr-uniform">
                                         <div className="col-12">
                                             <br />
@@ -83,6 +83,7 @@ const Teams = ({ id }) => {
                                         </div>
                                     </div>
                                     : null}
+                                <p/>
                             </div>
                         )}
                         {id >= 5410 ?

@@ -1,4 +1,4 @@
-import React from 'react';
+import {React, version} from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import * as serviceWorker from './serviceWorker';
@@ -24,6 +24,8 @@ function setConfig() {
   config.setEnvironment("prod");
 }
 setConfig();
+
+console.log("Hress version: " + process.env.REACT_APP_VERSION);
 
 // ReactDOM.render(<App/>, document.getElementById('content'));
 const container = document.getElementById("content");
