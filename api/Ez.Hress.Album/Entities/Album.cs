@@ -17,7 +17,7 @@ namespace Ez.Hress.Albums.Entities
             ImageCount = imageCount;
         }
 
-        public string Description { get; set; }
+        public new string Description { get; set; }
         public int ImageCount { get; set; }
 
         public HrefEntity Images { get { return new() { ID = this.ID, Href = $"/api/albums/{this.ID}/images" }; } }

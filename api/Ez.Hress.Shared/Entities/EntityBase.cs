@@ -7,6 +7,7 @@ namespace Ez.Hress.Shared.Entities
     {
         public T? ID { get; set; }
         public virtual string? Name { get; set; }
+        public string? Description { get; set; }
         public DateTime Inserted { get; set; }
         [DefaultValue("")]
         public string InsertedString

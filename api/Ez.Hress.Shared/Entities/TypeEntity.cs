@@ -21,7 +21,6 @@ namespace Ez.Hress.Shared.Entities
             Code = code;
         }
 
-        public string? Description { get; set; }
         public string Code { get; set; }
         public int? ParentID { get; set; }
         public int GroupType { get; set; }

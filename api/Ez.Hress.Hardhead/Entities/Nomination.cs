@@ -22,7 +22,7 @@ namespace Ez.Hress.Hardhead.Entities
         
         public UserBasicEntity Nominee { get; set; }        
 
-        public string Description { get; set; }
+        public new string Description { get; set; }
 
         public string? AffectedRule { get; set; }
 

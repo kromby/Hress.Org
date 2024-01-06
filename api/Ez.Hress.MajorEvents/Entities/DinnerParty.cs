@@ -17,7 +17,7 @@ namespace Ez.Hress.MajorEvents.Entities
             Date = date;
             Location = location;
             Guests = new List<PartyUser>();
-            Albums = new List<HrefEntity>();
+            Albums = new List<NameHrefEntity<int>>();
         }
 
         public DinnerParty(int id, int number, DateTime date, string location)
@@ -27,7 +27,7 @@ namespace Ez.Hress.MajorEvents.Entities
             Date = date;
             Location = location;
             Guests = new List<PartyUser>();
-            Albums = new List<HrefEntity>();
+            Albums = new List<NameHrefEntity<int>>();
         }
 
         public int Number { get; set; }
@@ -50,7 +50,7 @@ namespace Ez.Hress.MajorEvents.Entities
 
         public IList<PartyUser> Guests { get; set; }
 
-        public IList<HrefEntity> Albums { get; set; }
+        public IList<NameHrefEntity<int>> Albums { get; set; }
 
         public override string Name { get => $"Matar- og Rauðvínskvöld {Year}"; }
 

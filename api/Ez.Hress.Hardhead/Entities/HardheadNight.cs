@@ -32,8 +32,6 @@ namespace Ez.Hress.Hardhead.Entities
         }
         public int Number { get; set; }
 
-        public string? Description { get; set; }
-
         public override string Name { get { return string.Format("Harðhaus #{0}", Number); } }
 
         public int GuestCount { get; set; }

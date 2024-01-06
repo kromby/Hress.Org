@@ -338,12 +338,13 @@ namespace Ez.Hress.MajorEvents.DataAccess
             return list;
         }
 
-        public async Task<IList<HrefEntity>> GetAlbums(int partyID)
+        public async Task<IList<NameHrefEntity<int>>> GetAlbums(int partyID)
         {
-            var sql = @"SELECT	tx.TextValue
+            var sql = @"SELECT	tx.TextValue, c.Name, c.Description
                         FROM	rep_Text tx
+                        JOIN	adm_Component c ON tx.TextValue = c.Id
                         WHERE	tx.EventId = @id
-                        AND	tx.TypeId = 190";
+	                        AND	tx.TypeId = 190";
 
             _log.LogInformation("[{Class}] GetAlbums SQL: {sql}", this.GetType().Name, sql);
 
@@ -355,16 +356,18 @@ namespace Ez.Hress.MajorEvents.DataAccess
 
             command.Parameters.AddWithValue("id", partyID);
 
-            var list = new List<HrefEntity>();
+            var list = new List<NameHrefEntity<int>>();
             using(var reader = await command.ExecuteReaderAsync())
             {
                 while(reader.Read())
                 {
-                    HrefEntity entity = new();
-                    if(!reader.IsDBNull(reader.GetOrdinal("TextValue")))
+                    if (!reader.IsDBNull(reader.GetOrdinal("TextValue")))
                     {
-                        entity.ID = int.Parse(reader.GetString(reader.GetOrdinal("TextValue")));
-                        entity.Href = $"/album/{entity.ID}";
+                        NameHrefEntity<int> entity = new(int.Parse(reader.GetString(reader.GetOrdinal("TextValue"))))
+                        {
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Description = reader.GetString(reader.GetOrdinal("Description"))
+                        };
                         list.Add(entity);
                     }                    
                 }
