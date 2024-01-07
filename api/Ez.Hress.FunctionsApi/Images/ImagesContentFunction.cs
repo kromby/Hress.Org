@@ -73,7 +73,13 @@ namespace Ez.Hress.FunctionsApi.Images
                 _ = int.TryParse(req.Query["width"], out width);
             }
 
-            var entity = await _imageInteractor.GetContent(id, width);
+            int height = 0;
+            if (!string.IsNullOrWhiteSpace(req.Query["height"]))
+            {
+                _ = int.TryParse(req.Query["height"], out height);
+            }
+
+            var entity = await _imageInteractor.GetContent(id, width, height);
 
             if (entity == null || entity.Content == null)
             {

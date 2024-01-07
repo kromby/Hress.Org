@@ -92,7 +92,7 @@ const DinnerParty = () => {
                                     <h3>Myndir</h3>
                                     : null }
                                     {dinner.albums.map(album =>
-                                        <div className="row gtr-uniform">
+                                        <div className="row gtr-uniform" key={album.id}>
                                             <div className={isMobile ? "col-12" : "col-4"} key={album.id}>
                                                 <h4>
                                                     <Link to={"/album/" + album.id}>{album.name}</Link>

@@ -1,21 +1,22 @@
 import { useEffect, useState } from "react";
 import { ErrorBoundary } from "react-error-boundary";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import axios from "axios";
 import config from 'react-global-configuration';
+import { isMobile } from "react-device-detect";
 import { Post } from "../../components";
-import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/auth";
-import { useLocation } from "react-router-dom";
+import Preview from "./preview";
 
 const Albums = () => {
     const { authTokens } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
     const [albums, setAlbums] = useState();
- 
-    useEffect(() => {        
+
+    useEffect(() => {
         if (authTokens === undefined) {
-            navigate("/login", {state: { from: location.pathname }} );
+            navigate("/login", { state: { from: location.pathname } });
             return;
         }
 
@@ -50,31 +51,54 @@ const Albums = () => {
 
                 <Post
                     title="Myndaalbúm"
-                    body={
-                        <div className="table-wrapper" key="Table4">
-                            <table>
-                                {/* <thead>
+                    body={[
+                        <section key="One">
+                            {albums ? albums.slice(0, 3).map(album =>
+                                <div className="row gtr-uniform" key={album.id}>
+                                    <div className={isMobile ? "col-12" : "col-4"}>
+                                        <h4>
+                                            <Link to={"/album/" + album.id}>{album.name}</Link>
+                                        </h4>
+                                        {album.insertedString}<br />
+                                        {album.description}<br />
+                                        {album.imageCount} mynd(ir)
+                                    </div>
+                                    <div className={isMobile ? "col-12" : "col-8"}>
+                                        <Preview url={album.images.href} />
+                                    </div>
+                                    <p />
+                                </div>
+                            ) : null}
+                        </section>,
+                        <section key="divider">
+                            <p />
+                        </section>,
+                        <section key="Two">
+                            <div className="table-wrapper" key="Table4">
+                                <table>
+                                    {/* <thead>
                                     <tr>
                                         <th>Harðhaus</th>
                                         <th>Útskýring</th>
                                     </tr>
                                 </thead> */}
-                                <tbody>
-                                    {albums ? albums.map(album =>
-                                        <tr key={album.id}>
-                                            <td><Link to={"/album/" + album.id}>{album.name}</Link></td>
-                                            <td>{album.insertedString}</td>
-                                            <td>{album.description}</td>
-                                            <td>{album.imageCount} mynd(ir)</td>
-                                        </tr>
-                                    ) : null}
-                                </tbody>
-                            </table>
-                        </div>
-                    }
+                                    <tbody>
+                                        {albums ? albums.slice(3).map(album =>
+                                            <tr key={album.id}>
+                                                <td><Link to={"/album/" + album.id}>{album.name}</Link></td>
+                                                <td>{album.insertedString}</td>
+                                                <td>{album.description}</td>
+                                                <td>{album.imageCount} mynd(ir)</td>
+                                            </tr>
+                                        ) : null}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </section>
+                    ]}
                 />
             </ErrorBoundary>
-        </div>
+        </div >
     )
 }
 

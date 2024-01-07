@@ -31,7 +31,7 @@ namespace Ez.Hress.Shared.UseCases
 
         }
 
-        public async Task<ImageEntity?> GetContent(int id, int? width)
+        public async Task<ImageEntity?> GetContent(int id, int? width, int height)
         {
             int useWidth = width ?? 0;
 
@@ -69,14 +69,19 @@ namespace Ez.Hress.Shared.UseCases
 
                     useWidth = useWidth < (imageObject.Width * 2) ? useWidth : imageObject.Width * 2;
 
-                    imageObject.Mutate(i => i.Resize(new Size(useWidth, 0)));
+                    imageObject.Mutate(i => i.AutoOrient().Resize(new ResizeOptions
+                    {
+                        Mode = ResizeMode.Crop,
+                        Position = AnchorPositionMode.Center,
+                        Size = new Size(useWidth, height)
+                    }));
 
                     using var ms = new MemoryStream();
                     imageObject.SaveAsJpeg(ms);
                     content = ms.ToArray();
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _log.LogError(ex, "[{Class}], {Message}", nameof(ImageInteractor), ex.Message);
             }
@@ -139,7 +144,9 @@ namespace Ez.Hress.Shared.UseCases
             int id = 0;
             try
             {
-                var imageInfo = Image.Identify(entity.Content);
+                //var imageInfo = Image.Identify(entity.Content);
+                var imageInfo = Image.Load(entity.Content);
+                imageInfo.Mutate(i => i.AutoOrient());
                 id = await _imagesDataAccess.Save(entity, typeID, imageInfo.Height, imageInfo.Width);
                 _log.LogInformation("[{Class}] New image saved to metadata database: '{id}'", nameof(ImageInteractor), id);
 

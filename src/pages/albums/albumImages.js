@@ -45,7 +45,7 @@ const AlbumImages = ({url}) => {
                     {images ? images.map(image =>
                         <div className={isMobile ? "col-3" : "col-2"} key={image.id}>
                             <span className="image fit" key={image.id}>
-                                <img src={config.get("apiPath") + "/api/images/" + image.id + "/content?width=250"} alt={image.name} onClick={() => handleChange(image.id)} />
+                                <img src={config.get("apiPath") + "/api/images/" + image.id + "/content?width=200&height=150"} alt={image.name} onClick={() => handleChange(image.id)} />
                             </span>
                         </div>
                     ) : null}
