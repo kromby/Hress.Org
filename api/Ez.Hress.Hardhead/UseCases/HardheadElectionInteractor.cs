@@ -74,7 +74,7 @@ namespace Ez.Hress.Hardhead.UseCases
                 }
             }
             
-            return awardList.Where(a => a.ID == 361 || a.ID == 362 && a.ID > voter.LastStepID).FirstOrDefault();
+            return awardList.Where(a => (a.ID == 361 || a.ID == 362) && a.ID > voter.LastStepID).FirstOrDefault();
         }
 
         private static Award? GetNextElectionStep(int lastStepID, int twentyYearOldID, IList<Award> awardList)
