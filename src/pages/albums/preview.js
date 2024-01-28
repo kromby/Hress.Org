@@ -35,7 +35,7 @@ const Preview = ({ url }) => {
             {images ? images.slice(0, (isMobile ? 3 : 6)).map(image =>
                         <div className={isMobile ? "col-4" : "col-2"} key={image.id}>
                             <span className="image fit" key={image.id}>
-                                <img src={config.get("apiPath") + "/api/images/" + image.id + "/content?width=125&height=125"} alt={image.name} />
+                                <img src={config.get("apiPath") + "/api/images/" + image.id + "/content?width=140&height=140"} alt={image.name} />
                             </span>
                         </div>
                     ) : "Engar myndir"}

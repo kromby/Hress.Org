@@ -41,14 +41,12 @@ namespace Ez.Hress.Albums.DataAccess
 
             using var command = new SqlCommand(sql);
             command.Connection = connection;
-            command.Parameters.AddWithValue("id", id);  
+            command.Parameters.AddWithValue("id", id);
 
-            using (var reader = await command.ExecuteReaderAsync())
+            using var reader = await command.ExecuteReaderAsync();
+            if (reader.Read())
             {
-                if (reader.Read())
-                {
-                    return ParseAlbum(reader);                    
-                }
+                return ParseAlbum(reader);
             }
 
             return null;
@@ -74,9 +72,9 @@ namespace Ez.Hress.Albums.DataAccess
 
             var list = new List<Album>();
 
-            using(var reader = await command.ExecuteReaderAsync())
+            using (var reader = await command.ExecuteReaderAsync())
             {
-                while(reader.Read())
+                while (reader.Read())
                 {
                     Album entity = ParseAlbum(reader);
                     list.Add(entity);
@@ -88,13 +86,15 @@ namespace Ez.Hress.Albums.DataAccess
 
         private static Album ParseAlbum(SqlDataReader reader)
         {
-            Album entity = new Album(
-                                                    SqlHelper.GetInt(reader, "Id"),
-                                                    reader.GetString(reader.GetOrdinal("Name")),
-                                                    reader.GetString(reader.GetOrdinal("Description")),
-                                                    SqlHelper.GetInt(reader, "ImageCount"));
-            entity.Inserted = SqlHelper.GetDateTime(reader, "Inserted");
-            entity.InsertedBy = SqlHelper.GetInt(reader, "InsertedBy");
+            Album entity = new(
+                SqlHelper.GetInt(reader, "Id"),
+                reader.GetString(reader.GetOrdinal("Name")),
+                reader.GetString(reader.GetOrdinal("Description")),
+                SqlHelper.GetInt(reader, "ImageCount"))
+            {
+                Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
+                InsertedBy = SqlHelper.GetInt(reader, "InsertedBy")
+            };
             return entity;
         }
 
