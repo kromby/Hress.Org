@@ -25,11 +25,13 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
         private readonly AuthenticationInteractor _authenticationInteractor;
         private readonly RuleInteractor _ruleInteractor;
+        private readonly PostElectionInteractor _postElectionInteractor;
 
-        public HardheadRuleFunctions(AuthenticationInteractor authenticationInteractor, RuleInteractor ruleInteractor)
+        public HardheadRuleFunctions(AuthenticationInteractor authenticationInteractor, RuleInteractor ruleInteractor, PostElectionInteractor postElectionInteractor)
         {
             _ruleInteractor = ruleInteractor;
             _authenticationInteractor = authenticationInteractor;
+            _postElectionInteractor = postElectionInteractor;
         }
 
         [FunctionName("hardheadRules")]
@@ -125,6 +127,36 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             {
                 var list = await _ruleInteractor.GetRuleChangesByRule(id);
                 return list.Count > 0 ? new OkObjectResult(list) : new NotFoundResult();
+            }
+            catch (ArgumentException aex)
+            {
+                log.LogError(aex, "[HardheadRuleFunctions] Invalid input");
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "[HardheadRuleFunctions] Unhandled error");
+                throw;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                log.LogInformation($"[HardheadRuleFunctions] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+            }
+        }
+
+        [FunctionName("hardheadRulePostElection")]
+        public async Task<IActionResult> RulePostElection([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/rules/postelection")] HttpRequest req, ILogger log)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, nameof(RulePostElection));
+
+            try
+            {
+                var result = await _postElectionInteractor.UpdateRules();
+                return new OkObjectResult(result);
             }
             catch (ArgumentException aex)
             {

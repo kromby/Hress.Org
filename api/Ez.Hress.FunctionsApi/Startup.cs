@@ -144,6 +144,9 @@ namespace Ez.Hress.FunctionsApi
             services.AddSingleton<IRuleChangeDataAccess, RuleChangeTableDataAccess>();
             services.AddSingleton<IRuleDataAccess, RuleSqlDataAccess>();
             services.AddSingleton<RuleInteractor>();
+
+            // Hardhead - PostElection
+            services.AddSingleton<PostElectionInteractor>();
         }
     }
 }

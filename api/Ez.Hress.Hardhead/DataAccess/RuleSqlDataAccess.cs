@@ -28,7 +28,7 @@ namespace Ez.Hress.Hardhead.DataAccess
             var sql = @"SELECT	t.Id, t.TextValue, t.Inserted, t.InsertedBy
                         FROM	rep_Text t
                         JOIN	rep_Event e ON t.EventId = e.Id AND e.TypeId = 49
-                        WHERE	t.TypeId = 70 AND t.ParentId is null
+                        WHERE	t.TypeId = 70 AND t.ParentId is null AND t.Deleted IS NULL
                         ORDER BY Inserted";
 
             string method = nameof(GetRules);
@@ -69,7 +69,7 @@ namespace Ez.Hress.Hardhead.DataAccess
 
             var sql = @"SELECT	t.Id, t.TextValue, t.Inserted, t.InsertedBy
                         FROM	rep_Text t
-                        WHERE	t.ParentId = @parentId AND t.TypeId = 70
+                        WHERE	t.ParentId = @parentId AND t.TypeId = 70 AND t.Deleted IS NULL
 						GROUP BY t.Id, t.TextValue, t.Inserted, t.InsertedBy
                         ORDER BY t.Inserted";
 

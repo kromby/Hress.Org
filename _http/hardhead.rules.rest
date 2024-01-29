@@ -39,3 +39,6 @@ GET {{host}}/api/hardhead/rules
 
 ### Get child rules
 GET {{host}}/api/hardhead/rules/21717
+
+### Get rule changes after election
+GET {{host}}/api/hardhead/rules/postelection

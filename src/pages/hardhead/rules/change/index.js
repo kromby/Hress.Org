@@ -21,6 +21,13 @@ const RuleChange = () => {
     const [error, setError] = useState();
     const [ruleChanges, setRuleChanges] = useState();
 
+    const ChangeType = Object.freeze({
+        CREATE: 209,
+        UPDATE: 210,
+        DELETE: 211,
+    })
+
+
     useEffect(() => {
         if (authTokens === undefined) {
             navigate("/login", { state: { from: location.pathname } });
@@ -96,6 +103,7 @@ const RuleChange = () => {
             setSelectedCategory();
             setRuleText();
             setReasoning();
+            getRuleChanges();
         } catch (e) {
             console.error(e);
             if (e.response && e.response.status === 400) {
@@ -136,12 +144,12 @@ const RuleChange = () => {
         if (reasoning === undefined || reasoning.length <= 10)
             return false;
 
-        if (selected === 1 || selected === 2) {
+        if (selected === RuleChange.CREATE || selected === RuleChange.UPDATE) {
             if (text === undefined || text.length <= 16)
                 return false;
         }
 
-        if (selected === 1 || selected === 3) {
+        if (selected === RuleChange.UPDATE || selected === RuleChange.DELETE) {
             if (rule === undefined || rule === "")
                 return false;
         }
@@ -162,20 +170,20 @@ const RuleChange = () => {
                 body={[
 
                     <div className="row gtr-uniform" key="first">
-                        <div className="col-4" onClick={() => handleTypeChange(1)}>
-                            <input type="radio" checked={selected === 1} onChange={() => handleChange(1)} />
+                        <div className="col-4" onClick={() => handleTypeChange(ChangeType.UPDATE)}>
+                            <input type="radio" checked={selected === ChangeType.UPDATE} onChange={() => handleChange(ChangeType.UPDATE)} />
                             <label>
                                 Reglubreyting
                             </label>
                         </div>
-                        <div className="col-4" onClick={() => handleTypeChange(2)}>
-                            <input type="radio" checked={selected === 2} onChange={() => handleChange(2)} />
+                        <div className="col-4" onClick={() => handleTypeChange(ChangeType.CREATE)}>
+                            <input type="radio" checked={selected === ChangeType.CREATE} onChange={() => handleChange(ChangeType.CREATE)} />
                             <label>
                                 Ný regla
                             </label>
                         </div>
-                        <div className="col-4" onClick={() => handleTypeChange(3)}>
-                            <input type="radio" checked={selected === 3} onChange={() => handleChange(3)} />
+                        <div className="col-4" onClick={() => handleTypeChange(ChangeType.DELETE)}>
+                            <input type="radio" checked={selected === ChangeType.DELETE} onChange={() => handleChange(ChangeType.DELETE)} />
                             <label>
                                 Fjarlægja reglu
                             </label>
@@ -193,10 +201,10 @@ const RuleChange = () => {
                                         )}
                                     </select>
                                 </div>
-                                {rules && (selected === 1 || selected === 3) ?
+                                {rules && (selected === ChangeType.UPDATE || selected === ChangeType.DELETE) ?
                                     <div className="col-12">
                                         <select id="rule" name="rule" onChange={(ev) => handleRuleChange(ev)}>
-                                            <option value="">{selected === 1 ? "- Hvaða reglu viltu breyta? -" : "Hvaða reglu viltu fjarlægja?"}</option>
+                                            <option value="">{selected === ChangeType.UPDATE ? "- Hvaða reglu viltu breyta? -" : "Hvaða reglu viltu fjarlægja?"}</option>
                                             {rules.map((rule) =>
                                                 <option key={rule.id} value={rule.id}>{rule.parentNumber + "." + rule.number + ". " + rule.name}</option>
                                             )}
@@ -204,14 +212,14 @@ const RuleChange = () => {
                                     </div>
                                     : null}
 
-                                {selected === 1 || selected === 2 ?
+                                {selected === ChangeType.CREATE || selected === ChangeType.UPDATE ?
                                     <div className="col-12">
                                         <textarea
                                             name="ruleText"
                                             rows="2"
                                             onChange={(ev) => handleTextChange(ev)}
                                             defaultValue={ruleText}
-                                            placeholder={selected === 1 ? "Hvernig viltu hafa regluna eftir breytingu?" : "Hvernig viltu hafa nýju regluna?"}
+                                            placeholder={selected === ChangeType.UPDATE ? "Hvernig viltu hafa regluna eftir breytingu?" : "Hvernig viltu hafa nýju regluna?"}
                                         />
                                     </div>
                                     : null}
@@ -221,7 +229,6 @@ const RuleChange = () => {
                                         rows="2"
                                         onChange={(ev) => handleReasoningChange(ev)}
                                         defaultValue={reasoning}
-                                        // placeholder={selected === 1 ? "Hvernig viltu hafa regluna eftir breytingu?" : "Hvernig viltu hafa nýju regluna?"}
                                         placeholder="Rökstuddu breytinguna!"
                                     />
                                 </div>

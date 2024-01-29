@@ -86,14 +86,14 @@ namespace Ez.Hress.Hardhead.UseCases
                     if (approved > declined)
                     {
                         if(rule.TypeID == RuleChangeType.Update)
-                            sb.AppendLine($"INSERT INTO rep_Text(EventID, TypeID, ParentID, TextValue, InsertedBy) VALUE(4782, 70, {rule.RuleCategoryID}, {rule.RuleText}, 2630)");
+                            sb.AppendLine($"UPDATE [dbo].[rep_Text] SET [TextValue]='{rule.RuleText}', [Updated]='{DateTime.Now.ToString("yyyy-MM-dd")}', [UpdatedBy]=2630 WHERE Id={rule.RuleID}");
                         else if(rule.TypeID == RuleChangeType.Delete)
-                            sb.AppendLine($"INSERT INTO rep_Text(EventID, TypeID, ParentID, TextValue, InsertedBy) VALUE(4782, 70, {rule.RuleCategoryID}, {rule.RuleText}, 2630)");
+                            sb.AppendLine($"UPDATE [dbo].[rep_Text] SET Deleted='{DateTime.Now.ToString("yyyy-MM-dd")}' WHERE Id={rule.RuleID}");
                     }
                 }
                 else
                 {
-
+                    sb.AppendLine("MULTI OPTION NOT HANDLED");
                 }
             }
 
