@@ -18,10 +18,10 @@ const HardheadSidebar = () => {
 				<div className="mini-posts">
 					{/* <!-- Mini Post --> */}
 					<NextHardhead allowEdit="true" />
-					<MiniPost 
+					{/* <MiniPost 
 						title="Harðhausabústaður"
 						dateString="19. janúar"						
-					/>
+					/> */}
 					<AwardsSide />
 					<StatisticSide />
 					<RulesSide />

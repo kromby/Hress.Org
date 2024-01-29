@@ -27,17 +27,5 @@ namespace Ez.Hress.Hardhead.UseCases
 
             return list;
         }
-
-        public async Task SaveWinners(int typeID)
-        {
-            _log.LogInformation("[{Class}] Saving winners", nameof(AwardNominationInteractor));
-
-            var list = await _awardDataAccess.GetNominations(typeID);
-
-            foreach (var nomination in list)
-            {
-
-            }
-        }
     }
 }
