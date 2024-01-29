@@ -20,7 +20,7 @@
     "react-router-dom": "^6.21.1",
     "react-scripts": "^5.0.1",
     "react-youtube": "^10.1.0",
-    "webpack": "^5.89.0"
+    "webpack": "^5.90.0"
   },
   "scripts": {
     "start": "react-app-rewired start",
