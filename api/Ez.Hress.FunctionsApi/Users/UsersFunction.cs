@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Ez.Hress.UserProfile.UseCases;
 using Ez.Hress.Shared.UseCases;
 using Ez.Hress.FunctionsApi.Administration;
+using System.Diagnostics;
 
 namespace Ez.Hress.FunctionsApi.Users
 {
@@ -25,6 +26,38 @@ namespace Ez.Hress.FunctionsApi.Users
             _authenticationInteractor = authenticationInteractor;
         }
 
+        [FunctionName("users")]
+        public async Task<IActionResult> Run(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "users/{id:int}")] HttpRequest req, int id,
+            ILogger log)
+        {
+            log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _function, nameof(Run));
+
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            try
+            {
+                var entity = await _userProfileInteractor.GetUser(id);
+                return entity == null ? new NotFoundResult() : new OkObjectResult(entity);
+            }
+            catch (ArgumentException aex)
+            {
+                log.LogError(aex, "[HardheadRuleFunctions] Invalid input");
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "[HardheadRuleFunctions] Unhandled error");
+                throw;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                log.LogInformation($"[HardheadRuleFunctions] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+            }
+        }
+
         [FunctionName("usersBalanceSheet")]
         public async Task<IActionResult> RunBalanceSheet(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "users/{id:int}/balancesheet")] HttpRequest req,
@@ -32,7 +65,7 @@ namespace Ez.Hress.FunctionsApi.Users
         {
             log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _function, nameof(RunBalanceSheet));
 
-            if(!AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log))
+            if (!AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log))
             {
                 log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunBalanceSheet));
                 return new UnauthorizedResult();
@@ -44,7 +77,7 @@ namespace Ez.Hress.FunctionsApi.Users
         }
 
         [FunctionName("userPassword")]
-        public async Task<IActionResult> RunPassword([HttpTrigger(AuthorizationLevel.Function, "put", Route ="users/{id:int}/password")] HttpRequest req, int id, ILogger log)
+        public async Task<IActionResult> RunPassword([HttpTrigger(AuthorizationLevel.Function, "put", Route = "users/{id:int}/password")] HttpRequest req, int id, ILogger log)
         {
             log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _function, nameof(RunPassword));
 
@@ -55,7 +88,7 @@ namespace Ez.Hress.FunctionsApi.Users
             }
 
             id = id != 0 ? id : userID;
-            if(userID != id)
+            if (userID != id)
             {
                 log.LogWarning("[{Class}.{Method}] Don't have access to that user!", _function, nameof(RunPassword));
                 return new UnauthorizedObjectResult("Don't have access to that user!");
@@ -63,7 +96,7 @@ namespace Ez.Hress.FunctionsApi.Users
 
             try
             {
-                var body = await req.ReadFromJsonAsync<ChangePasswordBody>();                
+                var body = await req.ReadFromJsonAsync<ChangePasswordBody>();
                 await _authenticationInteractor.ChangePassword(id, body.Password, body.NewPassword);
                 return new AcceptedResult();
             }
@@ -72,7 +105,7 @@ namespace Ez.Hress.FunctionsApi.Users
                 log.LogError(aex, "[{Class}.{Method}] Invalid input", _function, nameof(RunPassword));
                 return new BadRequestObjectResult(aex.Message);
             }
-            catch(UnauthorizedAccessException uaex)
+            catch (UnauthorizedAccessException uaex)
             {
                 log.LogError(uaex, "[{Class}.{Method}] Unauthorized", _function, nameof(RunPassword));
                 return new UnauthorizedResult();

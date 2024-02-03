@@ -9,7 +9,7 @@ const Author = ({ID, Username, href, ProfilePhoto, UserPath}) => {
     useEffect(() => {
         const getUser = async () => {
             if (href) {
-                var url = config.get('path') + href + '?code=' + config.get('code');
+                var url = config.get('apiPath') + href;
                 try {
                     const response = await axios.get(url);
                 } catch (e) {
@@ -17,10 +17,10 @@ const Author = ({ID, Username, href, ProfilePhoto, UserPath}) => {
                 }
             } else {
                 setUser({
-                    ID: ID,
-                    Username: Username,
-                    ProfilePhoto: {
-                        Href: ProfilePhoto
+                    id: ID,
+                    username: Username,
+                    profilePhoto: {
+                        href: ProfilePhoto
                     }
                 });
             }
@@ -34,13 +34,20 @@ const Author = ({ID, Username, href, ProfilePhoto, UserPath}) => {
         }
     }, [ID, Username, href, ProfilePhoto, UserPath])
 
+    const getTitle = (username, name) => {
+        if (name) {
+            return username + " " + name;
+        } else 
+            return username;
+    }
+
     return (
         <div>
             {user ?
-                <a href={userPath + user.ID} className="author">
-                    <span className="name">{user.Username}</span>
-                    {user.ProfilePhoto && user.ProfilePhoto.Href ?
-                        <img src={config.get('apiPath') + user.ProfilePhoto.Href} alt={user.Username} /> :
+                <a href={userPath + user.id} className="author">
+                    <span className="name">{user.username}</span>
+                    {user.profilePhoto && user.profilePhoto.href ?
+                        <img src={config.get('apiPath') + user.profilePhoto.href} alt={user.username} title={getTitle(user.username, user.name)} /> :
                         null}
                 </a>
                 : null}

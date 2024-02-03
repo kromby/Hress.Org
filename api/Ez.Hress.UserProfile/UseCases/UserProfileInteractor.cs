@@ -1,4 +1,5 @@
-﻿using Ez.Hress.UserProfile.Entities;
+﻿using Ez.Hress.Shared.Entities;
+using Ez.Hress.UserProfile.Entities;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -17,6 +18,11 @@ namespace Ez.Hress.UserProfile.UseCases
         {
             _userDataAccess = userDataAccess;
             _log = log;
+        }
+
+        public async Task<UserBasicEntity> GetUser(int userID)
+        {
+            return await _userDataAccess.GetUser(userID);
         }
 
         public async Task<BalanceSheet> GetBalanceSheet(int userID)

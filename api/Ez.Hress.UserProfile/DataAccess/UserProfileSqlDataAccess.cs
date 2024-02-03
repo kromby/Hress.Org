@@ -17,11 +17,45 @@ namespace Ez.Hress.UserProfile.DataAccess
     {
         private readonly ILogger<UserProfileSqlDataAccess> _log;
         private readonly string _connectionString;
+        private readonly string _class;
 
         public UserProfileSqlDataAccess(DbConnectionInfo connectionInfo, ILogger<UserProfileSqlDataAccess> log)
         {
             _connectionString = connectionInfo.ConnectionString;
             _log = log;
+            _class = nameof(UserProfileSqlDataAccess);
+        }
+
+        public async Task<UserBasicEntity?> GetUser(int userID)
+        {
+            const string sql = @"SELECT	usr.Id, usr.Username, usr.Inserted, img.ImageID, tName.TextValue 'Name'
+                                FROM	adm_User usr
+                                LEFT OUTER JOIN	upf_Image img ON img.UserID = usr.ID AND img.TypeId = 14
+                                LEFT OUTER JOIN upf_Text tName ON tName.UserId = usr.ID AND tName.TypeId = 83
+                                WHERE	usr.Id = @userID
+                                AND	usr.Deleted IS NULL";
+
+            _log.LogInformation("[{Class}.{Method}] userID: {userID}", _class, nameof(GetUser), userID);
+            _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", _class, nameof(GetUser), sql);
+
+            UserBasicEntity user = new();
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("userID", userID);
+
+            using var reader = await command.ExecuteReaderAsync();
+            if (await reader.ReadAsync())
+            {
+                user.ID = SqlHelper.GetInt(reader, "ID");
+                user.Username = reader.GetString(reader.GetOrdinal("Username"));
+                user.ProfilePhotoId = SqlHelper.GetInt(reader, "ImageID");
+                user.Inserted = SqlHelper.GetDateTime(reader, "Inserted");
+                user.Name = reader.GetString(reader.GetOrdinal("Name")); ;
+                return user;
+            }
+            return null;
         }
 
         public async Task<IList<Relation>> GetRelations(int userID)
@@ -38,8 +72,8 @@ namespace Ez.Hress.UserProfile.DataAccess
                                 WHERE	(rel.PrimaryUserId = @userID
 	                                OR	rel.SecondaryUserId = @userID)
 	                                AND	rel.Deleted IS NULL";
-            _log.LogInformation("[{Class}.{Method}] userID: {userID}", nameof(UserProfileSqlDataAccess), nameof(GetRelations), userID);
-            _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", nameof(UserProfileSqlDataAccess), nameof(GetRelations), sql);
+            _log.LogInformation("[{Class}.{Method}] userID: {userID}", _class, nameof(GetRelations), userID);
+            _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", _class, nameof(GetRelations), sql);
 
             var list = new List<Relation>();
             using (var connection = new SqlConnection(_connectionString))
@@ -90,8 +124,8 @@ namespace Ez.Hress.UserProfile.DataAccess
                                 WHERE	debt.UserID = @userID AND debt.Deleted IS NULL
                                 ORDER BY debt.Inserted";
 
-            _log.LogInformation("[{Class}.{Method}] userID: {userID}", nameof(UserProfileSqlDataAccess), nameof(GetTransactions), userID);
-            _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", nameof(UserProfileSqlDataAccess), nameof(GetTransactions), sql);
+            _log.LogInformation("[{Class}.{Method}] userID: {userID}", _class, nameof(GetTransactions), userID);
+            _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", _class, nameof(GetTransactions), sql);
 
             var list = new List<Transaction>();
             using (var connection = new SqlConnection(_connectionString))

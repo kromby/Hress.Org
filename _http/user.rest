@@ -14,7 +14,8 @@ Content-Type: application/json
 ###
 @apiToken = {{login.response.body.*}}
 
-
+### Get user
+GET {{host}}/api/users/2637
 
 ### Get balance sheet
 GET {{host}}/api/users/2637/balancesheet
