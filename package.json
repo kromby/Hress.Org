@@ -18,15 +18,13 @@
     "react-helmet": "^6.1.0",
     "react-rating": "^2.0.5",
     "react-router-dom": "^6.22.0",
-    "react-scripts": "^5.0.1",
     "react-youtube": "^10.1.0",
     "webpack": "^5.90.1"
   },
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
-    "eject": "react-scripts eject"
+    "test": "react-app-rewired test"
   },
   "browserslist": {
     "production": [
