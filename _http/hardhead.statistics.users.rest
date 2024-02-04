@@ -1,5 +1,5 @@
-### Post nominations
-GET {{legacyHost}}/api/hardhead/statistics/users?periodType=2&code={{apiCode}}
+### Get user statistic by periodType
+GET {{host}}/api/hardhead/statistics/users?periodType=2
 
-### Post nominations
-GET {{legacyHost}}/api/hardhead/statistics/users?guestType=53&periodType=2&code={{apiCode}}
+### Get user statistic by periodType and attendanceType
+GET {{host}}/api/hardhead/statistics/users/2630?attendanceType=53&periodType=2

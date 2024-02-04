@@ -7,7 +7,7 @@ const UserImage = ({id, username, profilePhoto}) => {
     return ([
         profilePhoto ?
             <img key="101" className="userimage"
-                src={config.get("apiPath") + profilePhoto}
+                src={config.get("apiPath") + profilePhoto + "?height=50&width=50"}
                 alt={username} />
             : null,
         <p key="102">

@@ -10,7 +10,7 @@ const HostStats = () => {
     const [period, setPeriod] = useState("All");
     const [reload, setReload] = useState(false);
 
-    var url = config.get('path') + '/api/hardhead/statistics/users?guestType=53&periodType=' + period + '&code=' + config.get('code');
+    var url = config.get('apiPath') + '/api/hardhead/statistics/users?attendanceType=53&periodType=' + period;
 
     useEffect(() => {
         const getStats = async () => {
@@ -31,8 +31,8 @@ const HostStats = () => {
     }, [url])
 
     const handleSubmit = async (event) => {
-        console.log(data.stats.List.length);
-        if (pageSize > data.stats.List.length) {
+        console.log(data.stats.list.length);
+        if (pageSize > data.stats.list.length) {
             setPageSize(10);
         } else {
             setPageSize(pageSize + 10);
@@ -40,7 +40,7 @@ const HostStats = () => {
     }
 
     const getButtonText = () => {
-        if (data.stats === undefined || data.stats === null || pageSize > data.stats.List.length) {
+        if (data.stats === undefined || data.stats === null || pageSize > data.stats.list.length) {
             return 10;
         }
 
@@ -64,8 +64,8 @@ const HostStats = () => {
                     <option value="ThisYear">þetta ár</option>
                 </select>
             }
-            date={data.visible ? data.stats.DateFrom : null}
-            dateFormatted={data.visible ? data.stats.DateFromString : null}
+            date={data.visible ? data.stats.dateFrom : null}
+            dateFormatted={data.visible ? data.stats.dateFromString : null}
             showFooter={false}
             body={data.visible ?
                 <div className="table-wrapper">
@@ -80,18 +80,18 @@ const HostStats = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {data.stats.List.slice(0, pageSize).map((stat, i) =>
+                            {data.stats.list.slice(0, pageSize).map((stat, i) =>
                                 <tr key={i}>
                                     <td>{i + 1}</td>
                                     <td>
-                                        {typeof stat.User.ProfilePhoto !== 'undefined' && stat.User.ProfilePhoto !== null ?
-                                            <Author ID={stat.User.ID} Username={stat.User.Username} UserPath="/hardhead/users/" ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
-                                            <Author ID={stat.User.ID} Username={stat.User.Username} UserPath="/hardhead/users/" />
+                                        {typeof stat.user.profilePhoto !== 'undefined' && stat.user.profilePhoto !== null ?
+                                            <Author ID={stat.user.id} Username={stat.user.username} UserPath="/hardhead/users/" ProfilePhoto={stat.user.profilePhoto.href} /> :
+                                            <Author ID={stat.user.id} Username={stat.user.username} UserPath="/hardhead/users/" />
                                         }
                                     </td>
-                                    <td>{stat.AttendedCount}</td>
-                                    <td>{stat.FirstAttendedString}</td>
-                                    <td>{stat.LastAttendedString}</td>
+                                    <td>{stat.attendedCount}</td>
+                                    <td>{stat.firstAttendedString}</td>
+                                    <td>{stat.lastAttendedString}</td>
                                 </tr>
                             )}
                         </tbody>

@@ -20,7 +20,7 @@ namespace Ez.Hress.UserProfile.UseCases
             _log = log;
         }
 
-        public async Task<UserBasicEntity> GetUser(int userID)
+        public async Task<UserBasicEntity?> GetUser(int userID)
         {
             return await _userDataAccess.GetUser(userID);
         }
