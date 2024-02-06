@@ -9,6 +9,8 @@ namespace Ez.Hress.Hardhead.UseCases
 {
     public interface IHardheadStatisticsDataAccess
     {
-        public Task<IList<StatisticBase>> GetUserStatistic(DateTime fromDate, int attendanceTypeId);
+        Task<IList<StatisticBase>> GetUserStatistic(DateTime fromDate, int attendanceTypeId);
+
+        Task<IList<StatisticBase>> GetAttendanceStatistic(DateTime fromDate);
     }
 }

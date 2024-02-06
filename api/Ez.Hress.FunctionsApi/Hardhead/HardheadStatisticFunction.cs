@@ -25,7 +25,46 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             _statisticsInteractor = hardheadStatisticsInteractor;
         }
 
-        [FunctionName("HardheadStatisticUsers")]
+        [FunctionName("hardheadStatisticsAttendance")]
+        public async Task<IActionResult> RunAttendance(
+            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/statistics/attendances")] HttpRequest req,
+            ILogger log)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            const string method = nameof(RunAttendance);
+            log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, method);
+
+            try
+            {
+                var periodType = PeriodType.All;
+                if (req.Query.ContainsKey("periodType"))
+                {
+                    _ = Enum.TryParse<PeriodType>(req.Query["periodType"], out periodType);
+                }
+
+                var list = await _statisticsInteractor.GetAttendanceStatistics(periodType);
+                return new OkObjectResult(list);
+
+            }
+            catch (ArgumentException aex)
+            {
+                log.LogError(aex, "[{Class}.{Method}] Invalid input", _class, method);
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "[{Class}.{Method}] Unhandled error", _class, method);
+                throw;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                log.LogInformation("[{Class}.{Method}] Elapsed: {ElapsedMilliseconds} ms.", _class, method, stopwatch.ElapsedMilliseconds);
+            }
+        }
+
+            [FunctionName("HardheadStatisticUsers")]
         public async Task<IActionResult> RunUsers(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/statistics/users/{id:int?}")] HttpRequest req,
             int? id, ILogger log)
@@ -68,7 +107,6 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                 stopwatch.Stop();
                 log.LogInformation("[{Class}.{Method}] Elapsed: {ElapsedMilliseconds} ms.", _class, method, stopwatch.ElapsedMilliseconds);
             }
-
         }
     }
 }

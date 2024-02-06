@@ -25,19 +25,25 @@ import GuestStats from './guestStats';
 import HostStats from './hostStats';
 import ActorStats from './actorStats';
 import AttendanceStats from './attendanceStats';
+import { ErrorBoundary } from 'react-error-boundary';
 
-const Statistics  = () => {
+const Statistics = () => {
     useEffect(() => {
         document.title = "Tölfræði Harðhausa | Hress.Org";
     }, [])
 
     return (
         <div id="main">
-            <GuestStats />
-            <HostStats />
-            <ActorStats />
-            <AttendanceStats />
-        </div>        
+            <ErrorBoundary
+                FallbackComponent={<div>Það vantar einhvern hressleika hér!</div>}
+                onError={(error, errorInfo) => errorService.log({ error, errorInfo })}
+            >
+                <GuestStats />
+                <HostStats />
+                <ActorStats />
+                <AttendanceStats />
+            </ErrorBoundary>
+        </div>
     )
 }
 

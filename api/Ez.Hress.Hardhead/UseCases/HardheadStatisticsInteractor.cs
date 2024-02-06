@@ -46,5 +46,19 @@ namespace Ez.Hress.Hardhead.UseCases
 
             return entity;
         }
+
+        public async Task<StatsEntity> GetAttendanceStatistics(PeriodType periodType)
+        {
+            _log.LogInformation("[{Class}] Getting attendance statistics for type: {PeriodType}", nameof(HardheadStatisticsInteractor), periodType);
+
+            var entity = new StatsEntity("gestur")
+            {
+                PeriodType = periodType,
+                DateFrom = Utility.GetDateFromPeriodType(periodType)
+            };
+            entity.List = await _hardheadStatisticsDataAccess.GetAttendanceStatistic(entity.DateFrom);
+
+            return entity;
+        }
     }
 }

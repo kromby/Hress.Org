@@ -10,7 +10,7 @@ const AttendanceStats = () => {
     const [period, setPeriod] = useState("All");
     const [reload, setReload] = useState(false);
 
-    var url = config.get('path') + '/api/hardhead/statistics/attendance?periodType=' + period + '&code=' + config.get('code');
+    var url = config.get('apiPath') + '/api/hardhead/statistics/attendances?periodType=' + period;
 
     useEffect(() => {
         const getStats = async () => { 
@@ -30,8 +30,8 @@ const AttendanceStats = () => {
     }, [, url])
 
     const handleSubmit = async (event) => {
-        console.log(stats.List.length);
-        if (pageSize > stats.List.length) {
+        console.log(stats.list.length);
+        if (pageSize > stats.list.length) {
             setPageSize(10);
         } else {
             setPageSize(pageSize + 10);
@@ -39,7 +39,7 @@ const AttendanceStats = () => {
     }
 
     const getButtonText = () => {
-        if (stats === undefined || stats === null || pageSize > stats.List.length) {
+        if (stats === undefined || stats === null || pageSize > stats.list.length) {
             return 10;
         }
 
@@ -63,8 +63,8 @@ const AttendanceStats = () => {
                     <option value="ThisYear">þetta ár</option>
                 </select>
             }
-            date={stats ? stats.DateFrom : null}
-            dateFormatted={stats ? stats.DateFromString : null}
+            date={stats ? stats.dateFrom : null}
+            dateFormatted={stats ? stats.dateFromString : null}
             showFooter={false}
             body={stats ?
                 <div className="table-wrapper">
@@ -78,19 +78,17 @@ const AttendanceStats = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {stats.List.slice(0, pageSize).map((stat, i) =>
+                            {stats.list.slice(0, pageSize).map((stat, i) =>
                                 <tr key={i}>
                                     <td>{i + 1}</td>
                                     <td>
-                                        {stat.User.ProfilePhoto ?
-                                            <Author ID={stat.User.ID} Username={stat.User.Username} UserPath="/hardhead/users/" ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
-                                            <Author ID={stat.User.ID} Username={stat.User.Username} UserPath="/hardhead/users/" />
-                                            // <Author ID={stat.User.ID} Username={stat.User.Username} ProfilePhoto={stat.User.ProfilePhoto.Href} /> :
-                                            // <Author ID={stat.User.ID} Username={stat.User.Username} />
+                                        {stat.user.profilePhoto ?
+                                            <Author ID={stat.user.id} Username={stat.user.username} UserPath="/hardhead/users/" ProfilePhoto={stat.user.profilePhoto.href} /> :
+                                            <Author ID={stat.user.id} Username={stat.user.username} UserPath="/hardhead/users/" />                                        
                                         }
                                     </td>
-                                    <td>{stat.FirstAttendedString}</td>
-                                    <td>{stat.AttendedCount}</td>
+                                    <td>{stat.firstAttendedString}</td>
+                                    <td>{stat.attendedCount}</td>
                                 </tr>
                             )}
                         </tbody>
