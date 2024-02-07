@@ -1,6 +1,6 @@
 {
   "name": "ez.hress.reactweb",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "private": true,
   "dependencies": {
     "axios": "^1.6.7",
