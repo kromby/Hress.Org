@@ -25,8 +25,7 @@ const UserAwards = ({id}) => {
     }, [id])
 
     return (
-        <Post key={null}
-            id={null}
+        <Post 
             title="Verðlaunin"
             description="Efstu þrjú sætin"
             body={

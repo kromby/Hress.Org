@@ -24,11 +24,11 @@ const HHUserSidebar = () => {
         }
 
         const getStats = async () => {
-            var url = config.get('path') + '/api/hardhead/statistics/users/' + params.id + '?periodType=All&code=' + config.get('code');
+            var url = config.get('apiPath') + '/api/hardhead/statistics/users/' + params.id + '?periodType=All';
 
             try {
                 const response = await axios.get(url);
-                setStats(response.data.List[0]);
+                setStats(response.data.list[0]);
             } catch (e) {
                 console.error(e);
             }
@@ -57,7 +57,7 @@ const HHUserSidebar = () => {
                 <header>
                     <h2>{user ? user.Name : null}</h2>
                     <p>
-                        {stats ? "Mætti fyrst " + stats.FirstAttendedString : null}
+                        {stats ? "Mætti fyrst " + stats.firstAttendedString : null}
                     </p>
                 </header>
             </section>
@@ -71,7 +71,7 @@ const HHUserSidebar = () => {
                     <MiniPost
                         title="Mæting"
                         // href="/hardhead/awards"
-                        description={stats ? "Hefur mætt á " + stats.AttendedCount + " kvöld" : null}
+                        description={stats ? "Hefur mætt á " + stats.attendedCount + " kvöld" : null}
                         date={stats ? stats.FirstAttended : null}
                     // dateString={stats ? "Frá " + stats.FirstAttendedString : null}
                     // userHref={"http://www.hress.org/Gang/Single.aspx?Id=" + data.awards.Winner.ID}

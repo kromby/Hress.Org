@@ -4,6 +4,7 @@ import { Post } from "../../../components";
 import config from 'react-global-configuration';
 import UserAwards from "./userAwards";
 import { useParams } from "react-router-dom";
+import UserStatistics from "./userStatistics";
 
 const HHUsers = () => {
     const params = useParams();
@@ -11,6 +12,7 @@ const HHUsers = () => {
     return (
         <div id="main">
             <UserAwards id={params.id} />
+            <UserStatistics id={params.id} />
         </div>
     )
 }

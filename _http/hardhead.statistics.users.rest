@@ -2,7 +2,7 @@
 GET {{host}}/api/hardhead/statistics/users?periodType=2
 
 ### Get user statistic by periodType and attendanceType
-GET {{host}}/api/hardhead/statistics/users/2630?attendanceType=53&periodType=2
+GET {{host}}/api/hardhead/statistics/users/2630?attendanceType=53&periodType=4
 
 ### Get attendance statistic by periodType
 GET {{host}}/api/hardhead/statistics/attendances?periodType=2
