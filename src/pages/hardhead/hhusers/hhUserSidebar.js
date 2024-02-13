@@ -18,6 +18,7 @@ const HHUserSidebar = () => {
             try {
                 const response = await axios.get(url);
                 setUser(response.data);
+                document.title = response.data.Name + " | Hress.Org";
             } catch (e) {
                 console.error(e);
             }
@@ -33,6 +34,8 @@ const HHUserSidebar = () => {
                 console.error(e);
             }
         }
+
+        
 
         if (!user) {
             getUser();
