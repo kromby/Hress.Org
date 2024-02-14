@@ -33,7 +33,7 @@ const StatsSide = ({type}) => {
                 description={
                     <ol>
                         {stats ? stats.slice(0,10).map((user) =>
-                            <li key={user.id}>{user.username + " (" + user.winCount + " skipti)"}</li>
+                            <li key={user.id}>{user.username + " - " + user.winCount + " skipti"}</li>
                         ) : null}
                     </ol>
                 }
