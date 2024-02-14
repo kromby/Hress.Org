@@ -41,3 +41,6 @@ X-Custom-Authorization: token {{apiToken}}
 
 ### Get winner statistic
 GET {{host}}/api/dinnerparties/statistic?type=winners
+
+### Get guest statistic
+GET {{host}}/api/dinnerparties/statistic?type=guests

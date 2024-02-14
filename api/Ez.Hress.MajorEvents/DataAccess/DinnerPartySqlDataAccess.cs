@@ -407,6 +407,41 @@ namespace Ez.Hress.MajorEvents.DataAccess
             return list;
         }
 
+        public async Task<IList<PartyWinner>> GetGuestStatistic()
+        {
+            var sql = @"SELECT	guest.UserId, COUNT(guest.EventId) GuestCount, usr.Username, userPhoto.ImageId 'ImageID'--, guest.TypeId
+                        FROM rep_User guest
+                        JOIN rep_Event mogr ON mogr.Id = guest.EventId AND mogr.TypeId = 56
+                        JOIN adm_User usr ON guest.UserId = usr.Id
+                        LEFT OUTER JOIN upf_Image userPhoto ON usr.Id = userPhoto.UserId AND userPhoto.TypeId = 14
+                        WHERE guest.TypeId NOT IN (54, 81)
+                        GROUP BY guest.UserId, usr.Username, userPhoto.ImageId--, guest.TypeId
+                        ORDER BY COUNT(guest.EventId) DESC";
+
+            _log.LogInformation("[{Class}] GetWinnerStatistic", this.GetType().Name);
+            _log.LogInformation("[{Class}] Executing SQL: {sql}", this.GetType().Name, sql);
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql);
+            command.Connection = connection;
+
+            var list = new List<PartyWinner>();
+
+            using (var reader = await command.ExecuteReaderAsync())
+            {
+                while (reader.Read())
+                {
+                    PartyWinner guest = new(SqlHelper.GetInt(reader, "UserId"), reader.GetString(reader.GetOrdinal("Username")), SqlHelper.GetInt(reader, "GuestCount"));
+                    guest.ProfilePhotoId = SqlHelper.GetInt(reader, "ImageID");
+                    list.Add(guest);
+                }
+            }
+
+            return list;
+        }
+
         public async Task<IList<PartyWinner>> GetWinnerStatistic()
         {
             var sql = @"SELECT	usr.Id, usr.Username, COUNT(usr.Id) WinCount

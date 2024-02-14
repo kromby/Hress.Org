@@ -27,6 +27,8 @@ namespace Ez.Hress.MajorEvents.UseCases
 
         Task<IList<PartyQuiz>> GetQuizQuestions(int teamID);
 
+        Task<IList<PartyWinner>> GetGuestStatistic();
+
         Task<IList<PartyWinner>> GetWinnerStatistic();
 
         Task SaveVote(Vote vote);

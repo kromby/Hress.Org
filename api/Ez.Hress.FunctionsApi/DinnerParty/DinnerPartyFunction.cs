@@ -189,7 +189,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
             }
         }
 
-        [FunctionName("dinnerPartiesWinners")]
+        [FunctionName("dinnerPartiesStatistics")]
         public async Task<IActionResult> RunWinners([HttpTrigger(AuthorizationLevel.Function, "get", Route ="dinnerparties/statistic")] HttpRequest req,
             ILogger log)
         {
@@ -205,6 +205,9 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                     case "winners":
                         var result = await _dinnerPartyInteractor.GetWinnerStatistics();
                         return new OkObjectResult(result);
+                    case "guests":
+                        var guestResult = await _dinnerPartyInteractor.GetGuestStatistic();
+                        return new OkObjectResult(guestResult);
                     default:
                         throw new ArgumentException("Query parameter type is missing or invalid.");
                 }

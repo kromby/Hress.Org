@@ -89,10 +89,10 @@ namespace Ez.Hress.MajorEvents.UseCases
             return teams;
         }
 
-        //public async void GetAlbums(int id)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public async Task<IList<PartyWinner>> GetGuestStatistic()
+        {
+            return await _dinnerDataAccess.GetGuestStatistic();
+        }
 
         public async Task<IList<PartyWinner>> GetWinnerStatistics()
         {
