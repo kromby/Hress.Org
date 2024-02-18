@@ -10,7 +10,7 @@ const ActorStats = () => {
     const [period, setPeriod] = useState("All");
     const [reload, setReload] = useState(false);
 
-    var url = config.get('path') + '/api/movies/statistics/actor?periodType=' + period + '&code=' + config.get('code');
+    var url = `${config.get('apiPath')}/api/movies/statistics/actor?periodType=${period}`;
 
     useEffect(() => {
         const getStats = async () => {
@@ -29,8 +29,8 @@ const ActorStats = () => {
     }, [url])
 
     const handleSubmit = async (event) => {
-        console.log(stats.List.length);
-        if (pageSize > stats.List.length) {
+        console.log(stats.list.length);
+        if (pageSize > stats.list.length) {
             setPageSize(10);
         } else {
             setPageSize(pageSize + 10);
@@ -38,7 +38,7 @@ const ActorStats = () => {
     }
 
     const getButtonText = () => {
-        if (stats === undefined || stats === null || pageSize > stats.List.length) {
+        if (stats === undefined || stats === null || pageSize > stats.list.length) {
             return 10;
         }
 
@@ -62,8 +62,8 @@ const ActorStats = () => {
                     <option value="ThisYear">þetta ár</option>
                 </select>
             }
-            date={stats ? stats.DateFrom : null}
-            dateFormatted={stats ? stats.DateFromString : null}
+            date={stats ? stats.dateFrom : null}
+            dateFormatted={stats ? stats.dateFromString : null}
             showFooter={false}
             body={stats ?
                 <div className="table-wrapper">
@@ -78,13 +78,13 @@ const ActorStats = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            {stats.List.slice(0, pageSize).map((stat, i) =>
+                            {stats.list.slice(0, pageSize).map((stat, i) =>
                                 <tr key={i}>
                                     <td>{i + 1}</td>
-                                    <td><Link to={"/hardhead?query=" + stat.Text}>{stat.Text}</Link></td>
-                                    <td>{stat.AttendedCount}</td>
-                                    <td>{stat.FirstAttendedString}</td>
-                                    <td>{stat.LastAttendedString}</td>
+                                    <td><Link to={"/hardhead?query=" + stat.text}>{stat.text}</Link></td>
+                                    <td>{stat.attendedCount}</td>
+                                    <td>{stat.firstAttendedString}</td>
+                                    <td>{stat.lastAttendedString}</td>
                                 </tr>
                             )}
                         </tbody>

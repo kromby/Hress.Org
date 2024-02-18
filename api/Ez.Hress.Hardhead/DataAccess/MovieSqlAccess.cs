@@ -16,6 +16,7 @@ namespace Ez.Hress.Hardhead.DataAccess
     {
         private readonly ILogger<MovieSqlAccess> _log;
         private readonly string _connectionString;
+        private readonly string _class = nameof(MovieSqlAccess);
 
         private readonly static string SQL_GETMOVIE = @"SELECT	night.Id, film.TextValue Movie, actor.TextValue Actor, poster.ImageId poster, 
                                                         imdb.TextValue imdb, why.TextValue why, youtube.TextValue youtube, CAST(moviekills.Count as int) moviekills, CAST(hhkills.Count as int) hhkills
@@ -73,6 +74,43 @@ namespace Ez.Hress.Hardhead.DataAccess
                 MovieKillCount = SqlHelper.GetNullableInt(reader, "moviekills"),
                 HardheadKillCount = SqlHelper.GetNullableInt(reader, "hhkills")
             };
+        }
+
+        public async Task<IList<StatisticBase>> GetActorStatistic(DateTime fromDate)
+        {            
+            var sql = @"SELECT	actor.TextValue 'Actor', COUNT(actor.Id) AttendedCount, MIN(hardhead.Date) FirstAttended, MAX(hardhead.Date) LastAttended
+                        FROM	rep_Text actor
+                        JOIN	rep_Event hardhead ON actor.EventId = hardhead.Id AND hardhead.TypeId = 49
+                        WHERE	actor.TypeID = 63
+	                        AND	hardhead.Date > @fromDate
+                        GROUP BY actor.TextValue
+                        ORDER BY COUNT(actor.Id) DESC";
+
+            _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", _class, nameof(GetActorStatistic), sql);
+
+            var list = new List<StatisticBase>();
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                connection.Open();
+
+                using var command = new SqlCommand(sql, connection);
+                command.Parameters.Add(new SqlParameter("fromDate", fromDate));
+
+                var reader = await command.ExecuteReaderAsync();
+                while (reader.Read())
+                {
+                    var entity = new StatisticTextEntity(reader.GetString(reader.GetOrdinal("Actor")))
+                    {
+                        AttendedCount = reader.GetInt32(reader.GetOrdinal("AttendedCount")),
+                        FirstAttended = reader.GetDateTime(reader.GetOrdinal("FirstAttended")),
+                        LastAttended = reader.GetDateTime(reader.GetOrdinal("LastAttended"))
+                    };
+
+                    list.Add(entity);
+                }
+            }
+
+            return list;
         }
     }
 }

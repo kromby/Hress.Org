@@ -15,5 +15,7 @@ namespace Ez.Hress.Hardhead.UseCases
         /// <param name="nameAndActorFilter">Partial name of film or actor.</param>
         /// <returns>A list of movies.</returns>
         Task<IList<Movie>> GetMovies(string nameAndActorFilter);
+
+        Task<IList<StatisticBase>> GetActorStatistic(DateTime fromDate);
     }
 }

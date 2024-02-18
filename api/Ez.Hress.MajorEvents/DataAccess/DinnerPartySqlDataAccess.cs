@@ -433,8 +433,10 @@ namespace Ez.Hress.MajorEvents.DataAccess
             {
                 while (reader.Read())
                 {
-                    PartyWinner guest = new(SqlHelper.GetInt(reader, "UserId"), reader.GetString(reader.GetOrdinal("Username")), SqlHelper.GetInt(reader, "GuestCount"));
-                    guest.ProfilePhotoId = SqlHelper.GetInt(reader, "ImageID");
+                    PartyWinner guest = new(SqlHelper.GetInt(reader, "UserId"), reader.GetString(reader.GetOrdinal("Username")), SqlHelper.GetInt(reader, "GuestCount"))
+                    {
+                        ProfilePhotoId = SqlHelper.GetInt(reader, "ImageID")
+                    };
                     list.Add(guest);
                 }
             }

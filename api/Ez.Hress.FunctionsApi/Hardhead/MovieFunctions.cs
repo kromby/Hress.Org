@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Ez.Hress.Hardhead.UseCases;
+using System.Diagnostics;
+using Ez.Hress.Hardhead.Entities;
 
 namespace Ez.Hress.FunctionsApi.Hardhead
 {
@@ -46,6 +48,49 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             }
 
             return new NotFoundResult();
+        }
+
+        [FunctionName("movieStatistics")]
+        public async Task<IActionResult> RunStatistics([HttpTrigger(AuthorizationLevel.Function, "get", Route = "movies/statistics/{type}")] HttpRequest req, string type, ILogger log)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+
+            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunStatistics));
+
+            try
+            {
+                var periodTypeString = req.Query["periodType"];
+                var periodType = PeriodType.All;
+                if (!string.IsNullOrEmpty(periodTypeString))
+                {
+                    _ = Enum.TryParse<PeriodType>(periodTypeString, out periodType);
+                }
+
+                if (type == "actor")
+                {
+                    var result = await _movieInteractor.GetActorStatistics(periodType);
+                    return new OkObjectResult(result);
+                }
+                else
+                    return new NotFoundResult();
+
+            }
+            catch (ArgumentException aex)
+            {
+                log.LogError(aex, "[{Function}] Invalid input", nameof(RunStatistics));
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "[{Function}] Unhandled error", nameof(RunStatistics));
+                throw;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunStatistics), stopwatch.ElapsedMilliseconds);
+            }
         }
     }
 }

@@ -24,5 +24,17 @@ namespace Ez.Hress.Hardhead.UseCases
             _log.LogInformation("Getting movies by filter: {Filter}", filterBy);
             return _movieDataAccess.GetMovies(filterBy);
         }
+
+        public async Task<StatsEntity> GetActorStatistics(PeriodType periodType)
+        {
+            var entity = new StatsEntity("Harðhaus")
+            {
+                PeriodType = periodType,
+                DateFrom = Utility.GetDateFromPeriodType(periodType)
+            };
+            entity.List = await _movieDataAccess.GetActorStatistic(entity.DateFrom);
+
+            return entity;
+        }
     }
 }

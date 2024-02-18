@@ -28,3 +28,6 @@ Authorization: token {{apiToken}}
 
 ### Get movies by filter
 GET {{host}}/api/movies/?filter=die
+
+### Get actor statistics
+GET {{host}}/api/movies/statistics/actor?periodType=Last10
