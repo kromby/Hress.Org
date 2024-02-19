@@ -84,3 +84,6 @@ Authorization: token {{apiToken}}
 DELETE  {{legacyHost}}/api/hardhead/5358/guests/2630?code={{apiCode}}
 Content-Type: application/json
 Authorization: token {{apiToken}}
+
+### Get guests by Hardhead ID
+GET {{host}}/api/hardhead/5419/guests

@@ -309,5 +309,43 @@ namespace Ez.Hress.Hardhead.DataAccess
             };
             return Task.Run(() => { return list; });
         }
+
+        public async Task<IList<UserBasicEntity>> GetGuests(int hardheadID)
+        {
+            var sql = @"SELECT	guest.UserId, hressUser.Username, userPhoto.ImageId
+                        FROM	rep_User guest
+                        JOIN	adm_User hressUser ON guest.UserId = hressUser.Id
+                        LEFT OUTER JOIN	upf_Image userPhoto ON hressUser.Id = userPhoto.UserId AND userPhoto.TypeId = 14
+                        WHERE   guest.EventId = @id
+                            AND guest.TypeId = 52
+                        ORDER BY hressUser.Username";
+
+            var list = new List<UserBasicEntity>();
+
+            using (var connection = new SqlConnection(_connectionString))
+            {
+                await connection.OpenAsync();
+
+                using var command = new SqlCommand(sql, connection);
+                command.Parameters.Add(new SqlParameter("id", hardheadID));
+
+                using var reader = await command.ExecuteReaderAsync();
+                while (reader.Read())
+                {
+                    var href = new UserBasicEntity()
+                    {
+                        ID = SqlHelper.GetInt(reader, "UserId"),
+                        Username = reader.GetString(reader.GetOrdinal("Username")),
+                    };
+
+                    if (!reader.IsDBNull(reader.GetOrdinal("ImageId")))
+                        href.ProfilePhotoId = SqlHelper.GetInt(reader, "ImageId");
+
+                    list.Add(href);
+                }
+            }
+
+            return list;
+        }
     }
 }

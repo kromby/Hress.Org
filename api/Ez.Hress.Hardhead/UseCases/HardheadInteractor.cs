@@ -107,5 +107,10 @@ namespace Ez.Hress.Hardhead.UseCases
             //To start with the only action will be change the hardhead
             //Future actions could be "I was there", "Tilnefna vonbrigði"...
         }
+
+        public async Task<IList<UserBasicEntity>> GetGuests(int hardheadID)
+        {
+            return await _hardheadDataAccess.GetGuests(hardheadID);
+        }
     }
 }

@@ -12,7 +12,7 @@ const GuestsEdit = ({ hardheadID, users }) => {
     const [guests, setGuests] = useState();
 
     const getGuests = async () => {
-        var url = config.get('path') + '/api/hardhead/' + hardheadID + '/guests?code=' + config.get('code')
+        var url = `${config.get('apiPath')}/api/hardhead/${hardheadID}/guests`;
         axios.get(url)
             .then(response => {
                 setGuests(response.data);
@@ -77,11 +77,8 @@ const GuestsEdit = ({ hardheadID, users }) => {
                 </div>
                 {guests ?
                     guests.map(guest =>
-                        <div className="col-2 col-12-xsmall align-center" key={guest.ID}>
-                            {typeof guest.ProfilePhoto !== 'undefined' ?
-                                <UserImage id={guest.ID} username={guest.Username} profilePhoto={guest.ProfilePhoto.Href} /> :
-                                <UserImage id={guest.ID} username={guest.Username} />
-                            }
+                        <div className="col-2 col-12-xsmall align-center" key={guest.id}>
+                            <UserImage id={guest.id} username={guest.username} profilePhoto={guest.profilePhoto.href} />
                         </div>
                     )
                     : "Enginn skráður gestur"}

@@ -3,13 +3,16 @@ import config from 'react-global-configuration';
 import { Link } from 'react-router-dom';
 import './userimage.css';
 
-const UserImage = ({id, username, profilePhoto}) => {
+const getImageSrc = (profilePhoto) => {
+    const imagePath = !profilePhoto ? "/api/images/278634/content" : profilePhoto;
+    return `${config.get("apiPath")}${imagePath}?height=50&width=50`;
+}
+
+const UserImage = ({ id, username, profilePhoto }) => {
     return ([
-        profilePhoto ?
-            <img key="101" className="userimage"
-                src={config.get("apiPath") + profilePhoto + "?height=50&width=50"}
-                alt={username} />
-            : null,
+        <img key="101" className="userimage"
+            src={getImageSrc(profilePhoto)}
+            alt={username}  />,
         <p key="102">
             <Link to={"/hardhead/users/" + id}>{username}</Link>
         </p>

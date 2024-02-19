@@ -27,5 +27,7 @@ namespace Ez.Hress.Hardhead.UseCases
         Task<bool> CreateHardhead(int hostID, DateTime nextDate, int currentUserID, DateTime changeDate);
 
         Task<IList<ComponentEntity>> GetActions(int hardheadID);
+
+        Task<IList<UserBasicEntity>> GetGuests(int hardheadID);
     }
 }

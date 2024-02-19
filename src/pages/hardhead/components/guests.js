@@ -9,7 +9,7 @@ const Guests = ({ hardheadID }) => {
 
     useEffect(() => {
         const getGuests = async () => {
-            var url = config.get('path') + '/api/hardhead/' + hardheadID + '/guests?code=' + config.get('code');
+            var url = `${config.get('apiPath')}/api/hardhead/${hardheadID}/guests`;
 
             axios.get(url)
                 .then((response) => setGuests(response.data))
@@ -31,11 +31,8 @@ const Guests = ({ hardheadID }) => {
             <h3>Gestir</h3>
             <div className="row gtr-uniform">
                 {guests ? guests.map(guest =>
-                    <div className="col-2 align-center" key={guest.ID}>
-                        {typeof guest.ProfilePhoto !== 'undefined' ?
-                            <UserImage id={guest.ID} username={guest.Username} profilePhoto={guest.ProfilePhoto.Href} /> :
-                            <UserImage id={guest.ID} username={guest.Username} />
-                        }
+                    <div className="col-2 align-center" key={guest.id}>
+                        <UserImage id={guest.id} username={guest.username} profilePhoto={guest.profilePhoto?.href} />
                     </div>
                 ) : null}
                 {error ? error : null}
