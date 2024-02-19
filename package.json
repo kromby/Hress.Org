@@ -17,9 +17,9 @@
     "react-global-configuration": "^1.4.1",
     "react-helmet": "^6.1.0",
     "react-rating": "^2.0.5",
-    "react-router-dom": "^6.22.0",
+    "react-router-dom": "^6.22.1",
     "react-youtube": "^10.1.0",
-    "webpack": "^5.90.1"
+    "webpack": "^5.90.2"
   },
   "scripts": {
     "start": "react-app-rewired start",
