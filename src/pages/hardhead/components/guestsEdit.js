@@ -78,7 +78,7 @@ const GuestsEdit = ({ hardheadID, users }) => {
                 {guests ?
                     guests.map(guest =>
                         <div className="col-2 col-12-xsmall align-center" key={guest.id}>
-                            <UserImage id={guest.id} username={guest.username} profilePhoto={guest.profilePhoto.href} />
+                            <UserImage id={guest.id} username={guest.username} profilePhoto={guest.profilePhoto?.href} />
                         </div>
                     )
                     : "Enginn skráður gestur"}

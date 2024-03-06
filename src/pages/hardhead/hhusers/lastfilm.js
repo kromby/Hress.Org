@@ -43,7 +43,7 @@ const LastFilm = ({userID}) => {
                 description={<span>{hardhead.guestCount + " gestir"}<br /><br />{hardhead.description ? hardhead.description : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}</span>}
                 date={hardhead.date}
                 dateString={hardhead.dateString}
-                imageSource={movie ? config.get('apiPath') + movie.PosterPhoto.Href : null}
+                imageSource={movie ? config.get('apiPath') + movie.PosterPhoto?.Href : null}
             /> : null}
     </div>);
 
