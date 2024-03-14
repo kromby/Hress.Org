@@ -11,4 +11,4 @@ GET {{host}}/api/hardhead/statistics/attendances?periodType=2
 GET {{host}}/api/hardhead/statistics/users/2630/challenges
 
 ### Get streaks for a specific user
-GET {{host}}/api/hardhead/statistics/users/2630/streaks
+GET {{host}}/api/hardhead/statistics/users/2652/streaks

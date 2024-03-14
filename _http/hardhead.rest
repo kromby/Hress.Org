@@ -43,7 +43,7 @@ Authorization: token {{apiToken}}
 GET {{host}}/api/hardhead/5397
 
 ### Get hardheads by userID
-GET {{host}}/api/hardhead?userID=2634
+GET {{host}}/api/hardhead?userID=2630
 
 ### Get hardheads by dateFrom
 GET {{host}}/api/hardhead?dateFrom=1.1.2023
