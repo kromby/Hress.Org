@@ -6,3 +6,9 @@ GET {{host}}/api/hardhead/statistics/users/2630?attendanceType=53&periodType=4
 
 ### Get attendance statistic by periodType
 GET {{host}}/api/hardhead/statistics/attendances?periodType=2
+
+### Get history of challenges to and from a specific user
+GET {{host}}/api/hardhead/statistics/users/2630/challenges
+
+### Get streaks for a specific user
+GET {{host}}/api/hardhead/statistics/users/2630/streaks

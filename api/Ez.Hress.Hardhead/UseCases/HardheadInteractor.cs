@@ -46,7 +46,7 @@ namespace Ez.Hress.Hardhead.UseCases
 
         public async Task<IList<HardheadNight>> GetHardheads(int userID, UserType type)
         {
-            var idList = await _hardheadDataAccess.GetHardheadIDsByHostOrGuest(userID, type).ConfigureAwait(false);
+            var idList = await _hardheadDataAccess.GetHardheadIDs(userID, type).ConfigureAwait(false);
 
             if (idList != null && idList.Any())
             {

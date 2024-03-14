@@ -64,7 +64,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             }
         }
 
-            [FunctionName("HardheadStatisticUsers")]
+            [FunctionName("hardheadStatisticUsers")]
         public async Task<IActionResult> RunUsers(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/statistics/users/{id:int?}")] HttpRequest req,
             int? id, ILogger log)
@@ -89,6 +89,68 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                 }
 
                 var list = await _statisticsInteractor.GetUserStatistics(periodType, attendanceTypeID, id);
+                return new OkObjectResult(list);
+
+            }
+            catch (ArgumentException aex)
+            {
+                log.LogError(aex, "[{Class}.{Method}] Invalid input", _class, method);
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "[{Class}.{Method}] Unhandled error", _class, method);
+                throw;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                log.LogInformation("[{Class}.{Method}] Elapsed: {ElapsedMilliseconds} ms.", _class, method, stopwatch.ElapsedMilliseconds);
+            }
+        }
+
+        [FunctionName("hardheadStatisticUserChallenges")]
+        public async Task<IActionResult> RunUserChallenges([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/statistics/users/{id:int}/challenges")] HttpRequest req, int id, ILogger log)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            const string method = nameof(RunUserChallenges);
+            log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, method);
+
+            try
+            {
+                var list = await _statisticsInteractor.GetChallangeHistory(id);
+                return new OkObjectResult(list);
+
+            }
+            catch (ArgumentException aex)
+            {
+                log.LogError(aex, "[{Class}.{Method}] Invalid input", _class, method);
+                return new BadRequestObjectResult(aex.Message);
+            }
+            catch (Exception ex)
+            {
+                log.LogError(ex, "[{Class}.{Method}] Unhandled error", _class, method);
+                throw;
+            }
+            finally
+            {
+                stopwatch.Stop();
+                log.LogInformation("[{Class}.{Method}] Elapsed: {ElapsedMilliseconds} ms.", _class, method, stopwatch.ElapsedMilliseconds);
+            }
+        }
+
+        [FunctionName("hardheadStatisticUserStreaks")]
+        public async Task<IActionResult> RunUserStreaks([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/statistics/users/{id:int}/streaks")] HttpRequest req, int id, ILogger log)
+        {
+            var stopwatch = new Stopwatch();
+            stopwatch.Start();
+            const string method = nameof(RunUserStreaks);
+            log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, method);
+
+            try
+            {
+                var list = await _statisticsInteractor.GetStreaks(id);
                 return new OkObjectResult(list);
 
             }

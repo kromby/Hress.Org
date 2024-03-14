@@ -18,9 +18,9 @@ namespace Ez.Hress.Hardhead.UseCases
 
         Task<IList<HardheadNight>> GetHardheads(int parentID);
 
-        Task<IList<HardheadNight>> GetHardheads(IList<int> idList);
+        Task<IList<HardheadNight>> GetHardheads(IList<HardheadNight> idList);
 
-        Task<IList<int>> GetHardheadIDsByHostOrGuest(int userID, UserType type);
+        Task<IList<HardheadNight>> GetHardheadIDs(int userID, UserType? type);
 
         Task<bool> AlterHardhead(HardheadNight hardhead);
 

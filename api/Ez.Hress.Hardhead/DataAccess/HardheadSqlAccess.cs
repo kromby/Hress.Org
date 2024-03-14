@@ -158,7 +158,7 @@ namespace Ez.Hress.Hardhead.DataAccess
             return userList;
         }
 
-        public async Task<IList<HardheadNight>> GetHardheads(IList<int> idList)
+        public async Task<IList<HardheadNight>> GetHardheads(IList<HardheadNight> idNights)
         {
             var sql = @"SELECT	night.Id, night.Number, night.Date, host.UserId, summary.TextValue 'Description', hressUser.Username, userPhoto.ImageId, COUNT(guest.ID) 'GuestCount', night.ParentId 'YearID'
                         FROM    rep_Event night
@@ -179,12 +179,12 @@ namespace Ez.Hress.Hardhead.DataAccess
 
                 var sb = new StringBuilder();
                 int i = 0;
-                foreach (var id in idList)
+                foreach (var idNight in idNights)
                 {
                     var param = string.Format("@id{0}", i++);
                     sb.Append(param);
                     sb.Append(", ");
-                    command.Parameters.AddWithValue(param, id);
+                    command.Parameters.AddWithValue(param, idNight.ID);
                 }
 
                 command.CommandText = string.Format(sql, sb.ToString().Trim(new char[] { ' ', ',' }));
@@ -195,23 +195,28 @@ namespace Ez.Hress.Hardhead.DataAccess
             return list;
         }
 
-        public async Task<IList<int>> GetHardheadIDsByHostOrGuest(int userID, UserType type)
+        public async Task<IList<HardheadNight>> GetHardheadIDs(int userID, UserType? type)
         {
-            var sql = @"SELECT	hardhead.EventId
-                        FROM	rep_User hardhead
-                        JOIN	rep_Event night ON night.TypeId = 49 AND night.Id = hardhead.EventId
-                        WHERE	hardhead.UserId = @userID";
+            //var sql = @"SELECT	hardhead.EventId
+            //            FROM	rep_User hardhead
+            //            JOIN	rep_Event night ON night.TypeId = 49 AND night.Id = hardhead.EventId
+            //            WHERE	hardhead.UserId = @userID";
+
+            var sql = @"SELECT	hh.Id, hh.Number, hh.Date, usr.UserId
+                        FROM	rep_Event hh
+                        LEFT OUTER JOIN	rep_User usr ON hh.Id = usr.EventId AND usr.UserId = @userID
+                        WHERE	hh.TypeId = 49 AND hh.ParentId IS NOT NULL";
 
             if (type == UserType.guest)
             {
-                sql += " AND hardhead.TypeId = 52";
+                sql += " AND usr.TypeId = 52 ORDER BY hh.Number";
             }
             else if (type == UserType.host)
             {
-                sql += " AND hardhead.TypeId = 53";
+                sql += " AND usr.TypeId = 53 ORDER BY hh.Number";
             }
 
-            var list = new List<int>();
+            var list = new List<HardheadNight>();
             using (var connection = new SqlConnection(_connectionString))
             {
                 connection.Open();
@@ -222,7 +227,12 @@ namespace Ez.Hress.Hardhead.DataAccess
                 var reader = await command.ExecuteReaderAsync();
                 while (reader.Read())
                 {
-                    list.Add(reader.GetInt32(0));
+                    var nightUserID = SqlHelper.GetNullableInt(reader, "UserId");
+                    HardheadNight night = new(SqlHelper.GetInt(reader, "Id"), SqlHelper.GetInt(reader, "Number"), new() { ID = nightUserID ?? 0 })
+                    {
+                        Date = SqlHelper.GetDateTime(reader, "Date"),
+                    };
+                    list.Add(night);
                 }
             }
             return list;

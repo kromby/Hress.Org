@@ -1,4 +1,5 @@
 ﻿using Ez.Hress.Hardhead.Entities;
+using Ez.Hress.Shared.Entities;
 using Ez.Hress.Shared.UseCases;
 using Microsoft.Extensions.Logging;
 using System;
@@ -12,11 +13,13 @@ namespace Ez.Hress.Hardhead.UseCases
     public class HardheadStatisticsInteractor
     {
         private readonly IHardheadStatisticsDataAccess _hardheadStatisticsDataAccess;
+        private readonly IHardheadDataAccess _hardheadDataAccess;
         private readonly ITypeInteractor _typeInteractor;
         private readonly ILogger<HardheadStatisticsInteractor> _log;
-        public HardheadStatisticsInteractor(IHardheadStatisticsDataAccess hardheadStatsDataAccess, ITypeInteractor typeInteractor, ILogger<HardheadStatisticsInteractor> log)
+        public HardheadStatisticsInteractor(IHardheadStatisticsDataAccess hardheadStatsDataAccess, IHardheadDataAccess hardheadDataAccess, ITypeInteractor typeInteractor, ILogger<HardheadStatisticsInteractor> log)
         {
             _hardheadStatisticsDataAccess = hardheadStatsDataAccess;
+            _hardheadDataAccess = hardheadDataAccess;
             _typeInteractor = typeInteractor;
             _log = log;
         }
@@ -59,6 +62,116 @@ namespace Ez.Hress.Hardhead.UseCases
             entity.List = await _hardheadStatisticsDataAccess.GetAttendanceStatistic(entity.DateFrom);
 
             return entity;
+        }
+
+        // TODO: get statistics about nominees and nominated by a specific user
+        public async Task<object> GetChallangeHistory(int userID)
+        {
+            _log.LogInformation("[{Class}] Getting challenge history for user: {userID}", nameof(HardheadStatisticsInteractor), userID);
+
+            var list = await _hardheadDataAccess.GetHardheads(new DateTime(1979, 9, 9), DateTime.MaxValue);
+
+            var nextHardhead = new Dictionary<int, StatisticUserEntity>();
+            var previousHardhead = new Dictionary<int, StatisticUserEntity>();
+
+
+            HardheadNight? last = null;
+            bool addChallenged = false;
+            foreach (var night in list)
+            {
+                if(addChallenged && night.Host.ID != userID)
+                {
+                    if (previousHardhead.ContainsKey(night.Host.ID))
+                    {
+                        previousHardhead[night.Host.ID].AttendedCount++;
+                        previousHardhead[night.Host.ID].FirstAttended = night.Date;
+                    }
+                    else
+                    {
+                        previousHardhead.Add(night.Host.ID, new StatisticUserEntity()
+                        {
+                            AttendedCount = 1,
+                            User = night.Host,
+                            FirstAttended = night.Date,
+                            LastAttended = night.Date,
+                        });
+                    }
+
+                    addChallenged = false;
+                }
+
+                if(night.Host.ID == userID)
+                {
+                    if (last != null && last.Host.ID != userID)
+                    {
+                        if (nextHardhead.ContainsKey(last.Host.ID))
+                        {
+                            nextHardhead[last.Host.ID].AttendedCount++;
+                            nextHardhead[last.Host.ID].FirstAttended = last.Date;
+                        }
+                        else
+                        {
+                            nextHardhead.Add(last.Host.ID, new StatisticUserEntity()
+                            {
+                                AttendedCount = 1,
+                                User = last.Host,
+                                FirstAttended = last.Date,
+                                LastAttended = last.Date,
+                            });
+                        }
+                    }
+
+                    addChallenged = true;
+                }
+
+                last = night;
+            }
+
+            return new ChallangeHistory(previousHardhead.Values.OrderByDescending(t => t.AttendedCount).ToList(), previousHardhead.Values.OrderByDescending(t => t.AttendedCount).ToList());
+        }
+
+        public async Task<IList<StatisticUserEntity>> GetStreaks(int userID)
+        {
+            _log.LogInformation("[{Class}] Getting streaks of attended nights for user: {userID}", nameof(HardheadStatisticsInteractor), userID);
+
+            var allNights = await _hardheadDataAccess.GetHardheadIDs(userID, null);
+
+            var list = new List<StatisticUserEntity>();
+            StatisticUserEntity? stat = null ;
+
+            foreach(var night in allNights)
+            {
+                if(night.Host.ID == userID)
+                {
+                    if(stat == null)
+                    {
+                        stat = new StatisticUserEntity
+                        {
+                            FirstAttended = night.Date,
+                            LastAttended = night.Date,
+                            AttendedCount = 1,
+                            User = new UserBasicEntity() { ID = userID },
+                        };
+                    }
+                    else
+                    {
+                        stat.AttendedCount++;
+                        stat.LastAttended = night.Date;
+                    }
+                }
+                else
+                {
+                    if (stat == null)
+                        continue;
+
+                    if(stat.AttendedCount > 1)
+                        list.Add(stat);
+
+                    stat = null;
+                }
+            }
+
+            return list.OrderByDescending(s => s.AttendedCount).ToList();
         }
     }
 }
