@@ -12,6 +12,7 @@ const Author = ({ID, Username, href, ProfilePhoto, UserPath}) => {
                 var url = config.get('apiPath') + href;
                 try {
                     const response = await axios.get(url);
+                    setUser(response.data);
                 } catch (e) {
                     console.error(e);
                 }

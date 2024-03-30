@@ -1,18 +1,21 @@
-import axios from "axios";
-import { useEffect, useState } from "react"
-import { Post } from "../../../components";
-import config from 'react-global-configuration';
 import UserAwards from "./userAwards";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import UserStatistics from "./userStatistics";
+import Challenge from "./challenge";
 
 const HHUsers = () => {
     const params = useParams();
+    const location = useLocation();
+    const query = new URLSearchParams(location.search);
+    const flag = query.get("flag");
 
     return (
         <div id="main">
-            <UserAwards id={params.id} />
+            {flag !== "new" ? [
+            <UserAwards id={params.id} />,
             <UserStatistics id={params.id} />
+            ] : null}
+            {flag === "new" || flag === "all" ? <Challenge id={params.id} /> : null}            
         </div>
     )
 }

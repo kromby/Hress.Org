@@ -127,7 +127,7 @@ namespace Ez.Hress.Hardhead.UseCases
                 last = night;
             }
 
-            return new ChallangeHistory(previousHardhead.Values.OrderByDescending(t => t.AttendedCount).ToList(), previousHardhead.Values.OrderByDescending(t => t.AttendedCount).ToList());
+            return new ChallangeHistory(previousHardhead.Values.OrderByDescending(t => t.AttendedCount).ToList(), nextHardhead.Values.OrderByDescending(t => t.AttendedCount).ToList());
         }
 
         public async Task<IList<StatisticUserEntity>> GetStreaks(int userID)

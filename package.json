@@ -24,7 +24,7 @@
   "scripts": {
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
-    "test": "react-app-rewired test",
+    "test": "jest",
     "preversion": "npm run test",
     "version": "",
     "postversion": "git push && git push --tags"
@@ -43,13 +43,18 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/preset-env": "^7.24.3",
+    "@babel/preset-react": "^7.24.1",
     "assert": "^2.1.0",
+    "babel-jest": "^29.7.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "https-browserify": "^1.0.0",
+    "jest": "^27.5.1",
     "os-browserify": "^0.3.0",
     "process": "^0.11.10",
     "react-app-rewired": "^2.2.1",
+    "react-test-renderer": "^18.2.0",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "url": "^0.11.3"
