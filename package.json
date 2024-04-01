@@ -25,7 +25,6 @@
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
     "test": "jest",
-    "preversion": "npm run test",
     "version": "",
     "postversion": "git push && git push --tags"
   },
