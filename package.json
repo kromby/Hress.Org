@@ -7,7 +7,7 @@
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
     "path-browserify": "^1.0.1",
-    "query-string": "^8.2.0",
+    "query-string": "^9.0.0",
     "react": "^18.2.0",
     "react-datepicker": "^6.6.0",
     "react-device-detect": "^2.2.3",
