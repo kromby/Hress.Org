@@ -5,6 +5,7 @@ import UserStatistics from "./userStatistics";
 import Challenge from "./challenge";
 import axios from "axios";
 import { useState, useEffect } from "react";
+import Streak from "./streak";
 
 const HHUsers = () => {
     const params = useParams();
@@ -37,6 +38,7 @@ const HHUsers = () => {
             <UserStatistics id={params.id} />
             ] : null}
             { user ? <Challenge id={params.id} username={user.Name} profilePhoto={user.ProfilePhoto?.Href} /> : null}            
+            {flag === "new" || flag === "all" ? <Streak id={params.id} /> : null}
         </div>
     )
 }
