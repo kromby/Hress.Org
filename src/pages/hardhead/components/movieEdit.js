@@ -118,7 +118,7 @@ const MovieEdit = ({ id }) => {
             }
             setImageGetEnabled(true);
             setButtonEnabled(true);
-            setOmdbData(response.data);
+            //setOmdbData(response.data);
         } catch (e) {
             console.error("[MovieEdit] Error getting data from omdbapi");
             console.error(e);

@@ -48,10 +48,6 @@ const GuestsEdit = ({ hardheadID, users }) => {
                     headers: { 'Authorization': 'token ' + authTokens.token },
                 });
                 getGuests();
-
-                setUsers(users.filter(u => {
-                    return u.ID != guestID;
-                }));
             } catch (e) {
                 console.error("[GuestsEdit] Ekki tókst að bæta gest við.");
                 console.error(e);

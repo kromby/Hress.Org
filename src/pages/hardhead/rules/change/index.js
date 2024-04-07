@@ -171,19 +171,19 @@ const RuleChange = () => {
 
                     <div className="row gtr-uniform" key="first">
                         <div className="col-4" onClick={() => handleTypeChange(ChangeType.UPDATE)}>
-                            <input type="radio" checked={selected === ChangeType.UPDATE} onChange={() => handleChange(ChangeType.UPDATE)} />
+                            <input type="radio" checked={selected === ChangeType.UPDATE} onChange={() => handleTypeChange(ChangeType.UPDATE)} />
                             <label>
                                 Reglubreyting
                             </label>
                         </div>
                         <div className="col-4" onClick={() => handleTypeChange(ChangeType.CREATE)}>
-                            <input type="radio" checked={selected === ChangeType.CREATE} onChange={() => handleChange(ChangeType.CREATE)} />
+                            <input type="radio" checked={selected === ChangeType.CREATE} onChange={() => handleTypeChange(ChangeType.CREATE)} />
                             <label>
                                 Ný regla
                             </label>
                         </div>
                         <div className="col-4" onClick={() => handleTypeChange(ChangeType.DELETE)}>
-                            <input type="radio" checked={selected === ChangeType.DELETE} onChange={() => handleChange(ChangeType.DELETE)} />
+                            <input type="radio" checked={selected === ChangeType.DELETE} onChange={() => handleTypeChange(ChangeType.DELETE)} />
                             <label>
                                 Fjarlægja reglu
                             </label>
