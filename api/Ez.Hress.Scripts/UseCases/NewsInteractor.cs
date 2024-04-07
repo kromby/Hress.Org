@@ -33,6 +33,7 @@ namespace Ez.Hress.Scripts.UseCases
 
             if(list.Count > 1 && top == 1)
             {
+                // skipcq: CS-A1008
                 int rnd = new Random().Next(list.Count);
                 return list.Where(n => n.ID == list[rnd].ID).ToList();
             }
