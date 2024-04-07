@@ -44,7 +44,7 @@ namespace Ez.Hress.Scripts.UseCases
         {
             if (year < 2000 && year <= DateTime.Today.Year)
             {
-                throw new ArgumentException($"Year must be after 2000 and not in the future", nameof(year));
+                throw new ArgumentException("Year must be after 2000 and not in the future", nameof(year));
             }
 
             return await _newsDataAccess.GetNews(new DateTime(year, 1, 1), false, false, true);
@@ -54,12 +54,12 @@ namespace Ez.Hress.Scripts.UseCases
         {
             if (year < 2000 && year <= DateTime.Today.Year)
             {
-                throw new ArgumentException($"Year must be after 2000 and not in the future", nameof(year));
+                throw new ArgumentException("Year must be after 2000 and not in the future", nameof(year));
             }
 
             if (month < 1 && month > 12)
             {
-                throw new ArgumentException($"Month must be between 1 and 12", nameof(month));
+                throw new ArgumentException("Month must be between 1 and 12", nameof(month));
             }
 
             return await _newsDataAccess.GetNews(new DateTime(year, month, 1), false, true, true);

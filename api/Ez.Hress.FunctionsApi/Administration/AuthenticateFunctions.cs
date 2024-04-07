@@ -89,7 +89,7 @@ namespace Ez.Hress.FunctionsApi.Administration
             var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
             if (!isJWTValid)
             {
-                log.LogInformation($"[RunMagic] JWT is not valid!");
+                log.LogInformation("[RunMagic] JWT is not valid!");
                 return new UnauthorizedResult();
             }
 

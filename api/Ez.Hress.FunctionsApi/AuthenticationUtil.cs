@@ -20,7 +20,7 @@ namespace Ez.Hress.FunctionsApi
             log.LogInformation($"[GetAuthenticatedUserID] AUTHORIZATION_HEADER_NAME: '{AUTHORIZATION_HEADER_NAME}'");
             if (!headers.ContainsKey(AUTHORIZATION_HEADER_NAME))
             {
-                log.LogInformation($"[GetAuthenticatedUserID] AuthorisationHeader is missing.");
+                log.LogInformation("[GetAuthenticatedUserID] AuthorisationHeader is missing.");
                 userID = -1;
                 return false;
             }

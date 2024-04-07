@@ -44,7 +44,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
             if (!isJWTValid)
             {
-                log.LogInformation($"[RunAwardNominations] JWT is not valid!");
+                log.LogInformation("[RunAwardNominations] JWT is not valid!");
                 return new UnauthorizedResult();
             }
 
