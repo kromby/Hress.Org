@@ -29,7 +29,7 @@ namespace Ez.Hress.FunctionsApi.Albums
         {
             log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbums));
 
-            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
             if (!isJWTValid)
             {
                 log.LogInformation("[RunMagic] JWT is not valid!");
@@ -62,7 +62,7 @@ namespace Ez.Hress.FunctionsApi.Albums
         {
             log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbumImages));
 
-            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
             if (!isJWTValid)
             {
                 log.LogInformation("[RunMagic] JWT is not valid!");

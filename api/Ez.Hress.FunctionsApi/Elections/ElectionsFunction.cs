@@ -36,7 +36,7 @@ namespace Ez.Hress.FunctionsApi.Elections
         {
             log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAccess));
 
-            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
             if (!isJWTValid)
             {
                 log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunAccess));
@@ -55,7 +55,7 @@ namespace Ez.Hress.FunctionsApi.Elections
         {
             log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunVote));
 
-            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
             if (!isJWTValid)
             {
                 log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunVote));

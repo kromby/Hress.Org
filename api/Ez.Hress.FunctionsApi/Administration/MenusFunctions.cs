@@ -30,7 +30,7 @@ namespace Ez.Hress.FunctionsApi.Administration
         {
             log.LogInformation("[RunMenus] C# HTTP trigger function processed a request.");
 
-            _ = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            _ = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
 
             if (req.Query.ContainsKey("navigateUrl"))
             {

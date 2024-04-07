@@ -65,7 +65,7 @@ namespace Ez.Hress.FunctionsApi.Users
         {
             log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _function, nameof(RunBalanceSheet));
 
-            if (!AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log))
+            if (!AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID))
             {
                 log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunBalanceSheet));
                 return new UnauthorizedResult();
@@ -81,7 +81,7 @@ namespace Ez.Hress.FunctionsApi.Users
         {
             log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _function, nameof(RunPassword));
 
-            if (!AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log))
+            if (!AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID))
             {
                 log.LogInformation("[{Class}.{Method}] JWT is not valid!", _function, nameof(RunPassword));
                 return new UnauthorizedResult();

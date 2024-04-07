@@ -42,7 +42,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             if (HttpMethods.IsPut(req.Method))
             {
-                var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+                var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
                 if (!isJWTValid)
                 {
                     log.LogInformation("[{Class}.{Function}]  JWT is not valid!", _class, method);
@@ -114,7 +114,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             var method = nameof(RunActions);
             log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
 
-            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
             if (!isJWTValid)
             {
                 log.LogInformation("[{Class}.{Function}]  JWT is not valid!", _class, method);

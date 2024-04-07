@@ -15,7 +15,7 @@ namespace Ez.Hress.FunctionsApi
     {
         private const string AUTHORIZATION_HEADER_NAME = "X-Custom-Authorization";
 
-        public static bool GetAuthenticatedUserID(AuthenticationInteractor authenticationInteractor, IHeaderDictionary headers, out int userID, ILogger log)
+        public static bool GetAuthenticatedUserID(AuthenticationInteractor authenticationInteractor, IHeaderDictionary headers, ILogger log, out int userID)
         {
             log.LogInformation($"[GetAuthenticatedUserID] AUTHORIZATION_HEADER_NAME: '{AUTHORIZATION_HEADER_NAME}'");
             if (!headers.ContainsKey(AUTHORIZATION_HEADER_NAME))

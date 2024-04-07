@@ -122,7 +122,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                 }
                 else
                 {
-                    var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+                    var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
                     if (!isJWTValid)
                     {
                         log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunCoursesByType));

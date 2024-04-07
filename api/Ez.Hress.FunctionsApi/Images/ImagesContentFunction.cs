@@ -32,7 +32,7 @@ namespace Ez.Hress.FunctionsApi.Images
         {
             log.LogInformation("[{Class}] C# HTTP trigger function processed a request.", nameof(RunImages));
 
-            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
             if (!isJWTValid)
             {
                 log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunImages));

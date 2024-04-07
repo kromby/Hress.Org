@@ -72,7 +72,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             log.LogInformation("[HardheadRuleFunctions] C# HTTP trigger function processed a request.");
             log.LogInformation($"[HardheadRuleFunctions] Host: {req.Host.Value}");
 
-            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
             if (!isJWTValid)
             {
                 log.LogInformation("[HardheadRuleFunctions] JWT is not valid!");

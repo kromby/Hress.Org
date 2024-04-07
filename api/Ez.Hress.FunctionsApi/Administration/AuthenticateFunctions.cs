@@ -86,7 +86,7 @@ namespace Ez.Hress.FunctionsApi.Administration
 
             log.LogInformation("[RunMagic] C# HTTP trigger function processed a request.");
             
-            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, out int userID, log);
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
             if (!isJWTValid)
             {
                 log.LogInformation("[RunMagic] JWT is not valid!");
