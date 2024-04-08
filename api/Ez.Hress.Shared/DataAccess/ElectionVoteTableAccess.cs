@@ -19,7 +19,7 @@ namespace Ez.Hress.Shared.DataAccess
 
         public ElectionVoteTableAccess(IList<TableClient> clients, ILogger<ElectionVoteTableAccess> log)
         {
-            _tableClient = clients.Where(t => t.Name == "HardheadVotes").First();
+            _tableClient = clients.First(t => t.Name == "HardheadVotes");
             _log = log;
         }
 

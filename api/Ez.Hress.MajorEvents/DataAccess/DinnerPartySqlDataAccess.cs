@@ -21,7 +21,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
         public DinnerPartySqlDataAccess(DbConnectionInfo connectionInfo, IList<TableClient> clients, ILogger<DinnerPartySqlDataAccess> log)
         {
             _connectionString = connectionInfo.ConnectionString;
-            _tableClient = clients.Where(t => t.Name == "DinnerPartyElection").First();
+            _tableClient = clients.First(t => t.Name == "DinnerPartyElection");
             _log = log;
         }        
 

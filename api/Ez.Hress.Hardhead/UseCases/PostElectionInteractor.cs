@@ -52,8 +52,8 @@ namespace Ez.Hress.Hardhead.UseCases
 
                 var votes = await _voteDataAccess.GetVotes(Guid.Parse(rule.ID));
 
-                int approved = votes.Where(v => v.Value == "1").Count();
-                int declined = votes.Where(v => v.Value == "-1").Count();
+                int approved = votes.Count(v => v.Value == "1");
+                int declined = votes.Count(v => v.Value == "-1");
 
                 if (approved > declined)
                 {
@@ -80,8 +80,8 @@ namespace Ez.Hress.Hardhead.UseCases
 
                     var votes = await _voteDataAccess.GetVotes(Guid.Parse(rule.ID));
 
-                    int approved = votes.Where(v => v.Value == "1").Count();
-                    int declined = votes.Where(v => v.Value == "-1").Count();
+                    int approved = votes.Count(v => v.Value == "1");
+                    int declined = votes.Count(v => v.Value == "-1");
 
                     if (approved > declined)
                     {
