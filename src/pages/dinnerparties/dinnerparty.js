@@ -37,7 +37,7 @@ const DinnerParty = () => {
         <div id="main">
             <ErrorBoundary
                 FallbackComponent={<div>Það vantar einhvern hressleika hér!</div>}
-                onError={(error, errorInfo) => errorService.log({ error, errorInfo })}
+                onError={(error, errorInfo) => console.log({ error, errorInfo })}
                 onReset={() => {
                     // reset the state of your app so the error doesn't happen again
                 }}

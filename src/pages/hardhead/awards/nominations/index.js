@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAuth } from '../../../../context/auth';
 import StalloneNomination from './stalloneNomination';
 import DisappointmentNomination from './disappointmentNomination';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const Nominations = () => {
     const { authTokens } = useAuth();
@@ -14,8 +14,8 @@ const Nominations = () => {
     var url = config.get('path') + '/api/hardhead/5384/users?code=' + config.get('code');
 
     useEffect(() => {
-        if (authTokens === undefined) {
-            navigate("/login", { state: { from: location.pathname } });
+        if (authTokens === undefined) {            
+            useNavigate("/login", { state: { from: location.pathname } });
             return;
         }
 
