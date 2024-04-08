@@ -20,7 +20,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         }
         
         [Fact]
-        public async void NominateOK_Test()
+        public async Task NominateOK_Test()
         {
             // SETUP
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
@@ -37,7 +37,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         }
         
         [Fact]
-        public async void NominateErrNoContent_Test()
+        public async Task NominateErrNoContent_Test()
         {            
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardNominateInteractor interactor = new(awardMock.Object, userMock.Object, _log.Object);
@@ -48,7 +48,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         }
         
         [Fact]
-        public async void NominateErrNomineeMissing_Test()
+        public async Task NominateErrNomineeMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardNominateInteractor interactor = new(awardMock.Object, userMock.Object, _log.Object);
@@ -62,7 +62,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         }
 
         [Fact]
-        public async void NominateErrTypeMissing_Test()
+        public async Task NominateErrTypeMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardNominateInteractor interactor = new(awardMock.Object, userMock.Object, _log.Object);
@@ -76,7 +76,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         }
 
         [Fact]
-        public async void NominateErrCreatedByMissing_Test()
+        public async Task NominateErrCreatedByMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardNominateInteractor interactor = new(awardMock.Object, userMock.Object, _log.Object);
@@ -87,7 +87,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         }
 
         [Fact]
-        public async void NominateErrDescriptionMissing_Test()
+        public async Task NominateErrDescriptionMissing_Test()
         {
             awardMock.Setup(x => x.SaveNomination(It.IsAny<Nomination>()));
             AwardNominateInteractor interactor = new(awardMock.Object, userMock.Object, _log.Object);

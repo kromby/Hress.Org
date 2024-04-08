@@ -21,7 +21,7 @@ namespace Ez.Hress.UnitTest.Shared
         }
 
         [Fact]
-        public async void LoginOK_Test()
+        public async Task LoginOK_Test()
         {
             // SETUP
             var username = "username";
@@ -41,7 +41,7 @@ namespace Ez.Hress.UnitTest.Shared
         }
 
         [Fact]
-        public async void LoginErrorMissingUsername_Test()
+        public async Task LoginErrorMissingUsername_Test()
         {
             // SETUP
             var username = string.Empty;
@@ -55,7 +55,7 @@ namespace Ez.Hress.UnitTest.Shared
         }
 
         [Fact]
-        public async void LoginErrorMissingPassword_Test()
+        public async Task LoginErrorMissingPassword_Test()
         {
             // SETUP
             var username = "username";
@@ -69,7 +69,7 @@ namespace Ez.Hress.UnitTest.Shared
         }
 
         [Fact]
-        public async void LoginErrorUnauthorized_Test()
+        public async Task LoginErrorUnauthorized_Test()
         {
             // SETUP
             var username = "username";
@@ -85,7 +85,7 @@ namespace Ez.Hress.UnitTest.Shared
         }
 
         [Fact]
-        public async void CreateMagicCodeOK_Test()
+        public async Task CreateMagicCodeOK_Test()
         {
             // ARRANGE
             var userID = 220;

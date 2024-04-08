@@ -24,7 +24,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         }
 
         [Fact]
-        public async void Test()
+        public async Task Test()
         {
             // ARRANGE
             int typeID = 220;

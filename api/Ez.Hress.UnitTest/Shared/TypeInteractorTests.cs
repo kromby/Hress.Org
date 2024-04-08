@@ -23,7 +23,7 @@ namespace Ez.Hress.UnitTest.Shared
         }
 
         [Fact]
-        public async void GetTypesOK_Tests()
+        public async Task GetTypesOK_Tests()
         {
             // ARRANGE
             IList<TypeEntity> list = new List<TypeEntity>();

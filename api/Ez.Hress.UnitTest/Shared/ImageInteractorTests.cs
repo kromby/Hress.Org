@@ -31,7 +31,7 @@ namespace Ez.Hress.UnitTest.Shared
         }
 
         [Fact]
-        public async void GetContentHttpOK_Test()
+        public async Task GetContentHttpOK_Test()
         {
             // ARRANGE
             ImageEntity? entity = new(1979, "Test", "https://asdfkjasf.com") { };
@@ -50,7 +50,7 @@ namespace Ez.Hress.UnitTest.Shared
         }
 
         [Fact]
-        public async void GetContentBlobOK_Test()
+        public async Task GetContentBlobOK_Test()
         {
             // ARRANGE
             ImageEntity? entity = new(1979, "Test", "BLOB://asdfkjasf.com") { };
@@ -69,7 +69,7 @@ namespace Ez.Hress.UnitTest.Shared
         }
 
         [Fact]
-        public async void GetContentRelativeOK_Test()
+        public async Task GetContentRelativeOK_Test()
         {
             // ARRANGE
             ImageEntity? entity = new(1979, "Test", "~/images/external/prump.png") { };

@@ -28,7 +28,7 @@ namespace Ez.Hress.UnitTest.Hardhead
         }
 
         [Fact]
-        public async void GetRuleChangesOK_Test()
+        public async Task GetRuleChangesOK_Test()
         {
             // ARRANGE
             IList<RuleChange> list = new List<RuleChange>()

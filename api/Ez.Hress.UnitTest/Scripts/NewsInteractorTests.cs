@@ -22,7 +22,7 @@ namespace Ez.Hress.UnitTest.Scripts
         }
 
         [Fact]
-        public async void GetLatestNewsOK_Test()
+        public async Task GetLatestNewsOK_Test()
         {
             // ARRANGE
             IList<News> list = new List<News>();

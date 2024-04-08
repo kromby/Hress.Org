@@ -26,30 +26,30 @@ namespace Ez.Hress.UnitTest.Albums
             _albumDataAccessMock= new Mock<IAlbumDataAccess>(); 
         }
 
-//        [Fact]
-//        public async void AddImages_Test()
-//        {
-//            var dbConnectionInfo = new DbConnectionInfo("");
-//            var blobConnectionInfo = new BlobConnectionInfo("");
+        //        [Fact]
+        //        public async Task AddImages_Test()
+        //        {
+        //            var dbConnectionInfo = new DbConnectionInfo("");
+        //            var blobConnectionInfo = new BlobConnectionInfo("");
 
-//            IImageInfoDataAccess imageInfoDataAccess = new ImageInfoSqlDataAccess(dbConnectionInfo, _logImageInfoSql.Object);
-//            IImageContentDataAccess imageContentDataAccess = new ImageContentBlobDataAccess(blobConnectionInfo, _logImageContentBlob.Object);
-//            IList<IImageContentDataAccess> imageContentDataAccesses = new List<IImageContentDataAccess>
-//            {
-//                imageContentDataAccess
-//            };
+        //            IImageInfoDataAccess imageInfoDataAccess = new ImageInfoSqlDataAccess(dbConnectionInfo, _logImageInfoSql.Object);
+        //            IImageContentDataAccess imageContentDataAccess = new ImageContentBlobDataAccess(blobConnectionInfo, _logImageContentBlob.Object);
+        //            IList<IImageContentDataAccess> imageContentDataAccesses = new List<IImageContentDataAccess>
+        //            {
+        //                imageContentDataAccess
+        //            };
 
-//            var imageInteractor = new ImageInteractor(imageInfoDataAccess, imageContentDataAccesses, _logImageInteractor.Object);
+        //            var imageInteractor = new ImageInteractor(imageInfoDataAccess, imageContentDataAccesses, _logImageInteractor.Object);
 
-//#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
-//            var albumInteractor = new AlbumInteractor(null, imageInteractor, _logAlbumInteractor.Object);
-//#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+        //#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+        //            var albumInteractor = new AlbumInteractor(null, imageInteractor, _logAlbumInteractor.Object);
+        //#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
 
-//            await albumInteractor.AddImages(46114);
-//        }
+        //            await albumInteractor.AddImages(46114);
+        //        }
 
         [Fact]
-        public async void GetAlbums_Test()
+        public async Task GetAlbums_Test()
         {
             // ARRANGE
             IList<Album> albums = new List<Album>() { new Album(1, "name", "description", 10)};
