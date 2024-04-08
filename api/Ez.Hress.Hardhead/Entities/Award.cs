@@ -11,14 +11,11 @@ namespace Ez.Hress.Hardhead.Entities
     {
         public HrefEntity Winners
         {
-            get
-            {
-                return new HrefEntity()
-                {
-                    ID = this.ID,
-                    Href = string.Format("/api/hardhead/awards/{0}/winners", this.ID)
-                };
-            }
+            get => new HrefEntity()
+{
+    ID = this.ID,
+    Href = string.Format("/api/hardhead/awards/{0}/winners", this.ID)
+};
         }
 
         public string? Href { get; set; }

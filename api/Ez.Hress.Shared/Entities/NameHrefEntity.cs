@@ -7,6 +7,6 @@ namespace Ez.Hress.Shared.Entities
             ID = id;            
         }
         
-        public string Href { get { return $"/api/albums/{ID}/images"; } }
+        public string Href { get => $"/api/albums/{ID}/images"; }
     }
 }

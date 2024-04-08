@@ -32,7 +32,7 @@ namespace Ez.Hress.Hardhead.Entities
         }
         public int Number { get; set; }
 
-        public override string Name { get { return string.Format("Harðhaus #{0}", Number); } }
+        public override string Name { get => string.Format("Harðhaus #{0}", Number); }
 
         public int GuestCount { get; set; }
 
@@ -58,7 +58,11 @@ namespace Ez.Hress.Hardhead.Entities
         }
 
         public int YearID { private get; set; }
-        public HrefEntity Year { get { return new HrefEntity() { Href = string.Format("/api/hardhead/{0}", YearID), ID = YearID }; } }
+        public HrefEntity Year { get => new HrefEntity()
+{
+    Href = string.Format("/api/hardhead/{0}", YearID),
+    ID = YearID
+}; }
 
         public int? NextHostID { get; set; }
 

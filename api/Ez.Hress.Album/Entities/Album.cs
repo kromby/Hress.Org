@@ -20,6 +20,9 @@ namespace Ez.Hress.Albums.Entities
         public new string Description { get; set; }
         public int ImageCount { get; set; }
 
-        public HrefEntity Images { get { return new() { ID = this.ID, Href = $"/api/albums/{this.ID}/images" }; } }
+        public HrefEntity Images { get => new()
+{
+    ID = this.ID,
+    Href = $"/api/albums/{this.ID}/images"}; }
     }
 }
