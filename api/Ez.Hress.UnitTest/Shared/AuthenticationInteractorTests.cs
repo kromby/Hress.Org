@@ -89,7 +89,7 @@ namespace Ez.Hress.UnitTest.Shared
         {
             // ARRANGE
             var userID = 220;
-            _authMock.Setup(x => x.SaveMagicCode(userID, It.IsAny<string>(), It.Is<DateTime>(x => x > DateTime.Now && x < DateTime.Now.AddMinutes(3)))).Returns(Task.FromResult(1));
+            _authMock.Setup(x => x.SaveMagicCode(userID, It.IsAny<string>(), It.Is<DateTime>(x => x > DateTime.UtcNow && x < DateTime.UtcNow.AddMinutes(3)))).Returns(Task.FromResult(1));
             var authInfo = new AuthenticationInfo("keyKEYkey1234.#keyKEYkey1234.#keyKEYkey1234.#keyKEYkey1234.#", "issuer", "audience", "salt");
             var interactor = new AuthenticationInteractor(authInfo, _authMock.Object, _log.Object);
 

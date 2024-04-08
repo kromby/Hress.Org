@@ -24,7 +24,7 @@ namespace Ez.Hress.Hardhead.Entities
         {
             get
             {
-                if (Date < DateTime.Now)
+                if (Date < DateTime.UtcNow)
                     return Date.ToString("d. MMMM yyyy", CultureInfo.GetCultureInfo("is-IS"));
                 else
                     return Date.ToString("MMMM yyyy", CultureInfo.GetCultureInfo("is-IS"));

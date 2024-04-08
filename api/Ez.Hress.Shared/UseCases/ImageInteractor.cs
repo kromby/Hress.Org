@@ -123,13 +123,13 @@ namespace Ez.Hress.Shared.UseCases
 
             if (entity.ID == 0)
             {
-                entity.Inserted = DateTime.Now;
+                entity.Inserted = DateTime.UtcNow;
                 entity.InsertedBy = userID;
                 entity.PhotoUrl = $"BLOB:/{containerName.ToLowerInvariant()}/@ID";
             }
             else
             {
-                entity.Updated = DateTime.Now;
+                entity.Updated = DateTime.UtcNow;
                 entity.UpdatedBy = userID;
             }
 

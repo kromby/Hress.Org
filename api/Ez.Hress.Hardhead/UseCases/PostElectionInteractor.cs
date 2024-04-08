@@ -86,9 +86,9 @@ namespace Ez.Hress.Hardhead.UseCases
                     if (approved > declined)
                     {
                         if(rule.TypeID == RuleChangeType.Update)
-                            sb.AppendLine($"UPDATE [dbo].[rep_Text] SET [TextValue]='{rule.RuleText}', [Updated]='{DateTime.Now.ToString("yyyy-MM-dd")}', [UpdatedBy]=2630 WHERE Id={rule.RuleID}");
+                            sb.AppendLine($"UPDATE [dbo].[rep_Text] SET [TextValue]='{rule.RuleText}', [Updated]='{DateTime.UtcNow.ToString("yyyy-MM-dd")}', [UpdatedBy]=2630 WHERE Id={rule.RuleID}");
                         else if(rule.TypeID == RuleChangeType.Delete)
-                            sb.AppendLine($"UPDATE [dbo].[rep_Text] SET Deleted='{DateTime.Now.ToString("yyyy-MM-dd")}' WHERE Id={rule.RuleID}");
+                            sb.AppendLine($"UPDATE [dbo].[rep_Text] SET Deleted='{DateTime.UtcNow.ToString("yyyy-MM-dd")}' WHERE Id={rule.RuleID}");
                     }
                 }
                 else

@@ -152,7 +152,7 @@ namespace Ez.Hress.Shared.UseCases
                 throw new ArgumentException("UserID must be greater than 0", nameof(userID));
 
             var code = Guid.NewGuid().ToString("N");
-            int affected = await _authenticationDataAccess.SaveMagicCode(userID, code, DateTime.Now.AddSeconds(60));
+            int affected = await _authenticationDataAccess.SaveMagicCode(userID, code, DateTime.UtcNow.AddSeconds(60));
             if (affected == 0)
                 throw new Exception("Creating magic code failed");
             return code;
@@ -205,7 +205,7 @@ namespace Ez.Hress.Shared.UseCases
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authenticationInfo.Key));
             var creds = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
 
-            var token = new JwtSecurityToken(_authenticationInfo.Issuer, _authenticationInfo.Audience, claims, expires: DateTime.Now.AddDays(7), signingCredentials: creds);
+            var token = new JwtSecurityToken(_authenticationInfo.Issuer, _authenticationInfo.Audience, claims, expires: DateTime.UtcNow.AddDays(7), signingCredentials: creds);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }        

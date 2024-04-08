@@ -29,7 +29,7 @@ namespace Ez.Hress.Hardhead.UseCases
         public async Task<IList<HardheadNight>> GetHardheads(DateTime fromDate)
         {
             _log.LogInformation("[{Class}] Getting all Hardheads from '{from}' until now", _class, fromDate);
-            return await _hardheadDataAccess.GetHardheads(fromDate, DateTime.Now.AddDays(-1));
+            return await _hardheadDataAccess.GetHardheads(fromDate, DateTime.UtcNow.AddDays(-1));
         }
 
         public async Task<IList<HardheadNight>> GetHardheads(int parentID)
@@ -40,7 +40,7 @@ namespace Ez.Hress.Hardhead.UseCases
 
         public async Task<IList<HardheadNight>> GetNextHardhead()
         {
-            var list = await _hardheadDataAccess.GetHardheads(DateTime.Now.AddDays(-1), DateTime.Now.AddMonths(2));
+            var list = await _hardheadDataAccess.GetHardheads(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddMonths(2));
             return list;
         }
 
@@ -69,7 +69,7 @@ namespace Ez.Hress.Hardhead.UseCases
             if (night.Description == oldNight.Description)
                 night.Description = string.Empty;
 
-            night.Updated = DateTime.Now;
+            night.Updated = DateTime.UtcNow;
             night.UpdatedBy = userID;
 
             if (!await _hardheadDataAccess.AlterHardhead(night))
@@ -85,7 +85,7 @@ namespace Ez.Hress.Hardhead.UseCases
 
                 if (nextHardheadList.Count == 0)
                 {
-                    if (!await _hardheadDataAccess.CreateHardhead(night.NextHostID.Value, nextDate, userID, DateTime.Now))
+                    if (!await _hardheadDataAccess.CreateHardhead(night.NextHostID.Value, nextDate, userID, DateTime.UtcNow))
                         throw new SystemException("Creating new hardhead failed");
                 }
             }

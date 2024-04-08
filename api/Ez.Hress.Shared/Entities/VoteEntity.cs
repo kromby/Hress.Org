@@ -15,7 +15,7 @@ namespace Ez.Hress.Shared.Entities
             StepID = stepID;    
             Value = valueID;
 
-            Inserted = DateTime.Now;
+            Inserted = DateTime.UtcNow;
         }
 
         /// <summary>

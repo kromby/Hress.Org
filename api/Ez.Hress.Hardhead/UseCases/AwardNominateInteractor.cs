@@ -23,7 +23,7 @@ namespace Ez.Hress.Hardhead.UseCases
                 throw new ArgumentNullException(nameof(nomination));            
 
             nomination.Validate();
-            nomination.Inserted = DateTime.Now;
+            nomination.Inserted = DateTime.UtcNow;
 
             nomination.Nominee = await _userInteractor.GetUser(nomination.Nominee.ID);
 

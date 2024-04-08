@@ -33,7 +33,7 @@ namespace Ez.Hress.Hardhead.UseCases
                 throw new ArgumentNullException(nameof(ruleChange));
 
             ruleChange.Validate();
-            ruleChange.Inserted = DateTime.Now;
+            ruleChange.Inserted = DateTime.UtcNow;
 
             _logger.LogInformation("[{Class}.{Method}] Rule type: '{typeID}' category: {categoryID}", _className, method, ruleChange.TypeID, ruleChange.RuleCategoryID);
 
