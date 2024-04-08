@@ -50,7 +50,7 @@ const TypeAheadDropDown = ({minimum, defaultValue, placeholder, callback}) => {
     }
 
     const renderSuggestion = () => {
-        if (suggestions && suggestions.Search) {
+        if (suggestions?.Search) {
             console.log(suggestions);
             return (
                 <ul>
@@ -63,7 +63,7 @@ const TypeAheadDropDown = ({minimum, defaultValue, placeholder, callback}) => {
                         </li>)}
                 </ul>
             );
-        } else if (suggestions && suggestions.Error) {
+        } else if (suggestions?.Error) {
             return (
                 <i>{suggestions.Error}</i>);
         }

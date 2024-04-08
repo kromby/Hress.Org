@@ -51,12 +51,12 @@ const HHUserSidebar = () => {
             <title>{user ? user.Name : null} | Hress.Org</title>
             <meta name="description" content={user ? user.Name : null} />
             <meta property="og:title" content={user ? user.Name : null} />
-            <meta property="og:image" content={user && user.ProfilePhoto ? config.get("apiPath") + user.ProfilePhoto.Href : null} />
-            <meta property="og:image:secure_url" content={user && user.ProfilePhoto ? config.get("apiPath") + user.ProfilePhoto.Href : null} />
+            <meta property="og:image" content={user?.ProfilePhoto ? config.get("apiPath") + user.ProfilePhoto.Href : null} />
+            <meta property="og:image:secure_url" content={user?.ProfilePhoto ? config.get("apiPath") + user.ProfilePhoto.Href : null} />
         </Helmet>,
         <section id="sidebar">
             <section id="intro">
-                <a href="#" className="logo"><img src={user && user.ProfilePhoto ? config.get("apiPath") + user.ProfilePhoto.Href + "?width=80&height=80" : null} alt="" /></a>
+                <a href="#" className="logo"><img src={user?.ProfilePhoto ? config.get("apiPath") + user.ProfilePhoto.Href + "?width=80&height=80" : null} alt="" /></a>
                 <header>
                     <h2>{user ? user.Name : null}</h2>
                     <p>

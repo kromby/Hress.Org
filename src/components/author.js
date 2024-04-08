@@ -47,7 +47,7 @@ const Author = ({ID, Username, href, ProfilePhoto, UserPath}) => {
             {user ?
                 <a href={userPath + user.id} className="author">
                     <span className="name">{user.username}</span>
-                    {user.profilePhoto && user.profilePhoto.href ?
+                    {user.profilePhoto?.href ?
                         <img src={config.get('apiPath') + user.profilePhoto.href + "?height=50&width=50"} alt={user.username} title={getTitle(user.username, user.name)} /> :
                         null}
                 </a>

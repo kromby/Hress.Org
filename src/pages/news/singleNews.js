@@ -34,8 +34,8 @@ const SingleNews = () => {
                         <title>{news.name} | Hress.Org</title>
                         <meta name="description" content={news.name} />
                         <meta property="og:title" content={news.name} />
-                        <meta property="og:image" content={news.image && news.image.id ? config.get('apiPath') + news.image.href : null} />
-                        <meta property="og:image:secure_url" content={news.image && news.image.id ? config.get('apiPath') + news.image.href : null} />
+                        <meta property="og:image" content={news.image?.id ? config.get('apiPath') + news.image.href : null} />
+                        <meta property="og:image:secure_url" content={news.image?.id ? config.get('apiPath') + news.image.href : null} />
                         <meta property="og:image:width" content="1000" />
                         <meta property="og:image:height" content="563" />
                     </Helmet>,
@@ -46,7 +46,7 @@ const SingleNews = () => {
                         dateFormatted={news.insertedString}
                         author={news.author}
                         body={<span dangerouslySetInnerHTML={{ __html: news.content }} />}
-                        image={news.image && news.image.id ? config.get('apiPath') + news.image.href + "?width=1400" : null}
+                        image={news.image?.id ? config.get('apiPath') + news.image.href + "?width=1400" : null}
                         actions={<p />}
                     />
                 ] : null}

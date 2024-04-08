@@ -44,7 +44,7 @@ const OnThisDay = () => {
                         dateString={news.insertedString}
                         date={news.inserted}
                         href={"/news/" + news.id}
-                        imageSource={news.image && news.image.id ? config.get('apiPath') + news.image.href : null}
+                        imageSource={news.image?.id ? config.get('apiPath') + news.image.href : null}
                         imageHref={"/news/" + news.id}
                         userHref={"/gang/single.aspx?Id=" + news.author.id}
                         userPhoto={news.author.profilePhoto ? config.get('apiPath') + news.author.profilePhoto.href : null}
