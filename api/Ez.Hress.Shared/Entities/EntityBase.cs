@@ -16,7 +16,7 @@ namespace Ez.Hress.Shared.Entities
             {
                 if (Inserted.Year == 0001)
                     return string.Empty;
-                if (Inserted < DateTime.Now)
+                if (Inserted < DateTime.UtcNow)
                     return Inserted.ToString("d. MMMM yyyy", CultureInfo.GetCultureInfo("is-IS"));
                 else
                     return Inserted.ToString("MMMM yyyy", CultureInfo.GetCultureInfo("is-IS"));
