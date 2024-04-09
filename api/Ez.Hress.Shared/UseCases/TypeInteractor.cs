@@ -31,14 +31,14 @@ namespace Ez.Hress.Shared.UseCases
         public async Task<TypeEntity> GetEzType(string code)
         {
             var list = await GetEzTypes();
-            var type = list.Where(t => t.Code == code).First();
+            var type = list.First(t => t.Code == code);
             return type;
         }
 
         public async Task<TypeEntity> GetEzType(int id)
         {
             var list = await GetEzTypes();
-            var type = list.Where(t => t.ID == id).First();
+            var type = list.First(t => t.ID == id);
             return type;
         }
     }

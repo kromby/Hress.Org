@@ -64,7 +64,7 @@ namespace Ez.Hress.Hardhead.DataAccess
         public async Task<IList<RuleChild>> GetRules(int parentId)
         {
             var parentList = await GetRules();
-            var parent = parentList.Where(r => r.ID == parentId).First();
+            var parent = parentList.First(r => r.ID == parentId);
 
 
             var sql = @"SELECT	t.Id, t.TextValue, t.Inserted, t.InsertedBy
