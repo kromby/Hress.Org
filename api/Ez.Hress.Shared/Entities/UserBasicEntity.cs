@@ -8,10 +8,7 @@
 
         public string Href
         {
-            get
-            {
-                return string.Format("/api/users/{0}", ID);
-            }
+            get => string.Format("/api/users/{0}", ID);
         }
 
         public HrefEntity? ProfilePhoto

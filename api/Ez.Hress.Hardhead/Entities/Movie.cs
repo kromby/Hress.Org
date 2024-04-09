@@ -17,13 +17,10 @@ namespace Ez.Hress.Hardhead.Entities
         public int? HardheadKillCount { get; set; }
         public HrefEntity Hardhead
         {
-            get
-            {
-                return new HrefEntity()
-                {
-                    Href = string.Format("/api/hardhead/{0}", ID)
-                };
-            }
+            get => new HrefEntity()
+{
+    Href = string.Format("/api/hardhead/{0}", ID)
+};
         }
 
         public int? PosterPhotoID { private get; set; }

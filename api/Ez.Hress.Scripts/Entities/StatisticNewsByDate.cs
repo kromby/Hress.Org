@@ -36,6 +36,6 @@ namespace Ez.Hress.Scripts.Entities
         public string ValueString { get; set; }
         public int Count { get; set; }
         public DatePart Unit { get; set; }
-        public string UnitName { get { return Enum.GetName(typeof(DatePart), Unit) ?? "Unknown"; } }
+        public string UnitName { get => Enum.GetName(typeof(DatePart), Unit) ?? "Unknown"; }
     }
 }

@@ -11,13 +11,10 @@ namespace Ez.Hress.Administration.Entities
     {
         public HrefEntity Sidebar
         {
-            get
-            {
-                return new HrefEntity()
-                {
-                    Href = string.Format("/api/menus/{0}/sidebars", this.ID)
-                };
-            }
+            get => new HrefEntity()
+{
+    Href = string.Format("/api/menus/{0}/sidebars", this.ID)
+};
         }        
     }
 }

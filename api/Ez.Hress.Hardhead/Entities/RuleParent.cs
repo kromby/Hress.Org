@@ -8,13 +8,10 @@ namespace Ez.Hress.Hardhead.Entities
 
         public HrefEntity SubRules
         {
-            get
-            {
-                return new HrefEntity()
-                {
-                    Href = string.Format("/api/hardhead/rules/{0}", ID)
-                };
-            }
+            get => new HrefEntity()
+{
+    Href = string.Format("/api/hardhead/rules/{0}", ID)
+};
         }
     }
 }
