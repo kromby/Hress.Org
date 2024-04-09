@@ -28,7 +28,7 @@ const AwardsByType = () => {
 
     return (
         <div id="main">
-            {award && award.Years ? award.Years.map((year) =>
+            {award?.Years ? award.Years.map((year) =>
                 <Post key={year.ID}
                     title={award.Name + " " + year.Name}
                     description={"Harðhausar sem fengu atkvæði: " + year.GuestCount}
