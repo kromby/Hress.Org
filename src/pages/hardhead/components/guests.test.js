@@ -1,5 +1,4 @@
 import React from 'react';
-import { render, unmountComponentAtNode } from 'react-dom';
 import { act } from 'react-dom/test-utils';
 const axios = require('axios');
 import Guests from './guests';
@@ -17,7 +16,7 @@ describe('Guests', () => {
 
   afterEach(() => {
     // Clean up on exiting
-    unmountComponentAtNode(container);
+    ReactDOM.unmountComponentAtNode(container);
     container.remove();
   });
 
@@ -47,7 +46,7 @@ describe('Guests', () => {
 
     // Render the component
     await act(async () => {
-      render(<Guests hardheadID={123} />, container);
+      ReactDOM.render(<Guests hardheadID={123} />, container);
     });
 
     // Check if the error is displayed

@@ -22,7 +22,7 @@ namespace Ez.Hress.FunctionsApi.Administration
             _authenticationInteractor = authenticationInteractor;
             _menuInteractor = menuInteractor;
         }
-        
+
         [FunctionName("menus")]
         public async Task<IActionResult> RunMenus(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
@@ -38,14 +38,12 @@ namespace Ez.Hress.FunctionsApi.Administration
                 _ = bool.TryParse(req.Query["fetchChildren"], out bool fetchChildren);
                 log.LogInformation($"[RunMenus] navigateUrl: '{navigateUrl}'");
 
-                var list = await _menuInteractor.GetMenuItems(navigateUrl, userID, fetchChildren);
-                return new OkObjectResult(list);
+                var itemList = await _menuInteractor.GetMenuItems(navigateUrl, userID, fetchChildren);
+                return new OkObjectResult(itemList);
             }
-            else
-            {
-                var list = await _menuInteractor.GetMenuRoot(userID);
-                return new OkObjectResult(list);
-            }
+
+            var list = await _menuInteractor.GetMenuRoot(userID);
+            return new OkObjectResult(list);
         }
     }
 }

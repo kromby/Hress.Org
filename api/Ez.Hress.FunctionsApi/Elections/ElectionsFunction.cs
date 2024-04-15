@@ -46,8 +46,8 @@ namespace Ez.Hress.FunctionsApi.Elections
             var result = await _hardheadElectionInteractor.CheckAccess(userID);
             if (result != null)
                 return new OkObjectResult(result);
-            else
-                return new NotFoundResult();
+
+            return new NotFoundResult();
         }
 
         [FunctionName("electionsVote")]
@@ -66,25 +66,24 @@ namespace Ez.Hress.FunctionsApi.Elections
                 var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
                 var voteList = JsonConvert.DeserializeObject<IList<VoteEntity>>(requestBody);
 
-                if(voteList.Count == 0)
+                if (voteList.Count == 0)
                 {
                     await _hardheadElectionInteractor.SaveVoter(userID, id);
                     return new OkResult();
                 }
-                else if (voteList.Count == 1)
+
+                if (voteList.Count == 1)
                 {
                     var entity = voteList.First();
                     if (entity.StepID == 0)
                         entity.StepID = id;
 
-                    var result = await _hardheadElectionInteractor.SaveVote(entity, userID).ConfigureAwait(false);
-                    return result ? new OkResult() : throw new SystemException("Could not save vote.");
+                    var voteResult = await _hardheadElectionInteractor.SaveVote(entity, userID).ConfigureAwait(false);
+                    return voteResult ? new OkResult() : throw new SystemException("Could not save vote.");
                 }
-                else
-                {
-                    var result = await _hardheadElectionInteractor.SaveVotes(voteList, id, userID).ConfigureAwait(false);
-                    return result > 0 ? new OkResult() : throw new SystemException("Could not save vote.");
-                }
+
+                var result = await _hardheadElectionInteractor.SaveVotes(voteList, id, userID).ConfigureAwait(false);
+                return result > 0 ? new OkResult() : throw new SystemException("Could not save vote.");
             }
             catch (ArgumentException aex)
             {

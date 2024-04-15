@@ -69,7 +69,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             {
                 if (id.HasValue)
                 {
-                    var entity = await _hardheadInteractor.GetHardhead(id.Value);                  
+                    var entity = await _hardheadInteractor.GetHardhead(id.Value);
                     return new OkObjectResult(entity);
                 }
 
@@ -79,29 +79,19 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                     list = await _hardheadInteractor.GetNextHardhead();
                 }
 
-                if (req.Query.ContainsKey("dateFrom"))
+                if (req.Query.ContainsKey("dateFrom") && DateTime.TryParse(req.Query["dateFrom"], out DateTime dateFrom))
                 {
-
-                    if (DateTime.TryParse(req.Query["dateFrom"], out DateTime dateFrom))
-                    {
-                        list = await _hardheadInteractor.GetHardheads(dateFrom);
-                    }
+                    list = await _hardheadInteractor.GetHardheads(dateFrom);
                 }
 
-                if (req.Query.ContainsKey("parentID"))
+                if (req.Query.ContainsKey("parentID") && int.TryParse(req.Query["parentID"], out int parentID))
                 {
-                    if (int.TryParse(req.Query["parentID"], out int parentID))
-                    {
-                        list = await _hardheadInteractor.GetHardheads(parentID);
-                    }
+                    list = await _hardheadInteractor.GetHardheads(parentID);
                 }
 
-                if (req.Query.ContainsKey("userID"))
+                if (req.Query.ContainsKey("userID") && int.TryParse(req.Query["userID"], out int userID))
                 {
-                    if (int.TryParse(req.Query["userID"], out int userID))
-                    {
-                        list = await _hardheadInteractor.GetHardheads(userID, UserType.host);
-                    }
+                    list = await _hardheadInteractor.GetHardheads(userID, UserType.host);
                 }
 
                 return new OkObjectResult(list);

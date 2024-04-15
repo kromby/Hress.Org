@@ -34,6 +34,7 @@ namespace Ez.Hress.FunctionsApi.News
 
             try
             {
+                IList<Scripts.Entities.News> list = null;
                 if (id.HasValue)
                 {
                     log.LogInformation("[{Function}] Getting a single news by ID '{Id}'", nameof(RunNews), id);
@@ -42,23 +43,24 @@ namespace Ez.Hress.FunctionsApi.News
                         return new NotFoundResult();
                     return new OkObjectResult(entity);
                 }
-                else if (!string.IsNullOrWhiteSpace(req.Query["type"]) && req.Query["type"].ToString().ToUpper().Equals("ONTHISDAY"))
+                
+                if (!string.IsNullOrWhiteSpace(req.Query["type"]) && req.Query["type"].ToString().ToUpper().Equals("ONTHISDAY"))
                 {
                     log.LogInformation("[{Function}] Getting news for type '{Type}'", nameof(RunNews), req.Query["type"]);
                     int top = int.MaxValue;
                     _ = int.TryParse(req.Query["top"], out top);
 
-                    var list = await _newsInteractor.GetNewsOnThisDay(top);
+                    list = await _newsInteractor.GetNewsOnThisDay(top);
                     return new OkObjectResult(list);
                 }
-                else if (!string.IsNullOrWhiteSpace(req.Query["year"]))
+                
+                if (!string.IsNullOrWhiteSpace(req.Query["year"]))
                 {
                     if (!int.TryParse(req.Query["year"], out int year))
                     {
                         return new BadRequestObjectResult("Year property invalid");
                     }
-
-                    IList<Scripts.Entities.News> list = null;
+                    
                     if (int.TryParse(req.Query["month"], out int month))
                     {
                         log.LogInformation("[{Function}] Getting news for year '{Year}' and month '{Month}'", nameof(RunNews), year, month);
@@ -66,17 +68,15 @@ namespace Ez.Hress.FunctionsApi.News
                     }
                     else
                     {
-                        log.LogInformation("[{Function}] Getting news by Year '{Year}'", nameof(RunNews), year);                        
+                        log.LogInformation("[{Function}] Getting news by Year '{Year}'", nameof(RunNews), year);
                         list = await _newsInteractor.GetNewsByYear(year);
                     }
                     return new OkObjectResult(list);
                 }
-                else
-                {
-                    log.LogInformation("[{Function}] Getting latest news", nameof(RunNews));
-                    var list = await _newsInteractor.GetLatestNews();
-                    return new OkObjectResult(list);
-                }
+
+                log.LogInformation("[{Function}] Getting latest news", nameof(RunNews));
+                list = await _newsInteractor.GetLatestNews();
+                return new OkObjectResult(list);
             }
             catch (ArgumentException aex)
             {

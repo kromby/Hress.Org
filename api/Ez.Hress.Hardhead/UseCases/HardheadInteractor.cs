@@ -83,10 +83,9 @@ namespace Ez.Hress.Hardhead.UseCases
 
                 var nextHardheadList = await _hardheadDataAccess.GetHardheads(nextFirstDate, nextDate);
 
-                if (nextHardheadList.Count == 0)
+                if (nextHardheadList.Count == 0 && !await _hardheadDataAccess.CreateHardhead(night.NextHostID.Value, nextDate, userID, DateTime.UtcNow))
                 {
-                    if (!await _hardheadDataAccess.CreateHardhead(night.NextHostID.Value, nextDate, userID, DateTime.UtcNow))
-                        throw new SystemException("Creating new hardhead failed");
+                    throw new SystemException("Creating new hardhead failed");
                 }
             }
         }

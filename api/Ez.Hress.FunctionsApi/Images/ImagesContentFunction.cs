@@ -81,7 +81,7 @@ namespace Ez.Hress.FunctionsApi.Images
 
             var entity = await _imageInteractor.GetContent(id, width, height);
 
-            if (entity == null || entity.Content == null)
+            if (entity?.Content == null)
             {
                 return new NotFoundResult();
             }

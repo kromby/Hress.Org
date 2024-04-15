@@ -85,8 +85,8 @@ namespace Ez.Hress.Shared.DataAccess
             {
                 if ((stepThread == null || stepThread.Result > 0) || (electionThread == null || electionThread.Result > 0))
                     return voter.ID;
-                else
-                    return 0;
+
+                return 0;
             });
 
             result.Start();

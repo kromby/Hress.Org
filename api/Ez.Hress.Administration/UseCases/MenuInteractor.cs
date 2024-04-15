@@ -17,7 +17,7 @@ namespace Ez.Hress.Administration.UseCases
         public async Task<IList<MenuItem>> GetMenuItems(string navigateUrl, int userID, bool fetchChildren)
         {
             if (navigateUrl.LastIndexOf("/") > 2)
-                navigateUrl = navigateUrl.Substring(0, navigateUrl.IndexOf("/", 3));
+                navigateUrl = navigateUrl[0..navigateUrl.IndexOf("/", 3)];
 
             if (navigateUrl.ToLower().Equals("~/default"))
                 navigateUrl = "~/";

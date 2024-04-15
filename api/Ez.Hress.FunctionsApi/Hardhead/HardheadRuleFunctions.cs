@@ -47,18 +47,16 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             if (id.HasValue)
             {
-                var list = await _ruleInteractor.GetRules(id.Value);
-                if (list.Count <= 0)
+                var childList = await _ruleInteractor.GetRules(id.Value);
+                if (childList.Count <= 0)
                     return new NotFoundResult();
-                return new OkObjectResult(list);
+                return new OkObjectResult(childList);
             }
-            else
-            {
-                var list = await _ruleInteractor.GetRules();
-                if (list.Count <= 0)
-                    return new NotFoundResult();
-                return new OkObjectResult(list);
-            }
+
+            var parentList = await _ruleInteractor.GetRules();
+            if (parentList.Count <= 0)
+                return new NotFoundResult();
+            return new OkObjectResult(parentList);
         }
 
         [FunctionName("hardheadRuleChanges")]
@@ -85,18 +83,17 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                 {
                     return await PostRuleChange(req, userID, log);
                 }
-                else if (HttpMethods.IsGet(req.Method))
+
+                if (HttpMethods.IsGet(req.Method))
                 {
                     if (int.TryParse(req.Query["type"], out int typeID))
                         return await GetRuleChanges(typeID, log);
-                    else
-                        return await GetRuleChanges(log);
+
+                    return await GetRuleChanges(log);
                 }
-                else
-                {
-                    log.LogError($"[HardheadRuleFunctions] HttpMethod '{req.Method}' ist not yet supported.");
-                    return new NotFoundResult();
-                }
+
+                log.LogError($"[HardheadRuleFunctions] HttpMethod '{req.Method}' ist not yet supported.");
+                return new NotFoundResult();
             }
             catch (ArgumentException aex)
             {

@@ -31,7 +31,7 @@ namespace Ez.Hress.FunctionsApi.Rss
             log.LogInformation("[{Function}] Getting latest news", nameof(Run));
             var list = await _newsInteractor.GetLatestNews();
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new();
 
             sb.AppendLine("<rss version=\"2.0\">");
             sb.AppendLine("<channel>");
@@ -55,7 +55,7 @@ namespace Ez.Hress.FunctionsApi.Rss
             return new ContentResult { Content = rssString, ContentType = "application/xml", StatusCode = 200 };
         }
 
-        protected string RemoveIllegalCharacters(object input)
+        protected static string RemoveIllegalCharacters(object input)
         {
             // cast the input to a string
             string data = input.ToString();

@@ -72,8 +72,8 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                     var result = await _movieInteractor.GetActorStatistics(periodType);
                     return new OkObjectResult(result);
                 }
-                else
-                    return new NotFoundResult();
+
+                return new NotFoundResult();
 
             }
             catch (ArgumentException aex)

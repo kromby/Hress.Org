@@ -25,7 +25,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
             _dinnerPartyInteractor = dinnerPartyInteractor;
         }
 
-        
+
         [FunctionName("dinnerParties")]
         public async Task<IActionResult> RunDinnerParties(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/{id:int?}")] HttpRequest req,
@@ -33,7 +33,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
         {
             var stopwatch = new Stopwatch();
             stopwatch.Start();
-            
+
             log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunDinnerParties));
 
             try
@@ -44,14 +44,12 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                     var dinnerParty = await _dinnerPartyInteractor.GetDinnerParty(id.Value);
                     return new OkObjectResult(dinnerParty);
                 }
-                else
-                {
-                    log.LogInformation("[{Function}] Getting a all dinner parties.", nameof(RunDinnerParties));
-                    _ = int.TryParse(req.Query["top"], out int top);
-                    _ = bool.TryParse(req.Query["includeGuests"], out bool includeGuests);
-                    var dinnerParties = await _dinnerPartyInteractor.GetDinnerParties(includeGuests, top);
-                    return new OkObjectResult(dinnerParties);
-                }
+
+                log.LogInformation("[{Function}] Getting a all dinner parties.", nameof(RunDinnerParties));
+                _ = int.TryParse(req.Query["top"], out int top);
+                _ = bool.TryParse(req.Query["includeGuests"], out bool includeGuests);
+                var dinnerParties = await _dinnerPartyInteractor.GetDinnerParties(includeGuests, top);
+                return new OkObjectResult(dinnerParties);
             }
             catch (ArgumentException aex)
             {
@@ -69,7 +67,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                 log.LogInformation($"[RunNews] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
             }
         }
-        
+
         [FunctionName("dinnerPartiesCourses")]
         public async Task<IActionResult> RunCourses(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/{id:int}/courses")] HttpRequest req,
@@ -120,26 +118,24 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                     var courses = await _dinnerPartyInteractor.GetCoursesByType(typeID);
                     return new OkObjectResult(courses);
                 }
-                else
+
+                var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+                if (!isJWTValid)
                 {
-                    var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
-                    if (!isJWTValid)
-                    {
-                        log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunCoursesByType));
-                        return new UnauthorizedResult();
-                    }
+                    log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunCoursesByType));
+                    return new UnauthorizedResult();
+                }
 
-                    log.LogInformation("[{Function}] Saving a vote.", nameof(RunCoursesByType));
-                    string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                    var vote = JsonConvert.DeserializeObject<Vote>(requestBody);
-                    vote.TypeID = typeID;
-                    vote.InsertedBy = userID;
+                log.LogInformation("[{Function}] Saving a vote.", nameof(RunCoursesByType));
+                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+                var vote = JsonConvert.DeserializeObject<Vote>(requestBody);
+                vote.TypeID = typeID;
+                vote.InsertedBy = userID;
 
-                    log.LogInformation("[{Function}] Request body: {requestBody}", nameof(RunCoursesByType), requestBody);
+                log.LogInformation("[{Function}] Request body: {requestBody}", nameof(RunCoursesByType), requestBody);
 
-                    await _dinnerPartyInteractor.SaveVote(vote);
-                    return new OkResult();
-                }                
+                await _dinnerPartyInteractor.SaveVote(vote);
+                return new OkResult();
             }
             catch (ArgumentException aex)
             {
@@ -159,7 +155,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
         }
 
         [FunctionName("dinnerPartiesTeams")]
-        public async Task<IActionResult> RunTeams([HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/{id:int}/teams")] HttpRequest req, 
+        public async Task<IActionResult> RunTeams([HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/{id:int}/teams")] HttpRequest req,
             int id, ILogger log)
         {
             var stopwatch = new Stopwatch();
@@ -190,7 +186,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
         }
 
         [FunctionName("dinnerPartiesStatistics")]
-        public async Task<IActionResult> RunWinners([HttpTrigger(AuthorizationLevel.Function, "get", Route ="dinnerparties/statistic")] HttpRequest req,
+        public async Task<IActionResult> RunWinners([HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/statistic")] HttpRequest req,
             ILogger log)
         {
             var stopwatch = new Stopwatch();
@@ -200,7 +196,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
 
             try
             {
-                switch(req.Query["type"])
+                switch (req.Query["type"])
                 {
                     case "winners":
                         var result = await _dinnerPartyInteractor.GetWinnerStatistics();
@@ -228,5 +224,5 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                 log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunWinners), stopwatch.ElapsedMilliseconds);
             }
         }
-    }    
+    }
 }

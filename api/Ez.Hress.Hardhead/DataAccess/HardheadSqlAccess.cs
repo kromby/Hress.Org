@@ -187,7 +187,7 @@ namespace Ez.Hress.Hardhead.DataAccess
                     command.Parameters.AddWithValue(param, idNight.ID);
                 }
 
-                command.CommandText = string.Format(sql, sb.ToString().Trim(new char[] { ' ', ',' }));
+                command.CommandText = string.Format(sql, sb.ToString().Trim(new [] { ' ', ',' }));
 
                 var reader = await command.ExecuteReaderAsync();
                 ParseHardhead(list, reader);
@@ -317,7 +317,7 @@ namespace Ez.Hress.Hardhead.DataAccess
                     Link = new HrefEntity() { ID = 9000, Href = string.Format("/hardhead/{0}/edit", hardheadID) }
                 }
             };
-            return Task.Run(() => { return list; });
+            return Task.Run(() => list);
         }
 
         public async Task<IList<UserBasicEntity>> GetGuests(int hardheadID)

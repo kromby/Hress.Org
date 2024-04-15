@@ -38,7 +38,7 @@ namespace Ez.Hress.Shared.UseCases
                 return new Tuple<bool, int>(false, -1);
             }
 
-            if (scheme.Trim().ToLower() != "token")
+            if (scheme.Trim().ToLower(CultureInfo.InvariantCulture) != "token")
             {
                 _log.LogInformation("[{Class}] Scheme is not token. Scheme: '{Scheme}'", _class, scheme);
                 return new Tuple<bool, int>(false, -1);
@@ -154,7 +154,7 @@ namespace Ez.Hress.Shared.UseCases
             var code = Guid.NewGuid().ToString("N");
             int affected = await _authenticationDataAccess.SaveMagicCode(userID, code, DateTime.UtcNow.AddSeconds(60));
             if (affected == 0)
-                throw new Exception("Creating magic code failed");
+                throw new SystemException("Creating magic code failed");
             return code;
         }
 
@@ -183,7 +183,7 @@ namespace Ez.Hress.Shared.UseCases
 
                 if (handler.ValidateToken(token, validations, out var tokenSecure).Identity is not ClaimsIdentity identity)
                 {
-                    throw new Exception("boom - Identity is not valid");
+                    throw new SystemException("boom - Identity is not valid");
                 }
                 return identity.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value;
             }

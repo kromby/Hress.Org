@@ -65,8 +65,10 @@ namespace Ez.Hress.Hardhead.UseCases
             {
                 return GetNextElectionStep(lastStepID, twentyYearOldID, awardList);
             }
-            else if(user.Attended >= requiredNightCountForCenturion)
+            
+            if(user.Attended >= requiredNightCountForCenturion)
             {
+                // skipcq: CS-R1039
                 // TODO: Check if voter is Centurion
                 if(userID == 2665 || userID == 2637 || userID == 2635)
                 {

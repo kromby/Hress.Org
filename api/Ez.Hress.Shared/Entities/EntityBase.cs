@@ -18,8 +18,8 @@ namespace Ez.Hress.Shared.Entities
                     return string.Empty;
                 if (Inserted < DateTime.UtcNow)
                     return Inserted.ToString("d. MMMM yyyy", CultureInfo.GetCultureInfo("is-IS"));
-                else
-                    return Inserted.ToString("MMMM yyyy", CultureInfo.GetCultureInfo("is-IS"));
+
+                return Inserted.ToString("MMMM yyyy", CultureInfo.GetCultureInfo("is-IS"));
             }
         }
 

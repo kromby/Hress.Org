@@ -52,13 +52,11 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             {
                 if (HttpMethods.IsGet(req.Method))
                     return await GetAwardNominations(req, userID, log);
-                else if (HttpMethods.IsPost(req.Method))
+                if (HttpMethods.IsPost(req.Method))
                     return await PostAwardNominations(req, userID, log);
-                else
-                {
-                    log.LogError($"[RunAwardNominations] HttpMethod '{req.Method}' ist not yet supported.");
-                    return new NotFoundResult();
-                }
+
+                log.LogError($"[RunAwardNominations] HttpMethod '{req.Method}' ist not yet supported.");
+                return new NotFoundResult();
             }
             catch (ArgumentException aex)
             {

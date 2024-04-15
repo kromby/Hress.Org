@@ -43,10 +43,8 @@ namespace Ez.Hress.FunctionsApi.Albums
                 {
                     return new NotFoundResult();
                 }
-                else
-                {
-                    return new OkObjectResult(entity);
-                }
+
+                return new OkObjectResult(entity);
             }
             else
             {
