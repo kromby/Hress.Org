@@ -20,8 +20,8 @@ const YearsSide = ({year}) => {
             }
         }
         
-        console.log("[YearsSide] year: " + year);
-        console.log(year);        
+        
+                
         if (year) {
             var url = config.get("apiPath") + "/api/news/statistics/years/" + year + "/months";   
             setYearQS(year);

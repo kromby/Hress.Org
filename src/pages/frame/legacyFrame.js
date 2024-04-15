@@ -13,7 +13,7 @@ const LegacyFrame = () => {
     const [isLegacy, setIsLegacy] = useState(false);    
 
     useEffect(() => {
-        console.log("[LegacyFrame] Href: '" + location.pathname + "'");
+        
 
         if (isPrivate && authTokens === undefined) {
             navigate("/login", { state: { from: location.pathname } });
@@ -38,7 +38,7 @@ const LegacyFrame = () => {
 
         const parsed = queryString.parse(location.search);
         setIsLegacy(parsed.legacy);
-        console.log("[LegacyFrame] legacy: '" + parsed.legacy + "'");
+        
         if (parsed.legacy) {
             getMagicCode();
         }

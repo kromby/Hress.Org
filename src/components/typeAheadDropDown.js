@@ -25,8 +25,8 @@ const TypeAheadDropDown = ({minimum, defaultValue, placeholder, callback}) => {
         const value = e.target.value;
         setText(value);
 
-        console.log("min= " + minLength);
-        console.log(value.length);
+        
+        
 
         if (value.length >= minLength) {
             try {
@@ -39,9 +39,9 @@ const TypeAheadDropDown = ({minimum, defaultValue, placeholder, callback}) => {
     }
 
     const onSelect = (id, name) => {
-        console.log("onSelect");
-        console.log(id);
-        console.log(name);
+        
+        
+        
 
         setText(name);
         setSuggestions(null);
@@ -51,7 +51,7 @@ const TypeAheadDropDown = ({minimum, defaultValue, placeholder, callback}) => {
 
     const renderSuggestion = () => {
         if (suggestions?.Search) {
-            console.log(suggestions);
+            
             return (
                 <ul>
                     {suggestions.Search.map(movie =>

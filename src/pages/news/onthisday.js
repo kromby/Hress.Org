@@ -28,7 +28,7 @@ const OnThisDay = () => {
     return (
         <ErrorBoundary
             FallbackComponent={<div>Oops!</div>}
-            onError={(error, errorInfo) => console.log({ error, errorInfo })}
+            onError={(error, errorInfo) => {}}
             onReset={() => {
                 // reset the state of your app so the error doesn't happen again
             }}

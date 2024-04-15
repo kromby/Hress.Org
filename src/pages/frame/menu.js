@@ -76,10 +76,10 @@ const Menu = ({visible, onClick}) => {
             }
         }
 
-        console.log("[menu.js] isMobile: '" + isMobile + "'");
+        
 
         if (isMobile && (!links || loggedIn != (authTokens != undefined))) {
-            console.log("[menu.js] getLinks");
+            
             setLoggedIn(authTokens != undefined);
             getLinks();
         }

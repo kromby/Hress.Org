@@ -49,8 +49,8 @@ const Election = () => {
     }, [authTokens])
 
     const getElement = (id, name, href) => {
-        console.log("[Election] id: " + id);
-        console.log("[Election] name: " + name);
+        
+        
         if (id === 100) /*Lög og reglur - nýjar og niðurfelldar reglur*/ {
             return <RulesNewOld key={id}
                 ID={id}
