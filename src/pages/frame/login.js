@@ -15,16 +15,16 @@ function Login() {
     const { authTokens, setAuthTokens } = useAuth();
     const [referer, setReferer] = useState(location.state ? location.state.from : '/');
 
-    console.log("[Login] referer: " + referer);
+    
     
     const postLogin = async () => {
-        console.log("[Login] postLogin()");        
+                
         var url = config.get('apiPath') + '/api/authenticate';
         try {
             const result = await axios.post(url, { username, password });
             if (result.status === 200) {
-                console.log("[Login] /api/authenticate OK");
-                console.log(result.data);
+                
+                
 
                 var balanceUrl = config.get("apiPath") + "/api/users/0/balancesheet";
                 const response = await axios.get(balanceUrl, {
@@ -48,7 +48,7 @@ function Login() {
     }
 
     if (authTokens !== undefined) {
-        console.log("[Login] referer: " + referer);
+        
         return <Navigate to={referer}/>;
     }
 

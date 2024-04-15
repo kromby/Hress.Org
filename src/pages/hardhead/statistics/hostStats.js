@@ -31,7 +31,7 @@ const HostStats = () => {
     }, [url])
 
     const handleSubmit = async (event) => {
-        console.log(data.stats.list.length);
+        
         if (pageSize > data.stats.list.length) {
             setPageSize(10);
         } else {

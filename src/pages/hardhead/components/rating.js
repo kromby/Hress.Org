@@ -68,7 +68,7 @@ const HardheadRating = ({id, nightRatingVisible, movieRatingVisible}) => {
                 }, {
                     headers: { 'Authorization': 'token ' + authTokens.token },
                 });
-                console.log("saveRating" + response);
+                
             }
             catch (e) {
                 console.error(e);

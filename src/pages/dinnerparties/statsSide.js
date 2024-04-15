@@ -12,7 +12,7 @@ const StatsSide = ({type}) => {
             var url = new URL(config.get('apiPath'));
             url.pathname = "/api/dinnerparties/statistic";	
             url.searchParams.append("type", type);
-            console.log("url", url.toString());
+            
             try {
                 const response = await axios.get(url.toString());
                 setStats(response.data);
