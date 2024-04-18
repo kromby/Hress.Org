@@ -17,8 +17,8 @@ function Magic() {
         try {
             const parsed = queryString.parse(location.search);                
             var code = parsed.code;
-            console.log("[Magic] code:" + code);
-            console.log("[Magic] path:" + parsed.path);
+            
+            
 
             var url = config.get('apiPath') + '/api/authenticate';
 

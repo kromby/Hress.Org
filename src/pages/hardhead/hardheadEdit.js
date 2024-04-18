@@ -77,7 +77,7 @@ const HardheadEdit = () => {
 				headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
 			});
 			setData({ saved: true, error: data.error, isLoaded: data.isLoaded, visible: data.visible, minDate: data.minDate, maxDate: data.maxDate });
-			console.log(response);
+			
 		} catch (e) {
 			console.error(e);
 			alert("Ekki tókst að vista kvöld.");

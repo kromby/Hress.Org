@@ -47,7 +47,7 @@ const Hardhead = () => {
 				currentDate.setMonth(currentDate.getMonth() - 5);
 				url = config.get('apiPath') + '/api/hardhead?dateFrom=' + (currentDate.getMonth() + 1) + '.1.' + currentDate.getFullYear();
 			}
-			console.log("[Hardhead] getHardheadsUrl url: " + url);
+			
 			return url;
 		}
 

@@ -106,8 +106,8 @@ const MovieEdit = ({ id }) => {
     const movieCallback = async (imdbId) => {
         try {
             const response = await axios.get("https://www.omdbapi.com/?apikey=" + config.get("omdb") + "&i=" + imdbId);
-            console.log("[MovieEdit] Response from omdbapi");
-            console.log(response);
+            
+            
 
             setMovieName(response.data.Title);
             setActor(response.data.Actors.split(',')[0]);

@@ -25,7 +25,7 @@ const LegacyRedirect = () => {
             console.error("[LegacyRedirect] Unknown path: '" + location.pathname + "'");
         }
 
-        console.log("[LegacyRedirect] path: " + path);
+        
 
         if (path) {
             navigate(path, { state: { from: location.pathname } });

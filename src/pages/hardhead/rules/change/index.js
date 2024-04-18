@@ -137,7 +137,7 @@ const RuleChange = () => {
     }
 
     const allowSaving = (category, text, reasoning, rule) => {
-        console.log('[RuleChange] category: ' + category);
+        
         if (category === undefined || category === "")
             return false;
 
