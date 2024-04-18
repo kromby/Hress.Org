@@ -28,9 +28,9 @@ namespace Ez.Hress.Hardhead.UseCases
             _log = log;
         }
 
-        public async Task<Award?> CheckAccess(int userID)
+        public async Task<Award?> CheckAccessAsync(int userID)
         {
-            _log.LogInformation("[{Method}] Checking access for user: {userID}", nameof(CheckAccess), userID);
+            _log.LogInformation("[{Method}] Checking access for user: {userID}", nameof(CheckAccessAsync), userID);
             _ = int.TryParse(_config["Hress.Monthly.REP_HEAD.AppsForVoter"], out int requiredNightCount);
             _ = int.TryParse(_config["Hress.Monthly.REP_HEAD.AppsForCenturionVoter"], out int requiredNightCountForCenturion);
             _ = int.TryParse(_config["Hress.Monthly.REP_HEAD.TwentyYearID"], out int twentyYearOldID);
@@ -47,7 +47,7 @@ namespace Ez.Hress.Hardhead.UseCases
             if (user == null)
                 return null;
               
-            var voter = await _electionInteractor.GetVoter(userID);
+            var voter = await _electionInteractor.GetVoterAsync(userID);
 
             if (voter == null || voter.LastElectionID == votingYearID)
                 return null;
@@ -65,12 +65,13 @@ namespace Ez.Hress.Hardhead.UseCases
             {
                 return GetNextElectionStep(lastStepID, twentyYearOldID, awardList);
             }
-            
-            if(user.Attended >= requiredNightCountForCenturion)
+
+            // skipcq: CS-R1039
+            if (user.Attended >= requiredNightCountForCenturion)
             {
-                // skipcq: CS-R1039
                 // TODO: Check if voter is Centurion
-                if(userID == 2665 || userID == 2637 || userID == 2635)
+                // skipcq: CS-R1039
+                if (userID == 2665 || userID == 2637 || userID == 2635)
                 {
                     return GetNextElectionStep(lastStepID, twentyYearOldID, awardList);
                 }
@@ -88,33 +89,33 @@ namespace Ez.Hress.Hardhead.UseCases
             return awardList.FirstOrDefault(a => a.ID != 363 && a.ID > lastStepID);
         }
 
-        public async Task SaveVoter(int userID, int electionID)
+        public async Task SaveVoterAsync(int userID, int electionID)
         {
             var voter = new VoterEntity()
             {
                 ID = userID,
                 LastStepID = electionID
             };
-            await _electionInteractor.SaveVoter(voter);
+            await _electionInteractor.SaveVoterAsync(voter);
         }
 
-        public async Task<bool> SaveVote(VoteEntity entity, int userID)
+        public async Task<bool> SaveVoteAsync(VoteEntity entity, int userID)
         {
             if (entity == null)
                 throw new ArgumentException("Entity is missing.", nameof(entity));
 
             entity.Validate();
 
-            var result = await _electionInteractor.SaveVote(entity);
+            var result = await _electionInteractor.SaveVoteAsync(entity);
             if (!result)
                 return result;
 
-            await SaveVoter(userID, entity.StepID);
+            await SaveVoterAsync(userID, entity.StepID);
 
             return result;
         }
 
-        public async Task<int> SaveVotes(IList<VoteEntity> list, int stepID, int userID)
+        public async Task<int> SaveVotesAsync(IList<VoteEntity> list, int stepID, int userID)
         {
             if (list == null || list.Count == 0)
                 throw new ArgumentException("Entity is missing.", nameof(list));
@@ -125,14 +126,14 @@ namespace Ez.Hress.Hardhead.UseCases
                 vote.StepID = stepID;
                 vote.Validate();
 
-                if(await _electionInteractor.SaveVote(vote))
+                if(await _electionInteractor.SaveVoteAsync(vote))
                     result++;
             }
 
             if (result == 0)
                 return 0;
 
-            await SaveVoter(userID, stepID);
+            await SaveVoterAsync(userID, stepID);
 
             return result;
         }

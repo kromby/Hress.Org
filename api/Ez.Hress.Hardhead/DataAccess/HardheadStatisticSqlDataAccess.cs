@@ -88,10 +88,7 @@ namespace Ez.Hress.Hardhead.DataAccess
 
             using (var connection = new SqlConnection(_connectionString))
             {
-                if (attendanceTypeId > 52)
-                    sql = string.Format(sql, "guest.TypeId = @guestTypeId");
-                else
-                    sql = string.Format(sql, "guest.TypeId IN (52, 53)");
+                sql = attendanceTypeId > 52 ? string.Format(sql, "guest.TypeId = @guestTypeId") : string.Format(sql, "guest.TypeId IN (52, 53)");
                 _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", _class, nameof(GetUserStatistic), sql);
 
                 await connection.OpenAsync();

@@ -1,9 +1,8 @@
 ﻿using Ez.Hress.Shared.Entities;
 
-namespace Ez.Hress.Shared.UseCases
+namespace Ez.Hress.Shared.UseCases;
+
+public interface IUserInteractor
 {
-    public interface IUserInteractor
-    {
-        Task<UserBasicEntity> GetUser(int id);
-    }
+    Task<UserBasicEntity> GetUser(int id);
 }

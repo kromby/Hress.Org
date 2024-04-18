@@ -26,9 +26,9 @@ namespace Ez.Hress.Hardhead.UseCases
             _className = nameof(RuleInteractor);
         }
 
-        public async Task<int> SubmitRuleChange(RuleChange ruleChange)
+        public async Task<int> SubmitRuleChangeAsync(RuleChange ruleChange)
         {
-            string method = nameof(SubmitRuleChange);
+            string method = nameof(SubmitRuleChangeAsync);
             if (ruleChange == null)
                 throw new ArgumentNullException(nameof(ruleChange));
 
@@ -41,9 +41,9 @@ namespace Ez.Hress.Hardhead.UseCases
             return result;
         }
 
-        public async Task<IList<RuleChange>> GetRuleChanges(int typeID)
+        public async Task<IList<RuleChange>> GetRuleChangesAsync(int typeID)
         {
-            string method = nameof(GetRuleChanges);
+            string method = nameof(GetRuleChangesAsync);
             _logger.LogInformation("[{Class}.{Method}] Getting rule changes.", _className, method);
 
             var allRuleChanges = await _ruleChangeDataAccess.GetRuleChanges();
@@ -58,9 +58,9 @@ namespace Ez.Hress.Hardhead.UseCases
             return filteredChanges;
         }
 
-        public async Task<IList<RuleChange>> GetRuleChanges()
+        public async Task<IList<RuleChange>> GetRuleChangesAsync()
         {
-            string method = nameof(GetRuleChanges);
+            string method = nameof(GetRuleChangesAsync);
             _logger.LogInformation("[{Class}.{Method}] Getting rule changes.", _className, method);
 
             var allRuleChanges = await _ruleChangeDataAccess.GetRuleChanges();
@@ -74,9 +74,9 @@ namespace Ez.Hress.Hardhead.UseCases
             return allRuleChanges;
         }
 
-        public async Task<IList<RuleChange>> GetRuleChangesByRule(int ruleID)
+        public async Task<IList<RuleChange>> GetRuleChangesByRuleAsync(int ruleID)
         {
-            string method = nameof(GetRuleChanges);
+            string method = nameof(GetRuleChangesAsync);
             _logger.LogInformation("[{Class}.{Method}] Getting rule changes ruleID: {RuleID}", _className, method, ruleID);
 
             var allRuleChanges = await _ruleChangeDataAccess.GetRuleChanges();
@@ -91,12 +91,12 @@ namespace Ez.Hress.Hardhead.UseCases
             return filteredChanges;
         }
 
-        public async Task<IList<RuleParent>> GetRules()
+        public async Task<IList<RuleParent>> GetRulesAsync()
         {
             return await _ruleDataAccess.GetRules();
         }
 
-        public async Task<IList<RuleChild>> GetRules(int parentID)
+        public async Task<IList<RuleChild>> GetRulesAsync(int parentID)
         {
             if (parentID < 1)
                 throw new ArgumentException("Value can not be zero or negative.", nameof(parentID));

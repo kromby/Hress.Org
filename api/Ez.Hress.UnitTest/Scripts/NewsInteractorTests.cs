@@ -2,38 +2,32 @@
 using Ez.Hress.Scripts.UseCases;
 using Microsoft.Extensions.Logging;
 using Moq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ez.Hress.UnitTest.Scripts
+namespace Ez.Hress.UnitTest.Scripts;
+
+public class NewsInteractorTests
 {
-    public class NewsInteractorTests
+    private readonly Mock<INewsDataAccess> _newsDataAccess;
+    private readonly Mock<ILogger<NewsInteractor>> _log;
+
+    public NewsInteractorTests()
     {
-        private readonly Mock<INewsDataAccess> _newsDataAccess;
-        private readonly Mock<ILogger<NewsInteractor>> _log;
+        _newsDataAccess = new Mock<INewsDataAccess>();
+        _log = new Mock<ILogger<NewsInteractor>>();
+    }
 
-        public NewsInteractorTests()
-        {
-            _newsDataAccess = new Mock<INewsDataAccess>();
-            _log = new Mock<ILogger<NewsInteractor>>();
-        }
+    [Fact]
+    public async Task GetLatestNewsOK_TestAsync()
+    {
+        // ARRANGE
+        IList<News> list = new List<News>();
+        _newsDataAccess.Setup(x => x.GetLatestNews(It.IsAny<int>())).Returns(Task.FromResult(list));
+        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
 
-        [Fact]
-        public async Task GetLatestNewsOK_Test()
-        {
-            // ARRANGE
-            IList<News> list = new List<News>();
-            _newsDataAccess.Setup(x => x.GetLatestNews(It.IsAny<int>())).Returns(Task.FromResult(list));
-            var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        // ACT
+        var result = await interactor.GetLatestNewsAsync();
 
-            // ACT
-            var result = await interactor.GetLatestNews();
-
-            // ASSERT
-            Assert.NotNull(list);
-        }
+        // ASSERT
+        Assert.NotNull(list);
     }
 }

@@ -47,13 +47,13 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             if (id.HasValue)
             {
-                var childList = await _ruleInteractor.GetRules(id.Value);
+                var childList = await _ruleInteractor.GetRulesAsync(id.Value);
                 if (childList.Count <= 0)
                     return new NotFoundResult();
                 return new OkObjectResult(childList);
             }
 
-            var parentList = await _ruleInteractor.GetRules();
+            var parentList = await _ruleInteractor.GetRulesAsync();
             if (parentList.Count <= 0)
                 return new NotFoundResult();
             return new OkObjectResult(parentList);
@@ -122,7 +122,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             try
             {
-                var list = await _ruleInteractor.GetRuleChangesByRule(id);
+                var list = await _ruleInteractor.GetRuleChangesByRuleAsync(id);
                 return list.Count > 0 ? new OkObjectResult(list) : new NotFoundResult();
             }
             catch (ArgumentException aex)
@@ -176,7 +176,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
         {
             log.LogInformation("[HardheadRuleFunctions] GetRuleChanges typeID: {typeID}", typeID);
 
-            var result = await _ruleInteractor.GetRuleChanges(typeID);
+            var result = await _ruleInteractor.GetRuleChangesAsync(typeID);
 
             return new OkObjectResult(result);
         }
@@ -185,7 +185,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
         {
             log.LogInformation("[HardheadRuleFunctions] GetRuleChanges");
 
-            var result = await _ruleInteractor.GetRuleChanges();
+            var result = await _ruleInteractor.GetRuleChangesAsync();
 
             return new OkObjectResult(result);
         }
@@ -200,7 +200,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             log.LogInformation($"[HardheadRuleFunctions] Request body: {requestBody}");
 
-            await _ruleInteractor.SubmitRuleChange(change);
+            await _ruleInteractor.SubmitRuleChangeAsync(change);
             return new NoContentResult();
         }
     }

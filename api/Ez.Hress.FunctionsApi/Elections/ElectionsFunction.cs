@@ -43,7 +43,7 @@ namespace Ez.Hress.FunctionsApi.Elections
                 return new UnauthorizedResult();
             }
 
-            var result = await _hardheadElectionInteractor.CheckAccess(userID);
+            var result = await _hardheadElectionInteractor.CheckAccessAsync(userID);
             if (result != null)
                 return new OkObjectResult(result);
 
@@ -68,7 +68,7 @@ namespace Ez.Hress.FunctionsApi.Elections
 
                 if (voteList.Count == 0)
                 {
-                    await _hardheadElectionInteractor.SaveVoter(userID, id);
+                    await _hardheadElectionInteractor.SaveVoterAsync(userID, id);
                     return new OkResult();
                 }
 
@@ -78,11 +78,11 @@ namespace Ez.Hress.FunctionsApi.Elections
                     if (entity.StepID == 0)
                         entity.StepID = id;
 
-                    var voteResult = await _hardheadElectionInteractor.SaveVote(entity, userID).ConfigureAwait(false);
+                    var voteResult = await _hardheadElectionInteractor.SaveVoteAsync(entity, userID).ConfigureAwait(false);
                     return voteResult ? new OkResult() : throw new SystemException("Could not save vote.");
                 }
 
-                var result = await _hardheadElectionInteractor.SaveVotes(voteList, id, userID).ConfigureAwait(false);
+                var result = await _hardheadElectionInteractor.SaveVotesAsync(voteList, id, userID).ConfigureAwait(false);
                 return result > 0 ? new OkResult() : throw new SystemException("Could not save vote.");
             }
             catch (ArgumentException aex)

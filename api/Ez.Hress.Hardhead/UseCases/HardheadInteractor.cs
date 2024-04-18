@@ -20,31 +20,31 @@ namespace Ez.Hress.Hardhead.UseCases
             _log = log;
         }
 
-        public async Task<HardheadNight> GetHardhead(int id)
+        public async Task<HardheadNight> GetHardheadAsync(int id)
         {
             _log.LogInformation("[{Class}] Getting Hardhead '{ID}'", _class, id);
             return await _hardheadDataAccess.GetHardhead(id);
         }
 
-        public async Task<IList<HardheadNight>> GetHardheads(DateTime fromDate)
+        public async Task<IList<HardheadNight>> GetHardheadsAsync(DateTime fromDate)
         {
             _log.LogInformation("[{Class}] Getting all Hardheads from '{from}' until now", _class, fromDate);
             return await _hardheadDataAccess.GetHardheads(fromDate, DateTime.UtcNow.AddDays(-1));
         }
 
-        public async Task<IList<HardheadNight>> GetHardheads(int parentID)
+        public async Task<IList<HardheadNight>> GetHardheadsAsync(int parentID)
         {
             _log.LogInformation("[{Class}] Getting all Hardheads for parent '{ParentID}'", _class, parentID);
             return await _hardheadDataAccess.GetHardheads(parentID);
         }
 
-        public async Task<IList<HardheadNight>> GetNextHardhead()
+        public async Task<IList<HardheadNight>> GetNextHardheadAsync()
         {
             var list = await _hardheadDataAccess.GetHardheads(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddMonths(2));
             return list;
         }
 
-        public async Task<IList<HardheadNight>> GetHardheads(int userID, UserType type)
+        public async Task<IList<HardheadNight>> GetHardheadsAsync(int userID, UserType type)
         {
             var idList = await _hardheadDataAccess.GetHardheadIDs(userID, type).ConfigureAwait(false);
 
@@ -55,7 +55,7 @@ namespace Ez.Hress.Hardhead.UseCases
             return new List<HardheadNight>();
         }
 
-        public async Task SaveHardhead(HardheadNight night, int userID)
+        public async Task SaveHardheadAsync(HardheadNight night, int userID)
         {
             night.Validate();
 
@@ -90,7 +90,7 @@ namespace Ez.Hress.Hardhead.UseCases
             }
         }
 
-        public async Task<IList<ComponentEntity>> GetActions(int hardheadID, int userID)
+        public async Task<IList<ComponentEntity>> GetActionsAsync(int hardheadID, int userID)
         {
             var actionsTask = _hardheadDataAccess.GetActions(hardheadID);
             var hardhead = await _hardheadDataAccess.GetHardhead(hardheadID).ConfigureAwait(false);
@@ -107,7 +107,7 @@ namespace Ez.Hress.Hardhead.UseCases
             //Future actions could be "I was there", "Tilnefna vonbrigði"...
         }
 
-        public async Task<IList<UserBasicEntity>> GetGuests(int hardheadID)
+        public async Task<IList<UserBasicEntity>> GetGuestsAsync(int hardheadID)
         {
             return await _hardheadDataAccess.GetGuests(hardheadID);
         }

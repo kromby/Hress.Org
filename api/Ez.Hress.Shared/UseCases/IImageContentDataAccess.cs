@@ -1,18 +1,10 @@
-﻿using Ez.Hress.Shared.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Ez.Hress.Shared.UseCases;
 
-namespace Ez.Hress.Shared.UseCases
+public interface IImageContentDataAccess
 {
-    public interface IImageContentDataAccess
-    {
-        Task<byte[]?> GetContent(string path);
+    Task<byte[]?> GetContent(string path);
 
-        string Prefix { get; }
+    string Prefix { get; }
 
-        Task Save(string container, byte[] content, int id);
-    }
+    Task Save(string container, byte[] content, int id);
 }

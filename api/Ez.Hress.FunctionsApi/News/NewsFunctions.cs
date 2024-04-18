@@ -38,7 +38,7 @@ namespace Ez.Hress.FunctionsApi.News
                 if (id.HasValue)
                 {
                     log.LogInformation("[{Function}] Getting a single news by ID '{Id}'", nameof(RunNews), id);
-                    var entity = await _newsInteractor.GetNews(id.Value);
+                    var entity = await _newsInteractor.GetNewsAsync(id.Value);
                     if (entity == null || entity.ID < 1)
                         return new NotFoundResult();
                     return new OkObjectResult(entity);
@@ -50,7 +50,7 @@ namespace Ez.Hress.FunctionsApi.News
                     int top = int.MaxValue;
                     _ = int.TryParse(req.Query["top"], out top);
 
-                    list = await _newsInteractor.GetNewsOnThisDay(top);
+                    list = await _newsInteractor.GetNewsOnThisDayAsync(top);
                     return new OkObjectResult(list);
                 }
                 
@@ -64,18 +64,18 @@ namespace Ez.Hress.FunctionsApi.News
                     if (int.TryParse(req.Query["month"], out int month))
                     {
                         log.LogInformation("[{Function}] Getting news for year '{Year}' and month '{Month}'", nameof(RunNews), year, month);
-                        list = await _newsInteractor.GetNewsByYearAndMonth(year, month);
+                        list = await _newsInteractor.GetNewsByYearAndMonthAsync(year, month);
                     }
                     else
                     {
                         log.LogInformation("[{Function}] Getting news by Year '{Year}'", nameof(RunNews), year);
-                        list = await _newsInteractor.GetNewsByYear(year);
+                        list = await _newsInteractor.GetNewsByYearAsync(year);
                     }
                     return new OkObjectResult(list);
                 }
 
                 log.LogInformation("[{Function}] Getting latest news", nameof(RunNews));
-                list = await _newsInteractor.GetLatestNews();
+                list = await _newsInteractor.GetLatestNewsAsync();
                 return new OkObjectResult(list);
             }
             catch (ArgumentException aex)

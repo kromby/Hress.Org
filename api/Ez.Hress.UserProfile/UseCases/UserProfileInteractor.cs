@@ -20,12 +20,12 @@ namespace Ez.Hress.UserProfile.UseCases
             _log = log;
         }
 
-        public async Task<UserBasicEntity?> GetUser(int userID)
+        public async Task<UserBasicEntity?> GetUserAsync(int userID)
         {
             return await _userDataAccess.GetUser(userID);
         }
 
-        public async Task<BalanceSheet> GetBalanceSheet(int userID)
+        public async Task<BalanceSheet> GetBalanceSheetAsync(int userID)
         {
             _log.LogInformation("[{Class}] GetBalanceSheet", GetType().Name);
 

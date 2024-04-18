@@ -44,7 +44,7 @@ namespace Ez.Hress.FunctionsApi.Images
 
             try
             {
-                var entity = await _imageInteractor.Save(image, userID);
+                var entity = await _imageInteractor.SaveAsync(image, userID);
                 return new OkObjectResult(entity);
             }
             catch(ArgumentException aex)
@@ -79,7 +79,7 @@ namespace Ez.Hress.FunctionsApi.Images
                 _ = int.TryParse(req.Query["height"], out height);
             }
 
-            var entity = await _imageInteractor.GetContent(id, width, height);
+            var entity = await _imageInteractor.GetContentAsync(id, width, height);
 
             if (entity?.Content == null)
             {

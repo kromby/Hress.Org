@@ -25,7 +25,7 @@ namespace Ez.Hress.Hardhead.UseCases
 
         public async Task<string> UpdateRules()
         {
-            var list = await _ruleInteractor.GetRuleChanges();
+            var list = await _ruleInteractor.GetRuleChangesAsync();
             var newRuleList = list.Where(rc => rc.TypeID == RuleChangeType.Create);
             var newRuleTask = HandleNewRules(newRuleList.ToList());
 

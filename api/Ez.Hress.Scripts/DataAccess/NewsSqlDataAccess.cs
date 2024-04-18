@@ -196,28 +196,20 @@ namespace Ez.Hress.Scripts.DataAccess
 
         public async Task<IList<StatisticNewsByDate>> GetNewsStatisticsByDate(int? year)
         {
-            string sql;
-
-            if (year.HasValue)
-            {
-                sql = @"SELECT	DATEPART(month, news.Inserted) 'month', COUNT(news.Id) 'counter'
+            string sql = year.HasValue
+                ? @"SELECT	DATEPART(month, news.Inserted) 'month', COUNT(news.Id) 'counter'
                         FROM	adm_Component news
                         WHERE	news.TypeId = 9
 	                        AND	news.Deleted IS NULL
 							AND	DATEPART(year, news.Inserted) = @year
 						GROUP BY DATEPART(month, news.Inserted)
-						ORDER BY DATEPART(month, news.Inserted) DESC";
-            }
-            else
-            {
-                sql = @"SELECT	DATEPART(year, news.Inserted) 'year', COUNT(news.Id) 'counter'
+						ORDER BY DATEPART(month, news.Inserted) DESC"
+                : @"SELECT	DATEPART(year, news.Inserted) 'year', COUNT(news.Id) 'counter'
                         FROM	adm_Component news
                         WHERE	news.TypeId = 9
 	                        AND	news.Deleted IS NULL
 						GROUP BY DATEPART(year, news.Inserted)
 						ORDER BY DATEPART(year, news.Inserted) DESC";
-            }
-
             using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync();
 
@@ -235,20 +227,13 @@ namespace Ez.Hress.Scripts.DataAccess
             {
                 while (reader.Read())
                 {
-                    StatisticNewsByDate entity;
-                    if (year.HasValue)
-                    {
-                        entity = new(DatePart.Month,
+                    StatisticNewsByDate entity = year.HasValue
+                        ? new(DatePart.Month,
                         SqlHelper.GetInt(reader, "month"),
-                        SqlHelper.GetInt(reader, "counter"));
-                    }
-                    else
-                    {
-                        entity = new(DatePart.Year,
+                        SqlHelper.GetInt(reader, "counter"))
+                        : new(DatePart.Year,
                         SqlHelper.GetInt(reader, "year"),
                         SqlHelper.GetInt(reader, "counter"));
-                    }
-
                     list.Add(entity);
                 }
             }

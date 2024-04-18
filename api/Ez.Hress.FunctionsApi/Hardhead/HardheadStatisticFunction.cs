@@ -43,7 +43,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                     _ = Enum.TryParse<PeriodType>(req.Query["periodType"], out periodType);
                 }
 
-                var list = await _statisticsInteractor.GetAttendanceStatistics(periodType);
+                var list = await _statisticsInteractor.GetAttendanceStatisticsAsync(periodType);
                 return new OkObjectResult(list);
 
             }
@@ -77,18 +77,18 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             try
             {
                 var periodType = PeriodType.All;
-                if (req.Query.ContainsKey("periodType"))
+                if (req.Query.TryGetValue("periodType", out var periodTypeString))
                 {
-                    _ = Enum.TryParse<PeriodType>(req.Query["periodType"], out periodType);
+                    _ = Enum.TryParse<PeriodType>(periodTypeString, out periodType);
                 }
 
                 var attendanceTypeID = 0;
-                if (req.Query.ContainsKey("attendanceType"))
+                if (req.Query.TryGetValue("attendanceType", out var attendanceTypeString))
                 {
-                    _ = int.TryParse(req.Query["attendanceType"], out attendanceTypeID);
+                    _ = int.TryParse(attendanceTypeString, out attendanceTypeID);
                 }
 
-                var list = await _statisticsInteractor.GetUserStatistics(periodType, attendanceTypeID, id);
+                var list = await _statisticsInteractor.GetUserStatisticsAsync(periodType, attendanceTypeID, id);
                 return new OkObjectResult(list);
 
             }
@@ -119,7 +119,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             try
             {
-                var list = await _statisticsInteractor.GetChallangeHistory(id);
+                var list = await _statisticsInteractor.GetChallangeHistoryAsync(id);
                 return new OkObjectResult(list);
 
             }
@@ -150,7 +150,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             try
             {
-                var list = await _statisticsInteractor.GetStreaks(id);
+                var list = await _statisticsInteractor.GetStreaksAsync(id);
                 return new OkObjectResult(list);
 
             }

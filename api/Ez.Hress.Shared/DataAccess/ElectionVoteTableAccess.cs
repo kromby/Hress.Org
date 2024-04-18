@@ -45,6 +45,7 @@ namespace Ez.Hress.Shared.DataAccess
             var list = new List<VoteEntity>();
             await foreach (var item in tableList)
             {
+                // skipcq: CS-R1004
                 VoteEntity vote = new(Guid.Parse(item.CategoryID), int.Parse(item.PartitionKey), item.Value);
                 list.Add(vote);
             }

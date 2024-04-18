@@ -41,14 +41,14 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                 if (id.HasValue)
                 {
                     log.LogInformation("[{Function}] Getting a specific dinner party.", nameof(RunDinnerParties));
-                    var dinnerParty = await _dinnerPartyInteractor.GetDinnerParty(id.Value);
+                    var dinnerParty = await _dinnerPartyInteractor.GetDinnerPartyAsync(id.Value);
                     return new OkObjectResult(dinnerParty);
                 }
 
                 log.LogInformation("[{Function}] Getting a all dinner parties.", nameof(RunDinnerParties));
                 _ = int.TryParse(req.Query["top"], out int top);
                 _ = bool.TryParse(req.Query["includeGuests"], out bool includeGuests);
-                var dinnerParties = await _dinnerPartyInteractor.GetDinnerParties(includeGuests, top);
+                var dinnerParties = await _dinnerPartyInteractor.GetDinnerPartiesAsync(includeGuests, top);
                 return new OkObjectResult(dinnerParties);
             }
             catch (ArgumentException aex)
@@ -80,7 +80,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
 
             try
             {
-                var result = await _dinnerPartyInteractor.GetCourses(id);
+                var result = await _dinnerPartyInteractor.GetCoursesAsync(id);
                 return new OkObjectResult(result);
             }
             catch (ArgumentException aex)
@@ -115,7 +115,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                 if (req.Method == "GET")
                 {
                     log.LogInformation("[{Function}] Getting a all courses.", nameof(RunCoursesByType));
-                    var courses = await _dinnerPartyInteractor.GetCoursesByType(typeID);
+                    var courses = await _dinnerPartyInteractor.GetCoursesByTypeAsync(typeID);
                     return new OkObjectResult(courses);
                 }
 
@@ -134,7 +134,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
 
                 log.LogInformation("[{Function}] Request body: {requestBody}", nameof(RunCoursesByType), requestBody);
 
-                await _dinnerPartyInteractor.SaveVote(vote);
+                await _dinnerPartyInteractor.SaveVoteAsync(vote);
                 return new OkResult();
             }
             catch (ArgumentException aex)
@@ -165,7 +165,7 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
 
             try
             {
-                var result = await _dinnerPartyInteractor.GetRedwineTeams(id);
+                var result = await _dinnerPartyInteractor.GetRedwineTeamsAsync(id);
                 return new OkObjectResult(result);
             }
             catch (ArgumentException aex)
@@ -199,10 +199,10 @@ namespace Ez.Hress.FunctionsApi.DinnerParty
                 switch (req.Query["type"])
                 {
                     case "winners":
-                        var result = await _dinnerPartyInteractor.GetWinnerStatistics();
+                        var result = await _dinnerPartyInteractor.GetWinnerStatisticsAsync();
                         return new OkObjectResult(result);
                     case "guests":
-                        var guestResult = await _dinnerPartyInteractor.GetGuestStatistic();
+                        var guestResult = await _dinnerPartyInteractor.GetGuestStatisticAsync();
                         return new OkObjectResult(guestResult);
                     default:
                         throw new ArgumentException("Query parameter type is missing or invalid.");

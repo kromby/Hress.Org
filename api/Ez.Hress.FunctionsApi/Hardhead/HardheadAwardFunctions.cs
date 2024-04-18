@@ -85,7 +85,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             log.LogInformation($"[RunAwardNominations] Request body: {requestBody}");
 
-            await _awardWriteInteractor.Nominate(nom);
+            await _awardWriteInteractor.NominateAsync(nom);
             return new NoContentResult();
         }
 
@@ -103,7 +103,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                 throw new ArgumentException("Type query parameter is not a valid integer.");
             }
 
-            var list = await _awardReadInteractor.GetNominations(typeID, excludeUserID);
+            var list = await _awardReadInteractor.GetNominationsAsync(typeID, excludeUserID);
 
             if (list.Count == 0)
                 return new NotFoundResult();

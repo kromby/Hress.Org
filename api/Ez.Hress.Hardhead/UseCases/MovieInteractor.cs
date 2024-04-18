@@ -19,13 +19,13 @@ namespace Ez.Hress.Hardhead.UseCases
             _log = log;
         }
 
-        public Task<IList<Movie>> GetMovies(string filterBy)
+        public Task<IList<Movie>> GetMoviesAsync(string filterBy)
         {
             _log.LogInformation("Getting movies by filter: {Filter}", filterBy);
             return _movieDataAccess.GetMovies(filterBy);
         }
 
-        public async Task<StatsEntity> GetActorStatistics(PeriodType periodType)
+        public async Task<StatsEntity> GetActorStatisticsAsync(PeriodType periodType)
         {
             var entity = new StatsEntity("Harðhaus")
             {

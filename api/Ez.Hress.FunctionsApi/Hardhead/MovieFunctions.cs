@@ -39,9 +39,9 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                 }
                 else
                 {
-                    if (req.Query.ContainsKey("filter"))
+                    if (req.Query.TryGetValue("filter", out var value))
                     {
-                        var list = await _movieInteractor.GetMovies(req.Query["filter"]);
+                        var list = await _movieInteractor.GetMoviesAsync(value);
                         return new OkObjectResult(list);
                     }
                 }
@@ -69,7 +69,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
                 if (type == "actor")
                 {
-                    var result = await _movieInteractor.GetActorStatistics(periodType);
+                    var result = await _movieInteractor.GetActorStatisticsAsync(periodType);
                     return new OkObjectResult(result);
                 }
 

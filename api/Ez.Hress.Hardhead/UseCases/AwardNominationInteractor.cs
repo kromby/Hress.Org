@@ -14,7 +14,7 @@ namespace Ez.Hress.Hardhead.UseCases
             _log = log;
         }
 
-        public async Task<IList<Nomination>> GetNominations(int typeID, int excludedUserID)
+        public async Task<IList<Nomination>> GetNominationsAsync(int typeID, int excludedUserID)
         {
             _log.LogInformation("[{Class}] Getting nominations for type {typeID}", nameof(AwardNominationInteractor), typeID);
 

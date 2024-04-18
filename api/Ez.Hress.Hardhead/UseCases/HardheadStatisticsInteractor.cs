@@ -24,7 +24,7 @@ namespace Ez.Hress.Hardhead.UseCases
             _log = log;
         }
 
-        public async Task<StatsEntity> GetUserStatistics(PeriodType periodType, int attendanceTypeID, int? id)
+        public async Task<StatsEntity> GetUserStatisticsAsync(PeriodType periodType, int attendanceTypeID, int? id)
         {
             _log.LogInformation("[{Class}] Getting user statistics for type: {PeriodType}", nameof(HardheadStatisticsInteractor), periodType);
 
@@ -50,7 +50,7 @@ namespace Ez.Hress.Hardhead.UseCases
             return entity;
         }
 
-        public async Task<StatsEntity> GetAttendanceStatistics(PeriodType periodType)
+        public async Task<StatsEntity> GetAttendanceStatisticsAsync(PeriodType periodType)
         {
             _log.LogInformation("[{Class}] Getting attendance statistics for type: {PeriodType}", nameof(HardheadStatisticsInteractor), periodType);
 
@@ -65,7 +65,7 @@ namespace Ez.Hress.Hardhead.UseCases
         }
 
         // TODO: get statistics about nominees and nominated by a specific user
-        public async Task<object> GetChallangeHistory(int userID)
+        public async Task<object> GetChallangeHistoryAsync(int userID)
         {
             _log.LogInformation("[{Class}] Getting challenge history for user: {userID}", nameof(HardheadStatisticsInteractor), userID);
 
@@ -81,6 +81,7 @@ namespace Ez.Hress.Hardhead.UseCases
             {
                 if(addChallenged && night.Host.ID != userID)
                 {
+                    // skipcq: CS-P1005
                     if (previousHardhead.ContainsKey(night.Host.ID))
                     {
                         previousHardhead[night.Host.ID].AttendedCount++;
@@ -104,6 +105,7 @@ namespace Ez.Hress.Hardhead.UseCases
                 {
                     if (last != null && last.Host.ID != userID)
                     {
+                        // skipcq: CS-P1005
                         if (nextHardhead.ContainsKey(last.Host.ID))
                         {
                             nextHardhead[last.Host.ID].AttendedCount++;
@@ -130,7 +132,7 @@ namespace Ez.Hress.Hardhead.UseCases
             return new ChallangeHistory(previousHardhead.Values.OrderByDescending(t => t.AttendedCount).ToList(), nextHardhead.Values.OrderByDescending(t => t.AttendedCount).ToList());
         }
 
-        public async Task<IList<StatisticUserEntity>> GetStreaks(int userID)
+        public async Task<IList<StatisticUserEntity>> GetStreaksAsync(int userID)
         {
             _log.LogInformation("[{Class}] Getting streaks of attended nights for user: {userID}", nameof(HardheadStatisticsInteractor), userID);
 

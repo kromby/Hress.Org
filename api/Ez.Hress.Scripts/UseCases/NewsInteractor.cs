@@ -14,17 +14,17 @@ namespace Ez.Hress.Scripts.UseCases
             _log = log;
         }
 
-        public async Task<IList<News>> GetLatestNews()
+        public async Task<IList<News>> GetLatestNewsAsync()
         {
             return await _newsDataAccess.GetLatestNews(10);
         }
 
-        public async Task<News> GetNews(int id)
+        public async Task<News> GetNewsAsync(int id)
         {
             return await _newsDataAccess.GetNews(id);
         }
 
-        public async Task<IList<News>> GetNewsOnThisDay(int top)
+        public async Task<IList<News>> GetNewsOnThisDayAsync(int top)
         {
             _log.LogInformation($"[{nameof(NewsInteractor)}] Get historical news on this day");
             
@@ -41,7 +41,7 @@ namespace Ez.Hress.Scripts.UseCases
             return list;
         }
 
-        public async Task<IList<News>> GetNewsByYear(int year)
+        public async Task<IList<News>> GetNewsByYearAsync(int year)
         {
             if (year < 2000 && year <= DateTime.Today.Year)
             {
@@ -51,7 +51,7 @@ namespace Ez.Hress.Scripts.UseCases
             return await _newsDataAccess.GetNews(new DateTime(year, 1, 1), false, false, true);
         }
 
-        public async Task<IList<News>> GetNewsByYearAndMonth(int year, int month)
+        public async Task<IList<News>> GetNewsByYearAndMonthAsync(int year, int month)
         {
             if (year < 2000 && year <= DateTime.Today.Year)
             {
@@ -66,12 +66,12 @@ namespace Ez.Hress.Scripts.UseCases
             return await _newsDataAccess.GetNews(new DateTime(year, month, 1), false, true, true);
         }
 
-        public async Task<IList<StatisticNewsByDate>> GetNewsYearStatistics()
+        public async Task<IList<StatisticNewsByDate>> GetNewsYearStatisticsAsync()
         {
             return await _newsDataAccess.GetNewsStatisticsByDate(null);
         }
 
-        public async Task<IList<StatisticNewsByDate>> GetNewsMonthStatistics(int year)
+        public async Task<IList<StatisticNewsByDate>> GetNewsMonthStatisticsAsync(int year)
         {
             return await _newsDataAccess.GetNewsStatisticsByDate(year);
         }

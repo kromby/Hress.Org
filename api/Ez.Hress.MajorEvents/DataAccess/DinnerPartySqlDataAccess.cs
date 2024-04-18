@@ -363,6 +363,7 @@ namespace Ez.Hress.MajorEvents.DataAccess
                 {
                     if (!reader.IsDBNull(reader.GetOrdinal("TextValue")))
                     {
+                        // skipcq: CS-R1004
                         NameHrefEntity<int> entity = new(int.Parse(reader.GetString(reader.GetOrdinal("TextValue"))))
                         {
                             Name = reader.GetString(reader.GetOrdinal("Name")),

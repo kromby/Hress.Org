@@ -38,7 +38,7 @@ namespace Ez.Hress.FunctionsApi.Users
 
             try
             {
-                var entity = await _userProfileInteractor.GetUser(id);
+                var entity = await _userProfileInteractor.GetUserAsync(id);
                 return entity == null ? new NotFoundResult() : new OkObjectResult(entity);
             }
             catch (ArgumentException aex)
@@ -72,7 +72,7 @@ namespace Ez.Hress.FunctionsApi.Users
             }
 
             var myId = id != 0 ? id : userID;
-            var entity = await _userProfileInteractor.GetBalanceSheet(myId);
+            var entity = await _userProfileInteractor.GetBalanceSheetAsync(myId);
             return new OkObjectResult(entity);
         }
 
@@ -97,7 +97,7 @@ namespace Ez.Hress.FunctionsApi.Users
             try
             {
                 var body = await req.ReadFromJsonAsync<ChangePasswordBody>();
-                await _authenticationInteractor.ChangePassword(id, body.Password, body.NewPassword);
+                await _authenticationInteractor.ChangePasswordAsync(id, body.Password, body.NewPassword);
                 return new AcceptedResult();
             }
             catch (ArgumentException aex)

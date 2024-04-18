@@ -52,7 +52,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
                 try
                 {
                     HardheadNight night = await req.ReadFromJsonAsync<HardheadNight>();
-                    await _hardheadInteractor.SaveHardhead(night, userID);
+                    await _hardheadInteractor.SaveHardheadAsync(night, userID);
                     return new OkResult();
                 }
                 catch (JsonReaderException jrex)
@@ -69,29 +69,29 @@ namespace Ez.Hress.FunctionsApi.Hardhead
             {
                 if (id.HasValue)
                 {
-                    var entity = await _hardheadInteractor.GetHardhead(id.Value);
+                    var entity = await _hardheadInteractor.GetHardheadAsync(id.Value);
                     return new OkObjectResult(entity);
                 }
 
                 IList<HardheadNight> list = new List<HardheadNight>();
                 if (!req.QueryString.HasValue)
                 {
-                    list = await _hardheadInteractor.GetNextHardhead();
+                    list = await _hardheadInteractor.GetNextHardheadAsync();
                 }
 
                 if (req.Query.ContainsKey("dateFrom") && DateTime.TryParse(req.Query["dateFrom"], out DateTime dateFrom))
                 {
-                    list = await _hardheadInteractor.GetHardheads(dateFrom);
+                    list = await _hardheadInteractor.GetHardheadsAsync(dateFrom);
                 }
 
                 if (req.Query.ContainsKey("parentID") && int.TryParse(req.Query["parentID"], out int parentID))
                 {
-                    list = await _hardheadInteractor.GetHardheads(parentID);
+                    list = await _hardheadInteractor.GetHardheadsAsync(parentID);
                 }
 
                 if (req.Query.ContainsKey("userID") && int.TryParse(req.Query["userID"], out int userID))
                 {
-                    list = await _hardheadInteractor.GetHardheads(userID, UserType.host);
+                    list = await _hardheadInteractor.GetHardheadsAsync(userID, UserType.host);
                 }
 
                 return new OkObjectResult(list);
@@ -113,7 +113,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             try
             {
-                var result = await _hardheadInteractor.GetActions(id, userID);
+                var result = await _hardheadInteractor.GetActionsAsync(id, userID);
                 return new OkObjectResult(result);
             }
             catch (Exception ex)
@@ -131,7 +131,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             try
             {
-                var result = await _hardheadInteractor.GetGuests(id);
+                var result = await _hardheadInteractor.GetGuestsAsync(id);
                 return new OkObjectResult(result);
             }
             catch (Exception ex)

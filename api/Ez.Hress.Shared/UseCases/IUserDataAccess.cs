@@ -1,14 +1,8 @@
 ﻿using Ez.Hress.Shared.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ez.Hress.Shared.UseCases
+namespace Ez.Hress.Shared.UseCases;
+
+public interface IUserDataAccess
 {
-    public interface IUserDataAccess
-    {
-        Task<UserBasicEntity> GetUser(int id);
-    }
+    Task<UserBasicEntity> GetUser(int id);
 }

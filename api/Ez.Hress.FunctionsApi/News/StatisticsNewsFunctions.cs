@@ -32,7 +32,7 @@ namespace Ez.Hress.FunctionsApi.News
 
             try
             {
-                var list = await _newsInteractor.GetNewsYearStatistics();
+                var list = await _newsInteractor.GetNewsYearStatisticsAsync();
                 return new OkObjectResult(list);
             }
             catch (ArgumentException aex)
@@ -65,7 +65,7 @@ namespace Ez.Hress.FunctionsApi.News
 
             try
             {
-                var list = await _newsInteractor.GetNewsMonthStatistics(year);
+                var list = await _newsInteractor.GetNewsMonthStatisticsAsync(year);
                 return new OkObjectResult(list);
             }
             catch (ArgumentException aex)

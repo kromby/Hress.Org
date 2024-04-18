@@ -15,7 +15,7 @@ namespace Ez.Hress.MajorEvents.UseCases
             _log = logger;
         }
     
-        public async Task<IList<DinnerParty>> GetDinnerParties(bool includeGuests, int top)
+        public async Task<IList<DinnerParty>> GetDinnerPartiesAsync(bool includeGuests, int top)
         {
             _log.LogInformation("[{Class}] GetDinnerParties", GetType().Name);
             var list = await _dinnerDataAccess.GetAll();
@@ -39,7 +39,7 @@ namespace Ez.Hress.MajorEvents.UseCases
             return list;
         }
 
-        public async Task<DinnerParty?> GetDinnerParty(int id)
+        public async Task<DinnerParty?> GetDinnerPartyAsync(int id)
         {
             var dinnerPartyTask = _dinnerDataAccess.GetById(id);
             var guestsTask = _dinnerDataAccess.GetGuests(id, null);
@@ -52,7 +52,7 @@ namespace Ez.Hress.MajorEvents.UseCases
             guestsTask.Wait();            
             dinnerParty.Guests = guestsTask.Result;
             albumsTask.Wait();
-            if(albumsTask.Result != null && albumsTask.Result.Count > 0)
+            if(albumsTask.Result?.Count > 0)
             {
                 dinnerParty.Albums = albumsTask.Result;
             }
@@ -60,17 +60,17 @@ namespace Ez.Hress.MajorEvents.UseCases
             return dinnerParty;
         }
 
-        public async Task<IList<Course>> GetCourses(int partyID)
+        public async Task<IList<Course>> GetCoursesAsync(int partyID)
         {
             return await _dinnerDataAccess.GetCourses(partyID);
         }
 
-        public async Task<IList<Dish>> GetCoursesByType(int typeID)
+        public async Task<IList<Dish>> GetCoursesByTypeAsync(int typeID)
         {
             return await _dinnerDataAccess.GetCoursesByTypeId(typeID);
         }
 
-        public async Task<IList<PartyTeam>> GetRedwineTeams(int partyID)
+        public async Task<IList<PartyTeam>> GetRedwineTeamsAsync(int partyID)
         {            
             var userThread = _dinnerDataAccess.GetChildUsers(partyID);
             var teams = await _dinnerDataAccess.GetChilds(partyID);
@@ -89,17 +89,17 @@ namespace Ez.Hress.MajorEvents.UseCases
             return teams;
         }
 
-        public async Task<IList<PartyWinner>> GetGuestStatistic()
+        public async Task<IList<PartyWinner>> GetGuestStatisticAsync()
         {
             return await _dinnerDataAccess.GetGuestStatistic();
         }
 
-        public async Task<IList<PartyWinner>> GetWinnerStatistics()
+        public async Task<IList<PartyWinner>> GetWinnerStatisticsAsync()
         {
             return await _dinnerDataAccess.GetWinnerStatistic();
         }
 
-        public async Task SaveVote(Vote vote)
+        public async Task SaveVoteAsync(Vote vote)
         {
             await _dinnerDataAccess.SaveVote(vote);
         }

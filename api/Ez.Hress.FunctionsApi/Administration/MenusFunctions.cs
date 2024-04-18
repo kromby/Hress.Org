@@ -32,9 +32,8 @@ namespace Ez.Hress.FunctionsApi.Administration
 
             _ = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
 
-            if (req.Query.ContainsKey("navigateUrl"))
+            if (req.Query.TryGetValue("navigateUrl", out var navigateUrl))
             {
-                var navigateUrl = req.Query["navigateUrl"];
                 _ = bool.TryParse(req.Query["fetchChildren"], out bool fetchChildren);
                 log.LogInformation($"[RunMenus] navigateUrl: '{navigateUrl}'");
 

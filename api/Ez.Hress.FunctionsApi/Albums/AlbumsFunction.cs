@@ -38,7 +38,7 @@ namespace Ez.Hress.FunctionsApi.Albums
 
             if (id.HasValue)
             {
-                var entity = await _albumInteractor.GetAlbum(id.Value);
+                var entity = await _albumInteractor.GetAlbumAsync(id.Value);
                 if (entity == null)
                 {
                     return new NotFoundResult();
@@ -46,11 +46,9 @@ namespace Ez.Hress.FunctionsApi.Albums
 
                 return new OkObjectResult(entity);
             }
-            else
-            {
-                var list = await _albumInteractor.GetAlbums();
-                return new OkObjectResult(list);
-            }
+
+            var list = await _albumInteractor.GetAlbumsAsync();
+            return new OkObjectResult(list);
         }
 
         [FunctionName("albumImages")]
@@ -67,7 +65,7 @@ namespace Ez.Hress.FunctionsApi.Albums
                 return new UnauthorizedResult();
             }
 
-            var list = await _albumInteractor.GetImages(albumID);
+            var list = await _albumInteractor.GetImagesAsync(albumID);
             return new OkObjectResult(list);
         }
     }

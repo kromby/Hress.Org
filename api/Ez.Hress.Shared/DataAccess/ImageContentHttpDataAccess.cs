@@ -21,6 +21,7 @@ namespace Ez.Hress.Shared.DataAccess
 
         public Task Save(string container, byte[] content, int id)
         {
+            // skipcq: CS-A1003
             throw new NotImplementedException();
         }
     }

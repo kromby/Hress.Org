@@ -17,7 +17,7 @@ namespace Ez.Hress.Hardhead.UseCases
             _log = log;            
         }
 
-        public async Task<int> Nominate(Nomination nomination)
+        public async Task<int> NominateAsync(Nomination nomination)
         {
             if (nomination == null)
                 throw new ArgumentNullException(nameof(nomination));            

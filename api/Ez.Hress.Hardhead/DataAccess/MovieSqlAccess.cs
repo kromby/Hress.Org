@@ -18,7 +18,7 @@ namespace Ez.Hress.Hardhead.DataAccess
         private readonly string _connectionString;
         private readonly string _class = nameof(MovieSqlAccess);
 
-        private readonly static string SQL_GETMOVIE = @"SELECT	night.Id, film.TextValue Movie, actor.TextValue Actor, poster.ImageId poster, 
+        private const string SQL_GETMOVIE = @"SELECT	night.Id, film.TextValue Movie, actor.TextValue Actor, poster.ImageId poster, 
                                                         imdb.TextValue imdb, why.TextValue why, youtube.TextValue youtube, CAST(moviekills.Count as int) moviekills, CAST(hhkills.Count as int) hhkills
                                                 FROM    rep_Event night
                                                 JOIN    rep_Text film ON film.EventId = night.Id AND film.TypeId = 62

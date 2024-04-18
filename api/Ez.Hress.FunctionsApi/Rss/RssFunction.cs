@@ -22,14 +22,14 @@ namespace Ez.Hress.FunctionsApi.Rss
         }
 
         [FunctionName("rss")]
-        public async Task<IActionResult> Run(
+        public async Task<IActionResult> RunAsync(
             [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
             ILogger log)
         {
-            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(Run));
+            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAsync));
 
-            log.LogInformation("[{Function}] Getting latest news", nameof(Run));
-            var list = await _newsInteractor.GetLatestNews();
+            log.LogInformation("[{Function}] Getting latest news", nameof(RunAsync));
+            var list = await _newsInteractor.GetLatestNewsAsync();
 
             StringBuilder sb = new();
 

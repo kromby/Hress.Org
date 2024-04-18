@@ -41,14 +41,14 @@ namespace Ez.Hress.FunctionsApi.Administration
                 if (!string.IsNullOrWhiteSpace(body.Username))
                 {
                     log.LogInformation("[{Class}.RunAuthenticate] Authenticate by username: {Username}", _class, body.Username);
-                    var jwt = await _authenticationInteractor.Login(body.Username, body.Password, req.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString());
+                    var jwt = await _authenticationInteractor.LoginAsync(body.Username, body.Password, req.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString());
                     return new OkObjectResult(jwt);
                 }
                 
                 if (!string.IsNullOrWhiteSpace(body.Code))
                 {
                     log.LogInformation("[{Class}.RunAuthenticate] Authenticate by code", _class, body.Username);
-                    var jwt = await _authenticationInteractor.Login(body.Code, req.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString());
+                    var jwt = await _authenticationInteractor.LoginAsync(body.Code, req.HttpContext.Connection.RemoteIpAddress.MapToIPv4().ToString());
                     return new OkObjectResult(jwt);
                 }
 
@@ -94,7 +94,7 @@ namespace Ez.Hress.FunctionsApi.Administration
 
             try
             {
-                var code = await _authenticationInteractor.CreateMagicCode(userID);
+                var code = await _authenticationInteractor.CreateMagicCodeAsync(userID);
                 return new OkObjectResult(code);
             }
             catch (ArgumentException aex)
