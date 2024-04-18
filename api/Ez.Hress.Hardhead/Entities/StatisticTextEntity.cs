@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿namespace Ez.Hress.Hardhead.Entities;
 
-namespace Ez.Hress.Hardhead.Entities
+public class StatisticTextEntity : StatisticBase
 {
-    public class StatisticTextEntity : StatisticBase
+    public StatisticTextEntity(string text)
     {
-        public StatisticTextEntity(string text)
-        {
-            Text = text;
-        }
-        public string Text { get; set; }
+        Text = text;
     }
+    public string Text { get; set; }
 }

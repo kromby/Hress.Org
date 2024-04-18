@@ -56,7 +56,7 @@ public class PostElectionInteractorTests
         var postElectionInteractor = new PostElectionInteractor(ruleInteractor, _voteDataAccessMock.Object);
 
         // Act
-        string updatedRules = await postElectionInteractor.UpdateRules();
+        string updatedRules = await postElectionInteractor.UpdateRulesAsync();
 
         // Assert
         Assert.NotNull(updatedRules);

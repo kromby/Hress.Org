@@ -1,16 +1,10 @@
 ﻿using Ez.Hress.Hardhead.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ez.Hress.Hardhead.UseCases
+namespace Ez.Hress.Hardhead.UseCases;
+
+public interface IRuleDataAccess
 {
-    public interface IRuleDataAccess
-    {
-        Task<IList<RuleParent>> GetRules();
+    Task<IList<RuleParent>> GetRules();
 
-        Task<IList<RuleChild>> GetRules(int parentId);
-    }
+    Task<IList<RuleChild>> GetRules(int parentId);
 }

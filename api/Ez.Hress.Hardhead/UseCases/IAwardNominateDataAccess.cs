@@ -1,14 +1,8 @@
 ﻿using Ez.Hress.Hardhead.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ez.Hress.Hardhead.UseCases
+namespace Ez.Hress.Hardhead.UseCases;
+
+public interface IAwardNominateDataAccess
 {
-    public interface IAwardNominateDataAccess
-    {
-        Task<int> SaveNomination(Nomination nomination);
-    }
+    Task<int> SaveNomination(Nomination nomination);
 }

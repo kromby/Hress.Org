@@ -14,7 +14,7 @@ public class MenuInteractor
         _log = log;
     }
 
-    public async Task<IList<MenuItem>> GetMenuItems(string navigateUrl, int userID, bool fetchChildren)
+    public async Task<IList<MenuItem>> GetMenuItemsAsync(string navigateUrl, int userID, bool fetchChildren)
     {
         if (navigateUrl.LastIndexOf("/") > 2)
             navigateUrl = navigateUrl[..navigateUrl.IndexOf("/", 3)];
@@ -44,13 +44,13 @@ public class MenuInteractor
         return list;
     }
 
-    public async Task<IList<MenuItem>> GetMenuItems(int parentID, int userID)
+    public async Task<IList<MenuItem>> GetMenuItemsAsync(int parentID, int userID)
     {
         bool includePrive = userID > 0;
         return await _menuDataAccess.GetMenuItems(parentID, includePrive);
     }
 
-    public async Task<IList<MenuItem>> GetMenuRoot(int userID)
+    public async Task<IList<MenuItem>> GetMenuRootAsync(int userID)
     {
         bool includePrive = userID > 0;
         var list = await _menuDataAccess.GetMenuItems(34322, includePrive);

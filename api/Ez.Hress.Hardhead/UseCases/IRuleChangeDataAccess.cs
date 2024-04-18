@@ -1,18 +1,12 @@
 ﻿using Ez.Hress.Hardhead.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ez.Hress.Hardhead.UseCases
+namespace Ez.Hress.Hardhead.UseCases;
+
+public interface IRuleChangeDataAccess
 {
-    public interface IRuleChangeDataAccess
-    {
-        Task<int> SaveRuleChange(RuleChange ruleChange);
+    Task<int> SaveRuleChange(RuleChange ruleChange);
 
-        Task<IList<RuleChange>> GetRuleChanges();
+    Task<IList<RuleChange>> GetRuleChanges();
 
-        Task<int> GetRuleChangeCount(int ruleID);
-    }
+    Task<int> GetRuleChangeCount(int ruleID);
 }

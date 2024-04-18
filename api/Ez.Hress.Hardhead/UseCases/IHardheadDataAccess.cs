@@ -1,33 +1,27 @@
 ﻿using Ez.Hress.Hardhead.Entities;
 using Ez.Hress.Shared.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ez.Hress.Hardhead.UseCases
-{
-    public interface IHardheadDataAccess
-    {       
-        Task<IList<HardheadUser>> GetHardheadUsers(int yearID);
+namespace Ez.Hress.Hardhead.UseCases;
 
-        Task<HardheadNight> GetHardhead(int id);
+public interface IHardheadDataAccess
+{       
+    Task<IList<HardheadUser>> GetHardheadUsers(int yearID);
 
-        Task<IList<HardheadNight>> GetHardheads(DateTime fromDate, DateTime toDate);
+    Task<HardheadNight> GetHardhead(int id);
 
-        Task<IList<HardheadNight>> GetHardheads(int parentID);
+    Task<IList<HardheadNight>> GetHardheads(DateTime fromDate, DateTime toDate);
 
-        Task<IList<HardheadNight>> GetHardheads(IList<HardheadNight> idList);
+    Task<IList<HardheadNight>> GetHardheads(int parentID);
 
-        Task<IList<HardheadNight>> GetHardheadIDs(int userID, UserType? type);
+    Task<IList<HardheadNight>> GetHardheads(IList<HardheadNight> idList);
 
-        Task<bool> AlterHardhead(HardheadNight hardhead);
+    Task<IList<HardheadNight>> GetHardheadIDs(int userID, UserType? type);
 
-        Task<bool> CreateHardhead(int hostID, DateTime nextDate, int currentUserID, DateTime changeDate);
+    Task<bool> AlterHardhead(HardheadNight hardhead);
 
-        Task<IList<ComponentEntity>> GetActions(int hardheadID);
+    Task<bool> CreateHardhead(int hostID, DateTime nextDate, int currentUserID, DateTime changeDate);
 
-        Task<IList<UserBasicEntity>> GetGuests(int hardheadID);
-    }
+    Task<IList<ComponentEntity>> GetActions(int hardheadID);
+
+    Task<IList<UserBasicEntity>> GetGuests(int hardheadID);
 }

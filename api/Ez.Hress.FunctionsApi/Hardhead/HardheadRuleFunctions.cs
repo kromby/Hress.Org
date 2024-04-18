@@ -152,7 +152,7 @@ namespace Ez.Hress.FunctionsApi.Hardhead
 
             try
             {
-                var result = await _postElectionInteractor.UpdateRules();
+                var result = await _postElectionInteractor.UpdateRulesAsync();
                 return new OkObjectResult(result);
             }
             catch (ArgumentException aex)

@@ -1,40 +1,34 @@
 ﻿using Ez.Hress.Hardhead.Entities;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ez.Hress.Hardhead.UseCases
+namespace Ez.Hress.Hardhead.UseCases;
+
+public class MovieInteractor
 {
-    public class MovieInteractor
+    private readonly IMovieDataAccess _movieDataAccess;
+    private readonly ILogger<MovieInteractor> _log;
+
+    public MovieInteractor(IMovieDataAccess movieDataAccess, ILogger<MovieInteractor> log)
     {
-        private readonly IMovieDataAccess _movieDataAccess;
-        private readonly ILogger<MovieInteractor> _log;
+        _movieDataAccess = movieDataAccess;
+        _log = log;
+    }
 
-        public MovieInteractor(IMovieDataAccess movieDataAccess, ILogger<MovieInteractor> log)
+    public Task<IList<Movie>> GetMoviesAsync(string filterBy)
+    {
+        _log.LogInformation("Getting movies by filter: {Filter}", filterBy);
+        return _movieDataAccess.GetMovies(filterBy);
+    }
+
+    public async Task<StatsEntity> GetActorStatisticsAsync(PeriodType periodType)
+    {
+        var entity = new StatsEntity("Harðhaus")
         {
-            _movieDataAccess = movieDataAccess;
-            _log = log;
-        }
+            PeriodType = periodType,
+            DateFrom = Utility.GetDateFromPeriodType(periodType)
+        };
+        entity.List = await _movieDataAccess.GetActorStatistic(entity.DateFrom);
 
-        public Task<IList<Movie>> GetMoviesAsync(string filterBy)
-        {
-            _log.LogInformation("Getting movies by filter: {Filter}", filterBy);
-            return _movieDataAccess.GetMovies(filterBy);
-        }
-
-        public async Task<StatsEntity> GetActorStatisticsAsync(PeriodType periodType)
-        {
-            var entity = new StatsEntity("Harðhaus")
-            {
-                PeriodType = periodType,
-                DateFrom = Utility.GetDateFromPeriodType(periodType)
-            };
-            entity.List = await _movieDataAccess.GetActorStatistic(entity.DateFrom);
-
-            return entity;
-        }
+        return entity;
     }
 }

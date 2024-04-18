@@ -37,11 +37,11 @@ namespace Ez.Hress.FunctionsApi.Administration
                 _ = bool.TryParse(req.Query["fetchChildren"], out bool fetchChildren);
                 log.LogInformation($"[RunMenus] navigateUrl: '{navigateUrl}'");
 
-                var itemList = await _menuInteractor.GetMenuItems(navigateUrl, userID, fetchChildren);
+                var itemList = await _menuInteractor.GetMenuItemsAsync(navigateUrl, userID, fetchChildren);
                 return new OkObjectResult(itemList);
             }
 
-            var list = await _menuInteractor.GetMenuRoot(userID);
+            var list = await _menuInteractor.GetMenuRootAsync(userID);
             return new OkObjectResult(list);
         }
     }
