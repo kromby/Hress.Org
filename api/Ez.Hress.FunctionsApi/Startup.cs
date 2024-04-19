@@ -9,7 +9,6 @@ using Ez.Hress.MajorEvents.DataAccess;
 using Ez.Hress.MajorEvents.UseCases;
 using Ez.Hress.Scripts.DataAccess;
 using Ez.Hress.Scripts.UseCases;
-using Ez.Hress.Shared;
 using Ez.Hress.Shared.DataAccess;
 using Ez.Hress.Shared.Entities;
 using Ez.Hress.Shared.UseCases;
@@ -20,137 +19,130 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 [assembly: FunctionsStartup(typeof(Ez.Hress.FunctionsApi.Startup))]
 
-namespace Ez.Hress.FunctionsApi
+namespace Ez.Hress.FunctionsApi;
+
+public class Startup : FunctionsStartup
 {
-    public class Startup : FunctionsStartup
+
+    public override void Configure(IFunctionsHostBuilder builder)
     {
+        var config = new ConfigurationBuilder()
+            .AddJsonFile("host.json", optional: true)
+            .AddEnvironmentVariables()
+            .Build();
 
-        public override void Configure(IFunctionsHostBuilder builder)
+        ConfigureServices(builder.Services, config);
+    }
+
+    public static void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
+    {
+        var dbConnectionString = config["Ez.Hress.Database.ConnectionString"];
+        DbConnectionInfo dbConnectionInfo = new(dbConnectionString);
+        var contentStorageConnectionString = config["Ez.Hress.Shared.ContentStorage.ConnectionString"];            
+
+        var key = config["Ez.Hress.Shared.Authentication.Key"];
+        var issuer = config["Ez.Hress.Shared.Authentication.Issuer"];
+        var audience = config["Ez.Hress.Shared.Authentication.Audience"];
+        var salt = config["Ez.Hress.Shared.Authentication.Salt"];
+
+        IConfigurationDataAccess configurationDataAccess = new ConfigurationSqlAccess(dbConnectionInfo);
+        config = new ConfigurationBuilder()
+            .AddConfiguration(config)
+            .Add(new HressConfigurationSource(configurationDataAccess))
+            .Build();
+
+        services.AddSingleton<IConfiguration>(config);
+
+        services.AddMvcCore().AddNewtonsoftJson(options =>
         {
-            var config = new ConfigurationBuilder()
-                .AddJsonFile("host.json", optional: true)
-                .AddEnvironmentVariables()
-                .Build();
+            options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+            options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
+        });
 
-            ConfigureServices(builder.Services, config);
-        }
+        // Connection details
+        services.AddSingleton(dbConnectionInfo);
+        services.AddSingleton(new BlobConnectionInfo(contentStorageConnectionString));
 
-        public static void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
-        {
-            var dbConnectionString = config["Ez.Hress.Database.ConnectionString"];
-            DbConnectionInfo dbConnectionInfo = new(dbConnectionString);
-            var contentStorageConnectionString = config["Ez.Hress.Shared.ContentStorage.ConnectionString"];            
+        // Types
+        services.AddSingleton<ITypeDataAccess, TypeSqlAccess>();
+        services.AddSingleton<ITypeInteractor, TypeInteractor>();
 
-            var key = config["Ez.Hress.Shared.Authentication.Key"];
-            var issuer = config["Ez.Hress.Shared.Authentication.Issuer"];
-            var audience = config["Ez.Hress.Shared.Authentication.Audience"];
-            var salt = config["Ez.Hress.Shared.Authentication.Salt"];
+        // Clients
+        services.AddSingleton(new TableClient(contentStorageConnectionString, "DinnerPartyElection"));
+        services.AddSingleton(new TableClient(contentStorageConnectionString, "HardheadVotes"));
 
-            IConfigurationDataAccess configurationDataAccess = new ConfigurationSqlAccess(dbConnectionInfo);
-            config = new ConfigurationBuilder()
-                .AddConfiguration(config)
-                .Add(new HressConfigurationSource(configurationDataAccess))
-                .Build();
+        // Authentication
+        services.AddSingleton(new AuthenticationInfo(key, issuer, audience, salt));
+        services.AddSingleton<IAuthenticationDataAccess, AuthenticationSqlAccess>();
+        services.AddSingleton<AuthenticationInteractor>();
 
-            services.AddSingleton<IConfiguration>(config);
+        // User
+        services.AddSingleton<IUserDataAccess, UserSqlDataAccess>();
+        services.AddSingleton<IUserInteractor, UserInteractor>();
 
-            services.AddMvcCore().AddNewtonsoftJson(options =>
-            {
-                options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                options.SerializerSettings.DefaultValueHandling = DefaultValueHandling.Ignore;
-            });
+        services.AddSingleton<IUserProfileDataAccess, UserProfileSqlDataAccess>();
+        services.AddSingleton<UserProfileInteractor>();
 
-            // Connection details
-            services.AddSingleton(dbConnectionInfo);
-            services.AddSingleton(new BlobConnectionInfo(contentStorageConnectionString));
+        // Menu
+        services.AddSingleton<IMenuDataAccess, MenuSqlDataAccess>();
+        services.AddSingleton<MenuInteractor>();
 
-            // Types
-            services.AddSingleton<ITypeDataAccess, TypeSqlAccess>();
-            services.AddSingleton<ITypeInteractor, TypeInteractor>();
+        // News
+        services.AddSingleton<INewsDataAccess, NewsSqlDataAccess>();
+        services.AddSingleton<NewsInteractor>();
 
-            // Clients
-            services.AddSingleton(new TableClient(contentStorageConnectionString, "DinnerPartyElection"));
-            services.AddSingleton(new TableClient(contentStorageConnectionString, "HardheadVotes"));
+        // Dinner Party
+        services.AddSingleton<IDinnerPartyDataAccess, DinnerPartySqlDataAccess>();
+        services.AddSingleton<DinnerPartyInteractor>();
 
-            // Authentication
-            services.AddSingleton(new AuthenticationInfo(key, issuer, audience, salt));
-            services.AddSingleton<IAuthenticationDataAccess, AuthenticationSqlAccess>();
-            services.AddSingleton<AuthenticationInteractor>();
+        // Image
+        services.AddSingleton<IImageInfoDataAccess, ImageInfoSqlDataAccess>();
+        services.AddSingleton<IImageContentDataAccess, ImageContentHttpDataAccess>();
+        services.AddSingleton<IImageContentDataAccess, ImageContentRelativeDataAccess>();
+        services.AddSingleton<IImageContentDataAccess, ImageContentBlobDataAccess>();
+        services.AddSingleton<ImageInteractor>();
 
-            // User
-            services.AddSingleton<IUserDataAccess, UserSqlDataAccess>();
-            services.AddSingleton<IUserInteractor, UserInteractor>();
+        // Albums
+        services.AddSingleton<IAlbumDataAccess, AlbumSqlDataAccess>();
+        services.AddSingleton<AlbumInteractor>();
 
-            services.AddSingleton<IUserProfileDataAccess, UserProfileSqlDataAccess>();
-            services.AddSingleton<UserProfileInteractor>();
+        // Election (Shared)
+        services.AddSingleton<ElectionInteractor>();
+        services.AddSingleton<IElectionVoterDataAccess, ElectionSqlAccess>();
+        services.AddSingleton<IElectionVoteDataAccess, ElectionVoteTableAccess>();
 
-            // Menu
-            services.AddSingleton<IMenuDataAccess, MenuSqlDataAccess>();
-            services.AddSingleton<MenuInteractor>();
+        // Hardhead
+        services.AddSingleton<HardheadInteractor>();
+        services.AddSingleton<IHardheadDataAccess, HardheadSqlAccess>();
 
-            // News
-            services.AddSingleton<INewsDataAccess, NewsSqlDataAccess>();
-            services.AddSingleton<NewsInteractor>();
+        // Hardhead - Movie
+        services.AddSingleton<MovieInteractor>();
+        services.AddSingleton<IMovieDataAccess, MovieSqlAccess>();
 
-            // Dinner Party
-            services.AddSingleton<IDinnerPartyDataAccess, DinnerPartySqlDataAccess>();
-            services.AddSingleton<DinnerPartyInteractor>();
+        // Hardhead Election
+        services.AddSingleton<HardheadElectionInteractor>();
+        services.AddSingleton<IHardheadElectionDataAccess, HardheadElectionSqlAccess>();
 
-            // Image
-            services.AddSingleton<IImageInfoDataAccess, ImageInfoSqlDataAccess>();
-            services.AddSingleton<IImageContentDataAccess, ImageContentHttpDataAccess>();
-            services.AddSingleton<IImageContentDataAccess, ImageContentRelativeDataAccess>();
-            services.AddSingleton<IImageContentDataAccess, ImageContentBlobDataAccess>();
-            services.AddSingleton<ImageInteractor>();
+        // Hardhead - Award
+        services.AddSingleton<IAwardDataAccess, AwardSqlAccess>();
+        services.AddSingleton<AwardNominateInteractor>();
+        services.AddSingleton<IAwardNominateDataAccess, AwardNominateTableDataAccess>();
+        services.AddSingleton<AwardNominationInteractor>();
+        services.AddSingleton<IAwardNominationDataAccess, AwardNominateTableDataAccess>();
 
-            // Albums
-            services.AddSingleton<IAlbumDataAccess, AlbumSqlDataAccess>();
-            services.AddSingleton<AlbumInteractor>();
+        // Hardhead - Stats
+        services.AddSingleton<IHardheadStatisticsDataAccess, HardheadStatisticSqlDataAccess>();
+        services.AddSingleton<HardheadStatisticsInteractor>();
 
-            // Election (Shared)
-            services.AddSingleton<ElectionInteractor>();
-            services.AddSingleton<IElectionVoterDataAccess, ElectionSqlAccess>();
-            services.AddSingleton<IElectionVoteDataAccess, ElectionVoteTableAccess>();
+        // Hardhead - Rules
+        services.AddSingleton<IRuleChangeDataAccess, RuleChangeTableDataAccess>();
+        services.AddSingleton<IRuleDataAccess, RuleSqlDataAccess>();
+        services.AddSingleton<RuleInteractor>();
 
-            // Hardhead
-            services.AddSingleton<HardheadInteractor>();
-            services.AddSingleton<IHardheadDataAccess, HardheadSqlAccess>();
-
-            // Hardhead - Movie
-            services.AddSingleton<MovieInteractor>();
-            services.AddSingleton<IMovieDataAccess, MovieSqlAccess>();
-
-            // Hardhead Election
-            services.AddSingleton<HardheadElectionInteractor>();
-            services.AddSingleton<IHardheadElectionDataAccess, HardheadElectionSqlAccess>();
-
-            // Hardhead - Award
-            services.AddSingleton<IAwardDataAccess, AwardSqlAccess>();
-            services.AddSingleton<AwardNominateInteractor>();
-            services.AddSingleton<IAwardNominateDataAccess, AwardNominateTableDataAccess>();
-            services.AddSingleton<AwardNominationInteractor>();
-            services.AddSingleton<IAwardNominationDataAccess, AwardNominateTableDataAccess>();
-
-            // Hardhead - Stats
-            services.AddSingleton<IHardheadStatisticsDataAccess, HardheadStatisticSqlDataAccess>();
-            services.AddSingleton<HardheadStatisticsInteractor>();
-
-            // Hardhead - Rules
-            services.AddSingleton<IRuleChangeDataAccess, RuleChangeTableDataAccess>();
-            services.AddSingleton<IRuleDataAccess, RuleSqlDataAccess>();
-            services.AddSingleton<RuleInteractor>();
-
-            // Hardhead - PostElection
-            services.AddSingleton<PostElectionInteractor>();
-        }
+        // Hardhead - PostElection
+        services.AddSingleton<PostElectionInteractor>();
     }
 }

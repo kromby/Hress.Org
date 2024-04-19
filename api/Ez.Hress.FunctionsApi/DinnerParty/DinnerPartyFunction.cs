@@ -12,217 +12,216 @@ using System.Diagnostics;
 using Ez.Hress.MajorEvents.Entities;
 using Ez.Hress.Shared.UseCases;
 
-namespace Ez.Hress.FunctionsApi.DinnerParty
+namespace Ez.Hress.FunctionsApi.DinnerParty;
+
+public class DinnerPartyFunction
 {
-    public class DinnerPartyFunction
+    private readonly AuthenticationInteractor _authenticationInteractor;
+    private readonly DinnerPartyInteractor _dinnerPartyInteractor;
+
+    public DinnerPartyFunction(AuthenticationInteractor authenticationInteractor, DinnerPartyInteractor dinnerPartyInteractor)
     {
-        private readonly AuthenticationInteractor _authenticationInteractor;
-        private readonly DinnerPartyInteractor _dinnerPartyInteractor;
+        _authenticationInteractor = authenticationInteractor;
+        _dinnerPartyInteractor = dinnerPartyInteractor;
+    }
 
-        public DinnerPartyFunction(AuthenticationInteractor authenticationInteractor, DinnerPartyInteractor dinnerPartyInteractor)
+
+    [FunctionName("dinnerParties")]
+    public async Task<IActionResult> RunDinnerParties(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/{id:int?}")] HttpRequest req,
+        int? id, ILogger log)
+    {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunDinnerParties));
+
+        try
         {
-            _authenticationInteractor = authenticationInteractor;
-            _dinnerPartyInteractor = dinnerPartyInteractor;
+            if (id.HasValue)
+            {
+                log.LogInformation("[{Function}] Getting a specific dinner party.", nameof(RunDinnerParties));
+                var dinnerParty = await _dinnerPartyInteractor.GetDinnerPartyAsync(id.Value);
+                return new OkObjectResult(dinnerParty);
+            }
+
+            log.LogInformation("[{Function}] Getting a all dinner parties.", nameof(RunDinnerParties));
+            _ = int.TryParse(req.Query["top"], out int top);
+            _ = bool.TryParse(req.Query["includeGuests"], out bool includeGuests);
+            var dinnerParties = await _dinnerPartyInteractor.GetDinnerPartiesAsync(includeGuests, top);
+            return new OkObjectResult(dinnerParties);
         }
-
-
-        [FunctionName("dinnerParties")]
-        public async Task<IActionResult> RunDinnerParties(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/{id:int?}")] HttpRequest req,
-            int? id, ILogger log)
+        catch (ArgumentException aex)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
+            log.LogError(aex, "[RunNews] Invalid input");
+            return new BadRequestObjectResult(aex.Message);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "[RunNews] Unhandled error");
+            throw;
+        }
+        finally
+        {
+            stopwatch.Stop();
+            log.LogInformation($"[RunNews] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+        }
+    }
 
-            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunDinnerParties));
+    [FunctionName("dinnerPartiesCourses")]
+    public async Task<IActionResult> RunCourses(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/{id:int}/courses")] HttpRequest req,
+        int id, ILogger log)
+    {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
 
-            try
-            {
-                if (id.HasValue)
-                {
-                    log.LogInformation("[{Function}] Getting a specific dinner party.", nameof(RunDinnerParties));
-                    var dinnerParty = await _dinnerPartyInteractor.GetDinnerPartyAsync(id.Value);
-                    return new OkObjectResult(dinnerParty);
-                }
+        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunCourses));
 
-                log.LogInformation("[{Function}] Getting a all dinner parties.", nameof(RunDinnerParties));
-                _ = int.TryParse(req.Query["top"], out int top);
-                _ = bool.TryParse(req.Query["includeGuests"], out bool includeGuests);
-                var dinnerParties = await _dinnerPartyInteractor.GetDinnerPartiesAsync(includeGuests, top);
-                return new OkObjectResult(dinnerParties);
-            }
-            catch (ArgumentException aex)
+        try
+        {
+            var result = await _dinnerPartyInteractor.GetCoursesAsync(id);
+            return new OkObjectResult(result);
+        }
+        catch (ArgumentException aex)
+        {
+            log.LogError(aex, "[{Function}] Invalid input", nameof(RunCourses));
+            return new BadRequestObjectResult(aex.Message);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "[{Function}] Unhandled error", nameof(RunCourses));
+            throw;
+        }
+        finally
+        {
+            stopwatch.Stop();
+            log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunCourses), stopwatch.ElapsedMilliseconds);
+        }
+    }
+
+    [FunctionName("dinnerPartiesCoursesByType")]
+    public async Task<IActionResult> RunCoursesByType(
+        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "dinnerparties/courses/{typeID:int}")] HttpRequest req,
+        int typeID, ILogger log)
+    {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunCoursesByType));
+
+        try
+        {
+            if (req.Method == "GET")
             {
-                log.LogError(aex, "[RunNews] Invalid input");
-                return new BadRequestObjectResult(aex.Message);
+                log.LogInformation("[{Function}] Getting a all courses.", nameof(RunCoursesByType));
+                var courses = await _dinnerPartyInteractor.GetCoursesByTypeAsync(typeID);
+                return new OkObjectResult(courses);
             }
-            catch (Exception ex)
+
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+            if (!isJWTValid)
             {
-                log.LogError(ex, "[RunNews] Unhandled error");
-                throw;
+                log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunCoursesByType));
+                return new UnauthorizedResult();
             }
-            finally
+
+            log.LogInformation("[{Function}] Saving a vote.", nameof(RunCoursesByType));
+            string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            var vote = JsonConvert.DeserializeObject<Vote>(requestBody);
+            vote.TypeID = typeID;
+            vote.InsertedBy = userID;
+
+            log.LogInformation("[{Function}] Request body: {requestBody}", nameof(RunCoursesByType), requestBody);
+
+            await _dinnerPartyInteractor.SaveVoteAsync(vote);
+            return new OkResult();
+        }
+        catch (ArgumentException aex)
+        {
+            log.LogError(aex, "[{Function}] Invalid input", nameof(RunCoursesByType));
+            return new BadRequestObjectResult(aex.Message);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "[{Function}] Unhandled error", nameof(RunCoursesByType));
+            throw;
+        }
+        finally
+        {
+            stopwatch.Stop();
+            log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunCoursesByType), stopwatch.ElapsedMilliseconds);
+        }
+    }
+
+    [FunctionName("dinnerPartiesTeams")]
+    public async Task<IActionResult> RunTeams([HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/{id:int}/teams")] HttpRequest req,
+        int id, ILogger log)
+    {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunTeams));
+
+        try
+        {
+            var result = await _dinnerPartyInteractor.GetRedwineTeamsAsync(id);
+            return new OkObjectResult(result);
+        }
+        catch (ArgumentException aex)
+        {
+            log.LogError(aex, "[{Function}] Invalid input", nameof(RunTeams));
+            return new BadRequestObjectResult(aex.Message);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "[{Function}] Unhandled error", nameof(RunTeams));
+            throw;
+        }
+        finally
+        {
+            stopwatch.Stop();
+            log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunTeams), stopwatch.ElapsedMilliseconds);
+        }
+    }
+
+    [FunctionName("dinnerPartiesStatistics")]
+    public async Task<IActionResult> RunWinners([HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/statistic")] HttpRequest req,
+        ILogger log)
+    {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunWinners));
+
+        try
+        {
+            switch (req.Query["type"])
             {
-                stopwatch.Stop();
-                log.LogInformation($"[RunNews] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+                case "winners":
+                    var result = await _dinnerPartyInteractor.GetWinnerStatisticsAsync();
+                    return new OkObjectResult(result);
+                case "guests":
+                    var guestResult = await _dinnerPartyInteractor.GetGuestStatisticAsync();
+                    return new OkObjectResult(guestResult);
+                default:
+                    throw new ArgumentException("Query parameter type is missing or invalid.");
             }
         }
-
-        [FunctionName("dinnerPartiesCourses")]
-        public async Task<IActionResult> RunCourses(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/{id:int}/courses")] HttpRequest req,
-            int id, ILogger log)
+        catch (ArgumentException aex)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunCourses));
-
-            try
-            {
-                var result = await _dinnerPartyInteractor.GetCoursesAsync(id);
-                return new OkObjectResult(result);
-            }
-            catch (ArgumentException aex)
-            {
-                log.LogError(aex, "[{Function}] Invalid input", nameof(RunCourses));
-                return new BadRequestObjectResult(aex.Message);
-            }
-            catch (Exception ex)
-            {
-                log.LogError(ex, "[{Function}] Unhandled error", nameof(RunCourses));
-                throw;
-            }
-            finally
-            {
-                stopwatch.Stop();
-                log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunCourses), stopwatch.ElapsedMilliseconds);
-            }
+            log.LogError(aex, "[{Function}] Invalid input", nameof(RunWinners));
+            return new BadRequestObjectResult(aex.Message);
         }
-
-        [FunctionName("dinnerPartiesCoursesByType")]
-        public async Task<IActionResult> RunCoursesByType(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "dinnerparties/courses/{typeID:int}")] HttpRequest req,
-            int typeID, ILogger log)
+        catch (Exception ex)
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunCoursesByType));
-
-            try
-            {
-                if (req.Method == "GET")
-                {
-                    log.LogInformation("[{Function}] Getting a all courses.", nameof(RunCoursesByType));
-                    var courses = await _dinnerPartyInteractor.GetCoursesByTypeAsync(typeID);
-                    return new OkObjectResult(courses);
-                }
-
-                var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
-                if (!isJWTValid)
-                {
-                    log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunCoursesByType));
-                    return new UnauthorizedResult();
-                }
-
-                log.LogInformation("[{Function}] Saving a vote.", nameof(RunCoursesByType));
-                string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-                var vote = JsonConvert.DeserializeObject<Vote>(requestBody);
-                vote.TypeID = typeID;
-                vote.InsertedBy = userID;
-
-                log.LogInformation("[{Function}] Request body: {requestBody}", nameof(RunCoursesByType), requestBody);
-
-                await _dinnerPartyInteractor.SaveVoteAsync(vote);
-                return new OkResult();
-            }
-            catch (ArgumentException aex)
-            {
-                log.LogError(aex, "[{Function}] Invalid input", nameof(RunCoursesByType));
-                return new BadRequestObjectResult(aex.Message);
-            }
-            catch (Exception ex)
-            {
-                log.LogError(ex, "[{Function}] Unhandled error", nameof(RunCoursesByType));
-                throw;
-            }
-            finally
-            {
-                stopwatch.Stop();
-                log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunCoursesByType), stopwatch.ElapsedMilliseconds);
-            }
+            log.LogError(ex, "[{Function}] Unhandled error", nameof(RunWinners));
+            throw;
         }
-
-        [FunctionName("dinnerPartiesTeams")]
-        public async Task<IActionResult> RunTeams([HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/{id:int}/teams")] HttpRequest req,
-            int id, ILogger log)
+        finally
         {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunTeams));
-
-            try
-            {
-                var result = await _dinnerPartyInteractor.GetRedwineTeamsAsync(id);
-                return new OkObjectResult(result);
-            }
-            catch (ArgumentException aex)
-            {
-                log.LogError(aex, "[{Function}] Invalid input", nameof(RunTeams));
-                return new BadRequestObjectResult(aex.Message);
-            }
-            catch (Exception ex)
-            {
-                log.LogError(ex, "[{Function}] Unhandled error", nameof(RunTeams));
-                throw;
-            }
-            finally
-            {
-                stopwatch.Stop();
-                log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunTeams), stopwatch.ElapsedMilliseconds);
-            }
-        }
-
-        [FunctionName("dinnerPartiesStatistics")]
-        public async Task<IActionResult> RunWinners([HttpTrigger(AuthorizationLevel.Function, "get", Route = "dinnerparties/statistic")] HttpRequest req,
-            ILogger log)
-        {
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunWinners));
-
-            try
-            {
-                switch (req.Query["type"])
-                {
-                    case "winners":
-                        var result = await _dinnerPartyInteractor.GetWinnerStatisticsAsync();
-                        return new OkObjectResult(result);
-                    case "guests":
-                        var guestResult = await _dinnerPartyInteractor.GetGuestStatisticAsync();
-                        return new OkObjectResult(guestResult);
-                    default:
-                        throw new ArgumentException("Query parameter type is missing or invalid.");
-                }
-            }
-            catch (ArgumentException aex)
-            {
-                log.LogError(aex, "[{Function}] Invalid input", nameof(RunWinners));
-                return new BadRequestObjectResult(aex.Message);
-            }
-            catch (Exception ex)
-            {
-                log.LogError(ex, "[{Function}] Unhandled error", nameof(RunWinners));
-                throw;
-            }
-            finally
-            {
-                stopwatch.Stop();
-                log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunWinners), stopwatch.ElapsedMilliseconds);
-            }
+            stopwatch.Stop();
+            log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunWinners), stopwatch.ElapsedMilliseconds);
         }
     }
 }

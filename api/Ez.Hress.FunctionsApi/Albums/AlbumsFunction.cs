@@ -1,72 +1,68 @@
-using System;
-using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using Ez.Hress.Albums.UseCases;
 using Ez.Hress.Shared.UseCases;
 
-namespace Ez.Hress.FunctionsApi.Albums
+namespace Ez.Hress.FunctionsApi.Albums;
+
+public class AlbumsFunction
 {
-    public class AlbumsFunction
+    private readonly AlbumInteractor _albumInteractor;
+    private readonly AuthenticationInteractor _authenticationInteractor;
+    public AlbumsFunction(AuthenticationInteractor authenticationInteractor, AlbumInteractor albumInteractor)
     {
-        private readonly AlbumInteractor _albumInteractor;
-        private readonly AuthenticationInteractor _authenticationInteractor;
-        public AlbumsFunction(AuthenticationInteractor authenticationInteractor, AlbumInteractor albumInteractor)
+        _authenticationInteractor = authenticationInteractor;
+        _albumInteractor = albumInteractor;
+    }
+
+    [FunctionName("albums")]
+    public async Task<IActionResult> RunAlbums(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "albums/{id:int?}")] HttpRequest req,
+        int? id, ILogger log)
+    {
+        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbums));
+
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+        if (!isJWTValid)
         {
-            _authenticationInteractor = authenticationInteractor;
-            _albumInteractor = albumInteractor;
+            log.LogInformation("[RunMagic] JWT is not valid!");
+            return new UnauthorizedResult();
         }
 
-        [FunctionName("albums")]
-        public async Task<IActionResult> RunAlbums(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "albums/{id:int?}")] HttpRequest req,
-            int? id, ILogger log)
+        if (id.HasValue)
         {
-            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbums));
-
-            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
-            if (!isJWTValid)
+            var entity = await _albumInteractor.GetAlbumAsync(id.Value);
+            if (entity == null)
             {
-                log.LogInformation("[RunMagic] JWT is not valid!");
-                return new UnauthorizedResult();
+                return new NotFoundResult();
             }
 
-            if (id.HasValue)
-            {
-                var entity = await _albumInteractor.GetAlbumAsync(id.Value);
-                if (entity == null)
-                {
-                    return new NotFoundResult();
-                }
-
-                return new OkObjectResult(entity);
-            }
-
-            var list = await _albumInteractor.GetAlbumsAsync();
-            return new OkObjectResult(list);
+            return new OkObjectResult(entity);
         }
 
-        [FunctionName("albumImages")]
-        public async Task<IActionResult> RunAlbumImages(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = "albums/{albumID:int}/images")] HttpRequest req,
-            int albumID, ILogger log)
+        var list = await _albumInteractor.GetAlbumsAsync();
+        return new OkObjectResult(list);
+    }
+
+    [FunctionName("albumImages")]
+    public async Task<IActionResult> RunAlbumImages(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "albums/{albumID:int}/images")] HttpRequest req,
+        int albumID, ILogger log)
+    {
+        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbumImages));
+
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+        if (!isJWTValid)
         {
-            log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbumImages));
-
-            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
-            if (!isJWTValid)
-            {
-                log.LogInformation("[RunMagic] JWT is not valid!");
-                return new UnauthorizedResult();
-            }
-
-            var list = await _albumInteractor.GetImagesAsync(albumID);
-            return new OkObjectResult(list);
+            log.LogInformation("[RunMagic] JWT is not valid!");
+            return new UnauthorizedResult();
         }
+
+        var list = await _albumInteractor.GetImagesAsync(albumID);
+        return new OkObjectResult(list);
     }
 }

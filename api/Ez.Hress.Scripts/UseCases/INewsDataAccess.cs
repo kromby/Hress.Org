@@ -1,20 +1,14 @@
 ﻿using Ez.Hress.Scripts.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Ez.Hress.Scripts.UseCases
+namespace Ez.Hress.Scripts.UseCases;
+
+public interface INewsDataAccess
 {
-    public interface INewsDataAccess
-    {
-        Task<IList<News>> GetLatestNews(int top);
+    Task<IList<News>> GetLatestNews(int top);
 
-        Task<News> GetNews(int id);
+    Task<News> GetNews(int id);
 
-        Task<IList<News>> GetNews(DateTime date, bool useDay, bool useMonth, bool useYear);
+    Task<IList<News>> GetNews(DateTime date, bool useDay, bool useMonth, bool useYear);
 
-        Task<IList<StatisticNewsByDate>> GetNewsStatisticsByDate(int? year);
-    }
+    Task<IList<StatisticNewsByDate>> GetNewsStatisticsByDate(int? year);
 }

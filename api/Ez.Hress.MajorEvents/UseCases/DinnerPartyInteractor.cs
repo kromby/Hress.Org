@@ -2,106 +2,105 @@
 using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
 
-namespace Ez.Hress.MajorEvents.UseCases
+namespace Ez.Hress.MajorEvents.UseCases;
+
+public class DinnerPartyInteractor
 {
-    public class DinnerPartyInteractor
+    private readonly IDinnerPartyDataAccess _dinnerDataAccess;
+    private readonly ILogger<DinnerPartyInteractor> _log;
+
+    public DinnerPartyInteractor(IDinnerPartyDataAccess dinnerDataAccess, ILogger<DinnerPartyInteractor> logger)
     {
-        private readonly IDinnerPartyDataAccess _dinnerDataAccess;
-        private readonly ILogger<DinnerPartyInteractor> _log;
+        _dinnerDataAccess = dinnerDataAccess;
+        _log = logger;
+    }
 
-        public DinnerPartyInteractor(IDinnerPartyDataAccess dinnerDataAccess, ILogger<DinnerPartyInteractor> logger)
+    public async Task<IList<DinnerParty>> GetDinnerPartiesAsync(bool includeGuests, int top)
+    {
+        _log.LogInformation("[{Class}] GetDinnerParties", GetType().Name);
+        var list = await _dinnerDataAccess.GetAll();
+
+        if(top > 0)
         {
-            _dinnerDataAccess = dinnerDataAccess;
-            _log = logger;
+            list = list.Take<DinnerParty>(top).ToList();
         }
-    
-        public async Task<IList<DinnerParty>> GetDinnerPartiesAsync(bool includeGuests, int top)
-        {
-            _log.LogInformation("[{Class}] GetDinnerParties", GetType().Name);
-            var list = await _dinnerDataAccess.GetAll();
 
-            if(top > 0)
+        if (includeGuests)
+        {
+            foreach (var item in list)
             {
-                list = list.Take<DinnerParty>(top).ToList();
-            }
+                item.Guests = await _dinnerDataAccess.GetGuests(item.ID, 197);
 
-            if (includeGuests)
+                if (item.Guests.Count > 1 && item.Guests.First().ID == 2663)
+                    item.Guests = item.Guests.OrderBy(item => item.ID).ToList();
+            }
+        }
+
+        return list;
+    }
+
+    public async Task<DinnerParty?> GetDinnerPartyAsync(int id)
+    {
+        var dinnerPartyTask = _dinnerDataAccess.GetById(id);
+        var guestsTask = _dinnerDataAccess.GetGuests(id, null);
+        var albumsTask = _dinnerDataAccess.GetAlbums(id);
+
+        var dinnerParty = await dinnerPartyTask;
+        if (dinnerParty == null) 
+            return null;
+
+        guestsTask.Wait();            
+        dinnerParty.Guests = guestsTask.Result;
+        albumsTask.Wait();
+        if(albumsTask.Result?.Count > 0)
+        {
+            dinnerParty.Albums = albumsTask.Result;
+        }
+
+        return dinnerParty;
+    }
+
+    public async Task<IList<Course>> GetCoursesAsync(int partyID)
+    {
+        return await _dinnerDataAccess.GetCourses(partyID);
+    }
+
+    public async Task<IList<Dish>> GetCoursesByTypeAsync(int typeID)
+    {
+        return await _dinnerDataAccess.GetCoursesByTypeId(typeID);
+    }
+
+    public async Task<IList<PartyTeam>> GetRedwineTeamsAsync(int partyID)
+    {            
+        var userThread = _dinnerDataAccess.GetChildUsers(partyID);
+        var teams = await _dinnerDataAccess.GetChilds(partyID);
+        userThread.Wait();
+        var users = userThread.Result;
+
+        foreach(var team in teams)
+        {
+            team.Members = users.Where(m => m.ParentID == team.ID).ToList();
+            if (team.HasQuiz)
             {
-                foreach (var item in list)
-                {
-                    item.Guests = await _dinnerDataAccess.GetGuests(item.ID, 197);
-
-                    if (item.Guests.Count > 1 && item.Guests.First().ID == 2663)
-                        item.Guests = item.Guests.OrderBy(item => item.ID).ToList();
-                }
+                team.QuizQuestions = await _dinnerDataAccess.GetQuizQuestions(team.ID);
             }
-
-            return list;
         }
 
-        public async Task<DinnerParty?> GetDinnerPartyAsync(int id)
-        {
-            var dinnerPartyTask = _dinnerDataAccess.GetById(id);
-            var guestsTask = _dinnerDataAccess.GetGuests(id, null);
-            var albumsTask = _dinnerDataAccess.GetAlbums(id);
+        return teams;
+    }
 
-            var dinnerParty = await dinnerPartyTask;
-            if (dinnerParty == null) 
-                return null;
+    public async Task<IList<PartyWinner>> GetGuestStatisticAsync()
+    {
+        return await _dinnerDataAccess.GetGuestStatistic();
+    }
 
-            guestsTask.Wait();            
-            dinnerParty.Guests = guestsTask.Result;
-            albumsTask.Wait();
-            if(albumsTask.Result?.Count > 0)
-            {
-                dinnerParty.Albums = albumsTask.Result;
-            }
+    public async Task<IList<PartyWinner>> GetWinnerStatisticsAsync()
+    {
+        return await _dinnerDataAccess.GetWinnerStatistic();
+    }
 
-            return dinnerParty;
-        }
-
-        public async Task<IList<Course>> GetCoursesAsync(int partyID)
-        {
-            return await _dinnerDataAccess.GetCourses(partyID);
-        }
-
-        public async Task<IList<Dish>> GetCoursesByTypeAsync(int typeID)
-        {
-            return await _dinnerDataAccess.GetCoursesByTypeId(typeID);
-        }
-
-        public async Task<IList<PartyTeam>> GetRedwineTeamsAsync(int partyID)
-        {            
-            var userThread = _dinnerDataAccess.GetChildUsers(partyID);
-            var teams = await _dinnerDataAccess.GetChilds(partyID);
-            userThread.Wait();
-            var users = userThread.Result;
-
-            foreach(var team in teams)
-            {
-                team.Members = users.Where(m => m.ParentID == team.ID).ToList();
-                if (team.HasQuiz)
-                {
-                    team.QuizQuestions = await _dinnerDataAccess.GetQuizQuestions(team.ID);
-                }
-            }
-
-            return teams;
-        }
-
-        public async Task<IList<PartyWinner>> GetGuestStatisticAsync()
-        {
-            return await _dinnerDataAccess.GetGuestStatistic();
-        }
-
-        public async Task<IList<PartyWinner>> GetWinnerStatisticsAsync()
-        {
-            return await _dinnerDataAccess.GetWinnerStatistic();
-        }
-
-        public async Task SaveVoteAsync(Vote vote)
-        {
-            await _dinnerDataAccess.SaveVote(vote);
-        }
+    public async Task SaveVoteAsync(Vote vote)
+    {
+        await _dinnerDataAccess.SaveVote(vote);
     }
 }
