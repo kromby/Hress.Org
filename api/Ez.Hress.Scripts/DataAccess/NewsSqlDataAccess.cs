@@ -38,8 +38,10 @@ public class NewsSqlDataAccess : INewsDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
         command.Parameters.AddWithValue("top", top);
 
         var list = new List<News>();
@@ -114,8 +116,10 @@ public class NewsSqlDataAccess : INewsDataAccess
         {
             await connection.OpenAsync();
 
-            using var command = new SqlCommand(sql);
-            command.Connection = connection;
+            using var command = new SqlCommand(sql)
+            {
+                Connection = connection
+            };
             command.Parameters.AddWithValue("id", id);
 
             using var reader = await command.ExecuteReaderAsync();
@@ -159,8 +163,10 @@ public class NewsSqlDataAccess : INewsDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
 
         if (useDay)
         {
@@ -209,8 +215,10 @@ public class NewsSqlDataAccess : INewsDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
 
         var list = new List<StatisticNewsByDate>();
 

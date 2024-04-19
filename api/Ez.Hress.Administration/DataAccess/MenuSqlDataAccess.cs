@@ -53,8 +53,10 @@ public class MenuSqlDataAccess : IMenuDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand();
-        command.Connection = connection;
+        using var command = new SqlCommand()
+        {
+            Connection = connection
+        };
 
         command.Parameters.Add(new SqlParameter("componentType", typeCode));
 

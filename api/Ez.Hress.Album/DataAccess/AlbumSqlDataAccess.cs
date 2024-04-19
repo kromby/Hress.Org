@@ -34,8 +34,10 @@ public class AlbumSqlDataAccess : IAlbumDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
         command.Parameters.AddWithValue("id", id);
 
         using var reader = await command.ExecuteReaderAsync();
@@ -62,8 +64,10 @@ public class AlbumSqlDataAccess : IAlbumDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
 
         var list = new List<Album>();
 
@@ -106,8 +110,10 @@ public class AlbumSqlDataAccess : IAlbumDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
         command.Parameters.AddWithValue("id", albumID);
 
         var list = new List<ImageEntity>();

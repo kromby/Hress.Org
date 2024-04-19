@@ -39,8 +39,10 @@ public class DinnerPartySqlDataAccess : IDinnerPartyDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
 
         var list = new List<DinnerParty>();
 
@@ -94,8 +96,10 @@ public class DinnerPartySqlDataAccess : IDinnerPartyDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
 
         command.Parameters.AddWithValue("@id", id);
 
@@ -145,8 +149,10 @@ public class DinnerPartySqlDataAccess : IDinnerPartyDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
 
         command.Parameters.AddWithValue("@partyID", partyID);
 
@@ -191,8 +197,10 @@ public class DinnerPartySqlDataAccess : IDinnerPartyDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
 
         command.Parameters.AddWithValue("@partyID", partyID);
 
@@ -225,8 +233,10 @@ public class DinnerPartySqlDataAccess : IDinnerPartyDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
         command.Parameters.AddWithValue("partyID", partyID);
 
         var list = new List<Course>();
@@ -269,8 +279,10 @@ public class DinnerPartySqlDataAccess : IDinnerPartyDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
         command.Parameters.AddWithValue("typeID", typeID);
 
         var list = new List<Dish>();
@@ -310,8 +322,10 @@ public class DinnerPartySqlDataAccess : IDinnerPartyDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
 
         command.Parameters.AddWithValue("partyID", partyID);
         if (typeID.HasValue)
@@ -346,8 +360,10 @@ public class DinnerPartySqlDataAccess : IDinnerPartyDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
 
         command.Parameters.AddWithValue("id", partyID);
 
@@ -386,8 +402,10 @@ public class DinnerPartySqlDataAccess : IDinnerPartyDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
         command.Parameters.AddWithValue("teamID", teamID);
         var list = new List<PartyQuiz>();
 
@@ -420,8 +438,10 @@ public class DinnerPartySqlDataAccess : IDinnerPartyDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
 
         var list = new List<PartyWinner>();
 
@@ -457,8 +477,10 @@ public class DinnerPartySqlDataAccess : IDinnerPartyDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
 
-        using var command = new SqlCommand(sql);
-        command.Connection = connection;
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
 
         var list = new List<PartyWinner>();
 
