@@ -20,13 +20,12 @@ const YearsSide = ({year}) => {
             }
         }
         
-        
-                
+        let url = "";
         if (year) {
-            var url = config.get("apiPath") + "/api/news/statistics/years/" + year + "/months";   
+            url = config.get("apiPath") + "/api/news/statistics/years/" + year + "/months";   
             setYearQS(year);
         } else {
-            var url = config.get('apiPath') + "/api/news/statistics/years";
+            url = config.get('apiPath') + "/api/news/statistics/years";
         }        
 
         if (!years || lastUrl != url) {
