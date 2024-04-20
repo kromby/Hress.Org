@@ -2,6 +2,7 @@ import React from 'react';
 import { act } from 'react-dom/test-utils';
 const axios = require('axios');
 import Guests from './guests';
+import { createRoot } from 'react-dom/client';
 
 jest.mock('axios');
 
@@ -16,7 +17,7 @@ describe('Guests', () => {
 
   afterEach(() => {
     // Clean up on exiting
-    ReactDOM.unmountComponentAtNode(container);
+    createRoot(container).unmountComponentAtNode(container);
     container.remove();
   });
 
@@ -46,7 +47,7 @@ describe('Guests', () => {
 
     // Render the component
     await act(async () => {
-      ReactDOM.render(<Guests hardheadID={123} />, container);
+      createRoot(container).render(<Guests hardheadID={123} />);
     });
 
     // Check if the error is displayed

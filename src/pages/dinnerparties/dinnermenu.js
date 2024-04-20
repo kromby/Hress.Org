@@ -44,6 +44,7 @@ const DinnerMenu = ({id}) => {
                             <h2>{course.name}</h2>
                             {course.dishes.map(dish =>
                                 <blockquote key={dish.id}>
+                                    {/* skipcq: JS-0440 */}
                                     <span dangerouslySetInnerHTML={{ __html: dish.name }} />
                                 </blockquote>
                             )}

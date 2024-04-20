@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Post } from "../../components";
 import { useAuth } from "../../context/auth"
 import axios from "axios";
 import config from 'react-global-configuration';
 import { useLocation, useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 
 const Password = () => {

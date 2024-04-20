@@ -25,6 +25,7 @@ function setConfig() {
 }
 setConfig();
 
+// skipcq: JS-0002
 console.log("Hress version: " + process.env.REACT_APP_VERSION);
 
 // ReactDOM.render(<App/>, document.getElementById('content'));

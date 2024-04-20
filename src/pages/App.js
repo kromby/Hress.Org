@@ -67,7 +67,6 @@ function App() {
       if (existingTokens !== undefined && existingTokens !== null) {
 
         if (existingTokens.token === null) {
-          console.log("checkExistingTokens - Faulty! remove from local storage");
           localStorage.removeItem("tokens");
           return;
         }
@@ -75,11 +74,9 @@ function App() {
         var decodedToken = jwt.decode(existingTokens.token, { complete: true });
         var dateNow = new Date();
         if ((decodedToken.payload.exp * 1000) < (dateNow.getTime() + 1)) {
-          console.log("checkExistingTokens - Expired! remove from local storage");
           localStorage.removeItem("tokens");
         }
         else {
-          console.log("checkExistingTokens - set auth tokens");
           localStorage.setItem("userID", decodedToken.payload.sub);
           setAuthTokens(existingTokens);
         }

@@ -1,11 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import config from 'react-global-configuration';
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Post } from "../../components";
 import Author from "../../components/author";
 import { useAuth } from "../../context/auth";
-import { useLocation } from "react-router-dom";
 
 
 const Profile = () => {

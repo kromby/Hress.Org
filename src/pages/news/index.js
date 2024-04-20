@@ -42,6 +42,7 @@ const News = () => {
                             <span className={news.imageAlign === 1 ? "image left" : news.imageAlign === 2 ? "image right" : null}>
                                 <img style={{"maxHeight": "500px"}} src={config.get("apiPath") + news.image.href} alt={news.name} />
                             </span> : null }
+                            {/* skipcq: JS-0440 */}
                             <span dangerouslySetInnerHTML={{ __html: news.content }} />
                         </p>}
                     image={isMobile || news.imageAlign === 4 ? config.get('apiPath') + news.image.href + "?width=1400" : null}

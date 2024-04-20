@@ -3,9 +3,8 @@ import axios from 'axios';
 import config from 'react-global-configuration';
 
 import { useAuth } from '../../context/auth';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import { Post } from '../../components';
-import { useLocation } from 'react-router-dom';
 
 function Login() {
     const [isError, setIsError] = useState(false);

@@ -4,8 +4,7 @@ import axios from "axios";
 import { Post } from "../../components";
 import AlbumImages from "./albumImages";
 import { useAuth } from "../../context/auth";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 
 const Album = () => {
     const { authTokens } = useAuth();

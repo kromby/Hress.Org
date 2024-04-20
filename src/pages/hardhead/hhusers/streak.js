@@ -39,7 +39,7 @@ const Streak = ({ id }) => {
                             </thead>
                             <tbody>
                                 {streaks ? streaks.slice(0, 10).map((streak, i) =>
-                                    <tr key={i}>
+                                    <tr key={streak.firstAttendedString}>
                                         <td>{streak.firstAttendedString}</td>
                                         <td>{streak.lastAttendedString}</td>
                                         <td>{streak.attendedCount}</td>

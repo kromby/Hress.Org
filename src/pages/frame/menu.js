@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { isMobile } from 'react-device-detect';
 import config from 'react-global-configuration';
 import { useAuth } from '../../context/auth';
 import axios from "axios";
-import { useNavigate } from 'react-router-dom';
 
 /**
  * Hook that alerts clicks outside of the passed ref

@@ -79,7 +79,7 @@ const ActorStats = () => {
                         </thead>
                         <tbody>
                             {stats.list.slice(0, pageSize).map((stat, i) =>
-                                <tr key={i}>
+                                <tr key={stat.text}>
                                     <td>{i + 1}</td>
                                     <td><Link to={"/hardhead?query=" + stat.text}>{stat.text}</Link></td>
                                     <td>{stat.attendedCount}</td>

@@ -27,7 +27,7 @@ const AttendanceStats = () => {
             getStats();
             setReload(false);
         }
-    }, [, url])
+    }, [url])
 
     const handleSubmit = async (event) => {
         
@@ -79,7 +79,7 @@ const AttendanceStats = () => {
                         </thead>
                         <tbody>
                             {stats.list.slice(0, pageSize).map((stat, i) =>
-                                <tr key={i}>
+                                <tr key={stat.user.id}>
                                     <td>{i + 1}</td>
                                     <td>
                                         {stat.user.profilePhoto ?

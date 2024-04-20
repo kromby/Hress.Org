@@ -76,7 +76,7 @@ const UserStatistics = ({ id }) => {
                             </thead>
                             <tbody>
                                 {userStatistics ? userStatistics.map((stat, i) => 
-                                <tr key={i}>
+                                <tr key={stat.typeName}>
                                     <td>{stat.typeName + " " + getPeriodTypeName(stat.periodTypeName)}</td>    
                                     <td>{stat.list[0] ? stat.list[0].attendedCount : 0}</td>
                                     <td>{stat.list[0] ? stat.list[0].firstAttendedString : null}</td>

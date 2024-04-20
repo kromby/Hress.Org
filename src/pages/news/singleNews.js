@@ -45,6 +45,7 @@ const SingleNews = () => {
                         date={news.inserted}
                         dateFormatted={news.insertedString}
                         author={news.author}
+                        // skipcq: JS-0440
                         body={<span dangerouslySetInnerHTML={{ __html: news.content }} />}
                         image={news.image?.id ? config.get('apiPath') + news.image.href + "?width=1400" : null}
                         actions={<p />}

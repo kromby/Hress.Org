@@ -34,8 +34,8 @@ const HHUsers = () => {
     return (
         <div id="main">
             {flag !== "new" ? [
-            <UserAwards id={params.id} />,
-            <UserStatistics id={params.id} />
+            <UserAwards key="one" id={params.id} />,
+            <UserStatistics key="two" id={params.id} />
             ] : null}
             { user ? <Challenge id={params.id} username={user.Name} profilePhoto={user.ProfilePhoto?.Href} /> : null}            
             {flag === "new" || flag === "all" ? <Streak id={params.id} /> : null}

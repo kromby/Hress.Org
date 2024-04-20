@@ -81,7 +81,7 @@ const HostStats = () => {
                         </thead>
                         <tbody>
                             {data.stats.list.slice(0, pageSize).map((stat, i) =>
-                                <tr key={i}>
+                                <tr key={stat.user.id}>
                                     <td>{i + 1}</td>
                                     <td>
                                         {typeof stat.user.profilePhoto !== 'undefined' && stat.user.profilePhoto !== null ?

@@ -1,6 +1,5 @@
 import axios from "axios";
-import { useEffect } from "react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Post } from "../../components";
 import config from "react-global-configuration";
 import { isMobile } from "react-device-detect";
@@ -51,6 +50,7 @@ const Teams = ({ id }) => {
                                 <h2>{"Lið #" + team.number} {team.isWinner ? "(Sigurliðið)" : null}</h2>
                                 {team.isWinner || team.wine ?
                                     <blockquote>
+                                        {/* skipcq: JS-0440 */}
                                         {team.wine ? <span dangerouslySetInnerHTML={{ __html: team.wine }} /> : null}
                                     </blockquote> : null}
                                 <div className="row gtr-uniform">
