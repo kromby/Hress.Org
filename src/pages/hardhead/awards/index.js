@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import { Post } from '../../../components';
@@ -7,7 +7,7 @@ import AwardsWinners from './awardsWinners';
 const Awards = () => {
     const [data, setData] = useState({ awards: null, isLoading: false, visible: false })
 
-    var url = config.get('path') + '/api/hardhead/awards?code=' + config.get('code');
+    const url = config.get('path') + '/api/hardhead/awards?code=' + config.get('code');
 
     useEffect(() => {
         const getAwards = async () => {
@@ -31,7 +31,7 @@ const Awards = () => {
     return (
         <div id="main">
             {data.visible ?
-                data.awards.map((award, i) =>
+                data.awards.map((award) =>
                     <Post key={award.ID}
                         id={award.ID}
                         href={"/hardhead/awards/" + award.ID}

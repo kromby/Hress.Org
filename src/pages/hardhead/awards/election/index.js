@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import Post from '../../../../components/post';
@@ -28,7 +28,7 @@ const Election = () => {
         }
 
         const getNextStep = async () => {
-            var url = config.get('apiPath') + '/api/elections/49/voters/access';
+            const url = config.get('apiPath') + '/api/elections/49/voters/access';
             axios.get(url, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             })
@@ -119,7 +119,7 @@ const Election = () => {
         window.parent.scrollTo(0, 0);
 
         try {
-            var url = config.get('apiPath') + '/api/elections/49/voters/access';
+            const url = config.get('apiPath') + '/api/elections/49/voters/access';
             const response = await axios.get(url, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });

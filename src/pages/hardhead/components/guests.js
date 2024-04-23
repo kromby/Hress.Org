@@ -1,4 +1,4 @@
-import React, { Component, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import config from 'react-global-configuration';
 import UserImage from '../../../components/users/userimage';
 import axios from "axios";
@@ -9,7 +9,7 @@ const Guests = ({ hardheadID }) => {
 
     useEffect(() => {
         const getGuests = async () => {
-            var url = `${config.get('apiPath')}/api/hardhead/${hardheadID}/guests`;
+            const url = `${config.get('apiPath')}/api/hardhead/${hardheadID}/guests`;
 
             axios.get(url)
                 .then((response) => setGuests(response.data))

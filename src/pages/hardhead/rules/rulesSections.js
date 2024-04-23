@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 
@@ -27,7 +27,7 @@ const RulesSections = ({id}) => {
     return (
         <ol>
             {data.visible ?
-                data.rules.map((rule, i) =>
+                data.rules.map((rule) =>
                     <li key={rule.id}>
                         {rule.name}
                     </li>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import Post from '../../../../components/post';
@@ -10,7 +10,7 @@ const NightOfTheYear = ({ID, Name, Href, Description, Date, Year, onSubmit}) => 
     const { authTokens } = useAuth();
     const [nights, setNights] = useState();
 
-    var url = config.get('path') + Href + '&code=' + config.get('code');
+    const url = config.get('path') + Href + '&code=' + config.get('code');
 
     useEffect(() => {
         const getHardheadUsers = async () => {

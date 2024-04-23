@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import SidePost from '../../../components/sidepost';
@@ -6,7 +6,7 @@ import SidePost from '../../../components/sidepost';
 const YearsSide = () => {
     const [data, setData] = useState({ years: null, isLoading: false, visible: false });
 
-    var url = config.get('path') + '/api/hardhead/years?code=' + config.get('code');
+    const url = config.get('path') + '/api/hardhead/years?code=' + config.get('code');
 
     useEffect(() => {
         const getYears = async () => {

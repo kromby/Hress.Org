@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import { Post } from '../../../components';
@@ -30,7 +30,7 @@ const HostStats = () => {
         }
     }, [url])
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async () => {
         
         if (pageSize > data.stats.list.length) {
             setPageSize(10);

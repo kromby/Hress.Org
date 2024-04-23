@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import { MiniPost } from '../../../components';
 import axios from 'axios';
@@ -13,7 +13,7 @@ const StatisticsSide = () => {
                 const max = 4;
                 const periodType = Math.round(min + Math.random() * (max - min));
 
-                var url = '';
+                let url = '';
                 if (new Date().getMinutes() % 2 === 0)
                     url = config.get('path') + '/api/hardhead/statistics/users?periodType=' + periodType + '&code=' + config.get('code');
                 else
@@ -34,7 +34,7 @@ const StatisticsSide = () => {
     }, [])
 
     const getDescription = (period, guest) => {
-        var description = "gestur";
+        let description = "gestur";
 
         if (guest === "gestur")
             description = "Oftast mætt";
@@ -52,7 +52,6 @@ const StatisticsSide = () => {
             description = description + " síðustu 2 árin";
         else if (period === "ThisYear")
             description = description + " á þessu ári";
-
 
         return description;
     }

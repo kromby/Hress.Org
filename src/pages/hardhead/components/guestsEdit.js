@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from "axios";
 import { useAuth } from '../../../context/auth';
@@ -12,7 +12,7 @@ const GuestsEdit = ({ hardheadID, users }) => {
     const [guests, setGuests] = useState();
 
     const getGuests = async () => {
-        var url = `${config.get('apiPath')}/api/hardhead/${hardheadID}/guests`;
+        const url = `${config.get('apiPath')}/api/hardhead/${hardheadID}/guests`;
         axios.get(url)
             .then(response => {
                 setGuests(response.data);
@@ -42,9 +42,9 @@ const GuestsEdit = ({ hardheadID, users }) => {
         if (authTokens !== undefined) {
             event.preventDefault();
             try {
-                var guestID = event.target.value;
-                var url = config.get('path') + '/api/hardhead/' + hardheadID + '/guests/' + guestID + '?code=' + config.get('code');
-                const response = await axios.post(url, {}, {
+                const guestID = event.target.value;
+                const url = config.get('path') + '/api/hardhead/' + hardheadID + '/guests/' + guestID + '?code=' + config.get('code');
+                await axios.post(url, {}, {
                     headers: { 'Authorization': 'token ' + authTokens.token },
                 });
                 getGuests();

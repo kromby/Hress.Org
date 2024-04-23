@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import config from 'react-global-configuration';
 import axios from "axios";
 import { useAuth } from '../../../../context/auth';
@@ -11,7 +11,7 @@ const Nominations = () => {
     const location = useLocation();
     const [users, setUsers] = useState();
 
-    var url = config.get('path') + '/api/hardhead/5384/users?code=' + config.get('code');
+    const url = config.get('path') + '/api/hardhead/5384/users?code=' + config.get('code');
 
     useEffect(() => {
         if (authTokens === undefined) {            
@@ -21,7 +21,7 @@ const Nominations = () => {
 
         const getUsers = async () => {
             try {
-                var userID = localStorage.getItem("userID");
+                const userID = localStorage.getItem("userID");
                 const response = await axios.get(url);
                 setUsers(response.data.filter(user => user.ID != userID));
             } catch (e) {

@@ -7,7 +7,6 @@ import { useAuth } from "../../../../context/auth";
 const RuleChanges = ({id, title, href, date, dateFormatted, description, current, selectedValue, selectedRule, onSubmit}) => {
     const { authTokens } = useAuth();
     const [changes, setChanges] = useState();
-    const [value, setValue] = useState(-1);
     const [fallbackRule, setFallbackRule] = useState();
 
     useEffect(() => {
@@ -39,7 +38,6 @@ const RuleChanges = ({id, title, href, date, dateFormatted, description, current
             newValue = -1;
         else
             newValue = 1;
-        setValue(newValue);
 
         var ruleID = event;
         if (ruleID === -1)

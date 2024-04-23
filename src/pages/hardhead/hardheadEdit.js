@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import config from 'react-global-configuration';
 import { Post } from '../../components';
 import DatePicker from 'react-datepicker';
@@ -30,9 +30,9 @@ const HardheadEdit = () => {
 
 		const getHardhead = async () => {
 			try {
-				var url = config.get('apiPath') + '/api/hardhead/' + params.hardheadID;
+				const url = config.get('apiPath') + '/api/hardhead/' + params.hardheadID;
 				const response = await axios.get(url)
-				var date = new Date(response.data.date);
+				const date = new Date(response.data.date);
 				setHardhead(response.data);
 				setDate(date);
 				setDescription(response.data.description)
@@ -45,7 +45,7 @@ const HardheadEdit = () => {
 
 		const getUsers = async () => {
 			try {
-				var url = config.get('path') + '/api/users?role=US_L_HEAD&code=' + config.get('code')
+				const url = config.get('path') + '/api/users?role=US_L_HEAD&code=' + config.get('code')
 				const response = await axios.get(url);
 				setUsers(response.data);
 			} catch (e) {
@@ -65,8 +65,8 @@ const HardheadEdit = () => {
 		setButtonEnabled(false);
 		event.preventDefault();
 		try {
-			var url = config.get('apiPath') + '/api/hardhead/' + params.hardheadID;
-			const response = await axios.put(url, {
+			const url = config.get('apiPath') + '/api/hardhead/' + params.hardheadID;
+			await axios.put(url, {
 				ID: params.hardheadID,
 				Number: hardhead.number,
 				Host: hardhead.host,

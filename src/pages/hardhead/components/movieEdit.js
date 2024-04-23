@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from "axios";
 import { useAuth } from '../../../context/auth';
@@ -24,11 +24,11 @@ const MovieEdit = ({ id }) => {
     const [movieKills, setMovieKills] = useState();
     const [hardheadKills, setHardheadKills] = useState();
 
-    var movieUrl = config.get("path") + "/api/movies/" + id + "?code=" + config.get("code");
+    const movieUrl = config.get("path") + "/api/movies/" + id + "?code=" + config.get("code");
 
     useEffect(() => {
         if (authTokens === undefined) {
-            navigate("/login", {state: { from: location.pathname }} );
+            navigate("/login", { state: { from: location.pathname } });
             return;
         }
 
@@ -72,7 +72,7 @@ const MovieEdit = ({ id }) => {
         if (authTokens !== undefined) {
             event.preventDefault();
             try {
-                const response = await axios.put(movieUrl, {
+                await axios.put(movieUrl, {
                     ID: ID,
                     Name: movieName,
                     Actor: actor,
@@ -106,8 +106,6 @@ const MovieEdit = ({ id }) => {
     const movieCallback = async (imdbId) => {
         try {
             const response = await axios.get("https://www.omdbapi.com/?apikey=" + config.get("omdb") + "&i=" + imdbId);
-            
-            
 
             setMovieName(response.data.Title);
             setActor(response.data.Actors.split(',')[0]);

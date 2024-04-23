@@ -10,16 +10,11 @@ const Stallone = ({ID, Name, Description, Date, Year, onSubmit}) => {
     const [stallones, setStallones] = useState();
     const [savingAllowed, setSavingAllowed] = useState(false);
     const [selectedUser, setSelectedUser] = useState();
-    const [userID, setUserID] = useState();
 
     useEffect(() => {
-
-        setUserID(localStorage.getItem("userID"));
-
         const getNominations = async () => {
             try {
-                // var url = config.get('path') + '/api/hardhead/awards/' + ID + '/nominations?code=' + config.get('code');
-                var url = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + ID;
+                const url = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + ID;
                 const response = await axios.get(url, {
                     headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
                 });
@@ -41,12 +36,11 @@ const Stallone = ({ID, Name, Description, Date, Year, onSubmit}) => {
             return;
         }
 
-        var userID = localStorage.getItem("userID");
+        const userID = localStorage.getItem("userID");
         if (event == userID) {
             alert("Ætlar þú í alvöru að kjósa sjálfan þig, það er ekki mjög Harðhausalegt.");
             return;
         }
-
 
         setSelectedUser(event);
         setSavingAllowed(true);
@@ -60,10 +54,10 @@ const Stallone = ({ID, Name, Description, Date, Year, onSubmit}) => {
             return;
         }
 
-        var voteData = [{ id: selectedUser, Value: stallones.filter(n => n.id === selectedUser)[0].nominee.id }];
+        const voteData = [{ id: selectedUser, Value: stallones.filter(n => n.id === selectedUser)[0].nominee.id }];
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            const url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, voteData, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });

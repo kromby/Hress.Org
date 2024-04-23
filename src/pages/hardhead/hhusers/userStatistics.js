@@ -75,7 +75,7 @@ const UserStatistics = ({ id }) => {
                                 </tr>
                             </thead>
                             <tbody>
-                                {userStatistics ? userStatistics.map((stat, i) => 
+                                {userStatistics ? userStatistics.map((stat) => 
                                 <tr key={stat.typeName}>
                                     <td>{stat.typeName + " " + getPeriodTypeName(stat.periodTypeName)}</td>    
                                     <td>{stat.list[0] ? stat.list[0].attendedCount : 0}</td>

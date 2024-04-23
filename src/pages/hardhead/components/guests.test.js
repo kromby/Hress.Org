@@ -1,4 +1,3 @@
-import React from 'react';
 import { act } from 'react-dom/test-utils';
 const axios = require('axios');
 import Guests from './guests';

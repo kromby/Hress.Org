@@ -1,5 +1,5 @@
 import React from 'react';
-import { Intro, MiniPost } from '../../components';
+import { Intro } from '../../components';
 import './sidebar.css';
 import NextHardhead from './components/nexthardhead';
 import AwardsSide from './awards/awardsSide';

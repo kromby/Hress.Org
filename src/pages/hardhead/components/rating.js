@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import config from 'react-global-configuration';
 import { useAuth } from '../../../context/auth';
 import axios from "axios";
@@ -22,7 +22,7 @@ const HardheadRating = ({id, nightRatingVisible, movieRatingVisible}) => {
         const getRatingData = async () => {
             if (authTokens !== undefined) {
                 try {
-                    var url = config.get('path') + '/api/hardhead/' + id + '/ratings?code=' + config.get('code');
+                    const url = config.get('path') + '/api/hardhead/' + id + '/ratings?code=' + config.get('code');
                     const response = await axios.get(url, {
                         headers: { 'Authorization': 'token ' + authTokens.token }
                     })
@@ -35,7 +35,7 @@ const HardheadRating = ({id, nightRatingVisible, movieRatingVisible}) => {
             }
         }
 
-        var loggedIn = authTokens ? true : false;
+        const loggedIn = authTokens ? true : false;
 
         if (!data.ratings || lastLoggedIn != loggedIn) {
             getRatingData();
@@ -61,8 +61,8 @@ const HardheadRating = ({id, nightRatingVisible, movieRatingVisible}) => {
     const saveRating = async (rate, type) => {
         if (authTokens !== undefined) {
             try {
-                var url = config.get('path') + '/api/hardhead/' + id + '/ratings?code=' + config.get('code');
-                const response = await axios.post(url, {
+                const url = config.get('path') + '/api/hardhead/' + id + '/ratings?code=' + config.get('code');
+                await axios.post(url, {
                     type: type,
                     rating: rate
                 }, {

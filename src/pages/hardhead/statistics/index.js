@@ -20,7 +20,7 @@
         [ ] - Gestgjafi með flest kvöld á einu ári
 */
 
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import GuestStats from './guestStats';
 import HostStats from './hostStats';
 import ActorStats from './actorStats';
@@ -36,7 +36,7 @@ const Statistics = () => {
         <div id="main">
             <ErrorBoundary
                 FallbackComponent={<div>Það vantar einhvern hressleika hér!</div>}
-                onError={(error, errorInfo) => {}}
+                onError={() => {}}
             >
                 <GuestStats />
                 <HostStats />

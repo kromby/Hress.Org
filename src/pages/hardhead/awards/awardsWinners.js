@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import Author from '../../../components/author';
@@ -50,7 +50,7 @@ const AwardsWinners = ({href, position, year}) => {
                 </thead>
                 <tbody>
                     {data.visible ?
-                        data.winners.map((winner, i) =>
+                        data.winners.map((winner) =>
                             <tr key={winner.ID}>
                                 <td>{position ? winner.Year : winner.Position}</td>
                                 <td>

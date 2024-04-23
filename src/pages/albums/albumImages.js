@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import config from "react-global-configuration";
 import axios from "axios";
-import Album from "./album";
 import { isMobile } from "react-device-detect";
 import { useAuth } from "../../context/auth";
 
@@ -12,7 +11,7 @@ const AlbumImages = ({url}) => {
 
     useEffect(() => {
         const getImages = async () => {
-            var _url = config.get("apiPath") + url;
+            const _url = config.get("apiPath") + url;
             try {
                 const response = await axios.get(_url, {
 					headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },

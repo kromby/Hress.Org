@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from "axios";
 import YouTube from 'react-youtube';
@@ -15,7 +15,7 @@ const Movie = ({id, photoPostback}) => {
         }
     };
 
-    var movieUrl = config.get("path") + "/api/movies/" + id + "?code=" + config.get("code");
+    const movieUrl = config.get("path") + "/api/movies/" + id + "?code=" + config.get("code");
 
     useEffect(() => {
         const getMovieData = async () => {

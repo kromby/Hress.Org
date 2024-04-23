@@ -28,7 +28,7 @@ const ActorStats = () => {
         }
     }, [url])
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async () => {
         
         if (pageSize > stats.list.length) {
             setPageSize(10);

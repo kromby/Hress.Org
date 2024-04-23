@@ -26,7 +26,7 @@ const StalloneNomination = ({ Type, Users }) => {
     }, [Users])
 
     const getNominations = async () => {
-        var getUrl = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + Type;
+        const getUrl = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + Type;
         axios.get(getUrl, {
             headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
         })
@@ -46,8 +46,8 @@ const StalloneNomination = ({ Type, Users }) => {
         event.preventDefault();
 
         try {
-            var postUrl = config.get('apiPath') + '/api/hardhead/awards/nominations';
-            const response = await axios.post(postUrl, {
+            const postUrl = config.get('apiPath') + '/api/hardhead/awards/nominations';
+            await axios.post(postUrl, {
                 typeID: Type,
                 description: description,
                 nomineeID: nominee,

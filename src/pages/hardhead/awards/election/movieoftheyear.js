@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import Post from '../../../../components/post';
@@ -10,7 +10,7 @@ const MovieOfTheYear = ({ID, Name, Href, Description, Date, Year, onSubmit}) => 
     const { authTokens } = useAuth();
     const [nights, setNights] = useState();
 
-    var url = config.get('path') + Href + '&code=' + config.get('code');
+    const url = config.get('path') + Href + '&code=' + config.get('code');
 
     useEffect(() => {
         const getHardheadUsers = async () => {
@@ -28,7 +28,7 @@ const MovieOfTheYear = ({ID, Name, Href, Description, Date, Year, onSubmit}) => 
         }
     }, [url])
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async () => {
 
         if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
@@ -36,7 +36,7 @@ const MovieOfTheYear = ({ID, Name, Href, Description, Date, Year, onSubmit}) => 
         }
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            const url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, [], {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token }
             });

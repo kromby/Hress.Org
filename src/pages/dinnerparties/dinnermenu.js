@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import {isMobile} from 'react-device-detect';
 import config from "react-global-configuration";
 import axios from "axios";
 import { Post } from "../../components";
 
 const DinnerMenu = ({id}) => {
     const [menu, setMenu] = useState();
-    const [lastHeader, setLastHeader] = useState();
     var isFirst = true;
 
     useEffect(() => {

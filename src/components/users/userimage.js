@@ -1,4 +1,3 @@
-import React, { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import { Link } from 'react-router-dom';
 import './userimage.css';
