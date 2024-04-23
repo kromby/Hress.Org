@@ -235,7 +235,7 @@ const RuleChange = () => {
                                 <div className="col-12">
                                     {error ? <b>{error}<br /></b> : null}
                                     <button
-                                        tooltip="Leggja fram reglubreytingu"
+                                        title="Leggja fram reglubreytingu"
                                         className="button large"
                                         disabled={!buttonEnabled}>Leggja til</button>
                                 </div>

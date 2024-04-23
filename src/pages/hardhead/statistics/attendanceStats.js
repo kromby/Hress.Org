@@ -98,7 +98,7 @@ const AttendanceStats = () => {
             }
             actions={
                 <div>
-                    <button tooltip="Sjá meira" className="button large" onClick={handleSubmit}>Sjá {getButtonText()} efstu</button>
+                    <button className="button large" onClick={handleSubmit}>Sjá {getButtonText()} efstu</button>
                 </div>
             }
         />

@@ -109,7 +109,7 @@ const DisappointmentNomination = ({ Type, Users }) => {
                         <div className="col-12">
                             {isSaved ? <b>Tilnefning skráð!<br /></b> : null}
                             {error ? <b>{error}<br /></b> : null}
-                            <button tooltip="Tilnefna" className="button large" disabled={!buttonEnabled}>Tilnefna</button>
+                            <button title="Tilnefna" className="button large" disabled={!buttonEnabled}>Tilnefna</button>
                         </div>
                     </div>
                 </form>,

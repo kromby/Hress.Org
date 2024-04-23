@@ -101,7 +101,7 @@ const Password = () => {
                             <div className="col-12"></div>
                             <div className="col-12">
                                 <button
-                                    tooltip="Vista"
+                                    title="Vista"
                                     className="button large"
                                     disabled={!buttonEnabled}>Breyta lykilorði</button>
                             </div>

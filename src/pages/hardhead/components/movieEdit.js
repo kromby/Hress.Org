@@ -190,11 +190,11 @@ const MovieEdit = ({ id }) => {
                         <input id="poster" type="text" name="poster" onChange={(ev) => handlePosterChange(ev)} defaultValue={imagePath} placeholder="Slóð á poster" />
                     </div>
                     <div className="col-4 col-12-xsmall">
-                        <button tooltip="Sækja mynd" className="button small" disabled={!imageGetEnabled} onClick={(ev) => getPostImage(ev, undefined)}>Sækja mynd</button>
+                        <button className="button small" disabled={!imageGetEnabled} onClick={(ev) => getPostImage(ev)}>Sækja mynd</button>
                     </div>
                     <div className="col-12">
                         {data.saved ? <b>Mynd vistuð!<br /></b> : null}
-                        <button tooltip="Vista mynd" className="button large" disabled={!buttonEnabled}>Vista mynd</button>
+                        <button className="button large" disabled={!buttonEnabled}>Vista mynd</button>
                     </div>
                 </div>
             </form>

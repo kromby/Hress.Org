@@ -126,7 +126,7 @@ const HardheadEdit = () => {
 									</div>
 									<div className="col-12">
 										{data.saved ? <b>Kvöld vistað!<br /></b> : null}
-										<button tooltip="Vista kvöld" className="button large" disabled={!buttonEnabled}>Vista kvöld</button>
+										<button className="button large" disabled={!buttonEnabled}>Vista kvöld</button>
 									</div>
 								</div>
 							</form>

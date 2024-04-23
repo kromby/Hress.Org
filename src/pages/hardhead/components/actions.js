@@ -39,7 +39,7 @@ const HardheadActions = ({id}) => {
             {data.visible ?
                 data.actions.map(action =>
                     <li key={action.link.href}>
-                        <a href={action.link.href} tooltip={action.description} className="button large">{action.name}</a>
+                        <a href={action.link.href} title={action.description} className="button large">{action.name}</a>
                     </li>) : null
             }
         </ul>
