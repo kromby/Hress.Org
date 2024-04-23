@@ -104,7 +104,7 @@ const Menu = ({visible, onClick}) => {
             </section>
 
             <section>
-                <ul className="links" onClick={() => onClick()}>
+                <ul className="links" onClick={() => onClick()}  onKeyPress={() => onClick()}>
                     {isMobile && links ? links.map(link =>
                         <li key={link.id}>
                             {link.isLegacy ?
@@ -142,7 +142,7 @@ const Menu = ({visible, onClick}) => {
             </section>
 
             <section>
-                <ul className="actions stacked" onClick={() => onClick()}>
+                <ul className="actions stacked" onClick={() => onClick()} onKeyPress={() => onClick()}>
                     {authTokens === undefined ?
                         <li key="One"><Link className="button large fit" to="login" state={{ from: location.pathname } }>Innskráning</Link></li> :
                         [<li key="Two">

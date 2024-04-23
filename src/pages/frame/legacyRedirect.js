@@ -29,7 +29,6 @@ const LegacyRedirect = () => {
 
         if (path) {
             navigate(path, { state: { from: location.pathname } });
-            return;
         }
     }, [])
 

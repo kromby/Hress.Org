@@ -51,7 +51,9 @@ const LegacyFrame = () => {
         </div>)
     } else {
         return (<div id="main">
+            {/* skipcq: JS-D010 */}
             <iframe
+                title={location.pathname}
                 src={"https://hress.azurewebsites.net/" + location.pathname}
                 width="100%"
                 height="2000px"

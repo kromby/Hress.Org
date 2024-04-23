@@ -21,7 +21,6 @@ const Password = () => {
     useEffect(() => {
         if (authTokens === undefined) {
             navigate("/login", {state: { from: location.pathname }} );
-                return;
         }
     })
 

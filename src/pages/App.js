@@ -111,13 +111,13 @@ function App() {
               <Navigation />
               <nav className="main">
                 <ul>
-                  <li className="search" onClick={() => toggleMenu(true)}>
+                  <li className="search" onClick={() => toggleMenu()}>
                     <a className="fa-search" href="#search">Search</a>
                     {/* <form id="search" method="get" action="#">
                     <input type="text" name="query" placeholder="Search" />
                   </form> */}
                   </li>
-                  <li className="menu" onClick={() => toggleMenu(true)}>
+                  <li className="menu" onClick={() => toggleMenu()}>
                     <a className="fa-bars" href="#menu">Menu</a>
                   </li>
                 </ul>
@@ -197,7 +197,7 @@ function App() {
               <Route path="news/history" element={<HistorySidebar />} />
             </Routes>
           </div>
-          <Menu visible={data.showMenu} onClick={() => toggleMenu(true)} />
+          <Menu visible={data.showMenu} onClick={() => toggleMenu()} />
         </BrowserRouter>
       </div>
     </AuthContext.Provider>
