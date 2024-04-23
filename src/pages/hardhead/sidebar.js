@@ -1,4 +1,3 @@
-import React from 'react';
 import { Intro } from '../../components';
 import './sidebar.css';
 import NextHardhead from './components/nexthardhead';

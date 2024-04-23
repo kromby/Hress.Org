@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import Post from '../../../../components/post';
