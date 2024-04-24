@@ -166,7 +166,7 @@ const MovieEdit = ({ id }) => {
             <form onSubmit={handleSubmit}>
                 <div className="row gtr-uniform">
                     <div className="col-6 col-12-xsmall">
-                        <TypeAheadDropDown defaultValue={movieName} placeholder="Nafn myndar" callback={(id) => movieCallback(id)} />
+                        <TypeAheadDropDown defaultValue={movieName} placeholder="Nafn myndar" callback={(newId) => movieCallback(newId)} />
                     </div>
                     <div className="col-6 col-12-xsmall">
                         <input id="actor" type="text" name="actor" onChange={(ev) => handleActorChange(ev)} defaultValue={actor} placeholder="Harðhaus" />

@@ -31,12 +31,12 @@ const StalloneNomination = ({ Type, Users }) => {
             headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
         })
             .then(response => setNominations(response.data))
-            .catch(error => {
-                if (error.response.status === 404) {
+            .catch(axiosError => {
+                if (axiosError.response.status === 404) {
                     console.log("[StalloneNomination] No nominations not found");
                 } else {
                     console.error("[StalloneNomination] Error getting access");
-                    console.error(error);
+                    console.error(axiosError);
                 }
             })
     }

@@ -11,11 +11,10 @@ const HardheadOfTheYear = ({ID, Name, Description, Date, Year, Href, onSubmit}) 
     const [savingAllowed, setSavingAllowed] = useState(false);
     const [selectedUser, setSelectedUser] = useState();
 
-    var url = config.get('path') + Href + '&code=' + config.get('code');
-
-    useEffect(() => {
+        useEffect(() => {
         const getHardheadUsers = async () => {
             try {
+                const url = config.get('path') + Href + '&code=' + config.get('code');
                 const response = await axios.get(url);
                 setUsers(response.data);
             } catch (e) {
@@ -27,7 +26,7 @@ const HardheadOfTheYear = ({ID, Name, Description, Date, Year, Href, onSubmit}) 
         if (!users) {
             getHardheadUsers();
         }
-    }, [url])
+    }, [])
 
     const handleUserChange = async (event) => {
         if (authTokens === undefined) {
@@ -35,8 +34,8 @@ const HardheadOfTheYear = ({ID, Name, Description, Date, Year, Href, onSubmit}) 
             return;
         }
 
-        var userID = localStorage.getItem("userID");
-        if (event == userID) {
+        const userID = localStorage.getItem("userID");
+        if (event === userID) {
             alert("Ætlar þú í alvöru að kjósa sjálfan þig, það er ekki mjög Harðhausalegt.");
             return;
         }
@@ -54,7 +53,7 @@ const HardheadOfTheYear = ({ID, Name, Description, Date, Year, Href, onSubmit}) 
         }
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            const url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, [{
                 value: selectedUser
             }], {

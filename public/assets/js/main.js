@@ -70,7 +70,7 @@
 		$search_input
 			.on('keydown', function(event) {
 
-				if (event.keyCode == 27)
+				if (event.keyCode === 27)
 					$search_input.blur();
 
 			})

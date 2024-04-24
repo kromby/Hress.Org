@@ -28,7 +28,7 @@ const HardheadActions = ({id}) => {
 
         var loggedIn = authTokens ? true : false;
 
-        if (!data.actions || lastLoggedIn != loggedIn) {
+        if (!data.actions || lastLoggedIn !== loggedIn) {
             getActions();
             setLastLoggedIn(loggedIn);
         }

@@ -136,12 +136,12 @@ const RuleChange = () => {
         setButtonEnabled(allowSaving(event.target.value, ruleText, reasoning, selectedRule));
     }
 
-    const allowSaving = (category, text, reasoning, rule) => {
+    const allowSaving = (category, text, newReasoning, rule) => {
         
         if (category === undefined || category === "")
             return false;
 
-        if (reasoning === undefined || reasoning.length <= 10)
+        if (newReasoning === undefined || newReasoning.length <= 10)
             return false;
 
         if (selected === RuleChange.CREATE || selected === RuleChange.UPDATE) {

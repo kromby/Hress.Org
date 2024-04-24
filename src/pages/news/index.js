@@ -9,7 +9,7 @@ const News = () => {
 
     useEffect(() => {
         const getNews = async () => {
-            var url = config.get("apiPath") + "/api/news";
+            const url = config.get("apiPath") + "/api/news";
             try {
                 const response = await axios.get(url);
                 setNews(response.data);
@@ -28,24 +28,24 @@ const News = () => {
 
     return (
         <div id="main">
-            {news ? news.map(news => 
-                <Post key={news.id}
-                    id={news.id}
-                    href={"/news/" + news.id}
-                    title={news.name}
-                    date={news.inserted}
-                    dateFormatted={news.insertedString}
-                    author={news.author}
+            {news ? news.map(singleNews => 
+                <Post key={singleNews.id}
+                    id={singleNews.id}
+                    href={"/news/" + singleNews.id}
+                    title={singleNews.name}
+                    date={singleNews.inserted}
+                    dateFormatted={singleNews.insertedString}
+                    author={singleNews.author}
                     body={
-                        <p style={news.image && news.imageAlign !== 4 ? { "minHeight": news.image.height-50 } : null}>
-                            {!isMobile && news.imageAlign != 4 ?
-                            <span className={news.imageAlign === 1 ? "image left" : news.imageAlign === 2 ? "image right" : null}>
-                                <img style={{"maxHeight": "500px"}} src={config.get("apiPath") + news.image.href} alt={news.name} />
+                        <p style={singleNews.image && singleNews.imageAlign !== 4 ? { "minHeight": singleNews.image.height-50 } : null}>
+                            {!isMobile && singleNews.imageAlign !== 4 ?
+                            <span className={singleNews.imageAlign === 1 ? "image left" : singleNews.imageAlign === 2 ? "image right" : null}>
+                                <img style={{"maxHeight": "500px"}} src={config.get("apiPath") + singleNews.image.href} alt={singleNews.name} />
                             </span> : null }
                             {/* skipcq: JS-0440 */}
-                            <span dangerouslySetInnerHTML={{ __html: news.content }} />
+                            <span dangerouslySetInnerHTML={{ __html: singleNews.content }} />
                         </p>}
-                    image={isMobile || news.imageAlign === 4 ? config.get('apiPath') + news.image.href + "?width=1400" : null}
+                    image={isMobile || singleNews.imageAlign === 4 ? config.get('apiPath') + singleNews.image.href + "?width=1400" : null}
                     actions = {<p />}
                 />
             ) : null}

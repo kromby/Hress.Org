@@ -6,15 +6,14 @@ import { useAuth } from '../../../../context/auth';
 import HardheadRating from '../../components/rating';
 import HardheadBody from '../../components/hardheadbody';
 
-const NightOfTheYear = ({ID, Name, Href, Description, Date, Year, onSubmit}) => {
+const NightOfTheYear = ({ ID, Name, Href, Description, Date, Year, onSubmit }) => {
     const { authTokens } = useAuth();
     const [nights, setNights] = useState();
-
-    const url = config.get('path') + Href + '&code=' + config.get('code');
 
     useEffect(() => {
         const getHardheadUsers = async () => {
             try {
+                const url = config.get('path') + Href + '&code=' + config.get('code');
                 const response = await axios.get(url);
                 setNights(response.data);
             } catch (e) {
@@ -26,7 +25,7 @@ const NightOfTheYear = ({ID, Name, Href, Description, Date, Year, onSubmit}) => 
         if (!nights) {
             getHardheadUsers();
         }
-    }, [url])
+    }, [])
 
     const handelSubmit = async () => {
 
@@ -36,7 +35,7 @@ const NightOfTheYear = ({ID, Name, Href, Description, Date, Year, onSubmit}) => 
         }
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            const url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, [], {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token }
             });

@@ -44,12 +44,12 @@ function App() {
   const TRACKING_ID = "G-Z6HJ4VPZTN";
 
 
-  const setTokens = (data) => {
-    if (data) {
-      localStorage.setItem("tokens", JSON.stringify(data));
-      var decodedToken = jwt.decode(data.token, { complete: true });
+  const setTokens = (tokenData) => {
+    if (tokenData) {
+      localStorage.setItem("tokens", JSON.stringify(tokenData));
+      var decodedToken = jwt.decode(tokenData.token, { complete: true });
       localStorage.setItem("userID", decodedToken.payload.sub);
-      setAuthTokens(data);
+      setAuthTokens(tokenData);
     } else {
       setAuthTokens();
       localStorage.removeItem("tokens");

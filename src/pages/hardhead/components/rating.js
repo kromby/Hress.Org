@@ -37,7 +37,7 @@ const HardheadRating = ({id, nightRatingVisible, movieRatingVisible}) => {
 
         const loggedIn = authTokens ? true : false;
 
-        if (!data.ratings || lastLoggedIn != loggedIn) {
+        if (!data.ratings || lastLoggedIn !== loggedIn) {
             getRatingData();
             setLastLoggedIn(loggedIn);
         }

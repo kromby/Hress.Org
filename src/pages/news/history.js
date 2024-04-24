@@ -36,7 +36,7 @@ const HistoryNews = () => {
             document.title = "Gamlar fréttir | Hress.Org";
         }        
 
-        if (!news || lastUrl != url) {
+        if (!news || lastUrl !== url) {
             setLastUrl(url);
             getNews(url);
         }
@@ -60,7 +60,7 @@ const HistoryNews = () => {
                         author={news.author}
                         body={
                             <p style={news.image && news.imageAlign !== 4 ? { "minHeight": news.image.height - 50 } : null}>
-                                {!isMobile && news.image && news.imageAlign != 4 ?
+                                {!isMobile && news.image && news.imageAlign !== 4 ?
                                     <span className={news.imageAlign === 1 ? "image left" : news.imageAlign === 2 ? "image right" : null}>
                                         <img style={{ "maxHeight": "500px" }} src={config.get("apiPath") + news.image.href} alt={news.name} />
                                     </span> : null}                                

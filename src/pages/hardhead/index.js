@@ -55,7 +55,7 @@ const Hardhead = () => {
 
 		var url = getHardheadsUrl();
 
-		if (!hardheads || lastUrl != url) {
+		if (!hardheads || lastUrl !== url) {
 			getHardheads(url);
 			setLastUrl(url);
 		}

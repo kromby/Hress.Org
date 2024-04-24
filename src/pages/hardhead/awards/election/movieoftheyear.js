@@ -10,11 +10,10 @@ const MovieOfTheYear = ({ID, Name, Href, Description, Date, Year, onSubmit}) => 
     const { authTokens } = useAuth();
     const [nights, setNights] = useState();
 
-    const url = config.get('path') + Href + '&code=' + config.get('code');
-
     useEffect(() => {
         const getHardheadUsers = async () => {
             try {
+                const url = config.get('path') + Href + '&code=' + config.get('code');
                 const response = await axios.get(url);
                 setNights(response.data);
             } catch (e) {
@@ -26,7 +25,7 @@ const MovieOfTheYear = ({ID, Name, Href, Description, Date, Year, onSubmit}) => 
         if (!nights) {
             getHardheadUsers();
         }
-    }, [url])
+    }, [])
 
     const handleSubmit = async () => {
 

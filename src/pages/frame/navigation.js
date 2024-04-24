@@ -23,8 +23,8 @@ const Navigation = () => {
             }
         }
 
-        if (!links || loggedIn != (authTokens != undefined)) {
-            setLoggedIn(authTokens != undefined);
+        if (!links || loggedIn !== (authTokens !== undefined)) {
+            setLoggedIn(authTokens !== undefined);
             getLinks();
         }
     }, [loggedIn, authTokens, links, url])

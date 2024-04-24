@@ -37,7 +37,7 @@ const Stallone = ({ID, Name, Description, Date, Year, onSubmit}) => {
         }
 
         const userID = localStorage.getItem("userID");
-        if (event == userID) {
+        if (event === userID) {
             alert("Ætlar þú í alvöru að kjósa sjálfan þig, það er ekki mjög Harðhausalegt.");
             return;
         }

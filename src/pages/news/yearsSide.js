@@ -28,7 +28,7 @@ const YearsSide = ({year}) => {
             url = config.get('apiPath') + "/api/news/statistics/years";
         }        
 
-        if (!years || lastUrl != url) {
+        if (!years || lastUrl !== url) {
             setLastUrl(url);
             getYears(url);
         }
@@ -36,12 +36,12 @@ const YearsSide = ({year}) => {
 
     return (
         <div>
-            {years ? years.map((year) =>
-                <li key={year.value}>
+            {years ? years.map((singleYear) =>
+                <li key={singleYear.value}>
                     <SidePost
-                        title={year.count + " fréttir"}
-                        dateString={yearQS ? year.valueString.replace("YEAR", yearQS) : year.valueString}
-                        href={yearQS ? "/news/history?year=" + yearQS + "&month=" + year.value : "/news/history?year=" + year.value}
+                        title={singleYear.count + " fréttir"}
+                        dateString={yearQS ? singleYear.valueString.replace("YEAR", yearQS) : singleYear.valueString}
+                        href={yearQS ? "/news/history?year=" + yearQS + "&month=" + singleYear.value : "/news/history?year=" + singleYear.value}
                     />
                 </li>
             ) : null}
