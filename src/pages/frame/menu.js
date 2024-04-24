@@ -29,7 +29,7 @@ function useOutsideAlerter(ref, visible, callback) {
     }, [ref, visible, callback]);
 }
 
-const Menu = ({visible, onClick}) => {
+const Menu = ({ visible, onClick }) => {
     const { authTokens, setAuthTokens } = useAuth();
     const [data, setData] = useState({ isLoading: false, menuItems: null, userID: 0 });
     const [path, setPath] = useState();
@@ -45,12 +45,12 @@ const Menu = ({visible, onClick}) => {
         const getMenuData = async (pathname) => {
 
             try {
-                var url = config.get('apiPath') + '/api/menus?navigateUrl=~' + pathname + '&fetchChildren=true';
+                const url = config.get('apiPath') + '/api/menus?navigateUrl=~' + pathname + '&fetchChildren=true';
                 if (authTokens !== undefined) {
                     const response = await axios.get(url, {
                         headers: { 'X-Custom-Authorization': 'token ' + authTokens.token }
                     });
-                    var userID = localStorage.getItem("userID");
+                    const userID = localStorage.getItem("userID");
                     setData({ menuItems: response.data, isLoading: false, visible: true, userID: userID })
                 }
                 else {
@@ -62,12 +62,12 @@ const Menu = ({visible, onClick}) => {
                 console.error(e);
                 setData({ isLoading: false, visible: false });
             }
-        }      
+        }
 
         const getLinks = async () => {
             try {
-                var url = config.get("apiPath") + "/api/menus";
-                var headers = authTokens ? { headers: { 'X-Custom-Authorization': 'token ' + authTokens.token } } : null;
+                const url = config.get("apiPath") + "/api/menus";
+                const headers = authTokens ? { headers: { 'X-Custom-Authorization': 'token ' + authTokens.token } } : null;
                 const response = await axios.get(url, headers);
                 setLinks(response.data);
             } catch (e) {
@@ -75,15 +75,12 @@ const Menu = ({visible, onClick}) => {
             }
         }
 
-        
-
-        if (isMobile && (!links || loggedIn != (authTokens != undefined))) {
-            
-            setLoggedIn(authTokens != undefined);
+        if (isMobile && (!links || loggedIn !== (authTokens !== undefined))) {
+            setLoggedIn(authTokens !== undefined);
             getLinks();
         }
 
-        if (!data.menuItems || path != window.location.pathname) {
+        if (!data.menuItems || path !== window.location.pathname) {
             setPath(location.pathname);
             getMenuData(location.pathname);
         }
@@ -104,23 +101,23 @@ const Menu = ({visible, onClick}) => {
             </section>
 
             <section>
-                <ul className="links" onClick={() => onClick()}  onKeyPress={() => onClick()}>
+                <ul className="links" onClick={() => onClick()} onKeyPress={() => onClick()}>
                     {isMobile && links ? links.map(link =>
                         <li key={link.id}>
                             {link.isLegacy ?
-                                    <Link to={link.link.href + "?legacy=true"} target="_blank">
-                                        <h3>{link.name}</h3>
-                                        <p>{link.description}</p>
-                                    </Link>
-                                    :
-                                    <Link to={link.link.href.replace("{userID}", data.userID)}>
-                                        <h3>{link.name}</h3>
-                                        <p>{link.description}</p>
-                                    </Link>
-                                }
+                                <Link to={link.link.href + "?legacy=true"} target="_blank">
+                                    <h3>{link.name}</h3>
+                                    <p>{link.description}</p>
+                                </Link>
+                                :
+                                <Link to={link.link.href.replace("{userID}", data.userID)}>
+                                    <h3>{link.name}</h3>
+                                    <p>{link.description}</p>
+                                </Link>
+                            }
                         </li>
                     ) : null}
-                    {isMobile ? <hr/>: null}
+                    {isMobile ? <hr /> : null}
                     {data.visible ?
                         data.menuItems.map(item =>
                             <li key={item.id}>
@@ -144,7 +141,7 @@ const Menu = ({visible, onClick}) => {
             <section>
                 <ul className="actions stacked" onClick={() => onClick()} onKeyPress={() => onClick()}>
                     {authTokens === undefined ?
-                        <li key="One"><Link className="button large fit" to="login" state={{ from: location.pathname } }>Innskráning</Link></li> :
+                        <li key="One"><Link className="button large fit" to="login" state={{ from: location.pathname }}>Innskráning</Link></li> :
                         [<li key="Two">
                             <Link to={"/Profile"}>
                                 <h3>Prófíll</h3>
