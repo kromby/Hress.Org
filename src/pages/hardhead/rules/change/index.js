@@ -136,7 +136,7 @@ const RuleChange = () => {
         return true;
     }    
 
-    const handleTypeChange = async (event) => { setSelected(event); }
+    const handleTypeChange = (event) => { setSelected(event); }
     const handleTextChange = (event) => {
         setRuleText(event.target.value);
         setButtonEnabled(allowSaving(selectedCategory, event.target.value, reasoning, selectedRule));
