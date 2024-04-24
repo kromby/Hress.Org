@@ -27,6 +27,18 @@ const RuleChange = () => {
         DELETE: 211,
     })
 
+    const getRuleChanges = async () => {
+        try {
+            const url = config.get('apiPath') + '/api/hardhead/rules/changes';
+            const response = await axios.get(url, {
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+            });
+            setRuleChanges(response.data);
+        } catch (e) {
+            console.error(e);
+        }
+    }
+
     useEffect(() => {
         if (authTokens === undefined) {
             navigate("/login", { state: { from: location.pathname } });
@@ -59,18 +71,6 @@ const RuleChange = () => {
             const url = config.get('apiPath') + '/api/hardhead/rules/' + id;
             const response = await axios.get(url);
             setRules(response.data);
-        } catch (e) {
-            console.error(e);
-        }
-    }
-
-    const getRuleChanges = async () => {
-        try {
-            const url = config.get('apiPath') + '/api/hardhead/rules/changes';
-            const response = await axios.get(url, {
-                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
-            });
-            setRuleChanges(response.data);
         } catch (e) {
             console.error(e);
         }
