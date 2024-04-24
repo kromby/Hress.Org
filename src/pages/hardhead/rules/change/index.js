@@ -27,7 +27,6 @@ const RuleChange = () => {
         DELETE: 211,
     })
 
-
     useEffect(() => {
         if (authTokens === undefined) {
             navigate("/login", { state: { from: location.pathname } });
@@ -36,7 +35,7 @@ const RuleChange = () => {
 
         const getRuleCategories = async () => {
             try {
-                var url = config.get('apiPath') + '/api/hardhead/rules';
+                const url = config.get('apiPath') + '/api/hardhead/rules';
                 const response = await axios.get(url);
                 setRuleCategories(response.data);
             } catch (e) {
@@ -57,7 +56,7 @@ const RuleChange = () => {
 
     const getRules = async (id) => {
         try {
-            var url = config.get('apiPath') + '/api/hardhead/rules/' + id;
+            const url = config.get('apiPath') + '/api/hardhead/rules/' + id;
             const response = await axios.get(url);
             setRules(response.data);
         } catch (e) {
@@ -67,7 +66,7 @@ const RuleChange = () => {
 
     const getRuleChanges = async () => {
         try {
-            var url = config.get('apiPath') + '/api/hardhead/rules/changes';
+            const url = config.get('apiPath') + '/api/hardhead/rules/changes';
             const response = await axios.get(url, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
@@ -82,7 +81,7 @@ const RuleChange = () => {
         event.preventDefault();
 
         try {
-            var postUrl = config.get('apiPath') + '/api/hardhead/rules/changes';
+            const postUrl = config.get('apiPath') + '/api/hardhead/rules/changes';
             const response = await axios.post(postUrl, {
                 typeID: selected,
                 ruleText: ruleText,
@@ -115,6 +114,28 @@ const RuleChange = () => {
         }
     }
 
+    const allowSaving = (category, text, newReasoning, rule) => {        
+        if (category === undefined || category === "")
+            return false;
+
+        if (newReasoning === undefined || newReasoning.length <= 10)
+            return false;
+
+        if (selected === RuleChange.CREATE || selected === RuleChange.UPDATE) {
+            if (text === undefined || text.length <= 16)
+                return false;
+        }
+
+        if (selected === RuleChange.UPDATE || selected === RuleChange.DELETE) {
+            if (rule === undefined || rule === "")
+                return false;
+        }
+
+        setIsSaved(false);
+        setError("");
+        return true;
+    }    
+
     const handleTypeChange = async (event) => { setSelected(event); }
     const handleTextChange = (event) => {
         setRuleText(event.target.value);
@@ -135,32 +156,6 @@ const RuleChange = () => {
         setSelectedCategory(event.target.value);
         setButtonEnabled(allowSaving(event.target.value, ruleText, reasoning, selectedRule));
     }
-
-    const allowSaving = (category, text, newReasoning, rule) => {
-        
-        if (category === undefined || category === "")
-            return false;
-
-        if (newReasoning === undefined || newReasoning.length <= 10)
-            return false;
-
-        if (selected === RuleChange.CREATE || selected === RuleChange.UPDATE) {
-            if (text === undefined || text.length <= 16)
-                return false;
-        }
-
-        if (selected === RuleChange.UPDATE || selected === RuleChange.DELETE) {
-            if (rule === undefined || rule === "")
-                return false;
-        }
-
-        setIsSaved(false);
-        setError("");
-        return true;
-    }
-
-
-
 
     return (
         <div id="main">

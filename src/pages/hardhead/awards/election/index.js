@@ -48,9 +48,28 @@ const Election = () => {
         getNextStep();
     }, [authTokens])
 
+    const handleSubmit = async () => {
+        window.scrollTo(0, 0);
+        window.parent.scrollTo(0, 0);
+
+        try {
+            const url = config.get('apiPath') + '/api/elections/49/voters/access';
+            const response = await axios.get(url, {
+                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+            });
+            setStep(response.data);
+        } catch (error) {
+            if (error.response.status === 404) {
+                console.log("[Election] Access not found");
+                setStep(null);
+            } else {
+                console.error("[Election] Error getting access");
+                console.error(error);
+            }
+        }
+    }
+
     const getElement = (id, name, href) => {
-        
-        
         if (id === 100) /*Lög og reglur - nýjar og niðurfelldar reglur*/ {
             return <RulesNewOld key={id}
                 ID={id}
@@ -112,28 +131,7 @@ const Election = () => {
                 onSubmit={handleSubmit}
             />
         }
-    }
-
-    const handleSubmit = async () => {
-        window.scrollTo(0, 0);
-        window.parent.scrollTo(0, 0);
-
-        try {
-            const url = config.get('apiPath') + '/api/elections/49/voters/access';
-            const response = await axios.get(url, {
-                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
-            });
-            setStep(response.data);
-        } catch (error) {
-            if (error.response.status === 404) {
-                console.log("[Election] Access not found");
-                setStep(null);
-            } else {
-                console.error("[Election] Error getting access");
-                console.error(error);
-            }
-        }
-    }
+    }    
 
     return (
         <div id="main">

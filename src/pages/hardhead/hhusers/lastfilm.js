@@ -3,29 +3,27 @@ import axios from 'axios';
 import config from 'react-global-configuration';
 import { MiniPost } from "../../../components";
 
-const LastFilm = ({userID}) => {
+const LastFilm = ({ userID }) => {
     const [hardhead, setHardhead] = useState();
     const [movie, setMovie] = useState();
 
     useEffect(() => {
-        const getLastHardhead = async () => {
-            var url = config.get('apiPath') + '/api/hardhead?userID=' + userID;
-
+        const getLastMovie = async (id) => {
             try {
+                const url = config.get('path') + '/api/movies/' + id + '?code=' + config.get('code');
                 const response = await axios.get(url);
-                setHardhead(response.data[0]);
-                getLastMovie(response.data[0].id);
+                setMovie(response.data);
             } catch (e) {
                 console.error(e);
             }
         }
 
-        const getLastMovie = async (id) => {
-            var url = config.get('path') + '/api/movies/' + id + '?code=' + config.get('code');
-
+        const getLastHardhead = async () => {
             try {
+                const url = config.get('apiPath') + '/api/hardhead?userID=' + userID;
                 const response = await axios.get(url);
-                setMovie(response.data);
+                setHardhead(response.data[0]);
+                getLastMovie(response.data[0].id);
             } catch (e) {
                 console.error(e);
             }

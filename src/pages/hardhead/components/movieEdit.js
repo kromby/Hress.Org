@@ -103,26 +103,6 @@ const MovieEdit = ({ id }) => {
     const handleMovieKillsChange = (event) => { setMovieKills(event.target.value); setButtonEnabled(true); }
     const handleHardhaedKillsChanges = (event) => { setHardheadKills(event.target.value); setButtonEnabled(true); }
 
-    const movieCallback = async (imdbId) => {
-        try {
-            const response = await axios.get("https://www.omdbapi.com/?apikey=" + config.get("omdb") + "&i=" + imdbId);
-
-            setMovieName(response.data.Title);
-            setActor(response.data.Actors.split(',')[0]);
-            setImdbUrl("https://www.imdb.com/title/" + imdbId);
-            if (response.data.Poster !== "N/A") {
-                setImagePath(response.data.Poster);
-                getPostImage(null, response.data.Poster);
-            }
-            setImageGetEnabled(true);
-            setButtonEnabled(true);
-            //setOmdbData(response.data);
-        } catch (e) {
-            console.error("[MovieEdit] Error getting data from omdbapi");
-            console.error(e);
-        }
-    }
-
     const getPostImage = async (event, path) => {
         if (event) {
             event.preventDefault();
@@ -149,6 +129,26 @@ const MovieEdit = ({ id }) => {
                 console.error(e);
                 setImageGetEnabled(true);
             }
+        }
+    }
+
+    const movieCallback = async (imdbId) => {
+        try {
+            const response = await axios.get("https://www.omdbapi.com/?apikey=" + config.get("omdb") + "&i=" + imdbId);
+
+            setMovieName(response.data.Title);
+            setActor(response.data.Actors.split(',')[0]);
+            setImdbUrl("https://www.imdb.com/title/" + imdbId);
+            if (response.data.Poster !== "N/A") {
+                setImagePath(response.data.Poster);
+                getPostImage(null, response.data.Poster);
+            }
+            setImageGetEnabled(true);
+            setButtonEnabled(true);
+            //setOmdbData(response.data);
+        } catch (e) {
+            console.error("[MovieEdit] Error getting data from omdbapi");
+            console.error(e);
         }
     }
 

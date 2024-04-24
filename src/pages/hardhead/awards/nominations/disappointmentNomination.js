@@ -15,16 +15,6 @@ const DisappointmentNomination = ({ Type, Users }) => {
     const [isSaved, setIsSaved] = useState(false);
     const [error, setError] = useState();
 
-    useEffect(() => {
-        setUsers(Users);
-
-        document.title = "Tilnefna Vinnbrigði | Hress.Org";
-
-        if (!nominations) {
-            getNominations();
-        }
-    }, [Users])
-
     const getNominations = async () => {
         const getUrl = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + Type;
         axios.get(getUrl, {
@@ -40,6 +30,16 @@ const DisappointmentNomination = ({ Type, Users }) => {
                 }
             })
     }
+
+    useEffect(() => {
+        setUsers(Users);
+
+        document.title = "Tilnefna Vinnbrigði | Hress.Org";
+
+        if (!nominations) {
+            getNominations();
+        }
+    }, [Users])
 
     const handleSubmit = async (event) => {
         setButtonEnabled(false);
@@ -69,9 +69,6 @@ const DisappointmentNomination = ({ Type, Users }) => {
         }
     }
 
-    const handleNomineeChange = (event) => { setNominee(event.target.value); setButtonEnabled(allowSaving(event.target.value, description)); }
-    const handleDescriptionChange = (event) => { setDescription(event.target.value); setButtonEnabled(allowSaving(nominee, event.target.value)); }
-
     const allowSaving = (nomineeID, descriptionText) => {
         if (descriptionText === undefined)
             return false;
@@ -83,6 +80,9 @@ const DisappointmentNomination = ({ Type, Users }) => {
         setError("");
         return true;
     }
+
+    const handleNomineeChange = (event) => { setNominee(event.target.value); setButtonEnabled(allowSaving(event.target.value, description)); }
+    const handleDescriptionChange = (event) => { setDescription(event.target.value); setButtonEnabled(allowSaving(nominee, event.target.value)); }
 
     return (
         <Post

@@ -55,16 +55,6 @@ const Password = () => {
         }
     }
 
-    const handleNewPasswordChange = (event) => {
-        setNewPassword(event.target.value);
-        setButtonEnabled(comparePasswords(event.target.value, confirmPassword));
-    }
-
-    const handleConfirmPasswordChange = (event) => {
-        setConfirmPassword(event.target.value);
-        setButtonEnabled(comparePasswords(event.target.value, newPassword));
-    }
-
     const comparePasswords = (pass1, pass2) => {
         if (password.length < 5) {
             return false;
@@ -75,6 +65,17 @@ const Password = () => {
         }
 
         return pass1 === pass2;
+    }
+
+
+    const handleNewPasswordChange = (event) => {
+        setNewPassword(event.target.value);
+        setButtonEnabled(comparePasswords(event.target.value, confirmPassword));
+    }
+
+    const handleConfirmPasswordChange = (event) => {
+        setConfirmPassword(event.target.value);
+        setButtonEnabled(comparePasswords(event.target.value, newPassword));
     }
 
     return (
