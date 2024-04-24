@@ -32,21 +32,21 @@ const OnThisDay = () => {
             onReset={() => {}}
         >
             <div>
-                {news ? news.map(news =>
+                {news ? news.map(singleNews =>
                     <MiniPost
-                        key={news.id}
-                        title={news.name}
+                        key={singleNews.id}
+                        title={singleNews.name}
                         description={
                             <Link to="/news/history">Sjá allar fréttir frá þessum degi</Link>
                         }
-                        dateString={news.insertedString}
-                        date={news.inserted}
-                        href={"/news/" + news.id}
-                        imageSource={news.image?.id ? config.get('apiPath') + news.image.href : null}
-                        imageHref={"/news/" + news.id}
-                        userHref={"/gang/single.aspx?Id=" + news.author.id}
-                        userPhoto={news.author.profilePhoto ? config.get('apiPath') + news.author.profilePhoto.href : null}
-                        userText={news.author.username}
+                        dateString={singleNews.insertedString}
+                        date={singleNews.inserted}
+                        href={"/news/" + singleNews.id}
+                        imageSource={singleNews.image?.id ? config.get('apiPath') + singleNews.image.href : null}
+                        imageHref={"/news/" + singleNews.id}
+                        userHref={"/gang/single.aspx?Id=" + singleNews.author.id}
+                        userPhoto={singleNews.author.profilePhoto ? config.get('apiPath') + singleNews.author.profilePhoto.href : null}
+                        userText={singleNews.author.username}
                     />) : null}
             </div>
         </ErrorBoundary>

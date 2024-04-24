@@ -25,24 +25,17 @@ const TypeAheadDropDown = ({minimum, defaultValue, placeholder, callback}) => {
         const value = e.target.value;
         setText(value);
 
-        
-        
-
         if (value.length >= minLength) {
             try {
                 const response = await axios.get("https://www.omdbapi.com/?apikey=" + config.get("omdb") + "&s=" + value + "&type=movie");
                 setSuggestions(response.data);
-            } catch (e) {
-                console.error(e);
+            } catch (err) {
+                console.error(err);
             }
         }
     }
 
     const onSelect = (id, name) => {
-        
-        
-        
-
         setText(name);
         setSuggestions(null);
 
