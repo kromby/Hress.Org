@@ -28,7 +28,7 @@ const HardheadOfTheYear = ({ID, Name, Description, Date, Year, Href, onSubmit}) 
         }
     }, [])
 
-    const handleUserChange = async (event) => {
+    const handleUserChange = (event) => {
         if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
             return;

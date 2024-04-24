@@ -71,7 +71,7 @@ const Rules = ({ID, Name, onSubmit}) => {
         onSubmit();
     }
 
-    const handleChange = async (id, changeId, newValue) => {
+    const handleChange = (id, changeId, newValue) => {
         if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
             return;

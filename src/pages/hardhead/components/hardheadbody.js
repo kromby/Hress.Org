@@ -23,7 +23,7 @@ const HardheadBody = ({id, Name, description, viewNight, viewMovie, viewGuests, 
         }
     }, [viewNight, viewMovie, viewGuests])
 
-    const photoPostback = async (src) => {
+    const photoPostback = (src) => {
         if (src) {
             setMoviePhoto(src);
         }

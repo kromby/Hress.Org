@@ -34,7 +34,7 @@ const Teams = ({ id }) => {
         return true;
     }
 
-    const handleChange = async () => {
+    const handleChange = () => {
         setShowAnswers(!showAnswers);
     }
 

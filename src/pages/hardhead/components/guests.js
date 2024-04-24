@@ -8,7 +8,7 @@ const Guests = ({ hardheadID }) => {
     const [guests, setGuests] = useState();
 
     useEffect(() => {
-        const getGuests = async () => {
+        const getGuests = () => {
             const url = `${config.get('apiPath')}/api/hardhead/${hardheadID}/guests`;
 
             axios.get(url)

@@ -28,8 +28,7 @@ const ActorStats = () => {
         }
     }, [url])
 
-    const handleSubmit = async () => {
-        
+    const handleSubmit = () => {
         if (pageSize > stats.list.length) {
             setPageSize(10);
         } else {
@@ -45,7 +44,7 @@ const ActorStats = () => {
         return pageSize + 10;
     }
 
-    const handlePeriodChange = async (event) => {
+    const handlePeriodChange = (event) => {
         setPeriod(event.target.value);
         setReload(true);
     }

@@ -11,7 +11,7 @@ const GuestsEdit = ({ hardheadID, users }) => {
     const navigate = useNavigate();
     const [guests, setGuests] = useState();
 
-    const getGuests = async () => {
+    const getGuests = () => {
         const url = `${config.get('apiPath')}/api/hardhead/${hardheadID}/guests`;
         axios.get(url)
             .then(response => {

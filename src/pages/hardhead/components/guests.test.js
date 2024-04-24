@@ -20,7 +20,7 @@ describe('Guests', () => {
     container.remove();
   });
 
-  it('renders without crashing', async () => {
+  it('renders without crashing', () => {
     const guests = [
       { id: 1, username: 'guest1', profilePhoto: { href: 'photo1.jpg' } },
       { id: 2, username: 'guest2', profilePhoto: { href: 'photo2.jpg' } },
@@ -29,7 +29,7 @@ describe('Guests', () => {
     axios.get.mockResolvedValueOnce({ data: guests });
 
     // Render the component
-    await act(async () => {
+    act(() => {
       render(<Guests hardheadID={123} />, container);
     });
 
@@ -40,12 +40,12 @@ describe('Guests', () => {
     axios.get.mockClear();
   });
 
-  it('handles error when retrieving guests', async () => {
+  it('handles error when retrieving guests', () => {
     const error = new Error('Failed to retrieve guests');
     axios.get.mockRejectedValueOnce(error);
 
     // Render the component
-    await act(async () => {
+    act(() => {
       createRoot(container).render(<Guests hardheadID={123} />);
     });
 

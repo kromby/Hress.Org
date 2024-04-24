@@ -30,7 +30,7 @@ const Stallone = ({ID, Name, Description, Date, Year, onSubmit}) => {
         }
     }, [ID])
 
-    const handleChange = async (event) => {
+    const handleChange = (event) => {
         if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
             return;

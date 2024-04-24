@@ -10,11 +10,10 @@ const GuestStats = () => {
     const [period, setPeriod] = useState("All");
     const [reload, setReload] = useState(false);
 
-    var url = config.get('apiPath') + '/api/hardhead/statistics/users?periodType=' + period + '&attendanceType=' + 52;
-
     useEffect(() => {
         const getStats = async () => {
             try {
+                const url = config.get('apiPath') + '/api/hardhead/statistics/users?periodType=' + period + '&attendanceType=' + 52;
                 setData({ isLoading: true });
                 const response = await axios.get(url);
                 setData({ stats: response.data, isLoading: false, visible: true });
@@ -28,9 +27,9 @@ const GuestStats = () => {
             getStats();
             setReload(false);
         }
-    }, [url])
+    }, [])
 
-    const handleSubmit = async () => {
+    const handleSubmit = () => {
         if (pageSize > data.stats.list.length) {
             setPageSize(10);
         } else {
@@ -46,7 +45,7 @@ const GuestStats = () => {
         return pageSize + 10;
     }
 
-    const handlePeriodChange = async (event) => {
+    const handlePeriodChange = (event) => {
         setPeriod(event.target.value);
         setReload(true);
     }

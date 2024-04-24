@@ -19,15 +19,13 @@ const Election = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState();
 
-
-
     useEffect(() => {
         if (authTokens === undefined) {
             navigate("/login", { state: { from: location.pathname } });
             return;
         }
 
-        const getNextStep = async () => {
+        const getNextStep = () => {
             const url = config.get('apiPath') + '/api/elections/49/voters/access';
             axios.get(url, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },

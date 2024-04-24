@@ -41,7 +41,7 @@ const Movie = ({id, photoPostback}) => {
         }
     }, [id, photoPostback, movieUrl])
 
-    const toggleTrailer = async () => {
+    const toggleTrailer = () => {
         setTrailerOpen(!trailerOpen);
     }
 

@@ -15,7 +15,7 @@ const StalloneNomination = ({ Type, Users }) => {
     const [isSaved, setIsSaved] = useState(false);
     const [error, setError] = useState();
 
-    const getNominations = async () => {
+    const getNominations = () => {
         const getUrl = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + Type;
         axios.get(getUrl, {
             headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },

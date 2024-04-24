@@ -30,8 +30,7 @@ const HostStats = () => {
         }
     }, [url])
 
-    const handleSubmit = async () => {
-        
+    const handleSubmit = () => {        
         if (pageSize > data.stats.list.length) {
             setPageSize(10);
         } else {
@@ -47,7 +46,7 @@ const HostStats = () => {
         return pageSize + 10;
     }
 
-    const handlePeriodChange = async (event) => {
+    const handlePeriodChange = (event) => {
         setPeriod(event.target.value);
         setReload(true);
     }

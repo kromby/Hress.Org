@@ -26,20 +26,20 @@ const RuleChanges = ({id, title, href, date, dateFormatted, description, current
         }
     }, [href])
 
-    const handleChange = async (event) => {
+    const handleChange = (event) => {
         if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
             return;
         }
 
         // setSelectedRule(event);
-        var newValue = 0;
+        let newValue = 0;
         if (event === -1)
             newValue = -1;
         else
             newValue = 1;
 
-        var ruleID = event;
+        let ruleID = event;
         if (ruleID === -1)
             ruleID = fallbackRule;
 

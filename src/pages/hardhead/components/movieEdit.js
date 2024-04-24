@@ -32,7 +32,7 @@ const MovieEdit = ({ id }) => {
             return;
         }
 
-        const getMovieData = async () => {
+        const getMovieData = () => {
             axios.get(movieUrl).then(response => {
                 if (response.data !== undefined) {
                     if (response.data.YoutubeUrl) {

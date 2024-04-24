@@ -27,7 +27,7 @@ const AlbumImages = ({url}) => {
         }
     }, [url]);
 
-    const handleChange = async (id) => {
+    const handleChange = (id) => {
         setSelectedImage(id);
         window.scrollTo({top: isMobile ? 250 : 350, left: 0, behavior: 'smooth'});
     }    

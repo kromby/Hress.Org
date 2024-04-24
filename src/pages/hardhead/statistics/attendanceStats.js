@@ -29,7 +29,7 @@ const AttendanceStats = () => {
         }
     }, [url])
 
-    const handleSubmit = async () => {
+    const handleSubmit = () => {
         
         if (pageSize > stats.list.length) {
             setPageSize(10);
@@ -46,7 +46,7 @@ const AttendanceStats = () => {
         return pageSize + 10;
     }
 
-    const handlePeriodChange = async (event) => {
+    const handlePeriodChange = (event) => {
         setPeriod(event.target.value);
         setReload(true);
     }

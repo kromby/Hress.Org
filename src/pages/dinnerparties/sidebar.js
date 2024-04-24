@@ -12,7 +12,7 @@ const DinnerPartySidebar = () => {
     const [dinnerParties, setDinnerParties] = useState();
 
     useEffect(() => {
-        const getDinnerParties = async () => {
+        const getDinnerParties = () => {
             var url = config.get("apiPath") + "/api/dinnerparties";
             axios.get(url).then((response) => {
                 setDinnerParties(response.data);

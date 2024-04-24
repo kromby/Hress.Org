@@ -5,7 +5,7 @@ import { Post } from "../../../../components";
 import HardheadBody from "../../components/hardheadbody";
 import { useAuth } from "../../../../context/auth";
 
-const TwentyYearOldMovie = ({ID, Name, Href, onSubmit}) => {
+const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }) => {
     const { authTokens } = useAuth();
     const [movies, setMovies] = useState();
     const [value, setValue] = useState(-1);
@@ -34,7 +34,7 @@ const TwentyYearOldMovie = ({ID, Name, Href, onSubmit}) => {
             return;
         }
 
-        if(value === -1) {
+        if (value === -1) {
             alert("Engin mynd valin!");
             return;
         }
@@ -52,14 +52,14 @@ const TwentyYearOldMovie = ({ID, Name, Href, onSubmit}) => {
         onSubmit();
     }
 
-    const handleChange = async (event) => {
+    const handleChange = (event) => {
         if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
             return;
         }
-        
+
         setValue(event);
-    }    
+    }
 
     return (
         <div>
