@@ -74,8 +74,8 @@ const Profile = () => {
                                             </tr>
                                         )}
                                         <tr>
-                                            <td></td>
-                                            <td></td>
+                                            <td />
+                                            <td />
                                             <td><b>Samtals</b></td>
                                             <td><b>{balanceSheet.balance} kr.</b></td>
                                         </tr>

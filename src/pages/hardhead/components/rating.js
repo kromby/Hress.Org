@@ -89,8 +89,8 @@ const HardheadRating = ({id, nightRatingVisible, movieRatingVisible}) => {
                         <li key={rating.Code}>
                             <span id={rating.Code + "_" + id} />
                             {rating.Code === "REP_C_RTNG" ?
-                                <i className="icon solid fa-beer fa-2x"></i> :
-                                <i className="icon solid fa-film fa-2x"></i>}
+                                <i className="icon solid fa-beer fa-2x" /> :
+                                <i className="icon solid fa-film fa-2x" />}
                             {data.ratings.Readonly ?
                                 <span>(Fjöldi: {rating.NumberOfRatings}{rating.MyRating ? ' -  Þú: ' + rating.MyRating : null})&nbsp;</span>
                                 : null}

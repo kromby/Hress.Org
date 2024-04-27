@@ -88,7 +88,7 @@ const Password = () => {
                             <div className="col-6">
                                 <input type="password" name="password" id="password" defaultValue={password} onChange={e => { setPassword(e.target.value) }} placeholder="Lykilorð" />
                             </div>
-                            <div className="col-6"></div>
+                            <div className="col-6" />
                             <div className="col-6">
                                 <input type="password" name="newPassword" id="newPassword" defaultValue={newPassword} onChange={(ev) => handleNewPasswordChange(ev)} placeholder="Nýtt lykilorð" />
                             </div>
@@ -98,7 +98,7 @@ const Password = () => {
                             <div className="col-12">
                                 Lykilorð þarf að vera að minnsta kosti 8 stafir.
                             </div>
-                            <div className="col-12"></div>
+                            <div className="col-12" />
                             <div className="col-12">
                                 <button
                                     title="Vista"
