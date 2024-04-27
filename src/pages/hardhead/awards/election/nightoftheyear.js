@@ -74,7 +74,7 @@ const NightOfTheYear = ({ ID, Name, Href, Description, Date, Year, onSubmit }) =
                     dateFormatted={hardhead.DateString}
                     author={hardhead.Host}
                     body={<HardheadBody id={hardhead.ID} name={hardhead.Name} description={hardhead.Description} viewMovie={false} imageHeight={"270px"} />}
-                    actions={<ul className="actions"></ul>}
+                    actions={<ul className="actions" />}
                     stats={<HardheadRating id={hardhead.ID} movieRatingVisible="false" />}
                 />
             )

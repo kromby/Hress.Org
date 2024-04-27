@@ -42,7 +42,7 @@ const HardheadBody = ({id, Name, description, viewNight, viewMovie, viewGuests, 
                 </section> : null,
             showMovie ? <Movie key="1" id={id} photoPostback={photoPostback} /> : null,
             showGuests ? <Guests key="2" hardheadID={id} /> : null,
-            <p key="3"></p>,
+            <p key="3" />,
         ]
     )
 }

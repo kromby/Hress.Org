@@ -46,7 +46,7 @@ function Magic() {
         }
     }
 
-    return (<div></div>);
+    return (<div />);
 }
 
 export default Magic;
