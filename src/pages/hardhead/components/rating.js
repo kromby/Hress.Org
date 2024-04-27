@@ -4,7 +4,7 @@ import { useAuth } from '../../../context/auth';
 import axios from "axios";
 import Rating from 'react-rating';
 
-const HardheadRating = ({id, nightRatingVisible, movieRatingVisible}) => {
+const HardheadRating = ({ id, nightRatingVisible, movieRatingVisible }) => {
     const { authTokens } = useAuth();
     const [data, setData] = useState({ ratings: [], isLoading: false });
     const [showNightRating, setShowNightRating] = useState(true);
@@ -68,7 +68,7 @@ const HardheadRating = ({id, nightRatingVisible, movieRatingVisible}) => {
                 }, {
                     headers: { 'Authorization': 'token ' + authTokens.token },
                 });
-                
+
             }
             catch (e) {
                 console.error(e);
@@ -100,7 +100,9 @@ const HardheadRating = ({id, nightRatingVisible, movieRatingVisible}) => {
                                     fullSymbol="fas fa-star fa-1x"
                                     initialRating={data.ratings.Readonly ? rating.AverageRating : rating.MyRating}
                                     readonly={data.ratings.Readonly}
-                                    onHover={(rate) => document.getElementById(rating.Code + "_" + id).innerHTML = getRatingText(rate, rating.Code) || ' '}
+                                    onHover={(rate) => {
+                                        document.getElementById(rating.Code + "_" + id).innerHTML = getRatingText(rate, rating.Code) || ' '
+                                    }}
                                     onChange={(rate) => saveRating(rate, rating.Code)}
                                 />}
                         </li>
