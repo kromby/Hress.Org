@@ -8,14 +8,13 @@ import { useAuth } from "../../context/auth";
 const Navigation = () => {
     const { authTokens } = useAuth();
     const [links, setLinks] = useState();
-    const [loggedIn, setLoggedIn] = useState(false);
-
-    var url = config.get("apiPath") + "/api/menus";
+    const [loggedIn, setLoggedIn] = useState(false);    
 
     useEffect(() => {
         const getLinks = async () => {
             try {
-                var headers = authTokens ? { headers: { 'X-Custom-Authorization': 'token ' + authTokens.token } } : null;
+                const url = config.get("apiPath") + "/api/menus";
+                const headers = authTokens ? { headers: { 'X-Custom-Authorization': 'token ' + authTokens.token } } : null;
                 const response = await axios.get(url, headers);
                 setLinks(response.data);
             } catch (e) {
@@ -27,7 +26,7 @@ const Navigation = () => {
             setLoggedIn(authTokens !== undefined);
             getLinks();
         }
-    }, [loggedIn, authTokens, links, url])
+    }, [loggedIn, authTokens])
 
     return (
         <nav className="links">

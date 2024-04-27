@@ -13,7 +13,7 @@ const Rules = ({ID, Name, onSubmit}) => {
 
     useEffect(() => {
         const getRules = async () => {
-            var url = config.get('apiPath') + '/api/hardhead/rules';
+            const url = config.get('apiPath') + '/api/hardhead/rules';
             try {
                 const response = await axios.get(url);
 
@@ -40,7 +40,7 @@ const Rules = ({ID, Name, onSubmit}) => {
     }, [])
 
     async function getChild(href) {
-        var url = config.get('apiPath') + href;
+        const url = config.get('apiPath') + href;
         try {
             const response = await axios.get(url);
             return response.data.filter(p => p.changes);
@@ -58,7 +58,7 @@ const Rules = ({ID, Name, onSubmit}) => {
         }
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            const url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, selectedValues, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
@@ -77,7 +77,7 @@ const Rules = ({ID, Name, onSubmit}) => {
             return;
         }
 
-        var tempList = selectedValues.filter(v => v.RuleID !== id);
+        const tempList = selectedValues.filter(v => v.RuleID !== id);
         tempList.push({ ID: changeId, Value: newValue, RuleID: id });
         setSelectedValues(tempList);
 

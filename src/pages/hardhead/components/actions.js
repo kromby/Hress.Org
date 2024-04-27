@@ -12,7 +12,7 @@ const HardheadActions = ({id}) => {
         const getActions = async () => {
             if (authTokens !== undefined) {
                 try {
-                    var url = `${config.get('apiPath')}/api/hardhead/${id}/actions`;
+                    const url = `${config.get('apiPath')}/api/hardhead/${id}/actions`;
                     const response = await axios.get(url, {
                         headers: { 'X-Custom-Authorization': 'token ' + authTokens.token }
                     })
@@ -26,7 +26,7 @@ const HardheadActions = ({id}) => {
             }
         }
 
-        var loggedIn = authTokens ? true : false;
+        const loggedIn = authTokens ? true : false;
 
         if (!data.actions || lastLoggedIn !== loggedIn) {
             getActions();

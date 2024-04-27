@@ -9,7 +9,7 @@ const Author = ({ID, Username, href, ProfilePhoto, UserPath}) => {
     useEffect(() => {
         const getUser = async () => {
             if (href) {
-                var url = config.get('apiPath') + href;
+                const url = config.get('apiPath') + href;
                 try {
                     const response = await axios.get(url);
                     setUser(response.data);
@@ -33,7 +33,7 @@ const Author = ({ID, Username, href, ProfilePhoto, UserPath}) => {
         if (!user) {
             getUser();
         }
-    }, [ID, Username, href, ProfilePhoto, UserPath])
+    }, [ID])
 
     const getTitle = (username, name) => {
         if (name) {

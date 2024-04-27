@@ -16,12 +16,8 @@ function Magic() {
         setData({isLoading: true});
         try {
             const parsed = queryString.parse(location.search);                
-            var code = parsed.code;
-            
-            
-
-            var url = config.get('apiPath') + '/api/authenticate';
-
+            const code = parsed.code;
+            const url = config.get('apiPath') + '/api/authenticate';
             axios.post(url, {code}).then(
                 result => {
                     if(result.data.length > 0) {

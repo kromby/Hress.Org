@@ -48,7 +48,7 @@
 		// Multiple elements?
 		if (this.length > 1) {
 
-			for (var i = 0; i < this.length; i++)
+			for (const i = 0; i < this.length; i++)
 				$(this[i]).panel(userConfig);
 
 			return $this;
@@ -191,7 +191,7 @@
 				|| $this.touchPosY === null)
 				return;
 
-			var diffX = $this.touchPosX - event.originalEvent.touches[0].pageX,
+			const diffX = $this.touchPosX - event.originalEvent.touches[0].pageX,
 				diffY = $this.touchPosY - event.originalEvent.touches[0].pageY,
 				th = $this.outerHeight(),
 				ts = ($this.get(0).scrollHeight - $this.scrollTop());
@@ -199,9 +199,9 @@
 			// Hide on swipe?
 			if (config.hideOnSwipe) {
 
-				var result = false,
-					boundary = 20,
-					delta = 50;
+				let result = false;
+				const boundary = 20;
+				const delta = 50;
 
 				switch (config.side) {
 
@@ -313,7 +313,7 @@
 		// Multiple elements?
 		if (this.length > 1) {
 
-			for (var i = 0; i < this.length; i++)
+			for (const i = 0; i < this.length; i++)
 				$(this[i]).placeholder();
 
 			return $this;
@@ -321,7 +321,7 @@
 		}
 
 		// Vars.
-		var $this = $(this);
+		const $this = $(this);
 
 		// Text, TextArea.
 		$this.find('input[type=text],textarea')
@@ -396,7 +396,7 @@
 
 						event.preventDefault();
 
-						var x = i.parent().find('input[name=' + i.attr('name') + '-polyfill-field]');
+						const x = i.parent().find('input[name=' + i.attr('name') + '-polyfill-field]');
 
 						if (i.val() === '') {
 
@@ -412,7 +412,7 @@
 
 						event.preventDefault();
 
-						var i = x.parent().find('input[name=' + x.attr('name').replace('-polyfill-field', '') + ']');
+						const i = x.parent().find('input[name=' + x.attr('name').replace('-polyfill-field', '') + ']');
 
 						x.hide();
 

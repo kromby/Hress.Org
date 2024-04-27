@@ -13,7 +13,7 @@ const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
 
     useEffect(() => {
         const getNominations = async () => {
-            var url = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + ID;
+            const url = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + ID;
             try {
                 const response = await axios.get(url, {
                     headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
@@ -38,10 +38,10 @@ const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
             return;
         }
 
-        var voteData = [{ id: selectedValue, Value: disappointments.filter(n => n.id === selectedValue)[0].nominee.id }];
+        const voteData = [{ id: selectedValue, Value: disappointments.filter(n => n.id === selectedValue)[0].nominee.id }];
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            const url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, voteData, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });

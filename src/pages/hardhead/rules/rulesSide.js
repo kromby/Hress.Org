@@ -16,14 +16,14 @@ const RulesSide = () => {
                 setData({ isLoading: true });
                 const response = await axios.get(url);
 
-                var min = 0;
-                var max = response.data.length - 1;
+                let min = 0;
+                let max = response.data.length - 1;
                 const random = Math.round(min + Math.random() * (max - min));
 
                 setData({ rule: response.data[random], isLoading: false, visible: true });
                 id = response.data[random].id;
 
-                var childUrl = config.get('apiPath') + '/api/hardhead/rules/' + id;
+                const childUrl = config.get('apiPath') + '/api/hardhead/rules/' + id;
                 const childResponse = await axios.get(childUrl);
 
                 min = 0;

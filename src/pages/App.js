@@ -47,7 +47,7 @@ function App() {
   const setTokens = (tokenData) => {
     if (tokenData) {
       localStorage.setItem("tokens", JSON.stringify(tokenData));
-      var decodedToken = jwt.decode(tokenData.token, { complete: true });
+      const decodedToken = jwt.decode(tokenData.token, { complete: true });
       localStorage.setItem("userID", decodedToken.payload.sub);
       setAuthTokens(tokenData);
     } else {
@@ -63,7 +63,7 @@ function App() {
 
   const checkExistingTokens = () => {
     if (authTokens === undefined) {
-      var existingTokens = JSON.parse(localStorage.getItem("tokens"));
+      const existingTokens = JSON.parse(localStorage.getItem("tokens"));
       if (existingTokens !== undefined && existingTokens !== null) {
 
         if (existingTokens.token === null) {
@@ -71,8 +71,8 @@ function App() {
           return;
         }
 
-        var decodedToken = jwt.decode(existingTokens.token, { complete: true });
-        var dateNow = new Date();
+        const decodedToken = jwt.decode(existingTokens.token, { complete: true });
+        const dateNow = new Date();
         if ((decodedToken.payload.exp * 1000) < (dateNow.getTime() + 1)) {
           localStorage.removeItem("tokens");
         }
@@ -89,7 +89,7 @@ function App() {
   checkExistingTokens();
 
   const toggleMenu = () => {
-    var visible = !data.showMenu;
+    const visible = !data.showMenu;
 
     if (visible)
       setData({ showMenu: visible, class: "is-menu-visible" })

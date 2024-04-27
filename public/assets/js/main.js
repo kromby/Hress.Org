@@ -43,7 +43,7 @@
 			});
 
 	// Search (header).
-		var $search = $('#search'),
+		const $search = $('#search'),
 			$search_input = $search.find('input');
 
 		$body
@@ -81,7 +81,7 @@
 			});
 
 	// Intro.
-		var $intro = $('#intro');
+		const $intro = $('#intro');
 
 		// Move to main on <=large, back to sidebar on >large.
 			breakpoints.on('<=large', function() {

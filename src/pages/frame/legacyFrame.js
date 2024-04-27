@@ -22,7 +22,7 @@ const LegacyFrame = () => {
 
         const getMagicCode = async () => {
             try {
-                var url = config.get('apiPath') + "/api/authenticate/magic";
+                const url = config.get('apiPath') + "/api/authenticate/magic";
                 if (authTokens) {
                     const response = await axios.post(url, {}, {
                         headers: { "X-Custom-Authorization": "token " + authTokens.token }

@@ -12,14 +12,14 @@ const RulesNewOld = ({ ID, Name, onSubmit }) => {
 
     useEffect(() => {
         const getRules = async () => {
-            var url = `${config.get('apiPath')}/api/hardhead/rules/changes?type=209`;
+            const url = `${config.get('apiPath')}/api/hardhead/rules/changes?type=209`;
             try {
                 const response = await axios.get(url, {
                     headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
                 });
                 setRules(response.data);
 
-                var arr = [];
+                let arr = [];
                 response.data.forEach(element => {
                     arr.push({ ID: element.id, Value: 0 });
                 });
@@ -44,7 +44,7 @@ const RulesNewOld = ({ ID, Name, onSubmit }) => {
         }
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            const url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, selectedValues, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });
@@ -63,7 +63,7 @@ const RulesNewOld = ({ ID, Name, onSubmit }) => {
             return;
         }
 
-        var tempList = selectedValues.filter(v => v.ID !== id);
+        const tempList = selectedValues.filter(v => v.ID !== id);
         tempList.push({ ID: id, Value: value });
         setSelectedValues(tempList);
 

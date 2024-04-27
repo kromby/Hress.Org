@@ -40,7 +40,7 @@ const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }) => {
         }
 
         try {
-            var url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            const url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
             await axios.post(url, [{ EventID: ID, Value: value }], {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
             });

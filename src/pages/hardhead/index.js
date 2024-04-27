@@ -32,7 +32,7 @@ const Hardhead = () => {
 
 		const getHardheadsUrl = () => {
 			const parsed = queryString.parse(location.search);
-			var url;
+			let url;
 			if (params.hardheadID) {
 				url = config.get('apiPath') + '/api/hardhead/' + params.hardheadID;
 			} else if (parsed.parentID) {
@@ -43,7 +43,7 @@ const Hardhead = () => {
 				url = config.get('apiPath') + '/api/movies?filter=' + parsed.query;
 			}
 			else {
-				var currentDate = new Date();
+				const currentDate = new Date();
 				currentDate.setMonth(currentDate.getMonth() - 5);
 				url = config.get('apiPath') + '/api/hardhead?dateFrom=' + (currentDate.getMonth() + 1) + '.1.' + currentDate.getFullYear();
 			}
@@ -53,7 +53,7 @@ const Hardhead = () => {
 
 		document.title = "Harðhaus | Hress.Org";
 
-		var url = getHardheadsUrl();
+		const url = getHardheadsUrl();
 
 		if (!hardheads || lastUrl !== url) {
 			getHardheads(url);

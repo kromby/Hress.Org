@@ -29,7 +29,7 @@ const Password = () => {
         event.preventDefault();
 
         try {
-            var url = config.get('apiPath') + '/api/users/0/password';
+            const url = config.get('apiPath') + '/api/users/0/password';
             const response = await axios.put(url, {
                 password: password,
                 newPassword: newPassword

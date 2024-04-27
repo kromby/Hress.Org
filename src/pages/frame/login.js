@@ -14,18 +14,13 @@ function Login() {
     const { authTokens, setAuthTokens } = useAuth();
     const [referer, setReferer] = useState(location.state ? location.state.from : '/');
 
-    
-    
     const postLogin = async () => {
                 
-        var url = config.get('apiPath') + '/api/authenticate';
+        const url = config.get('apiPath') + '/api/authenticate';
         try {
             const result = await axios.post(url, { username, password });
             if (result.status === 200) {
-                
-                
-
-                var balanceUrl = config.get("apiPath") + "/api/users/0/balancesheet";
+                const balanceUrl = config.get("apiPath") + "/api/users/0/balancesheet";
                 const response = await axios.get(balanceUrl, {
                     headers: { 'X-Custom-Authorization': 'token ' + result.data },
                 });

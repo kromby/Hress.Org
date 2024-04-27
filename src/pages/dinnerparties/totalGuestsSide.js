@@ -5,7 +5,7 @@ const TotalGuestsSide = ({dinnerParties}) => {
     const [guestCount, setGuestCount] = useState();
 
     useEffect(() => {
-        if(!guestCount) {
+        if(!guestCount && dinnerParties) {
             let count = 0;
             for(const index of Object.keys(dinnerParties)) {
                 const party = dinnerParties[index];
