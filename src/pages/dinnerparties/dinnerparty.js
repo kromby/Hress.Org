@@ -37,8 +37,6 @@ const DinnerParty = () => {
         <div id="main">
             <ErrorBoundary
                 FallbackComponent={<div>Það vantar einhvern hressleika hér!</div>}
-                onError={() => {}}
-                onReset={() => {}}
             >
                 {dinner ?
                     [

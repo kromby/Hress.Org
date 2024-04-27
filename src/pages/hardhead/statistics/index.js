@@ -36,7 +36,6 @@ const Statistics = () => {
         <div id="main">
             <ErrorBoundary
                 FallbackComponent={<div>Það vantar einhvern hressleika hér!</div>}
-                onError={() => {}}
             >
                 <GuestStats />
                 <HostStats />

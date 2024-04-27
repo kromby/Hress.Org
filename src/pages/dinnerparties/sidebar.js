@@ -40,7 +40,6 @@ const DinnerPartySidebar = () => {
             <Intro logo="/logo.png" title="Hress.Org" description="þar sem hressleikinn býr" />
             <ErrorBoundary
                 FallbackComponent={ErrorFallback}
-                onReset={() => {}}
             >
                 <section>
                     <div className="mini-posts">

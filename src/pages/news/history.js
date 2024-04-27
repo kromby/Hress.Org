@@ -46,8 +46,6 @@ const HistoryNews = () => {
     return (
         <ErrorBoundary
             FallbackComponent={<div>Oops!</div>}
-            onError={() => {}}
-            onReset={() => {}}
         >
             <div id="main">
                 {news ? news.map(singleNews =>

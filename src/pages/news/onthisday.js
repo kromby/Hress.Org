@@ -28,8 +28,6 @@ const OnThisDay = () => {
     return (
         <ErrorBoundary
             FallbackComponent={<div>Oops!</div>}
-            onError={() => {}}
-            onReset={() => {}}
         >
             <div>
                 {news ? news.map(singleNews =>
