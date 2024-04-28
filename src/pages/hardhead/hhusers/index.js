@@ -16,7 +16,7 @@ const HHUsers = () => {
 
     useEffect(() => {
         const getUser = async () => {
-            var url = config.get('path') + '/api/users/' + params.id + '/?code=' + config.get('code');
+            const url = config.get('path') + '/api/users/' + params.id + '/?code=' + config.get('code');
             try {
                 const response = await axios.get(url);
                 setUser(response.data);

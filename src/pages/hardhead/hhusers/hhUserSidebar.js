@@ -13,7 +13,7 @@ const HHUserSidebar = () => {
 
     useEffect(() => {
         const getUser = async () => {
-            var url = config.get('path') + '/api/users/' + params.id + '/?code=' + config.get('code');
+            const url = config.get('path') + '/api/users/' + params.id + '/?code=' + config.get('code');
 
             try {
                 const response = await axios.get(url);
@@ -25,7 +25,7 @@ const HHUserSidebar = () => {
         }
 
         const getStats = async () => {
-            var url = config.get('apiPath') + '/api/hardhead/statistics/users/' + params.id + '?periodType=All';
+            const url = config.get('apiPath') + '/api/hardhead/statistics/users/' + params.id + '?periodType=All';
 
             try {
                 const response = await axios.get(url);

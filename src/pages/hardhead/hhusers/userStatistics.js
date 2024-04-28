@@ -7,10 +7,9 @@ import { Post } from "../../../components";
 const UserStatistics = ({ id }) => {
     const [userStatistics, setUserStatistics] = useState([]);
 
-
     useEffect(() => {
         const getUserStatistics = async (attendanceType, period) => {
-            var url = `${config.get('apiPath')}/api/hardhead/statistics/users/${id}?attendanceType=${attendanceType}&periodType=${period}`;
+            const url = `${config.get('apiPath')}/api/hardhead/statistics/users/${id}?attendanceType=${attendanceType}&periodType=${period}`;
             try {
                 const response = await axios.get(url);
                 return response.data;

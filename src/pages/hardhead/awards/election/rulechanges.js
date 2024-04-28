@@ -11,7 +11,7 @@ const RuleChanges = ({id, title, href, date, dateFormatted, description, current
 
     useEffect(() => {
         const getChanges = async () => {
-            var url = config.get('apiPath') + href;
+            const url = config.get('apiPath') + href;
             try {
                 const response = await axios.get(url);
                 setChanges(response.data);

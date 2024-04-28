@@ -10,7 +10,7 @@ const HostStats = () => {
     const [period, setPeriod] = useState("All");
     const [reload, setReload] = useState(false);
 
-    var url = config.get('apiPath') + '/api/hardhead/statistics/users?attendanceType=53&periodType=' + period;
+    const url = config.get('apiPath') + '/api/hardhead/statistics/users?attendanceType=53&periodType=' + period;
 
     useEffect(() => {
         const getStats = async () => {

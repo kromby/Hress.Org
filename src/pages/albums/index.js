@@ -21,10 +21,10 @@ const Albums = () => {
         }
 
         const getAlbums = async () => {
-            var url = config.get("apiPath") + "/api/albums";
+            const url = `${config.get("apiPath")}/api/albums`;
             try {
                 const response = await axios.get(url, {
-                    headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                    headers: { 'X-Custom-Authorization': `token ${authTokens.token}` },
                 });
                 setAlbums(response.data);
             } catch (e) {

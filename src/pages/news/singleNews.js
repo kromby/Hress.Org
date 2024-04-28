@@ -12,7 +12,7 @@ const SingleNews = () => {
     useEffect(() => {
         const getNews = async () => {
 
-            var url = config.get("apiPath") + "/api/news/" + params.id;
+            const url = config.get("apiPath") + "/api/news/" + params.id;
             try {
                 const response = await axios.get(url);
                 setNews(response.data);

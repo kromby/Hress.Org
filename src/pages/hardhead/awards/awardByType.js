@@ -9,7 +9,7 @@ const AwardsByType = () => {
     const [award, setAward] = useState();
     const params = useParams();
 
-    var url = config.get('path') + '/api/hardhead/awards/' + params.id + '?code=' + config.get('code');
+    const url = config.get('path') + '/api/hardhead/awards/' + params.id + '?code=' + config.get('code');
 
     useEffect(() => {
         const getYears = async () => {

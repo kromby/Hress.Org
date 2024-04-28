@@ -6,13 +6,12 @@ import HardheadActions from './actions';
 
 const NextHardhead = ({allowEdit}) => {
     const[hardhead, setHardhead] = useState();
-    const[editEnabled, setEditEnabled] = useState(false);
-
-    var url = config.get('path') + '/api/hardhead?code=' + config.get('code');		
+    const[editEnabled, setEditEnabled] = useState(false);    
 
     useEffect(() => {
         const getNextHardhead = async () => {
             try {
+                const url = `${config.get('path')}/api/hardhead?code=${config.get('code')}`;		
                 const response = await axios.get(url);
 
                 if(response.data.length > 0) {
@@ -29,7 +28,7 @@ const NextHardhead = ({allowEdit}) => {
         if(!hardhead) {
             getNextHardhead();
         }
-    }, [allowEdit, url])
+    }, [allowEdit])
 
     return (
         <div>

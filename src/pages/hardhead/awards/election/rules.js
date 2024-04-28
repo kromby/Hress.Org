@@ -13,13 +13,13 @@ const Rules = ({ID, Name, onSubmit}) => {
 
     useEffect(() => {
         const getRules = async () => {
-            const url = config.get('apiPath') + '/api/hardhead/rules';
+            const url = `${config.get('apiPath')}/api/hardhead/rules`;
             try {
                 const response = await axios.get(url);
 
                 let temparray = [];
                 await response.data.forEach(async parent => {
-                    var childRules = await getChild(parent.subRules.href);
+                    const childRules = await getChild(parent.subRules.href);
 
                     let selectedArr = selectedValues;
                     childRules.forEach(element => {

@@ -7,7 +7,7 @@ const RulesSections = ({id}) => {
 
     useEffect(() => {
         const getAwards = async () => {
-            var url = config.get('apiPath') + '/api/hardhead/rules/' + id;
+            const url = `${config.get('apiPath')}/api/hardhead/rules/${id}`;
 
             try {
                 setData({ isLoading: true });

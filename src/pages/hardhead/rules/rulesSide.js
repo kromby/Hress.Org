@@ -6,13 +6,12 @@ import axios from 'axios';
 const RulesSide = () => {
     const [data, setData] = useState({ rule: null, child: null, isLoading: false, visible: false })
 
-    var url = config.get('apiPath') + '/api/hardhead/rules';
-
     useEffect(() => {
-        var id = 0;
+        let id = 0;
 
         const getRule = async () => {
             try {
+                const url = `${config.get('apiPath')}/api/hardhead/rules`;
                 setData({ isLoading: true });
                 const response = await axios.get(url);
 
@@ -23,7 +22,7 @@ const RulesSide = () => {
                 setData({ rule: response.data[random], isLoading: false, visible: true });
                 id = response.data[random].id;
 
-                const childUrl = config.get('apiPath') + '/api/hardhead/rules/' + id;
+                const childUrl = `${url}/api/hardhead/rules/${id}`;
                 const childResponse = await axios.get(childUrl);
 
                 min = 0;
@@ -39,7 +38,7 @@ const RulesSide = () => {
         if (!data.rule) {
             getRule();
         }
-    }, [url])
+    })
 
     return (
         <div>

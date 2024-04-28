@@ -13,7 +13,7 @@ const DinnerPartySidebar = () => {
 
     useEffect(() => {
         const getDinnerParties = () => {
-            var url = config.get("apiPath") + "/api/dinnerparties";
+            const url = config.get("apiPath") + "/api/dinnerparties";
             axios.get(url).then((response) => {
                 setDinnerParties(response.data);
             }).catch((e) => {

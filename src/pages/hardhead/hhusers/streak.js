@@ -8,7 +8,7 @@ const Streak = ({ id }) => {
 
     useEffect(() => {
         const getStreaks = async () => {
-            var url = new URL(`/api/hardhead/statistics/users/${id}/streaks`, config.get('apiPath'));
+            const url = new URL(`/api/hardhead/statistics/users/${id}/streaks`, config.get('apiPath'));
             try {
                 const response = await axios.get(url);
                 setStreaks(response.data);

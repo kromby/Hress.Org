@@ -5,11 +5,11 @@ import { Post } from "../../components";
 
 const DinnerMenu = ({id}) => {
     const [menu, setMenu] = useState();
-    var isFirst = true;
+    let isFirst = true;
 
     useEffect(() => {
         const getMenu = async () => {
-            var url = config.get("apiPath") + "/api/dinnerParties/" + id + "/courses";
+            const url = `${config.get("apiPath")}/api/dinnerParties/${id}/courses`;
             try {
                 const response = await axios.get(url);
                 setMenu(response.data);

@@ -149,7 +149,7 @@
 			$this
 				.on('click', 'a', function (event) {
 
-					var $a = $(this),
+					const $a = $(this),
 						href = $a.attr('href'),
 						target = $a.attr('target');
 
@@ -327,7 +327,7 @@
 		$this.find('input[type=text],textarea')
 			.each(function () {
 
-				var i = $(this);
+				const i = $(this);
 
 				if (i.val() === ''
 					|| i.val() === i.attr('placeholder'))
@@ -338,7 +338,7 @@
 			})
 			.on('blur', function () {
 
-				var i = $(this);
+				const i = $(this);
 
 				if (i.attr('name').match(/-polyfill-field$/))
 					return;
@@ -351,7 +351,7 @@
 			})
 			.on('focus', function () {
 
-				var i = $(this);
+				const i = $(this);
 
 				if (i.attr('name').match(/-polyfill-field$/))
 					return;
@@ -367,8 +367,8 @@
 		$this.find('input[type=password]')
 			.each(function () {
 
-				var i = $(this);
-				var x = $(
+				const i = $(this);
+				const x = $(
 					$('<div>')
 						.append(i.clone())
 						.remove()
@@ -437,7 +437,7 @@
 				$this.find('input[type=text],input[type=password],textarea')
 					.each(function () {
 
-						var i = $(this);
+						const i = $(this);
 
 						if (i.attr('name').match(/-polyfill-field$/))
 							i.attr('name', '');
@@ -462,8 +462,8 @@
 				$this.find('input,textarea')
 					.each(function () {
 
-						var i = $(this),
-							x;
+						const i = $(this);
+							 let x;
 
 						i.removeClass('polyfill-placeholder');
 
@@ -525,7 +525,7 @@
 	 */
 	$.prioritize = function ($elements, condition) {
 
-		var key = '__prioritize';
+		const key = '__prioritize';
 
 		// Expand $elements if it's not already a jQuery object.
 		if (!($elements instanceof jQuery))
@@ -534,7 +534,8 @@
 		// Step through elements.
 		$elements.each(function () {
 
-			var $e = $(this), $p,
+			const $e = $(this);
+			let $p;
 				$parent = $e.parent();
 
 			// No parent? Bail.

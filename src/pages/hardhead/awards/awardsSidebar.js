@@ -6,11 +6,10 @@ import SidePost from "../../../components/sidepost";
 const AwardsSidebar = () => {
     const [years, setYears] = useState();
 
-    var url = config.get('path') + '/api/hardhead/years?code=' + config.get('code');
-
     useEffect(() => {
         const getYears = async () => {
             try {
+                const url = config.get('path') + '/api/hardhead/years?code=' + config.get('code');
                 const response = await axios.get(url);
                 setYears(response.data.filter(year => year.Hardhead));
             } catch (e) {
@@ -21,7 +20,7 @@ const AwardsSidebar = () => {
         if (!years) {
             getYears();
         }
-    }, [url])
+    }, [])
 
     return (
         <section id="sidebar">

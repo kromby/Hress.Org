@@ -4,13 +4,12 @@ import { MiniPost } from '../../../components';
 import axios from 'axios';
 
 const AwardsSide = () => {
-    const [data, setData] = useState({ awards: null, isLoading: false, visible: false })
-
-    var url = config.get('path') + '/api/hardhead/awards/364/winners?position=1&code=' + config.get('code');
+    const [data, setData] = useState({ awards: null, isLoading: false, visible: false })    
 
     useEffect(() => {
         const getAwards = async () => {
             try {
+                const url = `${config.get('path')}/api/hardhead/awards/364/winners?position=1&code=${config.get('code')}`;
                 setData({ isLoading: true });
                 const response = await axios.get(url);
                 setData({ awards: response.data[0], isLoading: false, visible: true });
@@ -23,7 +22,7 @@ const AwardsSide = () => {
         if (!data.awards) {
             getAwards();
         }
-    }, [url])
+    }, [])
 
     return (
         <div>

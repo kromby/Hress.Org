@@ -20,7 +20,7 @@ const Album = () => {
         }
 
         const getAlbum = async () => {
-            var url = config.get("apiPath") + "/api/albums/" + params.id;
+            const url = config.get("apiPath") + "/api/albums/" + params.id;
             try {
                 const response = await axios.get(url, {
                     headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },

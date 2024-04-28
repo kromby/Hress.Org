@@ -9,7 +9,7 @@ const AwardsByYear = () => {
     const [categories, setCategories] = useState();
     const params = useParams();
 
-    var url = config.get('path') + '/api/hardhead/awards?year=' + params.id + '&code=' + config.get('code');
+    const url = config.get('path') + '/api/hardhead/awards?year=' + params.id + '&code=' + config.get('code');
 
     useEffect(() => {
         const getAwardsByYear = async () => {

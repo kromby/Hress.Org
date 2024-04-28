@@ -8,8 +8,7 @@ const StatsSide = ({type}) => {
 
     useEffect(() => {
         const getStats = async () => {
-
-            var url = new URL(config.get('apiPath'));
+            const url = new URL(config.get('apiPath'));
             url.pathname = "/api/dinnerparties/statistic";	
             url.searchParams.append("type", type);
             

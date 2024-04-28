@@ -10,7 +10,7 @@ const Preview = ({ url }) => {
 
     useEffect(() => {
         const getImages = async () => {
-            var _url = config.get("apiPath") + url;
+            const _url = config.get("apiPath") + url;
             try {
                 const response = await axios.get(_url, {
 					headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },

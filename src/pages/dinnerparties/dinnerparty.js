@@ -16,7 +16,7 @@ const DinnerParty = () => {
 
     useEffect(() => {
         const getDinner = async () => {
-            var url = config.get("apiPath") + "/api/dinnerparties/" + params.id;
+            const url = config.get("apiPath") + "/api/dinnerparties/" + params.id;
             try {
                 const response = await axios.get(url);
                 setDinner(response.data);

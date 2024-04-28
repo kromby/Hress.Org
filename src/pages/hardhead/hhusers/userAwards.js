@@ -9,7 +9,7 @@ const UserAwards = ({id}) => {
 
     useEffect(() => {
         const getAwards = async () => {
-            var url = config.get('path') + '/api/hardhead/awards?code=' + config.get('code');
+            const url = config.get('path') + '/api/hardhead/awards?code=' + config.get('code');
 
             try {
                 const response = await axios.get(url);

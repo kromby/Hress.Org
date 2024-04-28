@@ -5,13 +5,12 @@ import { Post } from '../../../components';
 import RulesSections from './rulesSections';
 
 const Rules = () => {
-    const [data, setData] = useState({ rules: null, isLoading: false, visible: false })
-
-    var url = config.get('apiPath') + '/api/hardhead/rules';
+    const [data, setData] = useState({ rules: null, isLoading: false, visible: false })    
 
     useEffect(() => {
         const getRules = async () => {
             try {
+                const url = `${config.get('apiPath')}/api/hardhead/rules`;
                 setData({ isLoading: true });
                 const response = await axios.get(url);
                 setData({ rules: response.data, isLoading: false, visible: true });
@@ -27,7 +26,7 @@ const Rules = () => {
             getRules();
         }
 
-    }, [url])
+    }, [])
 
     return (
         <div id="main">

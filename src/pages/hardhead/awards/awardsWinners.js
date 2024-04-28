@@ -8,7 +8,7 @@ const AwardsWinners = ({href, position, year}) => {
 
     useEffect(() => {
         const getAwards = async () => {
-            var url = config.get('path') + href;
+            let url = config.get('path') + href;
 
             if (position)
                 url = url + '?position=' + position;

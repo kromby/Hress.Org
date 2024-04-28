@@ -12,8 +12,7 @@ const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }) => {
 
     useEffect(() => {
         const getMovies = async () => {
-            // TODO: Get parent ID from somewhere or just change every year ;)
-            var url = config.get('path') + Href + '&code=' + config.get('code');
+            const url = `${config.get('path')}${Href}&code=${config.get('code')}`;
             try {
                 const response = await axios.get(url);
                 setMovies(response.data);

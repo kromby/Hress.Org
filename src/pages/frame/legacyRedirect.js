@@ -9,7 +9,7 @@ const LegacyRedirect = () => {
     useEffect(() => {
         const parsed = queryString.parse(location.search);
 
-        var path;
+        let path;
 
         if (location.pathname.toLowerCase() === '/default/single.aspx') {
             if (parsed.Id) {

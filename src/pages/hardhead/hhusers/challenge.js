@@ -10,7 +10,7 @@ const Challenge = ({ id, username, profilePhoto }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            var url = new URL(`/api/hardhead/statistics/users/${id}/challenges`, config.get('apiPath'));
+            const url = new URL(`/api/hardhead/statistics/users/${id}/challenges`, config.get('apiPath'));
             try {
                 const response = await axios.get(url);
                 setChallengers(response.data.challengers);

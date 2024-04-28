@@ -8,11 +8,11 @@ import UserImage from "../../components/users/userimage";
 const Teams = ({ id }) => {
     const [teams, setTeams] = useState();
     const [showAnswers, setShowAnswers] = useState(false);
-    var isFirst = true;
+    let isFirst = true;
 
     useEffect(() => {
         const getTeams = async () => {
-            var url = config.get("apiPath") + "/api/dinnerparties/" + id + "/teams";
+            const url = `${config.get("apiPath")}/api/dinnerparties/${id}/teams`;
             try {
                 const response = await axios.get(url);
                 setTeams(response.data);

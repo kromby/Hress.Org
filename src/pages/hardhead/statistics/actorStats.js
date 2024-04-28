@@ -10,7 +10,7 @@ const ActorStats = () => {
     const [period, setPeriod] = useState("All");
     const [reload, setReload] = useState(false);
 
-    var url = `${config.get('apiPath')}/api/movies/statistics/actor?periodType=${period}`;
+    const url = `${config.get('apiPath')}/api/movies/statistics/actor?periodType=${period}`;
 
     useEffect(() => {
         const getStats = async () => {

@@ -7,7 +7,7 @@ const UserAwardDetail = ({awardID, userID, name}) => {
 
     useEffect(() => {
         const getAwards = async () => {
-            var url = config.get('path') + '/api/hardhead/awards/' + awardID + '/winners?user=' + userID + '&code=' + config.get('code');
+            const url = config.get('path') + '/api/hardhead/awards/' + awardID + '/winners?user=' + userID + '&code=' + config.get('code');
             try {
                 const response = await axios.get(url);
                 if (response.data.length > 0) {

@@ -8,7 +8,7 @@ const DinnerParties = () => {
 
     useEffect(() => {
         const getDinners = async () => {
-            var url = config.get("apiPath") + "/api/dinnerparties?top=4&includeGuests=true";
+            const url = config.get("apiPath") + "/api/dinnerparties?top=4&includeGuests=true";
             try {
                 const response = await axios.get(url);
                 setDinners(response.data);
