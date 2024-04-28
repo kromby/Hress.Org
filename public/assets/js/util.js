@@ -6,12 +6,14 @@
 	 */
 	$.fn.navList = function () {
 
+		// skipcq: JS-0239
 		var $this = $(this);
 		$a = $this.find('a');
 		b = [];
 
 		$a.each(function () {
 
+			// skipcq: JS-0239
 			var $this = $(this),
 				indent = Math.max(0, $this.parents('li').length - 1),
 				href = $this.attr('href'),
@@ -56,6 +58,7 @@
 		}
 
 		// Vars.
+		// skipcq: JS-0239
 		var $this = $(this),
 			$body = $('body'),
 			$window = $(window),

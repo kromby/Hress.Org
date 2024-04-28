@@ -6,6 +6,7 @@
 
 (function($) {
 
+	// skipcq: JS-0239
 	var	$window = $(window),
 		$body = $('body'),
 		$menu = $('#menu'),
