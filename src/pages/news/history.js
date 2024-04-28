@@ -62,8 +62,7 @@ const HistoryNews = () => {
                                     <span className={singleNews.imageAlign === 1 ? "image left" : singleNews.imageAlign === 2 ? "image right" : null}>
                                         <img style={{ "maxHeight": "500px" }} src={config.get("apiPath") + singleNews.image.href} alt={singleNews.name} />
                                     </span> : null}                                
-                                {/* skipcq: JS-0440 */}
-                                <span dangerouslySetInnerHTML={{ __html: singleNews.content }} />                                
+                                <span dangerouslySetInnerHTML={{ __html: singleNews.content }} /> {/* skipcq: JS-0440 */}
                             </p>}
                         image={isMobile || singleNews.imageAlign === 4 ? config.get('apiPath') + singleNews.image.href + "?width=1400": null}
                         actions={<p />}

@@ -48,7 +48,7 @@
 		// Multiple elements?
 		if (this.length > 1) {
 
-			for (const i = 0; i < this.length; i++)
+			for (let i = 0; i < this.length; i++)
 				$(this[i]).panel(userConfig);
 
 			return $this;
@@ -313,7 +313,7 @@
 		// Multiple elements?
 		if (this.length > 1) {
 
-			for (const i = 0; i < this.length; i++)
+			for (let i = 0; i < this.length; i++)
 				$(this[i]).placeholder();
 
 			return $this;

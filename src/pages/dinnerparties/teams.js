@@ -49,9 +49,8 @@ const Teams = ({ id }) => {
                                 {displayHr() ? <hr /> : null}
                                 <h2>{"Lið #" + team.number} {team.isWinner ? "(Sigurliðið)" : null}</h2>
                                 {team.isWinner || team.wine ?
-                                    <blockquote>
-                                        {/* skipcq: JS-0440 */}
-                                        {team.wine ? <span dangerouslySetInnerHTML={{ __html: team.wine }} /> : null}
+                                    <blockquote>                                        
+                                        {team.wine ? <span dangerouslySetInnerHTML={{ __html: team.wine }} /> : null} {/* skipcq: JS-0440 */}
                                     </blockquote> : null}
                                 <div className="row gtr-uniform">
                                     {team.members.map(member =>
