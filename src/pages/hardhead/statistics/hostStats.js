@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import { Post } from '../../../components';
@@ -30,13 +30,13 @@ const HostStats = () => {
         }
     }, [url])
 
-    const handleSubmit = () => {        
+    const handleSubmit = useCallback(() => {        
         if (pageSize > data.stats.list.length) {
             setPageSize(10);
         } else {
             setPageSize(pageSize + 10);
         }
-    }
+    });
 
     const getButtonText = () => {
         if (data.stats === undefined || data.stats === null || pageSize > data.stats.list.length) {

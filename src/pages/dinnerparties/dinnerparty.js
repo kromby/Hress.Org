@@ -89,13 +89,13 @@ const DinnerParty = () => {
                                     : null }
                                     {dinner.albums.map(album =>
                                         <div className="row gtr-uniform" key={album.id}>
-                                            <div className={isMobile ? "col-12" : "col-4"} key={album.id}>
+                                            <div className={isMobile ? "col-12" : "col-4"} key={album.id + "_2"}>
                                                 <h4>
                                                     <Link to={"/album/" + album.id}>{album.name}</Link>
                                                 </h4>
                                                 {album.description}
                                             </div>
-                                            <div className={isMobile ? "col-12" : "col-8"} key={album.id}>
+                                            <div className={isMobile ? "col-12" : "col-8"} key={album.id + "_3"}>
                                                 <Preview url={album.href} />
                                             </div>
                                             <p/>
