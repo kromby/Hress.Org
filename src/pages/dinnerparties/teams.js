@@ -89,7 +89,7 @@ const Teams = ({ id }) => {
                             <div className="row gtr-uniform">
                                 <div className="col-12">
                                     <br />
-                                    <input type="checkbox" id="cbx" checked={showAnswers} onChange={() => handleChange()} />
+                                    <input type="checkbox" id="cbx" checked={showAnswers} onChange={this.handleChange} />
                                     <label htmlFor="cbx">Sýna svör við öllum spurningum</label>
                                 </div>
                             </div> : null
