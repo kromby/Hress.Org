@@ -22,7 +22,7 @@ const RulesSide = () => {
                 setData({ rule: response.data[random], isLoading: false, visible: true });
                 id = response.data[random].id;
 
-                const childUrl = `${url}/api/hardhead/rules/${id}`;
+                const childUrl = `${config.get('apiPath')}/api/hardhead/rules/${id}`;
                 const childResponse = await axios.get(childUrl);
 
                 min = 0;
@@ -35,10 +35,10 @@ const RulesSide = () => {
             }
         }
 
-        if (!data.rule) {
+        // if (!data.rule) {
             getRule();
-        }
-    })
+        // }
+    }, [])
 
     return (
         <div>
