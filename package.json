@@ -29,7 +29,7 @@
     "test": "jest",
     "version": "",
     "postversion": "git push && git push --tags",
-    "sentry:sourcemaps": "sentry-cli sourcemaps inject --org na-f6q --project javascript-react ./build && sentry-cli sourcemaps upload --org na-f6q --project javascript-react ./build"
+    "sentry:sourcemaps": "sentry-cli login && sentry-cli sourcemaps inject --org na-f6q --project javascript-react ./build && sentry-cli sourcemaps upload --org na-f6q --project javascript-react ./build"
   },
   "browserslist": {
     "production": [
