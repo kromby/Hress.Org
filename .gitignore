@@ -288,3 +288,6 @@ __pycache__/
 .env
 # Sentry Config File
 .sentryclirc
+
+# Sentry Config File
+.sentryclirc

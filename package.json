@@ -25,7 +25,7 @@
   },
   "scripts": {
     "start": "react-app-rewired start",
-    "build": "react-app-rewired build && npm run sentry:sourcemaps",
+    "build": "react-app-rewired build && npm run sentry:sourcemaps && npm run sentry:sourcemaps",
     "test": "jest",
     "version": "",
     "postversion": "git push && git push --tags",
