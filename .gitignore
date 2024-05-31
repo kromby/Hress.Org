@@ -286,3 +286,5 @@ __pycache__/
 
 # Files created in build process
 .env
+# Sentry Config File
+.sentryclirc

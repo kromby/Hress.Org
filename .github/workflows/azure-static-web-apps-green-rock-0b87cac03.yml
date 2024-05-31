@@ -17,15 +17,16 @@ jobs:
 
       - name: Create .env file
         run: |
-            echo "REACT_APP_API_PATH=https://www.hress.org" > .env
-            echo "" >> .env            
-            echo "REACT_APP_LEGACY_API_PATH=https://ezhressapi.azurewebsites.net" >> .env
-            echo "REACT_APP_LEGACY_API_CODE=${{ secrets.LEGACY_API_CODE }}" >> .env
-            echo "" >> .env
-            echo "REACT_APP_IMAGE_PATH=https://ezcontentapi.azurewebsites.net" >> .env
-            echo "" >> .env
-            echo "REACT_APP_OMDB=${{ secrets.OMDB_KEY }}" >> .env
-  
+          echo "REACT_APP_API_PATH=https://www.hress.org" > .env
+          echo "" >> .env            
+          echo "REACT_APP_LEGACY_API_PATH=https://ezhressapi.azurewebsites.net" >> .env
+          echo "REACT_APP_LEGACY_API_CODE=${{ secrets.LEGACY_API_CODE }}" >> .env
+          echo "" >> .env
+          echo "REACT_APP_IMAGE_PATH=https://ezcontentapi.azurewebsites.net" >> .env
+          echo "" >> .env
+          echo "REACT_APP_OMDB=${{ secrets.OMDB_KEY }}" >> .env
+          echo "" >> .env
+          echot "REACT_APP_SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
 
       - name: Build And Deploy
         id: builddeploy
