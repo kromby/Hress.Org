@@ -29,6 +29,8 @@ jobs:
           echo "REACT_APP_SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
 
       - name: Build And Deploy
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
