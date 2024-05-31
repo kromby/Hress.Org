@@ -27,7 +27,6 @@ const News = () => {
 
   return (
     <div id="main">
-      <button onClick={() => methodDoesNotExist()}>Break the world</button>;
       {news
         ? news.map((singleNews) => (
             <Post
