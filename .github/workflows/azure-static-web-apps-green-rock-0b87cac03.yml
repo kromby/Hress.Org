@@ -26,7 +26,7 @@ jobs:
           echo "" >> .env
           echo "REACT_APP_OMDB=${{ secrets.OMDB_KEY }}" >> .env
           echo "" >> .env
-          echot "REACT_APP_SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
+          echo "REACT_APP_SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
 
       - name: Build And Deploy
         id: builddeploy
