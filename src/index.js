@@ -1,16 +1,29 @@
 import * as Sentry from "@sentry/react";
-import { StrictMode } from "react";
+import React, { StrictMode } from "react";
+import {
+  useLocation,
+  useNavigationType,
+  createRoutesFromChildren,
+  matchRoutes,
+} from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import config from "react-global-configuration";
 import App from "./pages/App";
 import dotenv from "dotenv";
+const packageJson = require("../package.json");
 
 Sentry.init({
   dsn: process.env.REACT_APP_SENTRY_DSN,
   integrations: [
-    Sentry.browserTracingIntegration(),
+    Sentry.reactRouterV6BrowserTracingIntegration({
+      useEffect: React.useEffect,
+      useLocation,
+      useNavigationType,
+      createRoutesFromChildren,
+      matchRoutes,
+    }),
     Sentry.replayIntegration(),
   ],
   // Performance Monitoring
@@ -20,6 +33,9 @@ Sentry.init({
   // Session Replay
   replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
   replaysOnErrorSampleRate: 1.0, // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+  initialScope: {
+    tags: { version: packageJson.version ?? process.env.REACT_APP_VERSION },
+  },
 });
 
 dotenv.config();
@@ -45,7 +61,9 @@ function setConfig() {
 setConfig();
 
 // skipcq: JS-0002
-console.log("Hress version: " + process.env.REACT_APP_VERSION);
+console.log(
+  "Hress version: " + packageJson.version ?? process.env.REACT_APP_VERSION
+);
 
 // ReactDOM.render(<App/>, document.getElementById('content'));
 const container = document.getElementById("content");
