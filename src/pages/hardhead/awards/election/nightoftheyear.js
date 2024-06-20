@@ -50,6 +50,7 @@ const NightOfTheYear = ({
       });
     } catch (e) {
       console.error(e);
+      // skipcq: JS-0052
       alert(e);
     }
 
