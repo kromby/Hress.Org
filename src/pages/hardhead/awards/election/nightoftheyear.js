@@ -24,7 +24,7 @@ const NightOfTheYear = ({
   useEffect(() => {
     const getHardheadUsers = async () => {
       try {
-        const url = config.get("path") + Href + "&code=" + config.get("code");
+        const url = `${config.get("path")}${Href}&code=${config.get("code")}`;
         const response = await axios.get(url);
         setNights(response.data);
       } catch (e) {
@@ -44,9 +44,9 @@ const NightOfTheYear = ({
     }
 
     try {
-      const url = config.get("apiPath") + "/api/elections/" + ID + "/vote";
+      const url = `${config.get("apiPath")}/api/elections/${ID}/vote`;
       await axios.post(url, [], {
-        headers: { "X-Custom-Authorization": "token " + authTokens.token },
+        headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
       });
     } catch (e) {
       console.error(e);
@@ -80,7 +80,7 @@ const NightOfTheYear = ({
               key={hardhead.ID}
               id={hardhead.ID}
               title={hardhead.Name}
-              description={hardhead.GuestCount + " gestir"}
+              description={`${hardhead.GuestCount} gestir`}
               date={hardhead.Date}
               dateFormatted={hardhead.DateString}
               author={hardhead.Host}
@@ -104,7 +104,7 @@ const NightOfTheYear = ({
       <ul className="actions pagination">
         <li>
           <button onClick={handleSubmit} className="button large next">
-            {"Ljúka (" + Name + ")"}
+            {`Ljúka (${Name})`}
           </button>
         </li>
       </ul>

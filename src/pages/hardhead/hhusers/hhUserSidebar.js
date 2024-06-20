@@ -13,29 +13,22 @@ const HHUserSidebar = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      const url =
-        config.get("path") +
-        "/api/users/" +
-        params.id +
-        "/?code=" +
-        config.get("code");
-
+      const url = `${config.get("path")}/api/users/${
+        params.id
+      }/?code=${config.get("code")}`;
       try {
         const response = await axios.get(url);
         setUser(response.data);
-        document.title = response.data.Name + " | Hress.Org";
+        document.title = `${response.data.Name} | Hress.Org`;
       } catch (e) {
         console.error(e);
       }
     };
 
     const getStats = async () => {
-      const url =
-        config.get("apiPath") +
-        "/api/hardhead/statistics/users/" +
-        params.id +
-        "?periodType=All";
-
+      const url = `${config.get("apiPath")}/api/hardhead/statistics/users/${
+        params.id
+      }?periodType=All`;
       try {
         const response = await axios.get(url);
         setStats(response.data.list[0]);
@@ -84,9 +77,9 @@ const HHUserSidebar = () => {
             <img
               src={
                 user?.ProfilePhoto
-                  ? config.get("apiPath") +
-                    user.ProfilePhoto.Href +
-                    "?width=80&height=80"
+                  ? `${config.get("apiPath")}${
+                      user.ProfilePhoto.Href
+                    }?width=80&height=80`
                   : null
               }
               alt=""
@@ -94,7 +87,7 @@ const HHUserSidebar = () => {
           </span>
           <header>
             <h2>{user ? user.Name : null}</h2>
-            <p>{stats ? "Mætti fyrst " + stats.firstAttendedString : null}</p>
+            <p>{stats ? `Mætti fyrst ${stats.firstAttendedString}` : null}</p>
           </header>
         </section>
         {/* <!-- Intro --> */}
@@ -107,7 +100,7 @@ const HHUserSidebar = () => {
               title="Mæting"
               // href="/hardhead/awards"
               description={
-                stats ? "Hefur mætt á " + stats.attendedCount + " kvöld" : null
+                stats ? `Hefur mætt á ${stats.attendedCount} kvöld` : null
               }
               date={stats ? stats.FirstAttended : null}
               // dateString={stats ? "Frá " + stats.FirstAttendedString : null}
