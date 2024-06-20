@@ -5,6 +5,7 @@ import Post from "../../../../components/post";
 import { useAuth } from "../../../../context/auth";
 import HardheadRating from "../../components/rating";
 import HardheadBody from "../../components/hardheadbody";
+import { useNavigate, useLocation } from "react-router-dom";
 
 const MovieOfTheYear = ({
   ID,
@@ -17,6 +18,8 @@ const MovieOfTheYear = ({
 }) => {
   const { authTokens } = useAuth();
   const [nights, setNights] = useState();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const getHardheadUsers = async () => {
@@ -26,7 +29,6 @@ const MovieOfTheYear = ({
         setNights(response.data);
       } catch (e) {
         console.error(e);
-        alert(e);
       }
     };
 
@@ -37,7 +39,7 @@ const MovieOfTheYear = ({
 
   const handleSubmit = async () => {
     if (authTokens === undefined) {
-      alert("Þú þarf að skrá þig inn");
+      navigate("/login", { state: { from: location.pathname } });
       return;
     }
 
