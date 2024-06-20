@@ -29,9 +29,9 @@ const RuleChange = () => {
 
   const getRuleChanges = async () => {
     try {
-      const url = config.get("apiPath") + "/api/hardhead/rules/changes";
+      const url = `${config.get("apiPath")}/api/hardhead/rules/changes`;
       const response = await axios.get(url, {
-        headers: { "X-Custom-Authorization": "token " + authTokens.token },
+        headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
       });
       setRuleChanges(response.data);
     } catch (e) {
@@ -47,7 +47,7 @@ const RuleChange = () => {
 
     const getRuleCategories = async () => {
       try {
-        const url = config.get("apiPath") + "/api/hardhead/rules";
+        const url = `${config.get("apiPath")}/api/hardhead/rules`;
         const response = await axios.get(url);
         setRuleCategories(response.data);
       } catch (e) {
@@ -68,7 +68,7 @@ const RuleChange = () => {
 
   const getRules = async (id) => {
     try {
-      const url = config.get("apiPath") + "/api/hardhead/rules/" + id;
+      const url = `${config.get("apiPath")}/api/hardhead/rules/${id}`;
       const response = await axios.get(url);
       setRules(response.data);
     } catch (e) {
@@ -81,18 +81,18 @@ const RuleChange = () => {
     event.preventDefault();
 
     try {
-      const postUrl = config.get("apiPath") + "/api/hardhead/rules/changes";
+      const postUrl = `${config.get("apiPath")}/api/hardhead/rules/changes`;
       const response = await axios.post(
         postUrl,
         {
           typeID: selected,
-          ruleText: ruleText,
+          ruleText,
           ruleID: selectedRule,
           ruleCategoryID: selectedCategory,
-          reasoning: reasoning,
+          reasoning,
         },
         {
-          headers: { "X-Custom-Authorization": "token " + authTokens.token },
+          headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
         }
       );
 
@@ -110,7 +110,7 @@ const RuleChange = () => {
     } catch (e) {
       console.error(e);
       if (e.response && e.response.status === 400) {
-        setError("Ekki tókst að leggja fram reglubreytingu! - " + e.message);
+        setError(`Ekki tókst að leggja fram reglubreytingu! - ${e.message}`);
       } else {
         setError("Ekki tókst að leggja fram reglubreytingu!");
       }
@@ -138,6 +138,24 @@ const RuleChange = () => {
   const handleTypeChange = (event) => {
     setSelected(event);
   };
+
+  const handleKeyDown = (event) => {
+    if (event.key.lower() === "c") {
+      handleTypeChange(ChangeType.CREATE);
+      return;
+    }
+
+    if (event.key.lower() === "u") {
+      handleTypeChange(ChangeType.UPDATE);
+      return;
+    }
+
+    if (event.key.lower() === "d") {
+      handleTypeChange(ChangeType.DELETE);
+      return;
+    }
+  };
+
   const handleTextChange = (event) => {
     setRuleText(event.target.value);
     setButtonEnabled(
@@ -176,6 +194,8 @@ const RuleChange = () => {
             <div
               className="col-4"
               onClick={() => handleTypeChange(ChangeType.UPDATE)}
+              onKeyPress={handleKeyDown}
+              role="button"
             >
               <input
                 id="update"
@@ -188,6 +208,8 @@ const RuleChange = () => {
             <div
               className="col-4"
               onClick={() => handleTypeChange(ChangeType.CREATE)}
+              onKeyPress={handleKeyDown}
+              role="button"
             >
               <input
                 id="create"
@@ -200,6 +222,8 @@ const RuleChange = () => {
             <div
               className="col-4"
               onClick={() => handleTypeChange(ChangeType.DELETE)}
+              onKeyPress={handleKeyDown}
+              role="button"
             >
               <input
                 id="delete"
@@ -225,7 +249,7 @@ const RuleChange = () => {
                     </option>
                     {ruleCategories.map((rule) => (
                       <option key={rule.id} value={rule.id}>
-                        {rule.number + ". grein - " + rule.name}
+                        {`${rule.number}. grein - ${rule.name}`}
                       </option>
                     ))}
                   </select>
@@ -246,11 +270,7 @@ const RuleChange = () => {
                       </option>
                       {rules.map((rule) => (
                         <option key={rule.id} value={rule.id}>
-                          {rule.parentNumber +
-                            "." +
-                            rule.number +
-                            ". " +
-                            rule.name}
+                          {`${rule.parentNumber}.${rule.number}.${rule.name}`}
                         </option>
                       ))}
                     </select>
