@@ -152,7 +152,6 @@ const RuleChange = () => {
 
     if (event.key.lower() === "d") {
       handleTypeChange(ChangeType.DELETE);
-      return;
     }
   };
 
@@ -196,6 +195,7 @@ const RuleChange = () => {
               onClick={() => handleTypeChange(ChangeType.UPDATE)}
               onKeyPress={handleKeyDown}
               role="button"
+              tabIndex="0"
             >
               <input
                 id="update"
@@ -210,6 +210,7 @@ const RuleChange = () => {
               onClick={() => handleTypeChange(ChangeType.CREATE)}
               onKeyPress={handleKeyDown}
               role="button"
+              tabIndex="1"
             >
               <input
                 id="create"
@@ -224,6 +225,7 @@ const RuleChange = () => {
               onClick={() => handleTypeChange(ChangeType.DELETE)}
               onKeyPress={handleKeyDown}
               role="button"
+              tabIndex="2"
             >
               <input
                 id="delete"
