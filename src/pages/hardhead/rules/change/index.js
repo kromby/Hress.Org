@@ -210,7 +210,7 @@ const RuleChange = () => {
               onClick={() => handleTypeChange(ChangeType.CREATE)}
               onKeyPress={handleKeyDown}
               role="button"
-              tabIndex="1"
+              tabIndex="0"
             >
               <input
                 id="create"
@@ -225,7 +225,7 @@ const RuleChange = () => {
               onClick={() => handleTypeChange(ChangeType.DELETE)}
               onKeyPress={handleKeyDown}
               role="button"
-              tabIndex="2"
+              tabIndex="0"
             >
               <input
                 id="delete"
