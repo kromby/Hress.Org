@@ -22,14 +22,11 @@ const HardheadRating = ({ id, nightRatingVisible, movieRatingVisible }) => {
     const getRatingData = async () => {
       if (authTokens !== undefined) {
         try {
-          const url =
-            config.get("path") +
-            "/api/hardhead/" +
-            id +
-            "/ratings?code=" +
-            config.get("code");
+          const url = `${config.get(
+            "path"
+          )}/api/hardhead/${id}/ratings?code=${config.get("code")}`;
           const response = await axios.get(url, {
-            headers: { Authorization: "token " + authTokens.token },
+            headers: { Authorization: `token ${authTokens.token}` },
           });
           setData({ ratings: response.data, isLoading: false, visible: true });
         } catch (e) {
@@ -64,20 +61,17 @@ const HardheadRating = ({ id, nightRatingVisible, movieRatingVisible }) => {
   const saveRating = async (rate, type) => {
     if (authTokens !== undefined) {
       try {
-        const url =
-          config.get("path") +
-          "/api/hardhead/" +
-          id +
-          "/ratings?code=" +
-          config.get("code");
+        const url = `${config.get(
+          "path"
+        )}/api/hardhead/${id}/ratings?code=${config.get("code")}`;
         await axios.post(
           url,
           {
-            type: type,
+            type,
             rating: rate,
           },
           {
-            headers: { Authorization: "token " + authTokens.token },
+            headers: { Authorization: `token ${authTokens.token}` },
           }
         );
       } catch (e) {
@@ -97,7 +91,7 @@ const HardheadRating = ({ id, nightRatingVisible, movieRatingVisible }) => {
             (rating.Code === "REP_C_RTNG" && showNightRating === true) ||
             (rating.Code === "REP_C_MRTNG" && showMovieRating === true) ? (
               <li key={rating.Code}>
-                <span id={rating.Code + "_" + id} />
+                <span id={`${rating.Code}_${id}`} />
                 {rating.Code === "REP_C_RTNG" ? (
                   <i className="icon solid fa-beer fa-2x" />
                 ) : (
@@ -106,7 +100,7 @@ const HardheadRating = ({ id, nightRatingVisible, movieRatingVisible }) => {
                 {data.ratings.Readonly ? (
                   <span>
                     (Fjöldi: {rating.NumberOfRatings}
-                    {rating.MyRating ? " -  Þú: " + rating.MyRating : null}
+                    {rating.MyRating ? ` -  Þú: ${rating.MyRating}` : null}
                     )&nbsp;
                   </span>
                 ) : null}
@@ -124,7 +118,7 @@ const HardheadRating = ({ id, nightRatingVisible, movieRatingVisible }) => {
                     readonly={data.ratings.Readonly}
                     onHover={(rate) => {
                       document.getElementById(
-                        rating.Code + "_" + id
+                        `${rating.Code}_${id}`
                       ).innerHTML = getRatingText(rate, rating.Code) || " ";
                     }}
                     onChange={(rate) => saveRating(rate, rating.Code)}
