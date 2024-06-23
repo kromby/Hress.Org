@@ -106,4 +106,16 @@ public class HardheadInteractor
     {
         return await _hardheadDataAccess.GetGuests(hardheadID);
     }
+
+    public async Task<int> AddGuest(int id, int guestId, int userId)
+    {
+        var list = await _hardheadDataAccess.GetGuests(guestId);
+
+        if(list.Where(g => g.ID == guestId).Any())
+        {
+            throw new SystemException("Guest already registered.");
+        }
+
+        return await _hardheadDataAccess.AddGuest(id, guestId, userId, DateTime.Now);
+    }
 }

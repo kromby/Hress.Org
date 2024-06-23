@@ -11,13 +11,13 @@ using System.Diagnostics;
 
 namespace Ez.Hress.FunctionsApi.Hardhead;
 
-public class HardheadStatisticFunction
+public class HardheadStatisticFunctions
 {
-    private const string _class = nameof(HardheadStatisticFunction);
+    private const string _class = nameof(HardheadStatisticFunctions);
 
     private readonly HardheadStatisticsInteractor _statisticsInteractor;
 
-    public HardheadStatisticFunction(HardheadStatisticsInteractor hardheadStatisticsInteractor)
+    public HardheadStatisticFunctions(HardheadStatisticsInteractor hardheadStatisticsInteractor)
     {
         _statisticsInteractor = hardheadStatisticsInteractor;
     }

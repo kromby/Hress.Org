@@ -27,7 +27,6 @@ public class HardheadRatingFunctions
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
-
         log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, nameof(Run));
 
         var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
