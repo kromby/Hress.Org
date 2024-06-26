@@ -21,11 +21,13 @@ const GuestsEdit = ({ hardheadID, users }) => {
       .catch((error) => {
         if (error.response.status === 404) {
           console.log(
-            "[GuestsEdit] Guests not found for Hardhead: " + hardheadID
+            "[GuestsEdit] Guests not found for Hardhead: ",
+            hardheadID
           );
         } else {
           console.error(
-            "[GuestsEdit] Error retrieving guests for Hardhead: " + hardheadID
+            "[GuestsEdit] Error retrieving guests for Hardhead: ",
+            hardheadID
           );
           console.error(error);
         }
@@ -55,7 +57,7 @@ const GuestsEdit = ({ hardheadID, users }) => {
           url,
           {},
           {
-            headers: { "X-Custom-Authorization": "token " + authTokens.token },
+            headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
           }
         );
         getGuests();
@@ -75,7 +77,7 @@ const GuestsEdit = ({ hardheadID, users }) => {
             <select
               id="demo-category"
               name="demo-category"
-              onChange={(ev) => handleGuestChange(ev)}
+              onChange={handleGuestChange}
             >
               <option value="">- Veldu gest? -</option>
               {users
