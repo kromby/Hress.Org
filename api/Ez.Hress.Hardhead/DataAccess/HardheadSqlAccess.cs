@@ -353,4 +353,36 @@ public class HardheadSqlAccess : IHardheadDataAccess
 
         return list;
     }
+
+    public async Task<int> AddGuest(int hardheadID, int guestID, int userID, DateTime actionDate)
+    {
+        var sql = @"INSERT INTO [dbo].[rep_User] ([EventId],[TypeId],[UserId],[Inserted],[InsertedBy])
+                        VALUES (@hardheadID, 52, @guestID, @insertedDate, @userID)";
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add(new SqlParameter("hardheadID", hardheadID));
+        command.Parameters.Add(new SqlParameter("guestID", guestID));
+        command.Parameters.Add(new SqlParameter("insertedDate", actionDate));
+        command.Parameters.Add(new SqlParameter("userID", userID));
+
+        return await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<int> RemoveGuest(int hardheadID, int guestID)
+    {
+        var sql = @"DELETE FROM [dbo].[rep_User]
+                        WHERE TypeId = 52 AND eventID = @hardheadID AND userID = @guestID";
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add(new SqlParameter("hardheadID", hardheadID));
+        command.Parameters.Add(new SqlParameter("guestID", guestID));
+
+        return await command.ExecuteNonQueryAsync();
+    }
 }

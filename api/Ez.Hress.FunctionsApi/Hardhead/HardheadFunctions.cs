@@ -114,22 +114,4 @@ public class HardheadFunctions
             throw;
         }
     }
-
-    [FunctionName("hardheadGuests")]
-    public async Task<IActionResult> RunGuests([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/{id:int}/guests")] HttpRequest req, int id, ILogger log)
-    {
-        var method = nameof(RunGuests);
-        log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
-
-        try
-        {
-            var result = await _hardheadInteractor.GetGuestsAsync(id);
-            return new OkObjectResult(result);
-        }
-        catch (Exception ex)
-        {
-            log.LogError("Internal error", ex);
-            throw;
-        }
-    }
 }
