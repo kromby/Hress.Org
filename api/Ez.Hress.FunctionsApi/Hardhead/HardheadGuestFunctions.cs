@@ -58,7 +58,7 @@ public class HardheadGuestFunctions
 
     [FunctionName("hardheadGuestPostDel")]
     public async Task<IActionResult> RunPostDel(
-        [HttpTrigger(AuthorizationLevel.Function, "post", "delete", Route = "hardhead/{id:int}/guests/{guestId:int]")] HttpRequest req, int id, int guestId,
+        [HttpTrigger(AuthorizationLevel.Function, "post", "delete", Route = "hardhead/{id:int}/guests/{guestId:int}")] HttpRequest req, int id, int guestId,
         ILogger log)
     {
         var stopwatch = new Stopwatch();
