@@ -11,13 +11,13 @@
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org ez-group --project hressorg-web ./build && sentry-cli sourcemaps upload --org ez-group --project hressorg-web ./build"
   },
   "dependencies": {
-    "@sentry/cli": "^2.32.1",
-    "@sentry/react": "^8.17.0",
-    "axios": "^1.7.2",
+    "@sentry/cli": "^2.33.1",
+    "@sentry/react": "^8.26.0",
+    "axios": "^1.7.4",
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
     "path-browserify": "^1.0.1",
-    "query-string": "^9.0.0",
+    "query-string": "^9.1.0",
     "react": "^18.3.1",
     "react-datepicker": "^7.3.0",
     "react-device-detect": "^2.2.3",
@@ -27,9 +27,9 @@
     "react-global-configuration": "^1.4.1",
     "react-helmet": "^6.1.0",
     "react-rating": "^2.0.5",
-    "react-router-dom": "^6.24.1",
+    "react-router-dom": "^6.26.1",
     "react-youtube": "^10.1.0",
-    "webpack": "^5.93.0"
+    "webpack": "^5.94.0"
   },
   "browserslist": {
     "production": [
@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@babel/preset-env": "^7.24.7",
+    "@babel/preset-env": "^7.25.4",
     "@babel/preset-react": "^7.24.7",
     "assert": "^2.1.0",
     "babel-jest": "^29.7.0",
@@ -64,6 +64,6 @@
     "react-test-renderer": "^18.3.1",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
-    "url": "^0.11.3"
+    "url": "^0.11.4"
   }
 }
