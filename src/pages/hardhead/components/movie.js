@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import YouTube from "react-youtube";
 
 const Movie = ({ movie }) => {
@@ -12,9 +12,7 @@ const Movie = ({ movie }) => {
     },
   };
 
-  const toggleTrailer = () => {
-    setTrailerOpen(!trailerOpen);
-  };
+  const toggleTrailer = useCallback(() => setTrailerOpen(!trailerOpen));
 
   return movie ? (
     <section>
