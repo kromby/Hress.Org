@@ -33,23 +33,21 @@ const Hardhead = () => {
       const parsed = queryString.parse(location.search);
       let url;
       if (params.hardheadID) {
-        url = config.get("apiPath") + "/api/hardhead/" + params.hardheadID;
+        url = `${config.get("apiPath")}/api/hardhead/${params.hardheadID}`;
       } else if (parsed.parentID) {
-        url =
-          config.get("apiPath") + "/api/hardhead?parentID=" + parsed.parentID;
+        url = `${config.get("apiPath")}/api/hardhead?parentID=${
+          parsed.parentID
+        }`;
       } else if (parsed.userID) {
-        url = config.get("apiPath") + "/api/hardhead?userID=" + parsed.userID;
+        url = `${config.get("apiPath")}/api/hardhead?userID=${parsed.userID}`;
       } else if (parsed.query) {
-        url = config.get("apiPath") + "/api/movies?filter=" + parsed.query;
+        url = `${config.get("apiPath")}/api/movies?filter=${parsed.query}`;
       } else {
         const currentDate = new Date();
         currentDate.setMonth(currentDate.getMonth() - 5);
-        url =
-          config.get("apiPath") +
-          "/api/hardhead?dateFrom=" +
-          (currentDate.getMonth() + 1) +
-          ".1." +
-          currentDate.getFullYear();
+        url = `${config.get("apiPath")}/api/hardhead?dateFrom=${
+          currentDate.getMonth() + 1
+        }.1.${currentDate.getFullYear()}`;
       }
 
       return url;
@@ -77,7 +75,7 @@ const Hardhead = () => {
               href={`/hardhead/${hardhead.id}`}
               title={hardhead.name}
               description={
-                hardhead.guestCount ? hardhead.guestCount + " gestir" : null
+                hardhead.guestCount ? `${hardhead.guestCount} gestir` : null
               }
               date={hardhead.date}
               dateFormatted={hardhead.dateString}

@@ -30,7 +30,7 @@ const Movie = ({ movie }) => {
         {movie.hardheadKillCount ? (
           <span>bar ábyrgð á {movie.hardheadKillCount} drápum </span>
         ) : null}
-        {movie.movieKillCount ? "af " + movie.movieKillCount : null}
+        {movie.movieKillCount ? `af ${movie.movieKillCount}` : null}
         {movie.hardheadKillCount || movie.movieKillCount
           ? " í myndinni)"
           : null}
