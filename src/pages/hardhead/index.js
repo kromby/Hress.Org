@@ -31,7 +31,7 @@ const Hardhead = () => {
 
     const getHardheadsUrl = () => {
       const parsed = queryString.parse(location.search);
-      let url;
+      let url = "";
       if (params.hardheadID) {
         url = `${config.get("apiPath")}/api/hardhead/${params.hardheadID}`;
       } else if (parsed.parentID) {
