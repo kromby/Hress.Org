@@ -36,21 +36,7 @@ public class HardheadNight : EntityBase<int>
         get; set;
     }
 
-    public HrefEntity? Movie
-    {
-        get
-        {
-            if (Date < DateTime.Today)
-            {
-                return null;
-            }
-
-            return new HrefEntity()
-            {
-                Href = string.Format("/api/movies/{0}", ID)
-            };
-        }
-    }
+    public Movie? Movie    {        get;set;    }
 
     public int YearID { private get; set; }
     public HrefEntity Year
