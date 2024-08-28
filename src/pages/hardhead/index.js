@@ -41,7 +41,7 @@ const Hardhead = () => {
       } else if (parsed.userID) {
         url = `${config.get("apiPath")}/api/hardhead?userID=${parsed.userID}`;
       } else if (parsed.query) {
-        url = `${config.get("apiPath")}/api/movies?filter=${parsed.query}`;
+        url = `${config.get("apiPath")}/api/hardhead?filter=${parsed.query}`;
       } else {
         const currentDate = new Date();
         currentDate.setMonth(currentDate.getMonth() - 5);

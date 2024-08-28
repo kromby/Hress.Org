@@ -15,12 +15,15 @@ Content-Type: application/json
 @apiToken = {{login.response.body.*}}
 
 ### Get movies
- GET {{legacyHost}}/api/movies/?code={{apiCode}}
+GET {{legacyHost}}/api/movies/?code={{apiCode}}
  Content-Type: application/json
 
  {
 	"filter": "arnold"
  }
+
+### Get hardhead by movie filter
+GET {{host}}/api/hardhead?filter=arnold
 
 ### Get ratings with authorization
 GET {{legacyHost}}/api/hardhead/5358/ratings?code={{apiCode}}
