@@ -33,6 +33,12 @@ public class HardheadInteractor
         return await _hardheadDataAccess.GetHardheads(parentID);
     }
 
+    public async Task<IList<HardheadNight>> GetHardheadsByMovieAsync(string nameAndActorFilter)
+    {
+        _log.LogInformation("[{Class}] Getting all Hardheads by movie filter '{Filter}'", _class, nameAndActorFilter);
+        return await _hardheadDataAccess.GetHardheadsByMovieFilterAsync(nameAndActorFilter);
+    }
+
     public async Task<IList<HardheadNight>> GetNextHardheadAsync()
     {
         var list = await _hardheadDataAccess.GetHardheads(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddMonths(2));

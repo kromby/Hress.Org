@@ -87,6 +87,25 @@ public class HardheadSqlAccess : IHardheadDataAccess
         return list;
     }
 
+    public async Task<IList<HardheadNight>> GetHardheadsByMovieFilterAsync(string nameAndActorFilter)
+    {
+        var sql = string.Format(SQL_GETHARDHEAD, "(film.TextValue LIKE @filter OR actor.TextValue LIKE @filter)");
+        _log.LogInformation("SQL: {SQL}", sql);
+
+        IList<HardheadNight> list = new List<HardheadNight>();
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("filter", string.Format("%{0}%", nameAndActorFilter)));
+
+            var reader = await command.ExecuteReaderAsync();
+            ParseHardhead(list, reader);
+        }
+        return list;
+    }
+
     private static void ParseHardhead(IList<HardheadNight> list, SqlDataReader reader)
     {
         while (reader.Read())

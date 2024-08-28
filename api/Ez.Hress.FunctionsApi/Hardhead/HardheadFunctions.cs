@@ -86,6 +86,11 @@ public class HardheadFunctions
                 list = await _hardheadInteractor.GetHardheadsAsync(userID, UserType.host);
             }
 
+            if (req.Query.ContainsKey("filter") && req.Query.TryGetValue("filter", out var value))
+            {
+                list = await _hardheadInteractor.GetHardheadsByMovieAsync(value);
+            }
+
             return new OkObjectResult(list);
         }
     }

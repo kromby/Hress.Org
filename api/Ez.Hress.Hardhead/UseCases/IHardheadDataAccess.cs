@@ -17,6 +17,8 @@ public interface IHardheadDataAccess
 
     Task<IList<HardheadNight>> GetHardheadIDs(int userID, UserType? type);
 
+    Task<IList<HardheadNight>> GetHardheadsByMovieFilterAsync(string nameAndActorFilter);
+
     Task<bool> AlterHardhead(HardheadNight hardhead);
 
     Task<bool> CreateHardhead(int hostID, DateTime nextDate, int currentUserID, DateTime changeDate);
