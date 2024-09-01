@@ -38,6 +38,7 @@ import Album from "./albums/album";
 import RuleChange from "./hardhead/rules/change";
 import Password from "./profile/password";
 import DinnerPartySidebar from "./dinnerparties/sidebar";
+import MovieList from "./hardhead/list";
 
 const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
 
@@ -151,6 +152,7 @@ function App() {
                     <Route path=":id" element={<AwardsByYear />} />
                   </Route>
                 </Route>
+                <Route path="list" element={<MovieList />} />
                 <Route path="rules">
                   <Route path="" element={<Rules />} />
                   <Route path="change" element={<RuleChange />} />
