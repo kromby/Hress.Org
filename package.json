@@ -1,6 +1,6 @@
 {
   "name": "ez.hress.reactweb",
-  "version": "1.4.1",
+  "version": "1.5.0",
   "private": true,
   "scripts": {
     "start": "react-app-rewired start",
@@ -13,7 +13,7 @@
   "dependencies": {
     "@sentry/cli": "^2.33.1",
     "@sentry/react": "^8.27.0",
-    "axios": "^1.7.5",
+    "axios": "^1.7.7",
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
     "path-browserify": "^1.0.1",
