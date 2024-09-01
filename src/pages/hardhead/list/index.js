@@ -8,7 +8,7 @@ const MovieList = () => {
 
   useEffect(() => {
     const getHardheads = async () => {
-      var url = `${config.get("apiPath")}/api/hardhead?dateFrom=1.1.1999`;
+      const url = `${config.get("apiPath")}/api/hardhead?dateFrom=1.1.1999`;
       try {
         const response = await axios.get(url);
         setHardheads(response.data);
