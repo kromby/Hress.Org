@@ -61,7 +61,10 @@ const MovieList = () => {
                         <td style={{ verticalAlign: "top" }}>
                           <a href={`/hardhead/${hardhead.id}`}>
                             {isMobile ? `#${hardhead.number}` : hardhead.name}{" "}
-                            hjá {hardhead.host.username}
+                            hjá{" "}
+                            <a href={`/hardhead/users/${hardhead.host.id}`}>
+                              {hardhead.host.username}
+                            </a>
                           </a>
                           <br />
                           {hardhead.dateString}
