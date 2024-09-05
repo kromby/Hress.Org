@@ -41,7 +41,12 @@ const News = () => {
                 <p
                   style={
                     singleNews.image && singleNews.imageAlign !== 4
-                      ? { minHeight: singleNews.image.height - 50 }
+                      ? {
+                          minHeight:
+                            singleNews.image.height > 500
+                              ? 500
+                              : singleNews.image.height - 50,
+                        }
                       : null
                   }
                 >
