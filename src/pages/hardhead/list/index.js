@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import config from "react-global-configuration";
+import { isMobile } from "react-device-detect";
 import axios from "axios";
 import { Post } from "../../../components";
 
@@ -34,6 +35,7 @@ const MovieList = () => {
             <table>
               <thead>
                 <tr>
+                  {/* {isMobile ? null : <th />} */}
                   <th />
                   <th>Kvöld</th>
                   <th>Mynd</th>
@@ -44,20 +46,22 @@ const MovieList = () => {
                 {hardheads
                   ? hardheads.map((hardhead) => (
                       <tr key={hardhead.id}>
-                        <td>
-                          {hardhead.movie.posterPhoto?.href ? (
-                            <img
-                              src={`${config.get("apiPath")}${
-                                hardhead.movie.posterPhoto?.href
-                              }?width=80`}
-                              alt={hardhead.name}
-                              // style={{ height: imageHeight }}
-                            />
-                          ) : null}
-                        </td>
+                        {isMobile ? null : (
+                          <td>
+                            {hardhead.movie.posterPhoto?.href ? (
+                              <img
+                                src={`${config.get("apiPath")}${
+                                  hardhead.movie.posterPhoto?.href
+                                }?width=80`}
+                                alt={hardhead.name}
+                              />
+                            ) : null}
+                          </td>
+                        )}
                         <td style={{ verticalAlign: "top" }}>
                           <a href={`/hardhead/${hardhead.id}`}>
-                            {hardhead.name}
+                            {isMobile ? `#${hardhead.number}` : hardhead.name}{" "}
+                            hjá {hardhead.host.username}
                           </a>
                           <br />
                           {hardhead.dateString}
