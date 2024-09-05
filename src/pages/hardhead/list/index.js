@@ -36,7 +36,6 @@ const MovieList = () => {
               <thead>
                 <tr>
                   {/* {isMobile ? null : <th />} */}
-                  <th />
                   <th>Kvöld</th>
                   <th>Mynd</th>
                   <th>Harðhaus</th>
