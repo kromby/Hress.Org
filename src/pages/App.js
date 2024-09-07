@@ -22,7 +22,7 @@ import HHUsers from "./hardhead/hhusers";
 import HHUserSidebar from "./hardhead/hhusers/hhUserSidebar";
 import Nominations from "./hardhead/awards/nominations";
 import LegacyFrame from "./frame/legacyFrame";
-import LegacyRedirect from "./frame/legacyRedirect";
+// import LegacyRedirect from "./frame/legacyRedirect";
 import Navigation from "./frame/navigation";
 import News from "./news";
 import MainSidebar from "./news/mainSidebar";
@@ -171,8 +171,7 @@ function App() {
               <Route path="chat" element={<LegacyFrame />} />
               <Route path="comic" element={<LegacyFrame />} />
               <Route path="default">
-                <Route path="" element={<LegacyFrame />} />
-                <Route path="single.aspx" element={<LegacyRedirect />} />
+                <Route path="*" element={<LegacyFrame />} />
               </Route>
               <Route path="feed" element={<LegacyFrame />} />
               <Route path="foodandredwine" element={<LegacyFrame />} />

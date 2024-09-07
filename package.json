@@ -1,6 +1,6 @@
 {
   "name": "ez.hress.reactweb",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "private": true,
   "scripts": {
     "start": "react-app-rewired start",
@@ -11,8 +11,8 @@
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org ez-group --project hressorg-web ./build && sentry-cli sourcemaps upload --org ez-group --project hressorg-web ./build"
   },
   "dependencies": {
-    "@sentry/cli": "^2.34.1",
-    "@sentry/react": "^8.27.0",
+    "@sentry/cli": "^2.35.0",
+    "@sentry/react": "^8.28.0",
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
     "jsonwebtoken": "^9.0.2",
