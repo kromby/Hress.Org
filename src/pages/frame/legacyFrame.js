@@ -20,22 +20,19 @@ const LegacyFrame = () => {
 
     const getMagicCode = async () => {
       try {
-        const url = config.get("apiPath") + "/api/authenticate/magic";
+        const url = `${config.get("apiPath")}/api/authenticate/magic`;
         if (authTokens) {
           const response = await axios.post(
             url,
             {},
             {
               headers: {
-                "X-Custom-Authorization": "token " + authTokens.token,
+                "X-Custom-Authorization": `token ${authTokens.token}`,
               },
             }
           );
           window.location.replace(
-            "https://hress.azurewebsites.net/magic/?code=" +
-              response.data +
-              "&path=" +
-              location.pathname
+            `https://hress.azurewebsites.net/magic/?code=${response.data}&path=${location.pathname}`
           );
         }
       } catch (e) {
@@ -43,7 +40,7 @@ const LegacyFrame = () => {
       }
     };
 
-    document.title = location.pathname + " | Hress.Org";
+    document.title = `${location.pathname} | Hress.Org`;
 
     const parsed = queryString.parse(location.search);
     setIsLegacy(parsed.legacy);
@@ -58,7 +55,7 @@ const LegacyFrame = () => {
       <div id="main">
         Þú verður fljótlega færð(ur) yfir á á gamla Hressleikann!
         <br />
-        {"https://hress.azurewebsites.net" + location.pathname}
+        {`https://hress.azurewebsites.net/${location.pathname}`}
       </div>
     );
   } else {
@@ -67,7 +64,7 @@ const LegacyFrame = () => {
         {/* skipcq: JS-D010 */}
         <iframe
           title={location.pathname}
-          src={"https://hress.azurewebsites.net/" + location.pathname}
+          src={`https://hress.azurewebsites.net/${location.pathname}`}
           width="100%"
           height="2000px"
           id="myLegacyFrame"
