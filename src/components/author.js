@@ -38,7 +38,7 @@ const Author = ({ ID, Username, href, ProfilePhoto, UserPath }) => {
 
   const getTitle = (username, name) => {
     if (name) {
-      return username + " " + name;
+      return `${username} ${name}`;
     } else return username;
   };
 
