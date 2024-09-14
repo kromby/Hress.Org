@@ -32,10 +32,10 @@ const HardheadBody = ({
   }, [viewNight, viewMovie, viewGuests]);
 
   return [
-    movie.posterPhoto?.href ? (
+    movie?.posterPhoto?.href ? (
       <span key="A" className="image right">
         <img
-          src={config.get("apiPath") + movie.posterPhoto?.href}
+          src={config.get("apiPath") + movie.posterPhoto.href}
           alt={name}
           style={{ height: imageHeight }}
         />
