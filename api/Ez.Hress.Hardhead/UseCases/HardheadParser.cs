@@ -25,7 +25,6 @@ namespace Ez.Hress.Hardhead.UseCases
             var movieInfo = new MovieInfo(movieInfoInput.Title, movieInfoInput.Plot, movieInfoInput.Rated ?? string.Empty, movieInfoInput.Country)
             {
                 Released = DateTime.Parse(movieInfoInput.Released),
-                Runtime = ,
                 Genre = movieInfoInput.Genre.Split(", ").ToList(),
                 Director = movieInfoInput.Director.Split(", ").ToList(),
                 Writer = movieInfoInput.Writer.Split(", ").ToList(),
