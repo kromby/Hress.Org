@@ -26,9 +26,6 @@ public class HardheadParser
         {
             Released = DateTime.Parse(movieInfoInput.Released),
             Genre = movieInfoInput.Genre.Split(", ").ToList(),
-            Director = movieInfoInput.Director.Split(", ").ToList(),
-            Writer = movieInfoInput.Writer.Split(", ").ToList(),
-            Actors = movieInfoInput.Actors.Split(", ").ToList(),
             Description = movieInfoInput.Plot,
             Language = movieInfoInput.Language.Split(", ").ToList(),           
             Ratings = movieInfoInput.Ratings.ToDictionary(static r => r.Source, r => r.Value),
@@ -37,7 +34,22 @@ public class HardheadParser
             ImdbID = movieInfoInput.ImdbID,                
         };
 
-        if(int.TryParse(movieInfoInput.Year, out int tempYear))
+        foreach (var director in movieInfoInput.Director.Split(","))
+        {
+            movieInfo.Crew.Add(new CrewMember { Name = director.Trim(), Role = Role.Director });
+        }
+
+        foreach (var writer in movieInfoInput.Writer.Split(","))
+        {
+            movieInfo.Crew.Add(new CrewMember { Name = writer.Trim(), Role = Role.Writer });
+        }
+
+        foreach (var actor in movieInfoInput.Actors.Split(","))
+        {
+            movieInfo.Crew.Add(new CrewMember { Name = actor.Trim(), Role = Role.Actor });
+        }
+
+        if (int.TryParse(movieInfoInput.Year, out int tempYear))
         {
             movieInfo.Year = tempYear;
         }
