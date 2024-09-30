@@ -22,11 +22,10 @@ namespace Ez.Hress.Hardhead.UseCases
         {
             _log.LogInformation("Parsing movie information: {MovieInfoInput}", movieInfoInput);
 
-            var movieInfo = new MovieInfo(movieInfoInput.Title, movieInfoInput.Plot, movieInfoInput.Rated, movieInfoInput.Country)
+            var movieInfo = new MovieInfo(movieInfoInput.Title, movieInfoInput.Plot, movieInfoInput.Rated ?? string.Empty, movieInfoInput.Country)
             {
-                Year = int.Parse(movieInfoInput.Year),
                 Released = DateTime.Parse(movieInfoInput.Released),
-                Runtime = int.Parse(movieInfoInput.Runtime.Replace("min", "").Trim()),
+                Runtime = ,
                 Genre = movieInfoInput.Genre.Split(", ").ToList(),
                 Director = movieInfoInput.Director.Split(", ").ToList(),
                 Writer = movieInfoInput.Writer.Split(", ").ToList(),
@@ -36,12 +35,27 @@ namespace Ez.Hress.Hardhead.UseCases
                 Ratings = movieInfoInput.Ratings.ToDictionary(static r => r.Source, r => r.Value),
                 Metascore = movieInfoInput.Metascore,
                 ImdbRating = decimal.Parse(movieInfoInput.ImdbRating),
-                ImdbVotes = int.Parse(movieInfoInput.ImdbVotes.Replace(",", "")),
                 ImdbID = movieInfoInput.ImdbID,                
             };
-            
 
-            if(IsValidString(movieInfoInput.Awards))
+            if(int.TryParse(movieInfoInput.Year, out int tempYear))
+            {
+                movieInfo.Year = tempYear;
+            }
+
+            if(int.TryParse(movieInfoInput.Runtime.Replace("min", "").Trim(), out int tempRuntime))
+            {
+                movieInfo.Runtime = tempRuntime;
+            }
+
+            if (int.TryParse(movieInfoInput.ImdbVotes.Replace(",", ""), out int tempImdbVote))
+            {
+                movieInfo.ImdbVotes = tempImdbVote;
+            }
+
+
+
+            if (IsValidString(movieInfoInput.Awards))
             {
                 movieInfo.Awards = movieInfoInput.Awards;
             }
