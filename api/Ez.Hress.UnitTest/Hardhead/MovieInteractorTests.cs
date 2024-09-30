@@ -28,7 +28,7 @@ public class MovieInteractorTests
         // ARRANGE
         int hardheadID = 1;
         int userID = 2;
-        DateTime hardheadDate = DateTime.Now;
+        DateTime hardheadDate = DateTime.UtcNow;
         MovieInfo movieInfo = new("Test Movie", "Test Plot", "Rating", "Country")
         {
             Year = 1988,

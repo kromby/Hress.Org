@@ -39,7 +39,7 @@ public class MovieInteractor
         _log.LogInformation("Saving movie information: {MovieInfo}", movieInfo);
         movieInfo.ID = hardheadID;
         movieInfo.InsertedBy = userID;
-        movieInfo.Inserted = DateTime.Now;
+        movieInfo.Inserted = DateTime.UtcNow;
         movieInfo.Age = hardheadDate.Subtract(movieInfo.Released).Days / 365;
 
         return await _movieInformationDataAccess.SaveMovieInformationAsync(movieInfo);
