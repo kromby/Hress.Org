@@ -116,11 +116,13 @@ public class Startup : FunctionsStartup
 
         // Hardhead
         services.AddSingleton<HardheadInteractor>();
-        services.AddSingleton<IHardheadDataAccess, HardheadSqlAccess>();
+        services.AddSingleton<HardheadParser>();
+        services.AddSingleton<IHardheadDataAccess, HardheadSqlAccess>();        
 
         // Hardhead - Movie
         services.AddSingleton<MovieInteractor>();
         services.AddSingleton<IMovieDataAccess, MovieSqlAccess>();
+        services.AddSingleton<IMovieInformationDataAccess, MovieInformationDataAccess>();
 
         // Hardhead Election
         services.AddSingleton<HardheadElectionInteractor>();
