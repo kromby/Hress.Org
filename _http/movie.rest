@@ -38,42 +38,32 @@ Content-Type: application/json
 X-Custom-Authorization: token {{apiToken}}
 
 {
-	"Title": "Die Hard",
-	"Year": "1988",
-	"Rated": "R",
-	"Released": "20 Jul 1988",
-	"Runtime": "132 min",
-	"Genre": "Action, Thriller",
-	"Director": "John McTiernan",
-	"Writer": "Roderick Thorp, Jeb Stuart, Steven E. de Souza",
-	"Actors": "Bruce Willis, Alan Rickman, Bonnie Bedelia",
-	"Plot": "An NYPD officer tries to save his wife and several others taken hostage by German terrorists during a Christmas party at the Nakatomi Plaza in Los Angeles.",
-	"Language": "English, German, Italian, Japanese",
-	"Country": "United States",
-	"Awards": "Nominated for 4 Oscars. 8 wins & 6 nominations total",
-	"Poster": "https://m.media-amazon.com/images/M/MV5BZjRlNDUxZjAtOGQ4OC00OTNlLTgxNmQtYTBmMDgwZmNmNjkxXkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_SX300.jpg",
-	"Ratings": [
-		{
-			"Source": "Internet Movie Database",
-			"Value": "8.2/10"
-		},
-		{
-			"Source": "Rotten Tomatoes",
-			"Value": "94%"
-		},
-		{
-			"Source": "Metacritic",
-			"Value": "72/100"
-		}
-	],
-	"Metascore": "72",
-	"imdbRating": "8.2",
-	"imdbVotes": "834,704",
-	"imdbID": "tt0095016",
-	"Type": "movie",
-	"DVD": "28 Dec 1999",
-	"BoxOffice": "$83,844,093",
-	"Production": "N/A",
-	"Website": "N/A",
-	"Response": "True"
+  "Title": "Shogun Assassin",
+  "Year": "1980",
+  "Rated": "R",
+  "Released": "07 Nov 1980",
+  "Runtime": "85 min",
+  "Genre": "Action, Adventure",
+  "Director": "Robert Houston, Kenji Misumi",
+  "Writer": "Robert Houston, Kazuo Koike, Goseki Kojima",
+  "Actors": "Tomisaburô Wakayama, Kayo Matsuo, Minoru Ôki",
+  "Plot": "When the wife of the Shogun's Decapitator is murdered and he is ordered to commit suicide by the paranoid Shogun, he and his four-year-old son escape and become assassins for hire, embarking on a journey of blood and violent death.",
+  "Language": "Japanese",
+  "Country": "Japan",
+  "Awards": "N/A",
+  "Poster": "https://m.media-amazon.com/images/M/MV5BZWE5NTZjMWQtNWVmZC00ZmIzLWExNzEtMWMxMjMxNmU2OTEyXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
+  "Ratings": [
+    { "Source": "Internet Movie Database", "Value": "7.3/10" },
+    { "Source": "Rotten Tomatoes", "Value": "82%" }
+  ],
+  "Metascore": "N/A",
+  "imdbRating": "7.3",
+  "imdbVotes": "11,433",
+  "imdbID": "tt0081506",
+  "Type": "movie",
+  "DVD": "N/A",
+  "BoxOffice": "N/A",
+  "Production": "N/A",
+  "Website": "N/A",
+  "Response": "True"
 }
