@@ -5,10 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ez.Hress.Hardhead.UseCases
+namespace Ez.Hress.Hardhead.UseCases;
+
+public interface IMovieInformationDataAccess
 {
-    public interface IMovieInformationDataAccess
-    {
-        Task<bool> SaveMovieInformationAsync(MovieInfo movieInfo);
-    }
+    Task<bool> SaveMovieInformationAsync(MovieInfo movieInfo);
 }

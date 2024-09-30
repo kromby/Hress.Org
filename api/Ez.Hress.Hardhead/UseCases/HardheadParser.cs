@@ -7,94 +7,93 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Ez.Hress.Hardhead.UseCases
+namespace Ez.Hress.Hardhead.UseCases;
+
+public class HardheadParser
 {
-    public class HardheadParser
+    private readonly ILogger<HardheadParser> _log;
+
+    public HardheadParser(ILogger<HardheadParser> log)
     {
-        private readonly ILogger<HardheadParser> _log;
+        _log = log;
+    }
 
-        public HardheadParser(ILogger<HardheadParser> log)
+    public MovieInfo ParseMovieInfo(MovieInfoModel movieInfoInput)
+    {
+        _log.LogInformation("Parsing movie information: {MovieInfoInput}", movieInfoInput);
+
+        var movieInfo = new MovieInfo(movieInfoInput.Title, movieInfoInput.Plot, movieInfoInput.Rated ?? string.Empty, movieInfoInput.Country)
         {
-            _log = log;
+            Released = DateTime.Parse(movieInfoInput.Released),
+            Genre = movieInfoInput.Genre.Split(", ").ToList(),
+            Director = movieInfoInput.Director.Split(", ").ToList(),
+            Writer = movieInfoInput.Writer.Split(", ").ToList(),
+            Actors = movieInfoInput.Actors.Split(", ").ToList(),
+            Description = movieInfoInput.Plot,
+            Language = movieInfoInput.Language.Split(", ").ToList(),           
+            Ratings = movieInfoInput.Ratings.ToDictionary(static r => r.Source, r => r.Value),
+            Metascore = movieInfoInput.Metascore,
+            ImdbRating = decimal.Parse(movieInfoInput.ImdbRating),
+            ImdbID = movieInfoInput.ImdbID,                
+        };
+
+        if(int.TryParse(movieInfoInput.Year, out int tempYear))
+        {
+            movieInfo.Year = tempYear;
         }
 
-        public MovieInfo ParseMovieInfo(MovieInfoModel movieInfoInput)
+        if(int.TryParse(movieInfoInput.Runtime.Replace("min", "").Trim(), out int tempRuntime))
         {
-            _log.LogInformation("Parsing movie information: {MovieInfoInput}", movieInfoInput);
-
-            var movieInfo = new MovieInfo(movieInfoInput.Title, movieInfoInput.Plot, movieInfoInput.Rated ?? string.Empty, movieInfoInput.Country)
-            {
-                Released = DateTime.Parse(movieInfoInput.Released),
-                Genre = movieInfoInput.Genre.Split(", ").ToList(),
-                Director = movieInfoInput.Director.Split(", ").ToList(),
-                Writer = movieInfoInput.Writer.Split(", ").ToList(),
-                Actors = movieInfoInput.Actors.Split(", ").ToList(),
-                Description = movieInfoInput.Plot,
-                Language = movieInfoInput.Language.Split(", ").ToList(),           
-                Ratings = movieInfoInput.Ratings.ToDictionary(static r => r.Source, r => r.Value),
-                Metascore = movieInfoInput.Metascore,
-                ImdbRating = decimal.Parse(movieInfoInput.ImdbRating),
-                ImdbID = movieInfoInput.ImdbID,                
-            };
-
-            if(int.TryParse(movieInfoInput.Year, out int tempYear))
-            {
-                movieInfo.Year = tempYear;
-            }
-
-            if(int.TryParse(movieInfoInput.Runtime.Replace("min", "").Trim(), out int tempRuntime))
-            {
-                movieInfo.Runtime = tempRuntime;
-            }
-
-            if (int.TryParse(movieInfoInput.ImdbVotes.Replace(",", ""), out int tempImdbVote))
-            {
-                movieInfo.ImdbVotes = tempImdbVote;
-            }
-
-
-
-            if (IsValidString(movieInfoInput.Awards))
-            {
-                movieInfo.Awards = movieInfoInput.Awards;
-            }
-
-            if(IsValidString(movieInfoInput.DVD))
-            {
-                movieInfo.DVDReleased = DateTime.Parse(movieInfoInput.DVD);
-            }
-
-            if (IsValidString(movieInfoInput.BoxOffice))
-            {
-                movieInfo.BoxOffice = movieInfoInput.BoxOffice;
-            }
-
-            if (IsValidString(movieInfoInput.Production))
-            {
-                movieInfo.Production = movieInfoInput.Production;
-            }
-
-            if (IsValidString(movieInfoInput.Website))
-            {
-                movieInfo.Website = movieInfoInput.Website;
-            }
-
-            return movieInfo;
+            movieInfo.Runtime = tempRuntime;
         }
 
-        private static bool IsValidString(string value)
+        if (int.TryParse(movieInfoInput.ImdbVotes.Replace(",", ""), out int tempImdbVote))
         {
-            if(string.IsNullOrWhiteSpace(value))
-            {
-                return false;
-            }
-
-            if(value == "N/A")
-            {
-                return false;
-            }
-
-            return true;
+            movieInfo.ImdbVotes = tempImdbVote;
         }
+
+
+
+        if (IsValidString(movieInfoInput.Awards))
+        {
+            movieInfo.Awards = movieInfoInput.Awards;
+        }
+
+        if(IsValidString(movieInfoInput.DVD))
+        {
+            movieInfo.DVDReleased = DateTime.Parse(movieInfoInput.DVD);
+        }
+
+        if (IsValidString(movieInfoInput.BoxOffice))
+        {
+            movieInfo.BoxOffice = movieInfoInput.BoxOffice;
+        }
+
+        if (IsValidString(movieInfoInput.Production))
+        {
+            movieInfo.Production = movieInfoInput.Production;
+        }
+
+        if (IsValidString(movieInfoInput.Website))
+        {
+            movieInfo.Website = movieInfoInput.Website;
+        }
+
+        return movieInfo;
+    }
+
+    private static bool IsValidString(string value)
+    {
+        if(string.IsNullOrWhiteSpace(value))
+        {
+            return false;
+        }
+
+        if(value == "N/A")
+        {
+            return false;
+        }
+
+        return true;
     }
 }
