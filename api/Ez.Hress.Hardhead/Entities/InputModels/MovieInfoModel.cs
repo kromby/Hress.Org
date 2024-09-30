@@ -46,7 +46,7 @@ namespace Ez.Hress.Hardhead.Entities.InputModels
         public string Language { get; set; }
         public string Country { get; set; }
         public string Awards { get; set; }
-        public RatingModel[] Ratings { get; set; }
+        public IList<RatingModel> Ratings { get; set; }
         public string Metascore { get; set; }
         public string ImdbRating { get; set; }
         public string ImdbVotes { get; set; }
