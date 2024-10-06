@@ -70,10 +70,7 @@ public class MovieInformationDataAccess : IMovieInformationDataAccess
         var movies = new HashSet<string>();
         await foreach (var role in crewResponse)
         {
-            if (!movies.Contains(role.PartitionKey))
-            {
-                movies.Add(role.PartitionKey);
-            }
+            movies.Add(role.PartitionKey);
         }
 
         crewMember.MovieCounter = movies.Count;
