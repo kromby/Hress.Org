@@ -25,8 +25,9 @@ const MovieEdit = ({ id }) => {
   const [hardheadKills, setHardheadKills] = useState();
   const [omdbData, setOmdbData] = useState();
 
-  const movieUrl =
-    config.get("path") + "/api/movies/" + id + "?code=" + config.get("code");
+  const movieUrl = `${config.get("path")}/api/movies/${id}?code=${config.get(
+    "code"
+  )}`;
 
   useEffect(() => {
     if (authTokens === undefined) {
@@ -40,8 +41,7 @@ const MovieEdit = ({ id }) => {
         .then((response) => {
           if (response.data !== undefined) {
             if (response.data.YoutubeUrl) {
-              response.data.YoutubeUrl =
-                "https://www.youtube.com/watch?v=" + response.data.YoutubeUrl;
+              response.data.YoutubeUrl = `https://www.youtube.com/watch?v=${response.data.YoutubeUrl}`;
             }
 
             setID(response.data.ID);
@@ -78,7 +78,7 @@ const MovieEdit = ({ id }) => {
     console.info("[saveMovieInfo] url", url);
 
     axios.put(url, movieInfo, {
-      headers: { "X-Custom-Authorization": "token " + authTokens.token },
+      headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
     });
     console.info("[saveMovieInfo] completed");
   };
@@ -168,7 +168,7 @@ const MovieEdit = ({ id }) => {
     if (authTokens !== undefined) {
       try {
         const response = await axios.post(
-          config.get("imagePath") + "/api/Images",
+          `${config.get("imagePath")}/api/Images`,
           {
             source: useImagePath,
             name: movieName,
@@ -177,7 +177,7 @@ const MovieEdit = ({ id }) => {
         if (response.status === 201) {
           if (response.data) {
             setPosterPhotoID(response.data.id);
-            setImagePath("/api/Images/" + response.data.id + "/content");
+            setImagePath(`/api/Images/${response.data.id}/content`);
             setButtonEnabled(true);
           }
         }
@@ -192,12 +192,12 @@ const MovieEdit = ({ id }) => {
   const movieCallback = async (imdbId) => {
     try {
       const response = await axios.get(
-        "https://www.omdbapi.com/?apikey=" + config.get("omdb") + "&i=" + imdbId
+        `https://www.omdbapi.com/?apikey=${config.get("omdb")}&i=${imdbId}`
       );
 
       setMovieName(response.data.Title);
       setActor(response.data.Actors.split(",")[0]);
-      setImdbUrl("https://www.imdb.com/title/" + imdbId);
+      setImdbUrl(`https://www.imdb.com/title/${imdbId}`);
       if (response.data.Poster !== "N/A") {
         setImagePath(response.data.Poster);
         getPostImage(null, response.data.Poster);
