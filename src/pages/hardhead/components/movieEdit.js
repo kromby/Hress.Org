@@ -104,7 +104,7 @@ const MovieEdit = ({ id }) => {
             HardheadKillCount: hardheadKills,
           },
           {
-            headers: { Authorization: "token " + authTokens.token },
+            headers: { Authorization: `token ${authTokens.token}` },
           }
         );
 
