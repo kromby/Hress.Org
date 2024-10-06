@@ -72,7 +72,7 @@ const MovieEdit = ({ id }) => {
     getMovieData();
   }, [params, movieUrl]);
 
-  const saveMovieInfo = async (movieInfo) => {
+  const saveMovieInfo = (movieInfo) => {
     console.info("[saveMovieInfo] started");
     const url = `${config.get("apiPath")}/api/movies/${id}/info`;
     console.info("[saveMovieInfo] url", url);
