@@ -93,7 +93,7 @@ const MovieEdit = ({ id }) => {
         await axios.put(
           movieUrl,
           {
-            ID: ID,
+            ID,
             Name: movieName,
             Actor: actor,
             ImdbUrl: imdbUrl,
