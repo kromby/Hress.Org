@@ -2,7 +2,7 @@ version = 1
 
 [[analyzers]]
 name = "csharp"
-test_patterns = \[  
+test_patterns = [  
   "*Tests.cs"  
 ]
 
