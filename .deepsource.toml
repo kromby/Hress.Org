@@ -2,9 +2,6 @@ version = 1
 
 [[analyzers]]
 name = "csharp"
-test_patterns = [  
-  "*Tests.cs"  
-]
 
 [[analyzers]]
 name = "javascript"
@@ -13,3 +10,6 @@ name = "javascript"
   plugins = ["react"]
   environment = ["jest", "jquery"]
 
+test_patterns = [  
+  "*Tests.cs"  
+]

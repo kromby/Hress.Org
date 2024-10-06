@@ -23,7 +23,7 @@ public class MovieInteractorTests
 
 
     [Fact]
-    public async Task SaveMovieInformationAsync_ShouldSaveMovieInformation()
+    public async Task SaveMovieInformation_ShouldSaveMovieInformation_Async()
     {
         // ARRANGE
         int hardheadID = 1;
