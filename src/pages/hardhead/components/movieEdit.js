@@ -72,6 +72,17 @@ const MovieEdit = ({ id }) => {
     getMovieData();
   }, [params, movieUrl]);
 
+  const saveMovieInfo = async (movieInfo) => {
+    console.info("[saveMovieInfo] started");
+    const url = `${config.get("apiPath")}/api/movies/${id}/info`;
+    console.info("[saveMovieInfo] url", url);
+
+    axios.put(url, movieInfo, {
+      headers: { "X-Custom-Authorization": "token " + authTokens.token },
+    });
+    console.info("[saveMovieInfo] completed");
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setButtonEnabled(false);
@@ -198,17 +209,6 @@ const MovieEdit = ({ id }) => {
       console.error("[MovieEdit] Error getting data from omdbapi");
       console.error(e);
     }
-  };
-
-  const saveMovieInfo = async (movieInfo) => {
-    console.info("[saveMovieInfo] started");
-    const url = `${config.get("apiPath")}/api/movies/${id}/info`;
-    console.info("[saveMovieInfo] url", url);
-
-    axios.put(url, movieInfo, {
-      headers: { "X-Custom-Authorization": "token " + authTokens.token },
-    });
-    console.info("[saveMovieInfo] completed");
   };
 
   return (
