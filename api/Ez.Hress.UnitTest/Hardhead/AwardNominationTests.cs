@@ -23,7 +23,7 @@ public class AwardNominationTests
         // ARRANGE
         int typeID = 220;
         int userID = 2630;
-        IList<Nomination> list = new List<Nomination>() { new Nomination(220, 999, "Smu"), new Nomination(220, 2640, "Smu") };
+        IList<Nomination> list = new List<Nomination>() { new(220, 999, "Smu"), new(220, 2640, "Smu") };
 
         _nominationDataAccess.Setup(x => x.GetNominations(typeID)).Returns(Task.FromResult(list));
         var awardNominationInteractor = new AwardNominationInteractor(_nominationDataAccess.Object, _log.Object);

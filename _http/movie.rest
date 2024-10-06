@@ -31,3 +31,39 @@ GET {{host}}/api/movies/?filter=die
 
 ### Get actor statistics
 GET {{host}}/api/movies/statistics/actor?periodType=Last10
+
+### Save detailed movie info
+PUT {{host}}/api/movies/5373/info
+Content-Type: application/json
+X-Custom-Authorization: token {{apiToken}}
+
+{
+  "Title": "Shogun Assassin",
+  "Year": "1980",
+  "Rated": "R",
+  "Released": "07 Nov 1980",
+  "Runtime": "85 min",
+  "Genre": "Action, Adventure",
+  "Director": "Robert Houston, Kenji Misumi",
+  "Writer": "Robert Houston, Kazuo Koike, Goseki Kojima",
+  "Actors": "Tomisaburô Wakayama, Kayo Matsuo, Minoru Ôki",
+  "Plot": "When the wife of the Shogun's Decapitator is murdered and he is ordered to commit suicide by the paranoid Shogun, he and his four-year-old son escape and become assassins for hire, embarking on a journey of blood and violent death.",
+  "Language": "Japanese",
+  "Country": "Japan",
+  "Awards": "N/A",
+  "Poster": "https://m.media-amazon.com/images/M/MV5BZWE5NTZjMWQtNWVmZC00ZmIzLWExNzEtMWMxMjMxNmU2OTEyXkEyXkFqcGdeQXVyMTQxNzMzNDI@._V1_SX300.jpg",
+  "Ratings": [
+    { "Source": "Internet Movie Database", "Value": "7.3/10" },
+    { "Source": "Rotten Tomatoes", "Value": "82%" }
+  ],
+  "Metascore": "N/A",
+  "imdbRating": "7.3",
+  "imdbVotes": "11,433",
+  "imdbID": "tt0081506",
+  "Type": "movie",
+  "DVD": "N/A",
+  "BoxOffice": "N/A",
+  "Production": "N/A",
+  "Website": "N/A",
+  "Response": "True"
+}

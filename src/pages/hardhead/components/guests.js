@@ -16,7 +16,7 @@ const Guests = ({ hardheadID }) => {
         .then((response) => setGuests(response.data))
         .catch((ex) => {
           console.error("[Guests] Error: ", ex);
-          if (ex.response.status !== 404) {
+          if (ex?.response?.status !== 404) {
             setError(ex);
             console.log("[Guests] Error retrieving guests");
           }
