@@ -26,7 +26,7 @@ public class MovieFunctions
     {
         _authenticationInteractor = authenticationInteractor;
         _movieInteractor = movieInteractor;
-        _hardheadInteractor = hardheadInteractor;   
+        _hardheadInteractor = hardheadInteractor;
         _hardheadParser = hardheadParser;
     }
 
@@ -57,13 +57,13 @@ public class MovieFunctions
     }
 
     [FunctionName("MovieInformation")]
-    public async Task<IActionResult> RunMovieInfo([HttpTrigger(AuthorizationLevel.Function, "post", "put", Route = "movies/{id:int}/info")] HttpRequest req, int id,
+    public async Task<IActionResult> RunMovieInfoAsync([HttpTrigger(AuthorizationLevel.Function, "post", "put", Route = "movies/{id:int}/info")] HttpRequest req, int id,
         ILogger log)
     {
-        var methodName = nameof(RunMovieInfo);
+        var methodName = nameof(RunMovieInfoAsync);
         log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, methodName);
 
-        if(HttpMethods.IsPost(req.Method) || HttpMethods.IsPut(req.Method))
+        if (HttpMethods.IsPost(req.Method) || HttpMethods.IsPut(req.Method))
         {
             try
             {
@@ -84,7 +84,7 @@ public class MovieFunctions
 
                 var hardheadNight = await _hardheadInteractor.GetHardheadAsync(id);
 
-                if(hardheadNight == null)
+                if (hardheadNight == null)
                 {
                     return new NotFoundResult();
                 }
