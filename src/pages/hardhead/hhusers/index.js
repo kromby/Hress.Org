@@ -1,5 +1,5 @@
 import UserAwards from "./userAwards";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import config from "react-global-configuration";
 import UserStatistics from "./userStatistics";
 import Challenge from "./challenge";
