@@ -9,23 +9,17 @@ import Streak from "./streak";
 
 const HHUsers = () => {
   const params = useParams();
-  const location = useLocation();
-  const query = new URLSearchParams(location.search);
-  const flag = query.get("flag");
   const [user, setUser] = useState();
 
   useEffect(() => {
     const getUser = async () => {
-      const url =
-        config.get("path") +
-        "/api/users/" +
-        params.id +
-        "/?code=" +
-        config.get("code");
+      const url = `${config.get("path")}/api/users/${
+        params.id
+      }/?code=${config.get("code")}`;
       try {
         const response = await axios.get(url);
         setUser(response.data);
-        document.title = response.data.Name + " | Hress.Org";
+        document.title = `${response.data.Name} | Hress.Org`;
       } catch (e) {
         console.error(e);
       }
@@ -38,12 +32,8 @@ const HHUsers = () => {
 
   return (
     <div id="main">
-      {flag !== "new"
-        ? [
-            <UserAwards key="one" id={params.id} />,
-            <UserStatistics key="two" id={params.id} />,
-          ]
-        : null}
+      <UserAwards key="one" id={params.id} />,
+      <UserStatistics key="two" id={params.id} />,
       {user ? (
         <Challenge
           id={params.id}
