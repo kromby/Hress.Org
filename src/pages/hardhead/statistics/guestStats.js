@@ -14,12 +14,9 @@ const GuestStats = () => {
   const [period, setPeriod] = useState("All");
   const [reload, setReload] = useState(false);
 
-  const url =
-    config.get("apiPath") +
-    "/api/hardhead/statistics/users?periodType=" +
-    period +
-    "&attendanceType=" +
-    52;
+  const url = `${config.get(
+    "apiPath"
+  )}/api/hardhead/statistics/users?periodType=${period}&attendanceType=52`;
 
   useEffect(() => {
     const getStats = async () => {
