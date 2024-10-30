@@ -50,7 +50,7 @@ const StalloneNomination = ({ Type, Users }: { Type: string, Users: [] }) => {
             const postUrl = config.get('apiPath') + '/api/hardhead/awards/nominations';
             await axios.post(postUrl, {
                 typeID: Type,
-                description: description,
+                description,
                 nomineeID: nominee,
             }, {
                 headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },

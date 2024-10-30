@@ -54,7 +54,7 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
         postUrl,
         {
           typeID: Type,
-          description: description,
+          description,
           nomineeID: nominee,
         },
         {
