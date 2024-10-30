@@ -2,7 +2,13 @@ import axios from "axios";
 import config from "react-global-configuration";
 import { useEffect, useState } from "react";
 
-const Author = ({ ID, Username, href, ProfilePhoto, UserPath }) => {
+const Author = ({
+  ID,
+  Username,
+  href = null,
+  ProfilePhoto = null,
+  UserPath = null,
+}) => {
   const [user, setUser] = useState();
   const [userPath, setUserPath] = useState(
     "http://www.hress.org/Gang/Single.aspx?Id="
