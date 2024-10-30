@@ -5,22 +5,21 @@ import axios from "axios";
 import { Post } from "../../../../components";
 import Author from "../../../../components/author";
 
-const DisappointmentNomination = ({ Type, Users }) => {
+const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) => {
   const { authTokens } = useAuth();
   const [buttonEnabled, setButtonEnabled] = useState(false);
-  const [users, setUsers] = useState();
-  const [nominations, setNominations] = useState();
-  const [description, setDescription] = useState();
-  const [nominee, setNominee] = useState();
+  const [users, setUsers] = useState<any>();
+  const [nominations, setNominations] = useState<any>();
+  const [description, setDescription] = useState<string>();
+  const [nominee, setNominee] = useState<string>();
   const [isSaved, setIsSaved] = useState(false);
-  const [error, setError] = useState();
+  const [error, setError] = useState<string>();
 
   const getNominations = () => {
-    const getUrl =
-      config.get("apiPath") + "/api/hardhead/awards/nominations?type=" + Type;
+    const getUrl = `${config.get('apiPath')}/api/hardhead/awards/nominations?type=${Type}`;
     axios
       .get(getUrl, {
-        headers: { "X-Custom-Authorization": "token " + authTokens.token },
+        headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
       })
       .then((response) => setNominations(response.data))
       .catch((axiosError) => {
@@ -43,39 +42,38 @@ const DisappointmentNomination = ({ Type, Users }) => {
     }
   }, [Users]);
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     setButtonEnabled(false);
     event.preventDefault();
 
     try {
-      const postUrl =
-        config.get("apiPath") + "/api/hardhead/awards/nominations";
+      const postUrl = `${config.get('apiPath')}/api/hardhead/awards/nominations`;
       await axios.post(
         postUrl,
         {
           typeID: Type,
-          description: description,
+          description,
           nomineeID: nominee,
         },
         {
-          headers: { "X-Custom-Authorization": "token " + authTokens.token },
+          headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
         }
       );
       setIsSaved(true);
       setDescription("");
       setNominee("");
       getNominations();
-    } catch (e) {
+    } catch (e: any) {
       console.error(e);
       if (e?.response?.status === 400) {
-        setError("Ekki tókst að skrá tilnefningu! - " + e.message);
+        setError(`Ekki tókst að skrá tilnefningu! - ${e.message}`);
       } else {
         setError("Ekki tókst að skrá tilnefningu!");
       }
     }
   };
 
-  const allowSaving = (nomineeID, descriptionText) => {
+  const allowSaving = (nomineeID: string, descriptionText: string) => {
     if (descriptionText === undefined) return false;
     if (descriptionText.length <= 10 || nomineeID.length <= 0) {
       return false;
@@ -86,13 +84,13 @@ const DisappointmentNomination = ({ Type, Users }) => {
     return true;
   };
 
-  const handleNomineeChange = (event) => {
+  const handleNomineeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setNominee(event.target.value);
-    setButtonEnabled(allowSaving(event.target.value, description));
+    setButtonEnabled(allowSaving(event.target.value, description ?? ""));
   };
-  const handleDescriptionChange = (event) => {
+  const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(event.target.value);
-    setButtonEnabled(allowSaving(nominee, event.target.value));
+    setButtonEnabled(allowSaving(nominee ?? "", event.target.value));
   };
 
   return (
@@ -111,10 +109,10 @@ const DisappointmentNomination = ({ Type, Users }) => {
                 >
                   <option value="">- Hvaða Harðhaus vilt þú tilnefna? -</option>
                   {users
-                    .sort((a, b) =>
+                    .sort((a: { Name: string }, b: { Name:string }) =>
                       a.Name.toLowerCase() > b.Name.toLowerCase() ? 1 : -1
                     )
-                    .map((user) => (
+                    .map((user: { ID: number, Name: string }) => (
                       <option key={user.ID} value={user.ID}>
                         {user.Name}
                       </option>
@@ -125,7 +123,7 @@ const DisappointmentNomination = ({ Type, Users }) => {
             <div className="col-12">
               <textarea
                 name="Lýsing"
-                rows="3"
+                rows={3}
                 onChange={(ev) => handleDescriptionChange(ev)}
                 defaultValue={description}
                 placeholder="Fyrir hvað vilt þú tilnefna?"
@@ -160,14 +158,14 @@ const DisappointmentNomination = ({ Type, Users }) => {
           <table>
             <thead>
               <tr>
-                <th width="200px">Harðhaus</th>
-                <th width="900px">Útskýring</th>
+                <th style={{ width: '200px' }}>Harðhaus</th>
+                <th style={{ width: '900px' }}>Útskýring</th>
                 <th>Tilnefnandi</th>
               </tr>
             </thead>
             {nominations ? (
               <tbody>
-                {nominations.map((nomination) => (
+                {nominations.map((nomination: any) => (
                   <tr key={nomination.id}>
                     <td>
                       {nomination.nominee.profilePhoto ? (

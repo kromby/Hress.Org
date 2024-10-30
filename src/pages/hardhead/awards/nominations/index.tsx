@@ -9,13 +9,14 @@ import { useLocation, useNavigate } from 'react-router-dom';
 const Nominations = () => {
     const { authTokens } = useAuth();
     const location = useLocation();
-    const [users, setUsers] = useState();
+    const [users, setUsers] = useState<any>();
+    const navigate = useNavigate();
 
-    const url = config.get('path') + '/api/hardhead/5384/users?code=' + config.get('code');
+    const url = `${config.get('path')}/api/hardhead/5384/users?code=${config.get('code')}`;
 
     useEffect(() => {
         if (authTokens === undefined) {            
-            useNavigate("/login", { state: { from: location.pathname } });
+            navigate("/login", { state: { from: location.pathname } });
             return;
         }
 
@@ -23,7 +24,7 @@ const Nominations = () => {
             try {
                 const userID = localStorage.getItem("userID");
                 const response = await axios.get(url);
-                setUsers(response.data.filter(user => user.ID !== userID));
+                setUsers(response.data.filter((user: { ID: string }) => user.ID !== userID));
             } catch (e) {
                 console.error(e);
             }
