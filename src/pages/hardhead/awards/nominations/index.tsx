@@ -24,7 +24,7 @@ const Nominations = () => {
             try {
                 const userID = localStorage.getItem("userID");
                 const response = await axios.get(url);
-                setUsers(response.data.filter((user: any) => user.ID !== userID));
+                setUsers(response.data.filter((user: { ID: string }) => user.ID !== userID));
             } catch (e) {
                 console.error(e);
             }

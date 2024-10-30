@@ -111,10 +111,10 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
                 >
                   <option value="">- Hvaða Harðhaus vilt þú tilnefna? -</option>
                   {users
-                    .sort((a: any, b: any) =>
+                    .sort((a: { Name: string }, b: { Name:string }) =>
                       a.Name.toLowerCase() > b.Name.toLowerCase() ? 1 : -1
                     )
-                    .map((user: any) => (
+                    .map((user: { ID: number, Name: string }) => (
                       <option key={user.ID} value={user.ID}>
                         {user.Name}
                       </option>

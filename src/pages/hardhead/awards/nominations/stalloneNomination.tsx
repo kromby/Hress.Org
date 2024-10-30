@@ -96,7 +96,7 @@ const StalloneNomination = ({ Type, Users }: { Type: string, Users: [] }) => {
                             {users ?
                                 <select id="category" name="category" onChange={(ev) => handleNomineeChange(ev)}>
                                     <option value="">- Hvaða Harðhaus vilt þú tilnefna? -</option>
-                                    {users.sort((a: any, b: any) => a.Name.toLowerCase() > b.Name.toLowerCase() ? 1 : -1).map((user: any) =>
+                                    {users.sort((a: { Name: string }, b: { Name:string }) => a.Name.toLowerCase() > b.Name.toLowerCase() ? 1 : -1).map((user: any) =>
                                         <option key={user.ID} value={user.ID}>
                                             {user.Name}
                                         </option>
