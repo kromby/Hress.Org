@@ -16,11 +16,10 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
   const [error, setError] = useState<string>();
 
   const getNominations = () => {
-    const getUrl =
-      config.get("apiPath") + "/api/hardhead/awards/nominations?type=" + Type;
+    const getUrl = `${config.get('apiPath')}/api/hardhead/awards/nominations?type=${Type}`;
     axios
       .get(getUrl, {
-        headers: { "X-Custom-Authorization": "token " + authTokens.token },
+        headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
       })
       .then((response) => setNominations(response.data))
       .catch((axiosError) => {
@@ -48,8 +47,7 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
     event.preventDefault();
 
     try {
-      const postUrl =
-        config.get("apiPath") + "/api/hardhead/awards/nominations";
+      const postUrl = `${config.get('apiPath')}/api/hardhead/awards/nominations`;
       await axios.post(
         postUrl,
         {
@@ -58,7 +56,7 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
           nomineeID: nominee,
         },
         {
-          headers: { "X-Custom-Authorization": "token " + authTokens.token },
+          headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
         }
       );
       setIsSaved(true);
@@ -68,7 +66,7 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
     } catch (e: any) {
       console.error(e);
       if (e?.response?.status === 400) {
-        setError("Ekki tókst að skrá tilnefningu! - " + e.message);
+        setError(`Ekki tókst að skrá tilnefningu! - ${e.message}`);
       } else {
         setError("Ekki tókst að skrá tilnefningu!");
       }
