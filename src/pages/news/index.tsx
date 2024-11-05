@@ -3,9 +3,10 @@ import { isMobile } from "react-device-detect";
 import axios from "axios";
 import config from "react-global-configuration";
 import { Post } from "../../components";
+import { NewsEntity } from "../../types/newsEntity";
 
 const News = () => {
-  const [news, setNews] = useState();
+  const [news, setNews] = useState<NewsEntity[]>();
 
   useEffect(() => {
     const getNews = async () => {
@@ -28,7 +29,7 @@ const News = () => {
   return (
     <div id="main">
       {news
-        ? news.map((singleNews) => (
+        ? news.map((singleNews: NewsEntity) => (
             <Post
               key={singleNews.id}
               id={singleNews.id}
@@ -42,12 +43,11 @@ const News = () => {
                   style={
                     singleNews.image && singleNews.imageAlign !== 4
                       ? {
-                          minHeight:
-                            singleNews.image.height > 500
+                          minHeight: singleNews.image.height > 500
                               ? 500
                               : singleNews.image.height - 50,
                         }
-                      : null
+                      : undefined
                   }
                 >
                   {!isMobile &&
@@ -59,7 +59,7 @@ const News = () => {
                           ? "image left"
                           : singleNews.imageAlign === 2
                           ? "image right"
-                          : null
+                          : undefined
                       }
                     >
                       <img
