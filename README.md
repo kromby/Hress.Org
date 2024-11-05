@@ -1,3 +1,5 @@
+[![DeepSource](https://app.deepsource.com/gh/kromby/Hress.Org.svg/?label=active+issues&show_trend=true&token=VdBUWHkYb47h94MHDxuGLAuZ)](https://app.deepsource.com/gh/kromby/Hress.Org/)
+
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Prerequisites
