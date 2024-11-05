@@ -50,7 +50,9 @@ const News = () => {
                       : null
                   }
                 >
-                  {!isMobile && singleNews.imageAlign !== 4 ? (
+                  {!isMobile &&
+                  singleNews.image &&
+                  singleNews.imageAlign !== 4 ? (
                     <span
                       className={
                         singleNews.imageAlign === 1
