@@ -10,7 +10,7 @@ const News = () => {
 
   useEffect(() => {
     const getNews = async () => {
-      const url = config.get("apiPath") + "/api/news";
+      const url = `${config.get("apiPath")}/api/news`;
       try {
         const response = await axios.get(url);
         setNews(response.data);
@@ -33,7 +33,7 @@ const News = () => {
             <Post
               key={singleNews.id}
               id={singleNews.id}
-              href={"/news/" + singleNews.id}
+              href={`/news/${singleNews.id}`}
               title={singleNews.name}
               date={singleNews.inserted}
               dateFormatted={singleNews.insertedString}
@@ -77,9 +77,7 @@ const News = () => {
               }
               image={
                 isMobile || singleNews.imageAlign === 4
-                  ? config.get("apiPath") +
-                    singleNews.image.href +
-                    "?width=1400"
+                  ? `${config.get("apiPath")}${singleNews.image.href}?width=1400`
                   : null
               }
               actions={<p />}
