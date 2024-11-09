@@ -22,7 +22,7 @@ public class AlbumSqlDataAccess : IAlbumDataAccess
     {
         const string sql = @"SELECT	album.Id, album.Name, album.Description, album.Inserted, album.InsertedBy, COUNT(img.Id) 'ImageCount'
                                     FROM	adm_Component album
-                                    JOIN	scr_Image img ON img.ComponentId = album.Id
+                                    LEFT OUTER JOIN	scr_Image img ON img.ComponentId = album.Id
                                     WHERE	album.TypeId = 43
 	                                    AND	album.Deleted IS NULL
                                         AND album.Id = @id
@@ -134,5 +134,64 @@ public class AlbumSqlDataAccess : IAlbumDataAccess
         }
 
         return list;
+    }
+
+    public async Task<Album> CreateAlbum(Album album)
+    {
+        const string sql = @"INSERT INTO adm_Component (TypeId, GroupType, IsPublic, Name, Description, InsertedBy, Inserted)
+                            OUTPUT INSERTED.Id
+                            VALUES (43, 'CONTENT', 0, @Name, @Description, @InsertedBy, @Inserted)";
+
+        _log.LogInformation("[{Method}] Executing SQL: '{SQL}'", nameof(CreateAlbum), sql);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
+
+        command.Parameters.AddWithValue("@Name", album.Name);
+        command.Parameters.AddWithValue("@Description", album.Description);
+        command.Parameters.AddWithValue("@InsertedBy", album.InsertedBy);
+        command.Parameters.AddWithValue("@Inserted", album.Inserted);
+
+        var result = await command.ExecuteScalarAsync();
+        if (result is null)
+            throw new InvalidOperationException("Failed to get inserted ID");
+
+        album.ID = (int)result;
+        return album;
+    }
+
+    public async Task AddImageToAlbum(int albumId, int imageId, int userId)
+    {
+        const string sql = @"INSERT INTO [dbo].[scr_Image]
+               ([ComponentId]
+               ,[TypeId]
+               ,[ImageId]
+               ,[Inserted]
+               ,[InsertedBy])
+         VALUES
+               (@ComponentId
+               ,46
+               ,@ImageId
+               ,@Inserted
+               ,@InsertedBy)";
+
+        _log.LogInformation("[{Method}] Executing SQL: '{SQL}'", nameof(AddImageToAlbum), sql);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+
+        command.Parameters.AddWithValue("@ComponentId", albumId);
+        command.Parameters.AddWithValue("@ImageId", imageId);
+        command.Parameters.AddWithValue("@Inserted", DateTime.UtcNow);
+        command.Parameters.AddWithValue("@InsertedBy", userId);
+
+        await command.ExecuteNonQueryAsync();
     }
 }

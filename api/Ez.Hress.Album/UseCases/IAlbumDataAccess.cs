@@ -10,4 +10,8 @@ public interface IAlbumDataAccess
     public Task<Album?> GetAlbum(int id);
 
     public Task<IList<ImageEntity>> GetImages(int albumID);
+
+    public Task<Album> CreateAlbum(Album album);
+
+    public Task AddImageToAlbum(int albumId, int imageId, int userId);
 }
