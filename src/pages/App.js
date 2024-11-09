@@ -35,10 +35,12 @@ import DinnerParty from "./dinnerparties/dinnerparty";
 import Profile from "./profile";
 import Albums from "./albums";
 import Album from "./albums/album";
+import AlbumEdit from "./albums/albumEdit";
 import RuleChange from "./hardhead/rules/change";
 import Password from "./profile/password";
 import DinnerPartySidebar from "./dinnerparties/sidebar";
 import MovieList from "./hardhead/list";
+import AlbumImageUpload from "./albums/albumImageUpload";
 
 const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
 
@@ -137,7 +139,11 @@ function App() {
               <Route exact path="/" element={<News />} />
               <Route path="album">
                 <Route path="" element={<Albums />} />
-                <Route path=":id" element={<Album />} />
+                <Route path="edit" element={<AlbumEdit />} />
+                <Route path=":id" element={<Album />}>
+                  <Route path="edit" element={<AlbumEdit />} />
+                </Route>
+                <Route path=":id/upload" element={<AlbumImageUpload />} />
               </Route>
               <Route path="hardhead">
                 <Route path="" element={<Hardhead />} />
