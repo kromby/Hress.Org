@@ -60,4 +60,17 @@ public class AlbumInteractor
     {
         return await _albumDataAccess.GetImages(albumID);
     }
+
+    public async Task<Album> CreateAlbumAsync(Album album, int userId)
+    {
+        _log.LogInformation("[{Method}] Creating album: {AlbumName}", nameof(CreateAlbumAsync), album.Name);
+        
+        // Validate the album before proceeding
+        album.Validate();
+        
+        // Set the InsertedBy property before passing to data access
+        album.InsertedBy = userId;
+        
+        return await _albumDataAccess.CreateAlbum(album);
+    }
 }
