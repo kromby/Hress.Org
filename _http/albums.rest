@@ -36,3 +36,11 @@ X-Custom-Authorization: token {{apiToken}}
 	"Description": "Í Víðihvammi hjá Hrönn og Mömmu (og Ingvari)",
 	"Date": "2024-11-02"
 }
+
+### Add image to album
+POST {{host}}/api/albums/46128/images
+X-Custom-Authorization: token {{apiToken}}
+
+{
+    "ImageId": 278650
+}
