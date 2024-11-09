@@ -19,10 +19,20 @@ GET {{host}}/api/albums
 X-Custom-Authorization: token {{apiToken}}
 
 ### Get album by id
-GET {{host}}/api/albums/46048
+GET {{host}}/api/albums/46125
 X-Custom-Authorization: token {{apiToken}}
 
 
 ### Get images for an album
 GET {{host}}/api/albums/46048/images
 X-Custom-Authorization: token {{apiToken}}
+
+### Create an album
+POST {{host}}/api/albums
+X-Custom-Authorization: token {{apiToken}}
+
+{
+    "Name": "Matar- og Rauðvínskvöld 2024",
+	"Description": "Í Víðihvammi hjá Hrönn og Mömmu (og Ingvari)",
+	"Date": "2024-11-02"
+}
