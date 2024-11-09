@@ -20,7 +20,7 @@ public class AlbumInteractor
     }
 
     public async Task AddImagesAsync(int albumID)
-    {            
+    {
         var list = Directory.GetFiles(@"C:\Temp\hress photos\MogR2023");
 
         var name = "Matar- og Rauðvínskvöld 2023";
@@ -29,7 +29,7 @@ public class AlbumInteractor
 
         foreach (var imagePath in list)
         {
-            if(!imagePath.EndsWith(".jpg"))
+            if (!imagePath.EndsWith(".jpg"))
                 continue;
 
             var imageBytes = File.ReadAllBytes(imagePath);
@@ -64,13 +64,25 @@ public class AlbumInteractor
     public async Task<Album> CreateAlbumAsync(Album album, int userId)
     {
         _log.LogInformation("[{Method}] Creating album: {AlbumName}", nameof(CreateAlbumAsync), album.Name);
-        
+
         // Validate the album before proceeding
         album.Validate();
-        
+
         // Set the InsertedBy property before passing to data access
         album.InsertedBy = userId;
-        
+
         return await _albumDataAccess.CreateAlbum(album);
+    }
+
+    public async Task AddImageToAlbumAsync(int albumId, int imageId, int userId)
+    {
+        _log.LogInformation("[{Method}] Adding image {ImageId} to album {AlbumId}", nameof(AddImageToAlbumAsync), imageId, albumId);
+
+        // Verify the album exists
+        var album = await GetAlbumAsync(albumId);
+        if (album == null)
+            throw new ArgumentException($"Album with ID {albumId} not found");
+
+        await _albumDataAccess.AddImageToAlbum(albumId, imageId, userId);
     }
 }

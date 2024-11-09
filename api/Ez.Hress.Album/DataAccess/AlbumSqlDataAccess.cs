@@ -164,4 +164,34 @@ public class AlbumSqlDataAccess : IAlbumDataAccess
         album.ID = (int)result;
         return album;
     }
+
+    public async Task AddImageToAlbum(int albumId, int imageId, int userId)
+    {
+        const string sql = @"INSERT INTO [dbo].[scr_Image]
+               ([ComponentId]
+               ,[TypeId]
+               ,[ImageId]
+               ,[Inserted]
+               ,[InsertedBy])
+         VALUES
+               (@ComponentId
+               ,46
+               ,@ImageId
+               ,@Inserted
+               ,@InsertedBy)";
+
+        _log.LogInformation("[{Method}] Executing SQL: '{SQL}'", nameof(AddImageToAlbum), sql);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+
+        command.Parameters.AddWithValue("@ComponentId", albumId);
+        command.Parameters.AddWithValue("@ImageId", imageId);
+        command.Parameters.AddWithValue("@Inserted", DateTime.UtcNow);
+        command.Parameters.AddWithValue("@InsertedBy", userId);
+
+        await command.ExecuteNonQueryAsync();
+    }
 }
