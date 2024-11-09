@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useImages } from '../../hooks/useImages';
 import { useAlbums } from '../../hooks/useAlbums';
 import { Post } from '../../components';
-import './albumEdit.css';
+import './albumImageUpload.css';
 import { Album } from '../../types/album';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -12,7 +12,7 @@ const AlbumImageUpload = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { uploadImage, loading: uploadLoading, error: uploadError } = useImages();
-  const { getAlbum, loading: albumLoading, error: albumError } = useAlbums();
+  const { getAlbum, addImage, loading: albumLoading, error: albumError } = useAlbums();
   
   const [imageUrl, setImageUrl] = useState('');
   const [message, setMessage] = useState<string | undefined>('');
@@ -88,11 +88,19 @@ const AlbumImageUpload = () => {
         // Upload each selected file
         for (let i = 0; i < selectedFiles.length; i++) {
           const file = selectedFiles[i];
-          await uploadImage({
+          const uploadedImage = await uploadImage({
             file,
             name: album.name,
             albumId: album.id
           });
+
+          console.info('[AlbumImageUpload] Uploaded image:', uploadedImage);
+
+          // Add the uploaded image to the album
+          if (uploadedImage) {
+            await addImage(album.id, uploadedImage.id);
+          }
+
           setUploadProgress(((i + 1) / selectedFiles.length) * 100);
         }
         setMessage('Myndum hefur verið hlaðið upp!');
@@ -101,11 +109,17 @@ const AlbumImageUpload = () => {
           fileInputRef.current.value = '';
         }
       } else if (uploadType === 'url' && imageUrl) {
-        await uploadImage({
+        const uploadedImage = await uploadImage({
           source: imageUrl,
           name: album.name,
           albumId: album.id
         });
+
+        // Add the uploaded image to the album
+        if (uploadedImage) {
+          await addImage(album.id, uploadedImage.id);
+        }
+
         setMessage('Myndum hefur verið hlaðið upp!');
         setImageUrl('');
       }
@@ -115,7 +129,7 @@ const AlbumImageUpload = () => {
   };
 
   const handleDone = () => {
-    navigate(`/albums/${id}`);
+    navigate(`/album/${id}`);
   };
 
   return (
