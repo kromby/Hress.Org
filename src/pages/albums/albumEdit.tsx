@@ -6,7 +6,6 @@ import DatePicker from 'react-datepicker';
 import { useAuth } from '../../context/auth';
 import { useAlbums } from '../../hooks/useAlbums';
 import { Album } from '../../types/album';
-import axios from 'axios';
 
 const AlbumEdit: React.FC = () => {
     const { authTokens } = useAuth();

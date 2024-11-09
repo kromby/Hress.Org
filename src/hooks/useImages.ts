@@ -31,14 +31,11 @@ export const useImages = () => {
     if (response.status === 201) {
       return response.data;
     }
+
+    return null;
   };
 
-  const uploadImage = async ({
-    file,
-    source,
-    name,
-    albumId,
-  }: UploadImageParams) => {
+  const uploadImage = async ({ file, source, name }: UploadImageParams) => {
     setLoading(true);
     setError(null);
 
@@ -86,6 +83,8 @@ export const useImages = () => {
     } finally {
       setLoading(false);
     }
+
+    return null;
   };
 
   return {
