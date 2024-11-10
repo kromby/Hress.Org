@@ -5,13 +5,14 @@ import { Post } from "../../components";
 import AlbumImages from "./albumImages";
 import { useAuth } from "../../context/auth";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { AlbumEntity } from "../../types/albumEntity";
 
 const Album = () => {
   const { authTokens } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const params = useParams();
-  const [album, setAlbum] = useState();
+  const [album, setAlbum] = useState<AlbumEntity>();
 
   useEffect(() => {
     if (authTokens === undefined) {
@@ -20,13 +21,13 @@ const Album = () => {
     }
 
     const getAlbum = async () => {
-      const url = config.get("apiPath") + "/api/albums/" + params.id;
+      const url = `${config.get("apiPath")}/api/albums/${params.id}`;
       try {
         const response = await axios.get(url, {
-          headers: { "X-Custom-Authorization": "token " + authTokens.token },
+          headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
         });
         setAlbum(response.data);
-        document.title = "Myndir - " + response.data.name + " | Hress.Org";
+        document.title = `Myndir - ${response.data.name} | Hress.Org`;
       } catch (e) {
         console.error(e);
       }

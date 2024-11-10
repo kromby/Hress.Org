@@ -2,12 +2,12 @@ import { useState } from "react";
 import axios, { AxiosError } from "axios";
 import config from "react-global-configuration";
 import { useAuth } from "../context/auth";
-import { Album } from "../types/album";
+import { AlbumEntity } from "../types/albumEntity";
 
 interface UseAlbumsReturn {
-  createAlbum: (albumData: Album) => Promise<Album>;
-  getAlbum: (id: number) => Promise<Album>;
-  addImage: (albumId: number, imageId: number) => Promise<Album>;
+  createAlbum: (albumData: AlbumEntity) => Promise<AlbumEntity>;
+  getAlbum: (id: number) => Promise<AlbumEntity>;
+  addImage: (albumId: number, imageId: number) => Promise<AlbumEntity>;
   loading: boolean;
   error: string | null;
 }
@@ -17,13 +17,13 @@ export const useAlbums = (): UseAlbumsReturn => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createAlbum = async (albumData: Album): Promise<Album> => {
+  const createAlbum = async (albumData: AlbumEntity): Promise<AlbumEntity> => {
     setLoading(true);
     setError(null);
 
     try {
       const url = `${config.get("apiPath")}/api/albums`;
-      const response = await axios.post<Album>(url, albumData, {
+      const response = await axios.post<AlbumEntity>(url, albumData, {
         headers: {
           "X-Custom-Authorization": `token ${authTokens.token}`,
           "Content-Type": "application/json",
@@ -41,13 +41,13 @@ export const useAlbums = (): UseAlbumsReturn => {
     }
   };
 
-  const getAlbum = async (id: number): Promise<Album> => {
+  const getAlbum = async (id: number): Promise<AlbumEntity> => {
     setLoading(true);
     setError(null);
 
     try {
       const url = `${config.get("apiPath")}/api/albums/${id}`;
-      const response = await axios.get<Album>(url, {
+      const response = await axios.get<AlbumEntity>(url, {
         headers: {
           "X-Custom-Authorization": `token ${authTokens.token}`,
         },
@@ -64,13 +64,16 @@ export const useAlbums = (): UseAlbumsReturn => {
     }
   };
 
-  const addImage = async (albumId: number, imageId: number): Promise<Album> => {
+  const addImage = async (
+    albumId: number,
+    imageId: number
+  ): Promise<AlbumEntity> => {
     setLoading(true);
     setError(null);
 
     try {
       const url = `${config.get("apiPath")}/api/albums/${albumId}/images`;
-      const response = await axios.post<Album>(
+      const response = await axios.post<AlbumEntity>(
         url,
         { imageId },
         {
