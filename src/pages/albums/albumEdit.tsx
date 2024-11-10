@@ -5,7 +5,7 @@ import { Post } from '../../components';
 import DatePicker from 'react-datepicker';
 import { useAuth } from '../../context/auth';
 import { useAlbums } from '../../hooks/useAlbums';
-import { Album } from '../../types/album';
+import { AlbumEntity } from '../../types/albumEntity';
 
 const AlbumEdit: React.FC = () => {
     const { authTokens } = useAuth();
@@ -22,11 +22,13 @@ const AlbumEdit: React.FC = () => {
         event.preventDefault();
 
         try {
-            const albumData: Album = {
+            const albumData: AlbumEntity = {
                 id: 0,
                 name,
                 description,
-                date: albumDate
+                date: albumDate,
+                insertedString: "",
+                images: { href: "" },
             };
 
             const album = await createAlbum(albumData);

@@ -4,7 +4,7 @@ import { useImages } from '../../hooks/useImages';
 import { useAlbums } from '../../hooks/useAlbums';
 import { Post } from '../../components';
 import './albumImageUpload.css';
-import { Album } from '../../types/album';
+import { AlbumEntity } from '../../types/albumEntity';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -20,7 +20,7 @@ const AlbumImageUpload = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
-  const [album, setAlbum] = useState<Album | undefined>(undefined);
+  const [album, setAlbum] = useState<AlbumEntity | undefined>(undefined);
 
   if (!id) {
     navigate('/albums');
