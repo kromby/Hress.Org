@@ -80,9 +80,14 @@ public class AlbumInteractor
 
         // Verify the album exists
         var album = await GetAlbumAsync(albumId);
+        var image = await _imageInteractor.GetImageAsync(imageId);
+
         if (album == null)
             throw new ArgumentException($"Album with ID {albumId} not found");
 
-        await _albumDataAccess.AddImageToAlbum(albumId, imageId, userId);
+        if (image == null)
+            throw new ArgumentException($"Image with ID {imageId} not found");
+
+        await _albumDataAccess.AddImage(albumId, imageId, userId, image.Inserted);
     }
 }

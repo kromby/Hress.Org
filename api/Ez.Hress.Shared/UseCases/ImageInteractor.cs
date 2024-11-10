@@ -141,6 +141,22 @@ public class ImageInteractor
             //var imageInfo = Image.Identify(entity.Content);
             var imageInfo = Image.Load(entity.Content);
             imageInfo.Mutate(i => i.AutoOrient());
+            bool dateTakenFound = false;
+            // Try to get date taken from EXIF data
+            if (imageInfo.Metadata.ExifProfile?.TryGetValue(SixLabors.ImageSharp.Metadata.Profiles.Exif.ExifTag.DateTimeOriginal, out var dateTaken) == true)
+            {
+                if (dateTaken != null && DateTime.TryParseExact(dateTaken.Value, "yyyy:MM:dd HH:mm:ss", null, System.Globalization.DateTimeStyles.None, out DateTime photoTaken))
+                {
+                    entity.Inserted = photoTaken;
+                    dateTakenFound = true;
+                }
+            }
+
+            if (!dateTakenFound)
+            {
+                entity.Inserted = DateTime.UtcNow;
+            }
+
             id = await _imagesDataAccess.Save(entity, typeID, imageInfo.Height, imageInfo.Width);
             _log.LogInformation("[{Class}] New image saved to metadata database: '{id}'", nameof(ImageInteractor), id);
 

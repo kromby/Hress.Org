@@ -165,7 +165,7 @@ public class AlbumSqlDataAccess : IAlbumDataAccess
         return album;
     }
 
-    public async Task AddImageToAlbum(int albumId, int imageId, int userId)
+    public async Task AddImage(int albumId, int imageId, int userId, DateTime inserted)
     {
         const string sql = @"INSERT INTO [dbo].[scr_Image]
                ([ComponentId]
@@ -180,7 +180,7 @@ public class AlbumSqlDataAccess : IAlbumDataAccess
                ,@Inserted
                ,@InsertedBy)";
 
-        _log.LogInformation("[{Method}] Executing SQL: '{SQL}'", nameof(AddImageToAlbum), sql);
+        _log.LogInformation("[{Method}] Executing SQL: '{SQL}'", nameof(AddImage), sql);
 
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
@@ -189,7 +189,7 @@ public class AlbumSqlDataAccess : IAlbumDataAccess
 
         command.Parameters.AddWithValue("@ComponentId", albumId);
         command.Parameters.AddWithValue("@ImageId", imageId);
-        command.Parameters.AddWithValue("@Inserted", DateTime.UtcNow);
+        command.Parameters.AddWithValue("@Inserted", inserted);
         command.Parameters.AddWithValue("@InsertedBy", userId);
 
         await command.ExecuteNonQueryAsync();

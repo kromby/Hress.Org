@@ -13,5 +13,5 @@ public interface IAlbumDataAccess
 
     public Task<Album> CreateAlbum(Album album);
 
-    public Task AddImageToAlbum(int albumId, int imageId, int userId);
+    public Task AddImage(int albumId, int imageId, int userId, DateTime inserted);
 }
