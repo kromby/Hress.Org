@@ -76,7 +76,7 @@ const News = () => {
                 </p>
               }
               image={
-                isMobile && singleNews.image && singleNews.imageAlign === 4
+                singleNews.image && (isMobile || singleNews.imageAlign === 4)
                   ? `${config.get("apiPath")}${singleNews.image.href}?width=1400`
                   : null
               }
