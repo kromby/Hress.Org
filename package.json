@@ -13,8 +13,8 @@
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org ez-group --project hressorg-web ./build && sentry-cli sourcemaps upload --org ez-group --project hressorg-web ./build"
   },
   "dependencies": {
-    "@sentry/cli": "^2.38.0",
-    "@sentry/react": "^8.36.0",
+    "@sentry/cli": "^2.38.2",
+    "@sentry/react": "^8.38.0",
     "@tanstack/react-query": "^5.59.20",
     "axios": "^1.7.7",
     "dotenv": "^16.4.5",
@@ -30,7 +30,7 @@
     "react-global-configuration": "^1.4.1",
     "react-helmet": "^6.1.0",
     "react-rating": "^2.0.5",
-    "react-router-dom": "^6.27.0",
+    "react-router-dom": "^6.28.0",
     "react-youtube": "^10.1.0",
     "webpack": "^5.96.1"
   },
