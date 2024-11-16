@@ -51,7 +51,7 @@ const HardheadBody = ({
         </p>
       </section>
     ) : null,
-    showMovie ? <Movie id={id} movie={movie} /> : null,
+    showMovie ? <Movie key="movie" id={id} movie={movie} /> : null,
     showGuests ? <Guests key="2" hardheadID={id} /> : null,
     <p key="3" />,
   ];
