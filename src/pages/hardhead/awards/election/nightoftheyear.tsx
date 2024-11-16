@@ -6,8 +6,19 @@ import { useAuth } from "../../../../context/auth";
 import HardheadRating from "../../components/rating";
 import HardheadBody from "../../components/hardheadbody";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useHardhead } from "../../../../hooks/hardhead/useHardhead";
 
-const MovieOfTheYear = ({
+interface MovieOfTheYearProps {
+  ID: number;
+  Name: string;
+  Href: string;
+  Description?: string;
+  Date?: string;
+  Year?: string;
+  onSubmit: () => void;
+}
+
+const NightOfTheYear = ({
   ID,
   Name,
   Href,
@@ -15,27 +26,20 @@ const MovieOfTheYear = ({
   Date,
   Year,
   onSubmit,
-}) => {
+}: MovieOfTheYearProps) => {
   const { authTokens } = useAuth();
-  const [nights, setNights] = useState();
+  const { fetchByHref } = useHardhead();
+  const [nights, setNights] = useState<any[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const getHardheadUsers = async () => {
-      try {
-        const url = `${config.get("path")}${Href}&code=${config.get("code")}`;
-        const response = await axios.get(url);
-        setNights(response.data);
-      } catch (e) {
-        console.error(e);
-      }
+    const loadNights = async () => {
+      const result = await fetchByHref(Href);
+      setNights(result);
     };
-
-    if (!nights) {
-      getHardheadUsers();
-    }
-  }, []);
+    loadNights();
+  }, [Href]);
 
   const handleSubmit = async () => {
     if (authTokens === undefined) {
@@ -68,8 +72,8 @@ const MovieOfTheYear = ({
         body={
           <section>
             <p>
-              Gefðu öllum myndunum sem þú sást einkunn, smelltu síðan á{" "}
-              <b>Ljúka</b> neðst á síðunni til að halda áfram
+              Gefðu öllum kvöldunum sem þú mættir á einkunn, smelltu síðan á{" "}
+              <i>Ljúka</i> neðst á síðunni til að halda áfram
             </p>
           </section>
         }
@@ -77,29 +81,32 @@ const MovieOfTheYear = ({
 
       {nights
         ? nights.map((hardhead) => (
-            <Post
-              key={hardhead.ID}
-              id={hardhead.ID}
-              title={hardhead.Name}
-              date={hardhead.Date}
-              dateFormatted={hardhead.DateString}
-              // body= { <Movie id={hardhead.ID}/> }
-              body={
-                <HardheadBody
-                  id={hardhead.ID}
-                  name={hardhead.Name}
-                  description={hardhead.Description}
-                  viewNight={false}
-                  viewGuests={false}
-                  imageHeight={"270px"}
-                />
-              }
-              actions={<ul className="actions" />}
-              stats={
-                <HardheadRating id={hardhead.ID} nightRatingVisible="false" />
-              }
-            />
-          ))
+          <Post
+            key={hardhead.id}
+            id={hardhead.id}
+            title={hardhead.name}
+            description={`${hardhead.guestCount} gestir`}
+            date={hardhead.date}
+            dateFormatted={hardhead.dateString}
+            author={hardhead.host}
+            body={
+              <HardheadBody
+                id={hardhead.id}
+                name={hardhead.name}
+                description={hardhead.description}
+                viewMovie={false}
+                viewNight={true}
+                viewGuests={true}
+                movie={hardhead.movie}
+                imageHeight={"270px"}
+              />
+            }
+            actions={<ul className="actions" />}
+            stats={
+              <HardheadRating id={hardhead.id} nightRatingVisible="true" movieRatingVisible="false" />
+            }
+          />
+        ))
         : null}
 
       <ul className="actions pagination">
@@ -113,4 +120,4 @@ const MovieOfTheYear = ({
   );
 };
 
-export default MovieOfTheYear;
+export default NightOfTheYear;
