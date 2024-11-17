@@ -27,9 +27,9 @@ const Election = () => {
         }
 
         const getNextStep = () => {
-            const url = config.get('apiPath') + '/api/elections/49/voters/access';
+            const url = `${config.get('apiPath')}/api/elections/49/voters/access`;
             axios.get(url, {
-                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                headers: { 'X-Custom-Authorization': `token ${authTokens.token}` },
             })
                 .then(response => setStep(response.data))
                 .catch(error => {
@@ -52,9 +52,9 @@ const Election = () => {
         window.parent.scrollTo(0, 0);
 
         try {
-            const url = config.get('apiPath') + '/api/elections/49/voters/access';
+            const url = `${config.get('apiPath')}/api/elections/49/voters/access`;
             const response = await axios.get(url, {
-                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                headers: { 'X-Custom-Authorization': `token ${authTokens.token}` },
             });
             setStep(response.data);
         } catch (error) {
@@ -139,6 +139,8 @@ const Election = () => {
                 onSubmit={handleSubmit}
             />
         }
+
+        return null;
     }
 
     return (
