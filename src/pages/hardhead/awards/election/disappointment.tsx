@@ -3,12 +3,22 @@ import { useEffect, useState } from "react";
 import config from 'react-global-configuration';
 import { Post } from "../../../../components";
 import { useAuth } from "../../../../context/auth"
-import {isMobile} from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
+import { Nomination } from "../../../../types/nomination";
 
-const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
+interface DisappointmentProps {
+    ID: number;
+    Name: string;
+    Description?: string;
+    Date?: string;
+    Year?: string;
+    onSubmit: () => void;
+}
+
+const Disappointment = ({ ID, Name, Description, Date, Year, onSubmit }: DisappointmentProps) => {
     const { authTokens } = useAuth();
-    const [disappointments, setDisappointments] = useState();
-    const [selectedValue, setSelectedValue] = useState();
+    const [disappointments, setDisappointments] = useState<Nomination[]>([]);
+    const [selectedValue, setSelectedValue] = useState<string>();
     const [savingAllowed, setSavingAllowed] = useState(false);
 
     useEffect(() => {
@@ -30,7 +40,7 @@ const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
         }
     }, [ID])
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         setSavingAllowed(false);
         event.preventDefault();
         if (authTokens === undefined) {
@@ -54,7 +64,7 @@ const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
         onSubmit();
     }
 
-    const handleChange = (event) => {
+    const handleChange = (event: string) => {
         if (authTokens === undefined) {
             alert("Þú þarf að skrá þig inn");
             return;
@@ -79,9 +89,9 @@ const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
                                 <div className={isMobile ? "col-12" : "col-6"} key={nomination.id} onClick={() => handleChange(nomination.id)} >
                                     <input type="radio" checked={selectedValue === nomination.id} onChange={() => handleChange(nomination.id)} />
                                     <label>
-                                        <h3 className="author" width="50%">
+                                        <h3 className="author" style={{ width: '50%', paddingLeft: '125px' }}>
                                             {nomination.nominee.profilePhoto ?
-                                                <img src={config.get("apiPath") + nomination.nominee.profilePhoto.href} alt={nomination.nominee.name} />
+                                                <img src={`${config.get("apiPath")}${nomination.nominee.profilePhoto.href}?height=40&width=40`} alt={nomination.nominee.name} />
                                                 : null}
                                             &nbsp;&nbsp;&nbsp;
                                             <b>{nomination.nominee.name}</b>
@@ -104,7 +114,7 @@ const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
             />
             <ul className="actions pagination">
                 <li>
-                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa " + Name}</button>
+                    <button onClick={(e) => handleSubmit(e as any)} disabled={!savingAllowed} className="button large next">{"Kjósa " + Name}</button>
                 </li>
             </ul>
         </div>
