@@ -95,8 +95,8 @@ const NightOfTheYear = ({
                 name={hardhead.name}
                 description={hardhead.description}
                 viewMovie={false}
-                viewNight={true}
-                viewGuests={true}
+                viewNight
+                viewGuests
                 movie={hardhead.movie}
                 imageHeight={"270px"}
               />

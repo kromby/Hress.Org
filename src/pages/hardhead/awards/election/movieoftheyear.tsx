@@ -7,6 +7,7 @@ import HardheadRating from "../../components/rating";
 import HardheadBody from "../../components/hardheadbody";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useHardhead } from "../../../../hooks/hardhead/useHardhead";
+import { HardheadNight } from "../../../../types/HardheadNight";
 
 interface MovieOfTheYearProps {
   ID: number;
@@ -31,7 +32,7 @@ const MovieOfTheYear = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { fetchByHref } = useHardhead();
-  const [nights, setNights] = useState<any[]>([]);
+  const [nights, setNights] = useState<HardheadNight[]>([]);
 
   useEffect(() => {
     const loadNights = async () => {
@@ -87,13 +88,12 @@ const MovieOfTheYear = ({
             title={hardhead.name}
             date={hardhead.date}
             dateFormatted={hardhead.dateString}
-            // body= { <Movie id={hardhead.ID}/> }
             body={
               <HardheadBody
                 id={hardhead.id}
                 name={hardhead.name}
                 description={hardhead.description}
-                viewMovie={true}
+                viewMovie
                 viewNight={false}
                 viewGuests={false}
                 imageHeight={"270px"}
@@ -102,7 +102,7 @@ const MovieOfTheYear = ({
             }
             actions={<ul className="actions" />}
             stats={
-              <HardheadRating id={hardhead.id} nightRatingVisible="false" movieRatingVisible={true} />
+              <HardheadRating id={hardhead.id} nightRatingVisible="false" movieRatingVisible />
             }
           />
         ))
