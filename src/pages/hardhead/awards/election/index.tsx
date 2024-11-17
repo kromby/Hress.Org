@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import Post from '../../../../components/post';
 import { useAuth } from '../../../../context/auth';
 import Stallone from './stallone';
@@ -12,12 +12,13 @@ import RulesNewOld from './rulesnewold';
 import Disappointment from './disappointment';
 import TwentyYearOldMovie from './twentyyearoldmovie';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { Award } from '../../../../types/award';
 
 const Election = () => {
     const { authTokens } = useAuth();
     const location = useLocation();
     const navigate = useNavigate();
-    const [step, setStep] = useState();
+    const [step, setStep] = useState<Award | undefined>(undefined);
 
     useEffect(() => {
         if (authTokens === undefined) {
@@ -57,9 +58,9 @@ const Election = () => {
             });
             setStep(response.data);
         } catch (error) {
-            if (error.response.status === 404) {
+            if (error instanceof AxiosError && error.response?.status === 404) {
                 console.log("[Election] Access not found");
-                setStep(null);
+                setStep(undefined);
             } else {
                 console.error("[Election] Error getting access");
                 console.error(error);
@@ -67,7 +68,7 @@ const Election = () => {
         }
     }
 
-    const getElement = (id, name, href) => {
+    const getElement = (id: number, name: string, href: string) => {
         if (id === 100) /*Lög og reglur - nýjar og niðurfelldar reglur*/ {
             return <RulesNewOld key={id}
                 ID={id}
@@ -91,6 +92,9 @@ const Election = () => {
             return <Disappointment key={id}
                 ID={id}
                 Name={name}
+                Description=""
+                Date=""
+                Year=""
                 onSubmit={handleSubmit}
             />
         } else if (id === 361) {
@@ -119,6 +123,9 @@ const Election = () => {
                 ID={id}
                 Name={name}
                 Href={href}
+                Description=""
+                Date=""
+                Year=""
                 onSubmit={handleSubmit}
             />
         } else if (id === 5284) {
@@ -126,15 +133,18 @@ const Election = () => {
                 key={id}
                 ID={id}
                 Name={name}
+                Description=""
+                Date=""
+                Year=""
                 onSubmit={handleSubmit}
             />
         }
-    }    
+    }
 
     return (
         <div id="main">
             {step ?
-                getElement(step.id, step.name, step.href)
+                getElement(step.id, step.name || "", step.href || "")
                 : <Post id="0" title="Kosningu lokið" />}
         </div>
     )
