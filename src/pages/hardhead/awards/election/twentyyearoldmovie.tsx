@@ -6,15 +6,9 @@ import HardheadBody from "../../components/hardheadbody";
 import { useAuth } from "../../../../context/auth";
 import { HardheadNight } from "../../../../types/hardheadNight";
 import { useHardhead } from "../../../../hooks/hardhead/useHardhead";
+import { ElectionModuleProps } from ".";
 
-interface TwentyYearOldMovieProps {
-    ID: number;
-    Name: string;
-    Href: string;
-    onSubmit: () => void;
-}
-
-const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }: TwentyYearOldMovieProps) => {
+const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
     const { authTokens } = useAuth();
     const [movies, setMovies] = useState<HardheadNight[]>([]);
     const [value, setValue] = useState(-1);
@@ -22,7 +16,7 @@ const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }: TwentyYearOldMovieProp
 
     useEffect(() => {
         const loadNights = async () => {
-            const result = await fetchByHref(Href);
+            const result = await fetchByHref(Href || "");
             setMovies(result);
         };
         loadNights();

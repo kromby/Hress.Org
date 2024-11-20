@@ -7,26 +7,14 @@ import HardheadRating from "../../components/rating";
 import HardheadBody from "../../components/hardheadbody";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useHardhead } from "../../../../hooks/hardhead/useHardhead";
-
-interface MovieOfTheYearProps {
-  ID: number;
-  Name: string;
-  Href: string;
-  Description?: string;
-  Date?: string;
-  Year?: string;
-  onSubmit: () => void;
-}
+import { ElectionModuleProps } from ".";
 
 const NightOfTheYear = ({
   ID,
   Name,
   Href,
-  Description,
-  Date,
-  Year,
   onSubmit,
-}: MovieOfTheYearProps) => {
+}: ElectionModuleProps) => {
   const { authTokens } = useAuth();
   const { fetchByHref } = useHardhead();
   const [nights, setNights] = useState<any[]>([]);
@@ -35,7 +23,7 @@ const NightOfTheYear = ({
 
   useEffect(() => {
     const loadNights = async () => {
-      const result = await fetchByHref(Href);
+      const result = await fetchByHref(Href || "");
       setNights(result);
     };
     loadNights();
@@ -66,9 +54,6 @@ const NightOfTheYear = ({
       <Post
         id={ID}
         title={Name}
-        description={Description}
-        date={Date}
-        dateFormatted={Year}
         body={
           <section>
             <p>

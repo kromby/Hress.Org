@@ -5,17 +5,9 @@ import { Post } from "../../../../components";
 import { useAuth } from "../../../../context/auth"
 import { isMobile } from 'react-device-detect';
 import { Nomination } from "../../../../types/nomination";
+import { ElectionModuleProps } from ".";
 
-interface DisappointmentProps {
-    ID: number;
-    Name: string;
-    Description?: string;
-    Date?: string;
-    Year?: string;
-    onSubmit: () => void;
-}
-
-const Disappointment = ({ ID, Name, Description, Date, Year, onSubmit }: DisappointmentProps) => {
+const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
     const { authTokens } = useAuth();
     const [disappointments, setDisappointments] = useState<Nomination[]>([]);
     const [selectedValue, setSelectedValue] = useState<string>();
@@ -35,7 +27,7 @@ const Disappointment = ({ ID, Name, Description, Date, Year, onSubmit }: Disappo
             }
         }
 
-        if (!disappointments) {
+        if (disappointments.length < 1) {
             getNominations();
         }
     }, [ID])
@@ -79,9 +71,6 @@ const Disappointment = ({ ID, Name, Description, Date, Year, onSubmit }: Disappo
             <Post
                 id={ID}
                 title={Name}
-                description={Description}
-                date={Date}
-                dateFormatted={Year}
                 body={
                     <section>
                         <div className="row gtr-uniform">
