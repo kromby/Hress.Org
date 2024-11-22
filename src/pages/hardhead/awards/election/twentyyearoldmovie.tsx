@@ -26,8 +26,7 @@ const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) =
         loadNights();
     }, [Href]);
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
+    const handleSubmit = async () => {
         if (authTokens === undefined) {
             navigate("/login", { state: { from: location.pathname } });
             return;
@@ -93,7 +92,7 @@ const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) =
                     </li>
                 ) : null}
                 <li>
-                    <button onClick={(e) => handleSubmit(e as any)} disabled={value === -1} className="button large next">{`Kjósa ${Name}`}</button>
+                    <button onClick={handleSubmit} disabled={value === -1} className="button large next">{`Kjósa ${Name}`}</button>
                 </li>
             </ul>
         </div>
