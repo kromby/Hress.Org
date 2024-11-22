@@ -36,9 +36,8 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
         }
     }, [ID])
 
-    const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async () => {
         setSavingAllowed(false);
-        event.preventDefault();
         if (authTokens === undefined) {
             navigate("/login", { state: { from: location.pathname } });
             return;
@@ -110,7 +109,13 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
                     </li>
                 ) : null}
                 <li>
-                    <button onClick={(e) => handleSubmit(e as any)} disabled={!savingAllowed} className="button large next">{`Kjósa ${Name}`}</button>
+                    <button
+                        onClick={handleSubmit}
+                        disabled={!savingAllowed}
+                        className="button large next"
+                    >
+                        {`Kjósa ${Name}`}
+                    </button>
                 </li>
             </ul>
         </div>

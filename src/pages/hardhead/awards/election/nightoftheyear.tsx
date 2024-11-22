@@ -8,6 +8,7 @@ import HardheadBody from "../../components/hardheadbody";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useHardhead } from "../../../../hooks/hardhead/useHardhead";
 import { ElectionModuleProps } from ".";
+import { HardheadNight } from "../../../../types/hardheadNight";
 
 const NightOfTheYear = ({
   ID,
@@ -17,7 +18,7 @@ const NightOfTheYear = ({
 }: ElectionModuleProps) => {
   const { authTokens } = useAuth();
   const { fetchByHref } = useHardhead();
-  const [nights, setNights] = useState<any[]>([]);
+  const [nights, setNights] = useState<HardheadNight[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
 

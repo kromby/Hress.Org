@@ -66,7 +66,7 @@ const MovieOfTheYear = ({
       />
 
       {nights
-        ? nights.map((hardhead: any) => (
+        ? nights.map((hardhead: HardheadNight) => (
           <Post
             key={hardhead.id}
             id={hardhead.id}
