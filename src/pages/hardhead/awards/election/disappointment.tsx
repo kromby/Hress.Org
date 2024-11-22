@@ -6,12 +6,16 @@ import { useAuth } from "../../../../context/auth"
 import { isMobile } from 'react-device-detect';
 import { Nomination } from "../../../../types/nomination";
 import { ElectionModuleProps } from ".";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
     const { authTokens } = useAuth();
     const [disappointments, setDisappointments] = useState<Nomination[]>([]);
     const [selectedValue, setSelectedValue] = useState<string>();
+    const [error, setError] = useState("");
     const [savingAllowed, setSavingAllowed] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const getNominations = async () => {
@@ -23,7 +27,7 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
                 setDisappointments(response.data);
             } catch (e) {
                 console.error(e);
-                alert(e);
+                setError(`Villa við að sækja lista af breytingum: ${e}`);
             }
         }
 
@@ -36,7 +40,7 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
         setSavingAllowed(false);
         event.preventDefault();
         if (authTokens === undefined) {
-            alert("Þú þarf að skrá þig inn");
+            navigate("/login", { state: { from: location.pathname } });
             return;
         }
 
@@ -49,7 +53,7 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
             });
         } catch (e) {
             console.error(e);
-            alert(e);
+            setError(`Villa við að kjósa breytingu: ${e}`);
             setSavingAllowed(true);
         }
 
@@ -57,11 +61,6 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
     }
 
     const handleChange = (event: string) => {
-        if (authTokens === undefined) {
-            alert("Þú þarf að skrá þig inn");
-            return;
-        }
-
         setSelectedValue(event);
         setSavingAllowed(true);
     }
@@ -102,6 +101,14 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
                 }
             />
             <ul className="actions pagination">
+                {error ? (
+                    <li>
+                        <b>
+                            {error}
+                            <br />
+                        </b>
+                    </li>
+                ) : null}
                 <li>
                     <button onClick={(e) => handleSubmit(e as any)} disabled={!savingAllowed} className="button large next">{"Kjósa " + Name}</button>
                 </li>

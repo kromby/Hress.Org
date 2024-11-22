@@ -7,8 +7,8 @@ import HardheadRating from "../../components/rating";
 import HardheadBody from "../../components/hardheadbody";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useHardhead } from "../../../../hooks/hardhead/useHardhead";
-import { HardheadNight } from "../../../../types/hardheadNight";
 import { ElectionModuleProps } from ".";
+import { HardheadNight } from "../../../../types/hardheadNight";
 
 const MovieOfTheYear = ({
   ID,

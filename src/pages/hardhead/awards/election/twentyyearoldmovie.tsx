@@ -7,12 +7,16 @@ import { useAuth } from "../../../../context/auth";
 import { HardheadNight } from "../../../../types/hardheadNight";
 import { useHardhead } from "../../../../hooks/hardhead/useHardhead";
 import { ElectionModuleProps } from ".";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
     const { authTokens } = useAuth();
     const [movies, setMovies] = useState<HardheadNight[]>([]);
     const [value, setValue] = useState(-1);
+    const [error, setError] = useState("");
     const { fetchByHref } = useHardhead();
+    const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const loadNights = async () => {
@@ -25,12 +29,7 @@ const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) =
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
         if (authTokens === undefined) {
-            alert("Þú þarf að skrá þig inn");
-            return;
-        }
-
-        if (value === -1) {
-            alert("Engin mynd valin!");
+            navigate("/login", { state: { from: location.pathname } });
             return;
         }
 
@@ -41,18 +40,13 @@ const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) =
             });
         } catch (e) {
             console.error(e);
-            alert(e);
+            setError(`Villa við að kjósa mynd ${e}`);
         }
 
         onSubmit();
     }
 
     const handleChange = (event: number) => {
-        if (authTokens === undefined) {
-            alert("Þú þarf að skrá þig inn");
-            return;
-        }
-
         setValue(event);
     }
 
@@ -90,6 +84,14 @@ const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) =
                 : null}
 
             <ul className="actions pagination">
+                {error ? (
+                    <li>
+                        <b>
+                            {error}
+                            <br />
+                        </b>
+                    </li>
+                ) : null}
                 <li>
                     <button onClick={(e) => handleSubmit(e as any)} disabled={value === -1} className="button large next">{"Kjósa " + Name}</button>
                 </li>
