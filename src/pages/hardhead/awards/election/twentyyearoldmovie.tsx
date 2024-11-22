@@ -34,9 +34,9 @@ const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) =
         }
 
         try {
-            const url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            const url = config.get('apiPath') + `/api/elections/${ID}/vote`;
             await axios.post(url, [{ EventID: ID, Value: value }], {
-                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                headers: { 'X-Custom-Authorization': `token ${authTokens.token}` },
             });
         } catch (e) {
             console.error(e);
@@ -93,7 +93,7 @@ const TwentyYearOldMovie = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) =
                     </li>
                 ) : null}
                 <li>
-                    <button onClick={(e) => handleSubmit(e as any)} disabled={value === -1} className="button large next">{"Kjósa " + Name}</button>
+                    <button onClick={(e) => handleSubmit(e as any)} disabled={value === -1} className="button large next">{`Kjósa ${Name}`}</button>
                 </li>
             </ul>
         </div>

@@ -19,10 +19,10 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
 
     useEffect(() => {
         const getNominations = async () => {
-            const url = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + ID;
+            const url = config.get('apiPath') + `/api/hardhead/awards/nominations?type=${ID}`;
             try {
                 const response = await axios.get(url, {
-                    headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                    headers: { 'X-Custom-Authorization': `token ${authTokens.token}` },
                 });
                 setDisappointments(response.data);
             } catch (e) {
@@ -47,9 +47,9 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
         const voteData = [{ id: selectedValue, Value: disappointments.filter(n => n.id === selectedValue)[0].nominee.id }];
 
         try {
-            const url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            const url = config.get('apiPath') + `/api/elections/${ID}/vote`;
             await axios.post(url, voteData, {
-                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                headers: { 'X-Custom-Authorization': `token ${authTokens.token}` },
             });
         } catch (e) {
             console.error(e);
@@ -110,7 +110,7 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
                     </li>
                 ) : null}
                 <li>
-                    <button onClick={(e) => handleSubmit(e as any)} disabled={!savingAllowed} className="button large next">{"Kjósa " + Name}</button>
+                    <button onClick={(e) => handleSubmit(e as any)} disabled={!savingAllowed} className="button large next">{`Kjósa ${Name}`}</button>
                 </li>
             </ul>
         </div>
