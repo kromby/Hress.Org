@@ -19,7 +19,7 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
 
     useEffect(() => {
         const getNominations = async () => {
-            const url = config.get('apiPath') + `/api/hardhead/awards/nominations?type=${ID}`;
+            const url = `${config.get('apiPath')}/api/hardhead/awards/nominations?type=${ID}`;
             try {
                 const response = await axios.get(url, {
                     headers: { 'X-Custom-Authorization': `token ${authTokens.token}` },
@@ -46,7 +46,7 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
         const voteData = [{ id: selectedValue, Value: disappointments.filter(n => n.id === selectedValue)[0].nominee.id }];
 
         try {
-            const url = config.get('apiPath') + `/api/elections/${ID}/vote`;
+            const url = `${config.get('apiPath')}/api/elections/${ID}/vote`;
             await axios.post(url, voteData, {
                 headers: { 'X-Custom-Authorization': `token ${authTokens.token}` },
             });
