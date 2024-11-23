@@ -6,36 +6,29 @@ import { useAuth } from "../../../../context/auth";
 import HardheadRating from "../../components/rating";
 import HardheadBody from "../../components/hardheadbody";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useHardhead } from "../../../../hooks/hardhead/useHardhead";
+import { ElectionModuleProps } from ".";
+import { HardheadNight } from "../../../../types/hardheadNight";
 
 const NightOfTheYear = ({
   ID,
   Name,
   Href,
-  Description,
-  Date,
-  Year,
   onSubmit,
-}) => {
+}: ElectionModuleProps) => {
   const { authTokens } = useAuth();
-  const [nights, setNights] = useState();
+  const { fetchByHref } = useHardhead();
+  const [nights, setNights] = useState<HardheadNight[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
 
   useEffect(() => {
-    const getHardheadUsers = async () => {
-      try {
-        const url = `${config.get("path")}${Href}&code=${config.get("code")}`;
-        const response = await axios.get(url);
-        setNights(response.data);
-      } catch (e) {
-        console.error(e);
-      }
+    const loadNights = async () => {
+      const result = await fetchByHref(Href || "");
+      setNights(result);
     };
-
-    if (!nights) {
-      getHardheadUsers();
-    }
-  }, []);
+    loadNights();
+  }, [Href]);
 
   const handleSubmit = async () => {
     if (authTokens === undefined) {
@@ -62,9 +55,6 @@ const NightOfTheYear = ({
       <Post
         id={ID}
         title={Name}
-        description={Description}
-        date={Date}
-        dateFormatted={Year}
         body={
           <section>
             <p>
@@ -77,29 +67,32 @@ const NightOfTheYear = ({
 
       {nights
         ? nights.map((hardhead) => (
-            <Post
-              key={hardhead.ID}
-              id={hardhead.ID}
-              title={hardhead.Name}
-              description={`${hardhead.GuestCount} gestir`}
-              date={hardhead.Date}
-              dateFormatted={hardhead.DateString}
-              author={hardhead.Host}
-              body={
-                <HardheadBody
-                  id={hardhead.ID}
-                  name={hardhead.Name}
-                  description={hardhead.Description}
-                  viewMovie={false}
-                  imageHeight={"270px"}
-                />
-              }
-              actions={<ul className="actions" />}
-              stats={
-                <HardheadRating id={hardhead.ID} movieRatingVisible="false" />
-              }
-            />
-          ))
+          <Post
+            key={hardhead.id}
+            id={hardhead.id}
+            title={hardhead.name}
+            description={`${hardhead.guestCount} gestir`}
+            date={hardhead.date}
+            dateFormatted={hardhead.dateString}
+            author={hardhead.host}
+            body={
+              <HardheadBody
+                id={hardhead.id}
+                name={hardhead.name}
+                description={hardhead.description}
+                viewMovie={false}
+                viewNight
+                viewGuests
+                movie={hardhead.movie}
+                imageHeight={"270px"}
+              />
+            }
+            actions={<ul className="actions" />}
+            stats={
+              <HardheadRating id={hardhead.id} nightRatingVisible="true" movieRatingVisible="false" />
+            }
+          />
+        ))
         : null}
 
       <ul className="actions pagination">

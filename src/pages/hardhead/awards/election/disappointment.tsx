@@ -3,63 +3,63 @@ import { useEffect, useState } from "react";
 import config from 'react-global-configuration';
 import { Post } from "../../../../components";
 import { useAuth } from "../../../../context/auth"
-import {isMobile} from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
+import { Nomination } from "../../../../types/nomination";
+import { ElectionModuleProps } from ".";
+import { useLocation, useNavigate } from "react-router-dom";
 
-const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
+const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
     const { authTokens } = useAuth();
-    const [disappointments, setDisappointments] = useState();
-    const [selectedValue, setSelectedValue] = useState();
+    const [disappointments, setDisappointments] = useState<Nomination[]>([]);
+    const [selectedValue, setSelectedValue] = useState<string>();
+    const [error, setError] = useState("");
     const [savingAllowed, setSavingAllowed] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const getNominations = async () => {
-            const url = config.get('apiPath') + '/api/hardhead/awards/nominations?type=' + ID;
+            const url = `${config.get('apiPath')}/api/hardhead/awards/nominations?type=${ID}`;
             try {
                 const response = await axios.get(url, {
-                    headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                    headers: { 'X-Custom-Authorization': `token ${authTokens.token}` },
                 });
                 setDisappointments(response.data);
             } catch (e) {
                 console.error(e);
-                alert(e);
+                setError(`Villa við að sækja lista af breytingum: ${e}`);
             }
         }
 
-        if (!disappointments) {
+        if (disappointments.length < 1) {
             getNominations();
         }
     }, [ID])
 
-    const handleSubmit = async (event) => {
+    const handleSubmit = async () => {
         setSavingAllowed(false);
-        event.preventDefault();
         if (authTokens === undefined) {
-            alert("Þú þarf að skrá þig inn");
+            navigate("/login", { state: { from: location.pathname } });
             return;
         }
 
         const voteData = [{ id: selectedValue, Value: disappointments.filter(n => n.id === selectedValue)[0].nominee.id }];
 
         try {
-            const url = config.get('apiPath') + '/api/elections/' + ID + '/vote';
+            const url = `${config.get('apiPath')}/api/elections/${ID}/vote`;
             await axios.post(url, voteData, {
-                headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
+                headers: { 'X-Custom-Authorization': `token ${authTokens.token}` },
             });
         } catch (e) {
             console.error(e);
-            alert(e);
+            setError(`Villa við að kjósa breytingu: ${e}`);
             setSavingAllowed(true);
         }
 
         onSubmit();
     }
 
-    const handleChange = (event) => {
-        if (authTokens === undefined) {
-            alert("Þú þarf að skrá þig inn");
-            return;
-        }
-
+    const handleChange = (event: string) => {
         setSelectedValue(event);
         setSavingAllowed(true);
     }
@@ -69,9 +69,6 @@ const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
             <Post
                 id={ID}
                 title={Name}
-                description={Description}
-                date={Date}
-                dateFormatted={Year}
                 body={
                     <section>
                         <div className="row gtr-uniform">
@@ -79,9 +76,9 @@ const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
                                 <div className={isMobile ? "col-12" : "col-6"} key={nomination.id} onClick={() => handleChange(nomination.id)} >
                                     <input type="radio" checked={selectedValue === nomination.id} onChange={() => handleChange(nomination.id)} />
                                     <label>
-                                        <h3 className="author" width="50%">
+                                        <h3 className="author" style={{ width: '50%', paddingLeft: '125px' }}>
                                             {nomination.nominee.profilePhoto ?
-                                                <img src={config.get("apiPath") + nomination.nominee.profilePhoto.href} alt={nomination.nominee.name} />
+                                                <img src={`${config.get("apiPath")}${nomination.nominee.profilePhoto.href}?height=40&width=40`} alt={nomination.nominee.name} />
                                                 : null}
                                             &nbsp;&nbsp;&nbsp;
                                             <b>{nomination.nominee.name}</b>
@@ -103,8 +100,22 @@ const Disappointment = ({ID, Name, Description, Date, Year, onSubmit}) => {
                 }
             />
             <ul className="actions pagination">
+                {error ? (
+                    <li>
+                        <b>
+                            {error}
+                            <br />
+                        </b>
+                    </li>
+                ) : null}
                 <li>
-                    <button onClick={handleSubmit} disabled={!savingAllowed} className="button large next">{"Kjósa " + Name}</button>
+                    <button
+                        onClick={handleSubmit}
+                        disabled={!savingAllowed}
+                        className="button large next"
+                    >
+                        {`Kjósa ${Name}`}
+                    </button>
                 </li>
             </ul>
         </div>

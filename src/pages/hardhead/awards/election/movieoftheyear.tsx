@@ -6,36 +6,29 @@ import { useAuth } from "../../../../context/auth";
 import HardheadRating from "../../components/rating";
 import HardheadBody from "../../components/hardheadbody";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useHardhead } from "../../../../hooks/hardhead/useHardhead";
+import { ElectionModuleProps } from ".";
+import { HardheadNight } from "../../../../types/hardheadNight";
 
 const MovieOfTheYear = ({
   ID,
   Name,
   Href,
-  Description,
-  Date,
-  Year,
   onSubmit,
-}) => {
+}: ElectionModuleProps) => {
   const { authTokens } = useAuth();
-  const [nights, setNights] = useState();
   const navigate = useNavigate();
   const location = useLocation();
+  const { fetchByHref } = useHardhead();
+  const [nights, setNights] = useState<HardheadNight[]>([]);
 
   useEffect(() => {
-    const getHardheadUsers = async () => {
-      try {
-        const url = `${config.get("path")}${Href}&code=${config.get("code")}`;
-        const response = await axios.get(url);
-        setNights(response.data);
-      } catch (e) {
-        console.error(e);
-      }
+    const loadNights = async () => {
+      const result = await fetchByHref(Href || "");
+      setNights(result);
     };
-
-    if (!nights) {
-      getHardheadUsers();
-    }
-  }, []);
+    loadNights();
+  }, [Href]);
 
   const handleSubmit = async () => {
     if (authTokens === undefined) {
@@ -62,9 +55,6 @@ const MovieOfTheYear = ({
       <Post
         id={ID}
         title={Name}
-        description={Description}
-        date={Date}
-        dateFormatted={Year}
         body={
           <section>
             <p>
@@ -76,30 +66,31 @@ const MovieOfTheYear = ({
       />
 
       {nights
-        ? nights.map((hardhead) => (
-            <Post
-              key={hardhead.ID}
-              id={hardhead.ID}
-              title={hardhead.Name}
-              date={hardhead.Date}
-              dateFormatted={hardhead.DateString}
-              // body= { <Movie id={hardhead.ID}/> }
-              body={
-                <HardheadBody
-                  id={hardhead.ID}
-                  name={hardhead.Name}
-                  description={hardhead.Description}
-                  viewNight={false}
-                  viewGuests={false}
-                  imageHeight={"270px"}
-                />
-              }
-              actions={<ul className="actions" />}
-              stats={
-                <HardheadRating id={hardhead.ID} nightRatingVisible="false" />
-              }
-            />
-          ))
+        ? nights.map((hardhead: HardheadNight) => (
+          <Post
+            key={hardhead.id}
+            id={hardhead.id}
+            title={hardhead.name}
+            date={hardhead.date}
+            dateFormatted={hardhead.dateString}
+            body={
+              <HardheadBody
+                id={hardhead.id}
+                name={hardhead.name}
+                description={hardhead.description}
+                viewMovie
+                viewNight={false}
+                viewGuests={false}
+                imageHeight={"270px"}
+                movie={hardhead.movie}
+              />
+            }
+            actions={<ul className="actions" />}
+            stats={
+              <HardheadRating id={hardhead.id} nightRatingVisible="false" movieRatingVisible />
+            }
+          />
+        ))
         : null}
 
       <ul className="actions pagination">

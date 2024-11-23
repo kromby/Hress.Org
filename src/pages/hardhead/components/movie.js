@@ -34,7 +34,7 @@ const Movie = ({ movie }) => {
           : null}
       </p>
       <p key="movie2">
-        {movie.reason
+        {movie.reason?.trim()
           ? movie.reason
           : "Gestgjafi hefur ekki skráð ástæðu fyrir mynd :("}
       </p>
