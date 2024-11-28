@@ -89,7 +89,7 @@ const NightOfTheYear = ({
             }
             actions={<ul className="actions" />}
             stats={
-              <HardheadRating id={hardhead.id} nightRatingVisible="true" movieRatingVisible="false" />
+              <HardheadRating id={hardhead.id} nightRatingVisible={true} movieRatingVisible={false} />
             }
           />
         ))
