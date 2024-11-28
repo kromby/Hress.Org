@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import config from "react-global-configuration";
 import { Post } from "../../components";
-import HardheadRating from "./components/rating.js";
+import HardheadRating from "./components/rating";
 import queryString from "query-string";
 import HardheadActions from "./components/actions";
 import axios from "axios";
@@ -90,7 +90,13 @@ const Hardhead = () => {
                 />
               }
               actions={<HardheadActions id={hardhead.id} />}
-              stats={<HardheadRating id={hardhead.id} />}
+              stats={
+                <HardheadRating
+                  id={hardhead.id}
+                  movieRatingVisible
+                  nightRatingVisible
+                />
+              }
             />
           ))
         : null}
