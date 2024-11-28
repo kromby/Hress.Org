@@ -102,46 +102,44 @@ const HardheadRating = ({
                 ) : (
                   <i className="icon solid fa-film fa-2x" />
                 )}
-                <>
-                  {data.ratings.Readonly &&
-                  rating.MyRating === undefined &&
-                  rating.AverageRating === undefined ? null : (
-                    <>
-                      <StarRatings
-                        rating={
-                          data.ratings.Readonly
-                            ? rating.AverageRating
-                            : rating.MyRating
-                        }
-                        starRatedColor="gold"
-                        starHoverColor="orange"
-                        starEmptyColor="rgb(203, 211, 227)"
-                        changeRating={(newRating: number) =>
-                          saveRating(newRating, rating.Code)
-                        }
-                        numberOfStars={5}
-                        name={`rating_${rating.Code}`}
-                        starDimension="20px"
-                        starSpacing="2px"
-                      />
-                      <div style={{ paddingTop: "5px" }}>
-                        {getRatingText(
-                          data.ratings.Readonly
-                            ? rating.AverageRating
-                            : rating.MyRating,
-                          rating.Code
-                        )}
-                      </div>
-                    </>
-                  )}
-                  {data.ratings.Readonly ? (
+                {data.ratings.Readonly &&
+                rating.MyRating === undefined &&
+                rating.AverageRating === undefined ? null : (
+                  <>
+                    <StarRatings
+                      rating={
+                        data.ratings.Readonly
+                          ? rating.AverageRating
+                          : rating.MyRating
+                      }
+                      starRatedColor="gold"
+                      starHoverColor="orange"
+                      starEmptyColor="rgb(203, 211, 227)"
+                      changeRating={(newRating: number) =>
+                        saveRating(newRating, rating.Code)
+                      }
+                      numberOfStars={5}
+                      name={`rating_${rating.Code}`}
+                      starDimension="20px"
+                      starSpacing="2px"
+                    />
                     <div style={{ paddingTop: "5px" }}>
-                      (Fjöldi: {rating.NumberOfRatings}
-                      {rating.MyRating ? ` -  Þú: ${rating.MyRating}` : null}
-                      )&nbsp;
+                      {getRatingText(
+                        data.ratings.Readonly
+                          ? rating.AverageRating
+                          : rating.MyRating,
+                        rating.Code
+                      )}
                     </div>
-                  ) : null}
-                </>
+                  </>
+                )}
+                {data.ratings.Readonly ? (
+                  <div style={{ paddingTop: "5px" }}>
+                    (Fjöldi: {rating.NumberOfRatings}
+                    {rating.MyRating ? ` -  Þú: ${rating.MyRating}` : null}
+                    )&nbsp;
+                  </div>
+                ) : null}
               </li>
             ) : null
           )
