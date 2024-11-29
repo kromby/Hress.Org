@@ -42,7 +42,7 @@ const Election = () => {
         .then((response) => setStep(response.data))
         .catch((error) => {
           if (error.response.status === 404) {
-            console.log("[Election] Access not found");
+            navigate("/login", { state: { from: location.pathname } });
           } else {
             console.error("[Election] Error getting access");
             console.error(error);

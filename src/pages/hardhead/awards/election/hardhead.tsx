@@ -44,8 +44,6 @@ const HardheadOfTheYear = ({
 
   const handleUserChange = (event: number | undefined) => {
     const userID = Number(localStorage.getItem("userID"));
-    console.info("[election-hardhead] handleUserChange event", event);
-    console.info("[election-hardhead] handleUserChange userID", userID);
     if (event === userID) {
       alert(
         "Ætlar þú í alvöru að kjósa sjálfan þig, það er ekki mjög Harðhausalegt."
