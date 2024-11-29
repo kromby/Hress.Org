@@ -10,12 +10,7 @@ import { useHardhead } from "../../../../hooks/hardhead/useHardhead";
 import { ElectionModuleProps } from ".";
 import { HardheadNight } from "../../../../types/hardheadNight";
 
-const NightOfTheYear = ({
-  ID,
-  Name,
-  Href,
-  onSubmit,
-}: ElectionModuleProps) => {
+const NightOfTheYear = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
   const { authTokens } = useAuth();
   const { fetchByHref } = useHardhead();
   const [nights, setNights] = useState<HardheadNight[]>([]);
@@ -67,32 +62,36 @@ const NightOfTheYear = ({
 
       {nights
         ? nights.map((hardhead) => (
-          <Post
-            key={hardhead.id}
-            id={hardhead.id}
-            title={hardhead.name}
-            description={`${hardhead.guestCount} gestir`}
-            date={hardhead.date}
-            dateFormatted={hardhead.dateString}
-            author={hardhead.host}
-            body={
-              <HardheadBody
-                id={hardhead.id}
-                name={hardhead.name}
-                description={hardhead.description}
-                viewMovie={false}
-                viewNight
-                viewGuests
-                movie={hardhead.movie}
-                imageHeight={"270px"}
-              />
-            }
-            actions={<ul className="actions" />}
-            stats={
-              <HardheadRating id={hardhead.id} nightRatingVisible={true} movieRatingVisible={false} />
-            }
-          />
-        ))
+            <Post
+              key={hardhead.id}
+              id={hardhead.id}
+              title={hardhead.name}
+              description={`${hardhead.guestCount} gestir`}
+              date={hardhead.date}
+              dateFormatted={hardhead.dateString}
+              author={hardhead.host}
+              body={
+                <HardheadBody
+                  id={hardhead.id}
+                  name={hardhead.name}
+                  description={hardhead.description}
+                  viewMovie={false}
+                  viewNight
+                  viewGuests
+                  movie={hardhead.movie}
+                  imageHeight={"270px"}
+                />
+              }
+              actions={<ul className="actions" />}
+              stats={
+                <HardheadRating
+                  id={hardhead.id}
+                  nightRatingVisible
+                  movieRatingVisible={false}
+                />
+              }
+            />
+          ))
         : null}
 
       <ul className="actions pagination">
