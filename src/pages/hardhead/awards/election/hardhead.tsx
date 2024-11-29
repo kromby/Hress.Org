@@ -1,4 +1,4 @@
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, useEffect } from "react";
 import config from "react-global-configuration";
 import axios from "axios";
 import Post from "../../../../components/post";
@@ -23,7 +23,7 @@ const HardheadOfTheYear = ({
   useEffect(() => {
     const getHardheadUsers = async () => {
       try {
-        const url = config.get("path") + Href + "&code=" + config.get("code");
+        const url = `${config.get("path")}${Href}&code=${config.get("code")}`;
         const response = await axios.get(url);
         setUsers(response.data);
       } catch (e) {
@@ -36,11 +36,6 @@ const HardheadOfTheYear = ({
       getHardheadUsers();
     }
   }, []);
-
-  if (authTokens === undefined) {
-    navigate("/login", { state: { from: location.pathname } });
-    return;
-  }
 
   const handleUserChange = (event: number | undefined) => {
     const userID = Number(localStorage.getItem("userID"));
@@ -60,7 +55,7 @@ const HardheadOfTheYear = ({
     event.preventDefault();
 
     try {
-      const url = config.get("apiPath") + "/api/elections/" + ID + "/vote";
+      const url = `${config.get("apiPath")}/api/elections/${ID}/vote`;
       await axios.post(
         url,
         [
@@ -69,7 +64,7 @@ const HardheadOfTheYear = ({
           },
         ],
         {
-          headers: { "X-Custom-Authorization": "token " + authTokens.token },
+          headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
         }
       );
     } catch (e) {
@@ -80,6 +75,10 @@ const HardheadOfTheYear = ({
 
     onSubmit();
   };
+
+  if (authTokens === undefined) {
+    navigate("/login", { state: { from: location.pathname } });
+  }
 
   return (
     <Post
@@ -133,7 +132,7 @@ const HardheadOfTheYear = ({
                   <li>
                     <input
                       type="submit"
-                      value={"Kjósa " + Name}
+                      value={`Kjósa ${Name}`}
                       disabled={!savingAllowed}
                     />
                   </li>
