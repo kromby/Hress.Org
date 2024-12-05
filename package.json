@@ -17,7 +17,7 @@
     "@sentry/react": "^8.40.0",
     "@types/react-star-ratings": "^2.3.3",
     "axios": "^1.7.9",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "jsonwebtoken": "^9.0.2",
     "path-browserify": "^1.0.1",
     "query-string": "^9.1.1",
