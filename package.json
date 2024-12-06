@@ -32,7 +32,7 @@
     "react-router-dom": "^6.28.0",
     "react-star-ratings": "^2.3.0",
     "react-youtube": "^10.1.0",
-    "webpack": "^5.96.1"
+    "webpack": "^5.97.1"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
