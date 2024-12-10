@@ -66,7 +66,7 @@ public class HardheadElectionInteractor
         {
             // TODO: Check if voter is Centurion
             // skipcq: CS-R1039
-            if (userID == 2665 || userID == 2637 || userID == 2635)
+            if (userID == 2665 || userID == 2637 || userID == 2635 || userID == 2638 || userID == 2663 || userID == 2763)
             {
                 return GetNextElectionStep(lastStepID, twentyYearOldID, awardList);
             }
