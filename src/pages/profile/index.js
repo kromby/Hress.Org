@@ -10,6 +10,7 @@ const Profile = () => {
   const { authTokens } = useAuth();
   const navigate = useNavigate();
   const [balanceSheet, setBalanceSheet] = useState();
+  const [includePaid, setIncludePaid] = useState(false);
 
   const location = useLocation();
 
@@ -20,7 +21,9 @@ const Profile = () => {
     }
 
     const getBalanceSheet = async () => {
-      const url = `${config.get("apiPath")}/api/users/0/balancesheet`;
+      const url = `${config.get("apiPath")}/api/users/0/balancesheet${
+        includePaid ? "?includePaid=true" : ""
+      }`;
       try {
         const response = await axios.get(url, {
           headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
@@ -33,10 +36,8 @@ const Profile = () => {
 
     document.title = "Fjármál | Hress.Org";
 
-    if (!balanceSheet) {
-      getBalanceSheet();
-    }
-  }, []);
+    getBalanceSheet();
+  }, [includePaid]);
 
   return (
     <div id="main">
@@ -47,13 +48,22 @@ const Profile = () => {
           body={
             <section>
               <h3 key="Header3">Útistandandi færslur</h3>
+              <div style={{ marginLeft: "50px" }}>
+                <input
+                  type="checkbox"
+                  id="cbx"
+                  checked={includePaid}
+                  onChange={() => setIncludePaid(!includePaid)}
+                />
+                <label htmlFor="cbx">Sýna greiddar færslur</label>
+              </div>
               <div className="table-wrapper" key="Table4">
                 <table>
                   <thead>
                     <tr>
                       <th>Notandi</th>
                       <th>Dagsetning</th>
-                      <th>Útskýring</th>
+                      <th>Lýsing</th>
                       <th>Upphæð</th>
                     </tr>
                   </thead>
@@ -75,8 +85,21 @@ const Profile = () => {
                           )}
                         </td>
                         <td>{transaction.insertedString}</td>
-                        <td>{transaction.name}</td>
-                        <td>{transaction.amount} kr.</td>
+                        <td>
+                          {transaction.deleted ? (
+                            <s>{transaction.name}</s>
+                          ) : (
+                            transaction.name
+                          )}
+                        </td>
+                        <td>
+                          {transaction.deleted ? (
+                            <s>{transaction.amount}</s>
+                          ) : (
+                            transaction.amount
+                          )}
+                          kr.
+                        </td>
                       </tr>
                     ))}
                     <tr>
@@ -96,19 +119,15 @@ const Profile = () => {
               <br />
               <br />
               <br />
-              <p>
-                <Link to={"/profile/password"}>
-                  <h3>Breyta lykilorði</h3>
-                </Link>
-              </p>
-              <p>
-                <Link
-                  to={"/Gang/Profile/MyProfile.aspx?legacy=true"}
-                  target="_blank"
-                >
-                  <h3>Prófíllinn á gamla hress</h3>
-                </Link>
-              </p>
+              <Link to={"/profile/password"}>
+                <h3>Breyta lykilorði</h3>
+              </Link>
+              <Link
+                to={"/Gang/Profile/MyProfile.aspx?legacy=true"}
+                target="_blank"
+              >
+                <h3>Prófíllinn á gamla hress</h3>
+              </Link>
             </section>
           }
         />

@@ -109,14 +109,16 @@ public class UserProfileSqlDataAccess : IUserProfileDataAccess
         return list;
     }
 
-    public async Task<IList<Transaction>> GetTransactions(int userID)
+    public async Task<IList<Transaction>> GetTransactions(int userID, bool includePaid)
     {
-        const string sql = @"SELECT	debt.ID, debt.UserID, usr.Username, userPhoto.ImageId 'UserImageID', debt.Name, debt.Amount, debt.Inserted, debt.InsertedBy
+        string sql = @"SELECT	debt.ID, debt.UserID, usr.Username, userPhoto.ImageId 'UserImageID', debt.Name, debt.Amount, debt.Inserted, debt.InsertedBy, debt.Deleted
                                 FROM	upf_Debt debt
 								JOIN	adm_User usr ON debt.UserID = usr.Id
-								LEFT OUTER JOIN	upf_Image userPhoto ON debt.UserID = userPhoto.UserId AND userPhoto.TypeId = 14
-                                WHERE	debt.UserID = @userID AND debt.Deleted IS NULL
-                                ORDER BY debt.Inserted";
+								LEFT OUTER JOIN	upf_Image userPhoto ON debt.UserID = userPhoto.UserId AND userPhoto.TypeId = 14 
+                                WHERE	debt.UserID = @userID ";
+        if(!includePaid) 
+            sql += " AND debt.Deleted IS NULL ";
+        sql += "ORDER BY debt.Inserted";
 
         _log.LogInformation("[{Class}.{Method}] userID: {userID}", _class, nameof(GetTransactions), userID);
         _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", _class, nameof(GetTransactions), sql);
@@ -144,6 +146,11 @@ public class UserProfileSqlDataAccess : IUserProfileDataAccess
                     Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
                     InsertedBy = SqlHelper.GetInt(reader, "InsertedBy")
                 };
+
+                if(!reader.IsDBNull(reader.GetOrdinal("Deleted")))
+                {
+                    entity.Deleted = SqlHelper.GetDateTime(reader, "Deleted");
+                }
 
                 list.Add(entity);
             }

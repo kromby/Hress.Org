@@ -1,40 +1,56 @@
-import { useState, useRef, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useImages } from '../../hooks/useImages';
-import { useAlbums } from '../../hooks/useAlbums';
-import { Post } from '../../components';
-import './albumImageUpload.css';
-import { AlbumEntity } from '../../types/albumEntity';
+import { useState, useRef, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useImages } from "../../hooks/useImages";
+import { useAlbums } from "../../hooks/useAlbums";
+import { Post } from "../../components";
+import "./albumImageUpload.css";
+import { AlbumEntity } from "../../types/albumEntity";
+import { useAuth } from "../../context/auth";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 const AlbumImageUpload = () => {
+  const { authTokens } = useAuth();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { uploadImage, loading: uploadLoading, error: uploadError } = useImages();
-  const { getAlbum, addImage, loading: albumLoading, error: albumError } = useAlbums();
-  
-  const [imageUrl, setImageUrl] = useState('');
-  const [message, setMessage] = useState<string | undefined>('');
-  const [uploadType, setUploadType] = useState<'file' | 'url'>('file');
+  const {
+    uploadImage,
+    loading: uploadLoading,
+    error: uploadError,
+  } = useImages();
+  const {
+    getAlbum,
+    addImage,
+    loading: albumLoading,
+    error: albumError,
+  } = useAlbums();
+
+  const [imageUrl, setImageUrl] = useState("");
+  const [message, setMessage] = useState<string | undefined>("");
+  const [uploadType, setUploadType] = useState<"file" | "url">("file");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [selectedFiles, setSelectedFiles] = useState<FileList | null>(null);
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [album, setAlbum] = useState<AlbumEntity | undefined>(undefined);
 
-  if (!id) {
-    navigate('/albums');
-    return null;
-  }
-
   useEffect(() => {
+    if (!id) {
+      navigate("/albums");
+      return;
+    }
+
+    if (authTokens === undefined) {
+      navigate("/login", { state: { from: location.pathname } });
+      return;
+    }
+
     const fetchAlbum = async () => {
       const albumData = await getAlbum(parseInt(id));
       setAlbum(albumData);
     };
     fetchAlbum();
   }, [id]);
-  
+
   if (albumLoading) {
     return <div>Hleð inn albúmi...</div>;
   }
@@ -49,15 +65,17 @@ const AlbumImageUpload = () => {
 
   const validateFile = (file: File): boolean => {
     if (file.size > MAX_FILE_SIZE) {
-      setMessage(`Mynd er of stór. Hámarksstærð er ${MAX_FILE_SIZE / 1024 / 1024}MB`);
+      setMessage(
+        `Mynd er of stór. Hámarksstærð er ${MAX_FILE_SIZE / 1024 / 1024}MB`
+      );
       return false;
     }
-    
-    if (!file.type.startsWith('image/')) {
-      setMessage('Aðeins er hægt að hlaða upp myndum');
+
+    if (!file.type.startsWith("image/")) {
+      setMessage("Aðeins er hægt að hlaða upp myndum");
       return false;
     }
-    
+
     return true;
   };
 
@@ -71,7 +89,7 @@ const AlbumImageUpload = () => {
         setMessage(undefined);
       } else {
         if (fileInputRef.current) {
-          fileInputRef.current.value = '';
+          fileInputRef.current.value = "";
         }
         setSelectedFiles(null);
       }
@@ -80,21 +98,21 @@ const AlbumImageUpload = () => {
 
   const handleUpload = async (event: React.FormEvent) => {
     event.preventDefault();
-    setMessage('');
+    setMessage("");
     setUploadProgress(0);
 
     try {
-      if (uploadType === 'file' && selectedFiles && selectedFiles.length > 0) {
+      if (uploadType === "file" && selectedFiles && selectedFiles.length > 0) {
         // Upload each selected file
         for (let i = 0; i < selectedFiles.length; i++) {
           const file = selectedFiles[i];
           const uploadedImage = await uploadImage({
             file,
             name: album.name,
-            albumId: album.id
+            albumId: album.id,
           });
 
-          console.info('[AlbumImageUpload] Uploaded image:', uploadedImage);
+          console.info("[AlbumImageUpload] Uploaded image:", uploadedImage);
 
           // Add the uploaded image to the album
           if (uploadedImage) {
@@ -103,16 +121,16 @@ const AlbumImageUpload = () => {
 
           setUploadProgress(((i + 1) / selectedFiles.length) * 100);
         }
-        setMessage('Myndum hefur verið hlaðið upp!');
+        setMessage("Myndum hefur verið hlaðið upp!");
         setSelectedFiles(null);
         if (fileInputRef.current) {
-          fileInputRef.current.value = '';
+          fileInputRef.current.value = "";
         }
-      } else if (uploadType === 'url' && imageUrl) {
+      } else if (uploadType === "url" && imageUrl) {
         const uploadedImage = await uploadImage({
           source: imageUrl,
           name: album.name,
-          albumId: album.id
+          albumId: album.id,
         });
 
         // Add the uploaded image to the album
@@ -120,11 +138,11 @@ const AlbumImageUpload = () => {
           await addImage(album.id, uploadedImage.id);
         }
 
-        setMessage('Myndum hefur verið hlaðið upp!');
-        setImageUrl('');
+        setMessage("Myndum hefur verið hlaðið upp!");
+        setImageUrl("");
       }
     } catch (err) {
-      console.error('Error uploading image:', err);
+      console.error("Error uploading image:", err);
     }
   };
 
@@ -136,14 +154,16 @@ const AlbumImageUpload = () => {
     <div id="main">
       <Post
         title="Bæta við myndum"
-        description={`Hlaða upp myndum í ${album ? album.name : 'albúm'}`}
+        description={`Hlaða upp myndum í ${album ? album.name : "albúm"}`}
         body={[
           <section key="upload">
             <div className="row gtr-uniform">
               <div className="col-12">
-                <select 
-                  value={uploadType} 
-                  onChange={(e) => setUploadType(e.target.value as 'file' | 'url')}
+                <select
+                  value={uploadType}
+                  onChange={(e) =>
+                    setUploadType(e.target.value as "file" | "url")
+                  }
                   className="form-select"
                 >
                   <option value="file">Velja myndir af tölvu</option>
@@ -154,7 +174,7 @@ const AlbumImageUpload = () => {
 
             <form onSubmit={handleUpload}>
               <div className="row gtr-uniform">
-                {uploadType === 'file' ? (
+                {uploadType === "file" ? (
                   <div className="col-12">
                     <input
                       type="file"
@@ -166,8 +186,8 @@ const AlbumImageUpload = () => {
                     />
                     {uploadProgress > 0 && (
                       <div className="progress-bar">
-                        <div 
-                          className="progress" 
+                        <div
+                          className="progress"
                           style={{ width: `${uploadProgress}%` }}
                         />
                       </div>
@@ -186,37 +206,34 @@ const AlbumImageUpload = () => {
                 )}
 
                 <div className="col-12">
-                  <button 
-                    className="button" 
+                  <button
+                    className="button"
                     type="submit"
-                    disabled={uploadLoading || (uploadType === 'file' ? !selectedFiles?.length : !imageUrl)}
+                    disabled={
+                      uploadLoading ||
+                      (uploadType === "file"
+                        ? !selectedFiles?.length
+                        : !imageUrl)
+                    }
                   >
-                    {uploadLoading ? 'Hleð upp...' : 'Hlaða upp mynd(um)'}
+                    {uploadLoading ? "Hleð upp..." : "Hlaða upp mynd(um)"}
                   </button>
                 </div>
               </div>
             </form>
 
-            {uploadError && (
-              <div className="error-message">
-                {uploadError}
-              </div>
-            )}
-            
-            {message && (
-              <div className="success-message">
-                {message}
-              </div>
-            )}
+            {uploadError && <div className="error-message">{uploadError}</div>}
 
-            <div className="row gtr-uniform" style={{ marginTop: '2em' }}>
+            {message && <div className="success-message">{message}</div>}
+
+            <div className="row gtr-uniform" style={{ marginTop: "2em" }}>
               <div className="col-12">
                 <button className="button large" onClick={handleDone}>
                   Klára
                 </button>
               </div>
             </div>
-          </section>
+          </section>,
         ]}
       />
     </div>

@@ -69,7 +69,14 @@ public class UsersFunction
         }
 
         var myId = id != 0 ? id : userID;
-        var entity = await _userProfileInteractor.GetBalanceSheetAsync(myId);
+
+        bool includePaid = false;
+        if(req.Query.ContainsKey("includePaid"))
+        {
+            bool.TryParse(req.Query["includePaid"], out includePaid);
+        }
+
+        var entity = await _userProfileInteractor.GetBalanceSheetAsync(myId, includePaid);
         return new OkObjectResult(entity);
     }
 

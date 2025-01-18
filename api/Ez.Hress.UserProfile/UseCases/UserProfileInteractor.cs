@@ -20,11 +20,11 @@ public class UserProfileInteractor
         return await _userDataAccess.GetUser(userID);
     }
 
-    public async Task<BalanceSheet> GetBalanceSheetAsync(int userID)
+    public async Task<BalanceSheet> GetBalanceSheetAsync(int userID, bool includePaid = false)
     {
         _log.LogInformation("[{Class}] GetBalanceSheet", GetType().Name);
 
-        var transactionTask = _userDataAccess.GetTransactions(userID);
+        var transactionTask = _userDataAccess.GetTransactions(userID, includePaid);
 
         var relations = await _userDataAccess.GetRelations(userID);
         var entity = new BalanceSheet() { UserID = userID };
@@ -34,14 +34,14 @@ public class UserProfileInteractor
 
         foreach (var relation in relations)
         {                
-            var transactions = await _userDataAccess.GetTransactions(relation.RelatedUser.ID);
+            var transactions = await _userDataAccess.GetTransactions(relation.RelatedUser.ID, includePaid);
             entity.Transactions = entity.Transactions.Union(transactions).ToList();
         }
 
         if (entity.Transactions.Count > 0)
         {
             entity.Transactions = entity.Transactions.OrderBy(t => t.Inserted).ToList();
-            entity.Balance = entity.Transactions.Sum(t => t.Amount);
+            entity.Balance = entity.Transactions.Where(t => t.Deleted == null).Sum(t => t.Amount);
         }
 
         return entity;
