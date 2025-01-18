@@ -27,4 +27,6 @@ public abstract class EntityBase<T>
     public int InsertedBy { get; set; }
     public DateTime? Updated { get; set; }
     public int? UpdatedBy { get; set; }
+
+    public DateTime? Deleted { get; set; }
 }

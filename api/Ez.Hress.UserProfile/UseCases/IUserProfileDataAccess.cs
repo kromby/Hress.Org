@@ -7,7 +7,7 @@ public interface IUserProfileDataAccess
 {
     Task<UserBasicEntity?> GetUser(int userID);
 
-    Task<IList<Transaction>> GetTransactions(int userID);
+    Task<IList<Transaction>> GetTransactions(int userID, bool includePaid);
 
     Task<IList<Relation>> GetRelations(int userID);
 }
