@@ -24,7 +24,7 @@ public class HardheadStatisticSqlDataAccess : IHardheadStatisticsDataAccess
         _log.LogInformation("[{Class}.{Method}] GetAttendanceStatistic fromDate: '{fromDate}'", _class, nameof(GetAttendanceStatistic), fromDate);
         string sql = @"SELECT	hardhead.Id, hardhead.Number, hardhead.Date, COUNT(guests.Id) GuestCount, host.UserId, hUser.Username, userPhoto.ImageId
                         FROM	rep_Event hardhead
-                        JOIN	rep_User guests ON guests.EventId = hardhead.Id
+                        JOIN	rep_User guests ON guests.EventId = hardhead.Id AND guests.UserId != 2646
                         JOIN	rep_User host ON host.EventId = hardhead.Id AND host.TypeId = 53
                         JOIN	adm_User hUser ON host.UserId = hUser.Id
                         LEFT OUTER JOIN	upf_Image userPhoto ON hUser.Id = userPhoto.UserId AND userPhoto.TypeId = 14
