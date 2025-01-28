@@ -23,7 +23,7 @@ public class HardheadSqlAccess : IHardheadDataAccess
         FROM    rep_Event night
         JOIN	rep_User host ON host.EventId = night.Id AND host.TypeId = 53
         JOIN	adm_User hressUser ON host.UserId = hressUser.Id
-        JOIN	rep_User guest ON guest.EventId = night.Id
+        JOIN	rep_User guest ON guest.EventId = night.Id AND guest.UserId != 2646
         LEFT OUTER JOIN	upf_Image userPhoto ON hressUser.Id = userPhoto.UserId AND userPhoto.TypeId = 14
         LEFT OUTER JOIN	rep_Text summary ON summary.EventId = night.Id AND summary.TypeId = 37
         LEFT OUTER JOIN rep_Text film ON film.EventId = night.Id AND film.TypeId = 62
