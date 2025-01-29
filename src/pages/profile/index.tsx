@@ -3,14 +3,15 @@ import { useEffect, useState } from "react";
 import config from "react-global-configuration";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Post } from "../../components";
-import Author from "../../components/author";
 import { useAuth } from "../../context/auth";
 import { useUsers } from "../../hooks/useUsers";
+import { BalanceSheet } from "../../types/balanceSheet";
+import AuthorNew from "../../components/authorNew";
 
 const Profile = () => {
   const { authTokens } = useAuth();
   const navigate = useNavigate();
-  const [balanceSheet, setBalanceSheet] = useState();
+  const [balanceSheet, setBalanceSheet] = useState<BalanceSheet>();
   const [includePaid, setIncludePaid] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState(0);
 
@@ -64,18 +65,18 @@ const Profile = () => {
                   </thead>
                   <tbody>
                     {balanceSheet.transactions.map((transaction) => (
-                      <tr key={transaction.id} style={{ color: transaction.deleted ? 'lightgrey' : null }}>
+                      <tr key={transaction.id} style={{ color: transaction.deleted ? 'lightgrey' : undefined }}>
                         <td>
                           {transaction.user.profilePhoto ? (
-                            <Author
-                              ID={transaction.user.id}
-                              Username={transaction.user.name}
-                              ProfilePhoto={transaction.user.profilePhoto.href}
+                            <AuthorNew
+                              id={transaction.user.id}
+                              username={transaction.user.name}
+                              profilePhoto={transaction.user.profilePhoto.href}
                             />
                           ) : (
-                            <Author
-                              ID={transaction.user.id}
-                              Username={transaction.user.name}
+                            <AuthorNew
+                              id={transaction.user.id}
+                              username={transaction.user.name}
                             />
                           )}
                         </td>
@@ -129,7 +130,7 @@ const Profile = () => {
                     style={{ padding: "5px", paddingLeft: "10px" }}
                   >
                     <option value={0}>--</option>
-                    {users.map(user => (
+                    {users.sort((a, b) => a.Name.localeCompare(b.Name)).map(user => (
                       <option key={user.ID} value={user.ID}>
                         {user.Name}
                       </option>
