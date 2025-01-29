@@ -5,14 +5,18 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { Post } from "../../components";
 import Author from "../../components/author";
 import { useAuth } from "../../context/auth";
+import { useUsers } from "../../hooks/useUsers";
 
 const Profile = () => {
   const { authTokens } = useAuth();
   const navigate = useNavigate();
   const [balanceSheet, setBalanceSheet] = useState();
   const [includePaid, setIncludePaid] = useState(false);
+  const [selectedUserId, setSelectedUserId] = useState(0);
 
   const location = useLocation();
+  const userID = localStorage.getItem("userID");
+  const { users, loading } = userID == 2630 ? useUsers("") : { users: null, loading: false };
 
   useEffect(() => {
     if (authTokens === undefined) {
@@ -21,7 +25,7 @@ const Profile = () => {
     }
 
     const getBalanceSheet = async () => {
-      const url = `${config.get("apiPath")}/api/users/0/balancesheet${
+      const url = `${config.get("apiPath")}/api/users/${selectedUserId}/balancesheet${
         includePaid ? "?includePaid=true" : ""
       }`;
       try {
@@ -35,9 +39,8 @@ const Profile = () => {
     };
 
     document.title = "Fjármál | Hress.Org";
-
     getBalanceSheet();
-  }, [includePaid]);
+  }, [includePaid, selectedUserId]);
 
   return (
     <div id="main">
@@ -48,15 +51,6 @@ const Profile = () => {
           body={
             <section>
               <h3 key="Header3">Útistandandi færslur</h3>
-              <div style={{ marginLeft: "50px" }}>
-                <input
-                  type="checkbox"
-                  id="cbx"
-                  checked={includePaid}
-                  onChange={() => setIncludePaid(!includePaid)}
-                />
-                <label htmlFor="cbx">Sýna greiddar færslur</label>
-              </div>
               <div className="table-wrapper" key="Table4">
                 <table>
                   <thead>
@@ -69,7 +63,7 @@ const Profile = () => {
                   </thead>
                   <tbody>
                     {balanceSheet.transactions.map((transaction) => (
-                      <tr key={transaction.id}>
+                      <tr key={transaction.id} style={{ color: transaction.deleted ? 'lightgrey' : null }}>
                         <td>
                           {transaction.user.profilePhoto ? (
                             <Author
@@ -115,10 +109,33 @@ const Profile = () => {
                   </tbody>
                 </table>
               </div>
-              <br />
-              <br />
-              <br />
-              <br />
+              <div style={{ marginBottom: "20px" }}>
+                <input
+                  type="checkbox"
+                  id="cbx"
+                  checked={includePaid}
+                  onChange={() => setIncludePaid(!includePaid)}
+                />
+                <label htmlFor="cbx">Sýna greiddar færslur</label>
+              </div>
+              {authTokens && userID == 2630 && users && !loading && (
+                <div style={{ marginBottom: "50px" }}>
+                  <label htmlFor="userSelect" style={{ marginRight: "10px" }}>Sjá færslur fyrir annan Hressling</label>
+                  <select 
+                    id="userSelect"
+                    value={selectedUserId}
+                    onChange={(e) => setSelectedUserId(Number(e.target.value))}
+                    style={{ padding: "5px", paddingLeft: "10px" }}
+                  >
+                    <option value={0}>--</option>
+                    {users.map(user => (
+                      <option key={user.ID} value={user.ID}>
+                        {user.Name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}              
               <Link to={"/profile/password"}>
                 <h3>Breyta lykilorði</h3>
               </Link>
