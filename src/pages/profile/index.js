@@ -16,7 +16,8 @@ const Profile = () => {
 
   const location = useLocation();
   const userID = localStorage.getItem("userID");
-  const { users, loading } = userID === 2630 ? useUsers("") : { users: null, loading: false };
+  const adminUser = '2630';
+  const { users, loading } = userID === adminUser ? useUsers("") : { users: null, loading: false };
 
   useEffect(() => {
     if (authTokens === undefined) {
@@ -118,7 +119,7 @@ const Profile = () => {
                 />
                 <label htmlFor="cbx">Sýna greiddar færslur</label>
               </div>
-              {authTokens && userID === 2630 && users && !loading && (
+              {authTokens && userID === adminUser && users && !loading && (
                 <div style={{ marginBottom: "50px" }}>
                   <label htmlFor="userSelect" style={{ marginRight: "10px" }}>Sjá færslur fyrir annan Hressling</label>
                   <select 

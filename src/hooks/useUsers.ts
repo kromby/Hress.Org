@@ -20,6 +20,11 @@ export const useUsers = (role: string): UseUsersResult => {
     const fetchUsers = async (role: string): Promise<void> => {
       try {
         setLoading(true);
+
+        if (role && !/^[a-zA-Z0-9_-]+$/.test(role)) {
+          throw new Error('Invalid role parameter');
+        }
+
         const url = `${config.get("path")}/api/users?role=${role}&code=${config.get("code")}`;
         const response = await axios.get<User[]>(url, {
           headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
@@ -27,8 +32,13 @@ export const useUsers = (role: string): UseUsersResult => {
         setUsers(response.data);
         setError(null);
       } catch (e) {
-        console.error(e);
-        setError(e as AxiosError);
+        if (axios.isAxiosError(e)) {
+          console.error('Failed to fetch users:', e.message);
+          setError(e);
+        } else {
+          console.error('An unexpected error occurred:', e);
+          setError(new AxiosError('An unexpected error occurred'));
+        }
       } finally {
         setLoading(false);
       }
@@ -37,7 +47,7 @@ export const useUsers = (role: string): UseUsersResult => {
     if (authTokens?.token) {
       fetchUsers(role);
     }
-  }, [authTokens]);
+  }, [authTokens, role]);
 
   return { users, loading, error };
 };
