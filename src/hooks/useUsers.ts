@@ -22,7 +22,7 @@ export const useUsers = (role: string): UseUsersResult => {
         setLoading(true);
 
         if (role && !/^[a-zA-Z0-9_-]+$/.test(role)) {
-          throw new Error('Invalid role parameter');
+          throw new Error('Role parameter must contain only letters, numbers, underscores, or hyphens');
         }
 
         const url = `${config.get("path")}/api/users?role=${role}&code=${config.get("code")}`;
