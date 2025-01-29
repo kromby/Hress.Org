@@ -24,16 +24,20 @@ const AuthorNew: React.FC<AuthorProps> = ({
   );
 
   useEffect(() => {
+    let isMounted = true;
     const getUser = async () => {
       if (href) {
         const url = config.get("apiPath") + href;
         try {
           const response = await axios.get(url);
-          setUser(response.data);
+          if(isMounted) {
+            setUser(response.data);
+          }
         } catch (error) {
           console.error("Error fetching user:", error);
         }
       } else {
+        if(isMounted) {
         setUser({
           id,
           username,
@@ -44,12 +48,17 @@ const AuthorNew: React.FC<AuthorProps> = ({
             href: profilePhoto,
           },
         });
+        }
       }
     };
     getUser();
 
     if (userPath) setUserURL(userPath);
-  }, [href]);
+
+    return () => {
+      isMounted = false;
+    }
+  }, [href, id, username, profilePhoto, userPath]);
 
   const getImageSrc = (profilePhoto: string, mode: string) => {
     const size = mode === "Expanded" ? 50 : mode === "Compact" ? 25 : 40;
