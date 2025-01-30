@@ -16,7 +16,7 @@ export const useSingleUser = (href: string | undefined): UseSingleUserResult => 
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<AxiosError | null>(null);
 
-  const fetchUser = useCallback(async (bypassCache: boolean = false): Promise<void> => {
+  const fetchUser = useCallback(async (bypassCache = false): Promise<void> => {
     if (!href) return;
 
     // Check cache first unless bypassing
