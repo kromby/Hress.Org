@@ -2,7 +2,7 @@ import axios from "axios";
 import config from "react-global-configuration";
 import { useEffect, useState } from "react";
 
-const Author = ({
+const AuthorOld = ({
   ID,
   Username,
   href = null,
@@ -73,4 +73,4 @@ const Author = ({
   );
 };
 
-export default Author;
+export default AuthorOld;

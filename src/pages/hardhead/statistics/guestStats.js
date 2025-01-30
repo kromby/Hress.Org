@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import config from "react-global-configuration";
 import axios from "axios";
 import { Post } from "../../../components";
-import Author from "../../../components/authorOld";
+import AuthorOld from "../../../components/authorOld";
 
 const GuestStats = () => {
   const [data, setData] = useState({
@@ -100,14 +100,14 @@ const GuestStats = () => {
                     <td>
                       {typeof stat.user.profilePhoto !== "undefined" &&
                       stat.user.profilePhoto !== null ? (
-                        <Author
+                        <AuthorOld
                           ID={stat.user.id}
                           Username={stat.user.username}
                           UserPath="/hardhead/users/"
                           ProfilePhoto={stat.user.profilePhoto.href}
                         />
                       ) : (
-                        <Author
+                        <AuthorOld
                           ID={stat.user.id}
                           Username={stat.user.username}
                           UserPath="/hardhead/users/"
