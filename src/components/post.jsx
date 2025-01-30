@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import Author from './authorOld';
+import Author from './author';
 import './post.css';
 
 export default class Post extends Component {
@@ -25,13 +25,13 @@ export default class Post extends Component {
                         <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>
                         {this.props.author?.ID ?
                             this.props.author.ProfilePhoto ?
-                                <Author ID={this.props.author.ID} Username={this.props.author.Username} UserPath={this.props.userPath} ProfilePhoto={this.props.author.ProfilePhoto.Href} /> :
-                                <Author ID={this.props.author.ID} Username={this.props.author.Username} UserPath={this.props.userPath} />
+                                <Author id={this.props.author.ID} username={this.props.author.Username} userPath={this.props.userPath} profilePhoto={this.props.author.ProfilePhoto.Href} /> :
+                                <Author id={this.props.author.ID} username={this.props.author.Username} userPath={this.props.userPath} />
                             : null}
                         {this.props.author?.id ?
                             this.props.author.profilePhoto ?
-                                <Author ID={this.props.author.id} Username={this.props.author.username} UserPath={this.props.userPath} ProfilePhoto={this.props.author.profilePhoto.href} /> :
-                                <Author ID={this.props.author.id} Username={this.props.author.username} UserPath={this.props.userPath} />
+                                <Author id={this.props.author.id} username={this.props.author.username} userPath={this.props.userPath} profilePhoto={this.props.author.profilePhoto.href} /> :
+                                <Author id={this.props.author.id} username={this.props.author.username} userPath={this.props.userPath} />
                             : null}
                     </div>
                 </header>

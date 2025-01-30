@@ -11,7 +11,7 @@ interface AuthorProps {
   userPath?: string | null;
 }
 
-const AuthorNew: React.FC<AuthorProps> = ({
+const Author: React.FC<AuthorProps> = ({
   id,
   username,
   href = null,
@@ -86,4 +86,4 @@ const AuthorNew: React.FC<AuthorProps> = ({
   );
 };
 
-export default AuthorNew;
+export default Author;

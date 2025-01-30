@@ -6,7 +6,7 @@ import { Post } from "../../components";
 import { useAuth } from "../../context/auth";
 import { useUsers } from "../../hooks/useUsers";
 import { BalanceSheet } from "../../types/balanceSheet";
-import AuthorNew from "../../components/authorNew";
+import Author from "../../components/author";
 
 const Profile = () => {
   const { authTokens } = useAuth();
@@ -68,13 +68,13 @@ const Profile = () => {
                       <tr key={transaction.id} style={{ color: transaction.deleted ? 'lightgrey' : undefined }}>
                         <td>
                           {transaction.user.profilePhoto ? (
-                            <AuthorNew
+                            <Author
                               id={transaction.user.id}
                               username={transaction.user.name}
                               profilePhoto={transaction.user.profilePhoto.href}
                             />
                           ) : (
-                            <AuthorNew
+                            <Author
                               id={transaction.user.id}
                               username={transaction.user.name}
                             />
