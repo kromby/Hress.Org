@@ -23,16 +23,14 @@ export default class Post extends Component {
                     </div> */}
                     <div className="meta">
                         <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>
-                        {this.props.author?.ID ?
-                            this.props.author.ProfilePhoto ?
-                                <Author id={this.props.author.ID} username={this.props.author.Username} userPath={this.props.userPath} profilePhoto={this.props.author.ProfilePhoto.Href} /> :
-                                <Author id={this.props.author.ID} username={this.props.author.Username} userPath={this.props.userPath} />
-                            : null}
-                        {this.props.author?.id ?
-                            this.props.author.profilePhoto ?
-                                <Author id={this.props.author.id} username={this.props.author.username} userPath={this.props.userPath} profilePhoto={this.props.author.profilePhoto.href} /> :
-                                <Author id={this.props.author.id} username={this.props.author.username} userPath={this.props.userPath} />
-                            : null}
+                        {(this.props.author?.id || this.props.author?.ID) && (
+                          <Author
+                            id={this.props.author.id || this.props.author.ID}
+                            username={this.props.author.username || this.props.author.Username}
+                            userPath={this.props.userPath}
+                            profilePhoto={this.props.author.profilePhoto?.href || this.props.author.ProfilePhoto?.Href}
+                          />
+                        )}
                     </div>
                 </header>
                 {this.props.image ?
