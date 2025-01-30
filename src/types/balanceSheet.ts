@@ -1,18 +1,7 @@
-export interface ProfilePhoto {
-  id: number;
-  href: string | undefined | null;
-}
-
-export interface TransactionUser {
-  username: string;
-  name: string;
-  href: string;
-  profilePhoto: ProfilePhoto;
-  id: number;
-}
+import { UserBasicEntity } from "./userBasicEntity";
 
 export interface Transaction {
-  user: TransactionUser;
+  user: UserBasicEntity;
   amount: number;
   id: number;
   name: string;
