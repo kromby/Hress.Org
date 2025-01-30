@@ -72,15 +72,19 @@ const Author: React.FC<AuthorProps> = ({
 
   return (
     <div>
-      <a href={userURL + user.id} className="author">
+      {!user && <span className="loading">Loading...</span>}
+      {user ? 
+      <a href={userURL + user.id} className="author"  aria-label={`View ${user.username}'s profile`}>
         <span className="name">{user.username}</span>
 
         <img
           src={getImageSrc(user.profilePhoto?.href ?? '', "Expanded")}
           alt={username}
           className="profile-photo"
+          loading="lazy"
         />
       </a>
+      : null}
     </div>
   );
 };
