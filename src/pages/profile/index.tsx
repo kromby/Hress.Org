@@ -70,13 +70,13 @@ const Profile = () => {
                           {transaction.user.profilePhoto ? (
                             <Author
                               id={transaction.user.id}
-                              username={transaction.user.name}
-                              profilePhoto={transaction.user.profilePhoto.href}
+                              username={transaction.user.name ?? ''}
+                              profilePhoto={transaction.user.profilePhoto?.href ?? ''}
                             />
                           ) : (
                             <Author
                               id={transaction.user.id}
-                              username={transaction.user.name}
+                              username={transaction.user.name ?? ''}
                             />
                           )}
                         </td>
