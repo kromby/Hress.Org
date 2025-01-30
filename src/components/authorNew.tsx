@@ -1,7 +1,7 @@
 import axios from "axios";
 import config from "react-global-configuration";
 import { useEffect, useState } from "react";
-import { TransactionUser } from "../types/balanceSheet";
+import { UserBasicEntity } from "../types/userBasicEntity";
 
 interface AuthorProps {
   id: number;
@@ -18,7 +18,7 @@ const AuthorNew: React.FC<AuthorProps> = ({
   profilePhoto = null,
   userPath = null,
 }) => {
-  const [user, setUser] = useState<TransactionUser>();
+  const [user, setUser] = useState<UserBasicEntity>();
   const [userURL, setUserURL] = useState(
     "http://www.hress.org/Gang/Single.aspx?Id="
   );
@@ -43,10 +43,14 @@ const AuthorNew: React.FC<AuthorProps> = ({
           username,
           href: "",
           name: username,
-          profilePhoto: {
-            id: 0,
-            href: profilePhoto,
-          },
+          ...(profilePhoto ? {
+            profilePhoto: {
+              href: profilePhoto,
+            }
+          }:{}),
+          inserted: new Date().toString(),
+          insertedString: "",
+          insertedBy: 0,
         });
         }
       }
