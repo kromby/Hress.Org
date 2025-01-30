@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import config from "react-global-configuration";
 import axios from "axios";
 import { Post } from "../../../components";
-import Author from "../../../components/author";
+import Author from "../../../components/authorOld";
 
 const GuestStats = () => {
   const [data, setData] = useState({

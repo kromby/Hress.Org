@@ -3,7 +3,7 @@ import { useAuth } from "../../../../context/auth";
 import config from "react-global-configuration";
 import axios from "axios";
 import { Post } from "../../../../components";
-import Author from "../../../../components/author";
+import Author from "../../../../components/authorOld";
 import { useNavigate } from "react-router-dom";
 
 const StalloneNomination = ({ Type, Users }: { Type: string; Users: [] }) => {
