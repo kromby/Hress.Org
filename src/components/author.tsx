@@ -23,6 +23,14 @@ const Author: React.FC<AuthorProps> = ({
     "http://www.hress.org/Gang/Single.aspx?Id="
   );
 
+  const IMAGE_SIZES = {
+      Expanded: 50,
+      Compact: 25,
+      Default: 40,
+    };
+    
+  const DEFAULT_PROFILE_PHOTO = "/api/images/278634/content";
+
   const user = useMemo<UserBasicEntity | undefined>(() => {
     if (href) {
       return fetchedUser;
@@ -52,10 +60,12 @@ const Author: React.FC<AuthorProps> = ({
   if (href && error) return <div>Error loading user</div>;
   if (!user) return null;
 
-  const getImageSrc = (profilePhoto: string, mode: string) => {
-    const size = mode === "Expanded" ? 50 : mode === "Compact" ? 25 : 40;
+  type AuthorMode = 'Expanded' | 'Compact' | 'Default';
+
+  const getImageSrc = (profilePhoto: string, mode: AuthorMode) => {
+    const size = IMAGE_SIZES[mode] || IMAGE_SIZES.Default;
     const imagePath = !profilePhoto
-      ? "/api/images/278634/content"
+      ? DEFAULT_PROFILE_PHOTO
       : profilePhoto;
     return `${config.get("apiPath")}${imagePath}?height=${size}&width=${size}`;
   };
