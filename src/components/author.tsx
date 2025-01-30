@@ -6,9 +6,9 @@ import { UserBasicEntity } from "../types/userBasicEntity";
 interface AuthorProps {
   id: number;
   username: string;
-  href?: string | undefined;
-  profilePhoto?: string | undefined;
-  userPath?: string | undefined;
+  href?: string;
+  profilePhoto?: string;
+  userPath?: string;
 }
 
 const Author: React.FC<AuthorProps> = ({
