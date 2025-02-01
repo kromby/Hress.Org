@@ -7,6 +7,7 @@ import {
   matchRoutes,
 } from "react-router-dom";
 import { createRoot } from "react-dom/client";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import config from "react-global-configuration";
@@ -65,12 +66,22 @@ console.log(
   "Hress version: " + packageJson.version ?? process.env.REACT_APP_VERSION
 );
 
-// ReactDOM.render(<App/>, document.getElementById('content'));
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
+
 const container = document.getElementById("content");
 const root = createRoot(container);
 root.render(
   <StrictMode>
-    <App />
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
   </StrictMode>
 );
 

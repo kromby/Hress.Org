@@ -8,6 +8,7 @@ import { useAuth } from '../../context/auth';
 import MovieEdit from './components/movieEdit';
 import GuestsEdit from './components/guestsEdit';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useUsers, UserRole } from '../../hooks/useUsers';
 
 const HardheadEdit = () => {
 	const { authTokens } = useAuth();
@@ -15,7 +16,7 @@ const HardheadEdit = () => {
 	const params = useParams();
 	const navigate = useNavigate();
 	const [hardhead, setHardhead] = useState();
-	const [users, setUsers] = useState();
+	const { users } = useUsers(UserRole.Hardhead);
 	const [nextHostID, setNextHostID] = useState();
 	const [hardheadDate, setDate] = useState(new Date());
 	const [description, setDescription] = useState("");
@@ -43,23 +44,10 @@ const HardheadEdit = () => {
 			}
 		}
 
-		const getUsers = async () => {
-			try {
-				const url = config.get('path') + '/api/users?role=US_L_HEAD&code=' + config.get('code')
-				const response = await axios.get(url);
-				setUsers(response.data);
-			} catch (e) {
-				console.error(e);
-			}
-		}
-
 		if (!hardhead) {
 			getHardhead();
 		}
-		if (!users) {
-			getUsers();
-		}
-	}, [params, location, authTokens])
+	}, [hardhead, authTokens, location.pathname, navigate, params.hardheadID])
 
 	const handleSubmit = async (event) => {
 		setButtonEnabled(false);
@@ -113,7 +101,7 @@ const HardheadEdit = () => {
 										{users ?
 											<select id="demo-category" name="demo-category" onChange={(ev) => handleHostChange(ev)}>
 												<option value="">- Á hvern skoraðir þú? -</option>
-												{users.sort((a, b) => a.Name > b.Name ? 1 : -1).map(user =>
+												{users.map(user =>
 													<option key={user.ID} value={user.ID}>
 														{user.Name}
 													</option>

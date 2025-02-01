@@ -130,7 +130,7 @@ const Profile = () => {
                     style={{ padding: "5px", paddingLeft: "10px" }}
                   >
                     <option value={0}>--</option>
-                    {users.sort((a, b) => a.Name.localeCompare(b.Name)).map(user => (
+                    {users.map(user => (
                       <option key={user.ID} value={user.ID}>
                         {user.Name}
                       </option>
