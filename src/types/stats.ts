@@ -1,16 +1,16 @@
 export enum PeriodType {
-  All,
-  Last10,
-  Last5,
-  Last2,
-  ThisYear
+    All = 'all',
+    Last10 = 'last10',
+    Last5 = 'last5',
+    Last2 = 'last2',
+    ThisYear = 'thisYear'
 }
 
 export interface StatisticBase {
   attendedCount: number;
-  firstAttended: string;
+  firstAttended: Date;
   firstAttendedString: string;
-  lastAttended: string;
+  lastAttended: Date;
   lastAttendedString: string;
 }
 
@@ -18,7 +18,7 @@ export interface StatsEntity {
   periodType: PeriodType;
   periodTypeName: string;
   typeName: string;
-  dateFrom: string;
+  dateFrom: Date;
   dateFromString: string;
   list: StatisticBase[];
 }
