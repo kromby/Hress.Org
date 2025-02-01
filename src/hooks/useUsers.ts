@@ -19,10 +19,6 @@ export enum UserRole {
 export const useUsers = (role: string = UserRole.All): UseUsersResult => {
 
   const fetchUsers = async (): Promise<User[]> => {
-    if (role && !/^[a-zA-Z0-9_-]+$/.test(role)) {
-      throw new Error("Role parameter must contain only letters, numbers, underscores, or hyphens");
-    }
-
     const url = `${config.get("path")}/api/users?${role === UserRole.All ? "" : `role=${role}`}&code=${config.get("code")}`;
     const response = await axios.get<User[]>(url);
     return response.data;
