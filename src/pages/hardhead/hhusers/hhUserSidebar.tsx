@@ -1,30 +1,19 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useParams } from "react-router-dom";
 import config from "react-global-configuration";
+
+import { useUserById } from "../../../hooks/useSingleUser";
 import { MiniPost } from "../../../components";
 import LastFilm from "./lastfilm";
-import { Helmet } from "react-helmet";
-import { useParams } from "react-router-dom";
+import { StatisticBase } from "../../../types/stats";
 
 const HHUserSidebar = () => {
-  const [user, setUser] = useState();
-  const [stats, setStats] = useState();
   const params = useParams();
-
+  const { user, loading, error } = useUserById(params.id);
+  const [stats, setStats] = useState<StatisticBase>();
+  
   useEffect(() => {
-    const getUser = async () => {
-      const url = `${config.get("path")}/api/users/${
-        params.id
-      }/?code=${config.get("code")}`;
-      try {
-        const response = await axios.get(url);
-        setUser(response.data);
-        document.title = `${response.data.Name} | Hress.Org`;
-      } catch (e) {
-        console.error(e);
-      }
-    };
-
     const getStats = async () => {
       const url = `${config.get("apiPath")}/api/hardhead/statistics/users/${
         params.id
@@ -37,56 +26,29 @@ const HHUserSidebar = () => {
       }
     };
 
-    if (!user) {
-      getUser();
-    }
-
     if (!stats) {
       getStats();
     }
   }, []);
 
   return (
-    (
-      <Helmet key="helmet">
-        <title>{user ? user.Name : null} | Hress.Org</title>
-        <meta name="description" content={user ? user.Name : null} />
-        <meta property="og:title" content={user ? user.Name : null} />
-        <meta
-          property="og:image"
-          content={
-            user?.ProfilePhoto
-              ? config.get("apiPath") + user.ProfilePhoto.Href
-              : null
-          }
-        />
-        <meta
-          property="og:image:secure_url"
-          content={
-            user?.ProfilePhoto
-              ? config.get("apiPath") + user.ProfilePhoto.Href
-              : null
-          }
-        />
-      </Helmet>
-    ),
-    (
+    
       <section id="sidebar">
         <section id="intro">
           <span className="logo">
             <img
               src={
-                user?.ProfilePhoto
+                user?.profilePhoto
                   ? `${config.get("apiPath")}${
-                      user.ProfilePhoto.Href
+                      user.profilePhoto.href
                     }?width=80&height=80`
-                  : null
+                  : undefined
               }
               alt=""
             />
           </span>
           <header>
-            <h2>{user ? user.Name : null}</h2>
+            <h2>{user ? user.name : null}</h2>
             <p>{stats ? `Mætti fyrst ${stats.firstAttendedString}` : null}</p>
           </header>
         </section>
@@ -102,7 +64,7 @@ const HHUserSidebar = () => {
               description={
                 stats ? `Hefur mætt á ${stats.attendedCount} kvöld` : null
               }
-              date={stats ? stats.FirstAttended : null}
+              date={stats ? stats.firstAttended : null}
               // dateString={stats ? "Frá " + stats.FirstAttendedString : null}
               // userHref={"http://www.hress.org/Gang/Single.aspx?Id=" + data.awards.Winner.ID}
               // userPhoto={config.get('path') + data.awards.Winner.ProfilePhoto.Href + "?code=" + config.get('code')}
@@ -178,7 +140,6 @@ const HHUserSidebar = () => {
         </section>
       </section>
     )
-  );
 };
 
 export default HHUserSidebar;
