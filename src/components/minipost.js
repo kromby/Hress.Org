@@ -1,7 +1,7 @@
 import './post.css';
 import { Link } from 'react-router-dom';
 
-const MiniPost = ({title, description, date, dateString, href, imageText, imageSource, imageHref, userText, userPhoto, userHref}) => {
+const MiniPost = ({title, description, date, dateString = '', href = undefined, imageText = '', imageSource = undefined, imageHref = undefined, userText = '', userPhoto = '', userHref = ''}) => {
     return (
         <article className="mini-post">
             <header>
