@@ -11,7 +11,7 @@ interface UseSingleUserResult {
   refetch: () => Promise<void>;
 }
 
-export const useSingleUser = (href: string | undefined): UseSingleUserResult => {
+export const useUserByHref = (href: string | undefined): UseSingleUserResult => {
   const [user, setUser] = useState<UserBasicEntity>();
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<AxiosError | null>(null);
@@ -66,10 +66,10 @@ export const useSingleUser = (href: string | undefined): UseSingleUserResult => 
     }
   }, [href, fetchUser]);
 
-  return { 
-    user, 
-    loading, 
-    error, 
-    refetch
-  };
+  return { user, loading, error, refetch };
+};
+
+export const useUserById = (id: string | undefined): UseSingleUserResult => {
+  const href = id ? `/api/users/${id}` : undefined;
+  return useUserByHref(href);
 };

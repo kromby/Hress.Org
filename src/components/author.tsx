@@ -1,6 +1,6 @@
 import config from "react-global-configuration";
 import { useEffect, useState, useMemo } from "react";
-import { useSingleUser } from "../hooks/useSingleUser";
+import { useUserByHref } from "../hooks/useSingleUser";
 import { UserBasicEntity } from "../types/userBasicEntity";
 
 interface AuthorProps {
@@ -18,7 +18,7 @@ const Author: React.FC<AuthorProps> = ({
   profilePhoto = undefined,
   userPath = undefined,
 }) => {
-  const { user: fetchedUser, loading, error } = useSingleUser(href);
+  const { user: fetchedUser, loading, error } = useUserByHref(href);
   const [userURL, setUserURL] = useState(
     "http://www.hress.org/Gang/Single.aspx?Id="
   );
