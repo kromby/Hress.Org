@@ -3,7 +3,7 @@ import { useAuth } from "../../../../context/auth";
 import config from "react-global-configuration";
 import axios from "axios";
 import { Post } from "../../../../components";
-import Author from "../../../../components/author";
+import AuthorOld from "../../../../components/authorOld";
 import { useNavigate } from "react-router-dom";
 
 const StalloneNomination = ({ Type, Users }: { Type: string; Users: [] }) => {
@@ -181,13 +181,13 @@ const StalloneNomination = ({ Type, Users }: { Type: string; Users: [] }) => {
                   <tr key={nomination.id}>
                     <td>
                       {nomination.nominee.profilePhoto ? (
-                        <Author
+                        <AuthorOld
                           ID={nomination.nominee.id}
                           Username={nomination.nominee.name}
                           ProfilePhoto={nomination.nominee.profilePhoto.href}
                         />
                       ) : (
-                        <Author
+                        <AuthorOld
                           ID={nomination.nominee.id}
                           Username={nomination.nominee.name}
                         />

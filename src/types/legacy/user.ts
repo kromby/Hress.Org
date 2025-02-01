@@ -1,4 +1,4 @@
-import { EntityBase } from './entityBase';
+import { EntityBase } from '../entityBase';
 
 export interface User extends EntityBase<number> {
     ID: number;

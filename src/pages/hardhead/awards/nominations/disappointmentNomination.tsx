@@ -3,7 +3,7 @@ import { useAuth } from "../../../../context/auth";
 import config from "react-global-configuration";
 import axios from "axios";
 import { Post } from "../../../../components";
-import Author from "../../../../components/author";
+import AuthorOld from "../../../../components/authorOld";
 
 const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) => {
   const { authTokens } = useAuth();
@@ -169,13 +169,13 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
                   <tr key={nomination.id}>
                     <td>
                       {nomination.nominee.profilePhoto ? (
-                        <Author
+                        <AuthorOld
                           ID={nomination.nominee.id}
                           Username={nomination.nominee.name}
                           ProfilePhoto={nomination.nominee.profilePhoto.href}
                         />
                       ) : (
-                        <Author
+                        <AuthorOld
                           ID={nomination.nominee.id}
                           Username={nomination.nominee.name}
                         />

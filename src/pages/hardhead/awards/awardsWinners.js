@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
-import Author from '../../../components/author';
+import AuthorOld from '../../../components/authorOld';
 
 const AwardsWinners = ({href, position, year}) => {
     const [data, setData] = useState({ winners: null, isLoading: false, visible: false })
@@ -55,8 +55,8 @@ const AwardsWinners = ({href, position, year}) => {
                                 <td>{position ? winner.Year : winner.Position}</td>
                                 <td>
                                     {typeof winner.Winner.ProfilePhoto !== 'undefined' ?
-                                        <Author ID={winner.Winner.ID} Username={winner.Winner.Username} UserPath="/hardhead/users/" ProfilePhoto={winner.Winner.ProfilePhoto.Href} /> :
-                                        <Author ID={winner.Winner.ID} Username={winner.Winner.Username} UserPath="/hardhead/users/" />
+                                        <AuthorOld ID={winner.Winner.ID} Username={winner.Winner.Username} UserPath="/hardhead/users/" ProfilePhoto={winner.Winner.ProfilePhoto.Href} /> :
+                                        <AuthorOld ID={winner.Winner.ID} Username={winner.Winner.Username} UserPath="/hardhead/users/" />
                                     }
                                 </td>
 

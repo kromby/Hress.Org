@@ -1,7 +1,7 @@
 import { Component } from 'react';
 import { Link } from 'react-router-dom';
 
-import Author from './author';
+import AuthorOld from './authorOld';
 import './post.css';
 
 export default class PostMultipleContent extends Component {
@@ -16,8 +16,8 @@ export default class PostMultipleContent extends Component {
                     <div className="meta">
                         <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>
                         {typeof this.props.author.ProfilePhoto !=='undefined' ?
-                        <Author ID={this.props.author.ID} Username={this.props.author.Username} ProfilePhoto={this.props.author.ProfilePhoto.Href} /> :
-                        <Author ID={this.props.author.ID} Username={this.props.author.Username} />}
+                        <AuthorOld ID={this.props.author.ID} Username={this.props.author.Username} ProfilePhoto={this.props.author.ProfilePhoto.Href} /> :
+                        <AuthorOld ID={this.props.author.ID} Username={this.props.author.Username} />}
                     </div>
                 </header>
                 {this.props.top ? <div className="image featured">{this.props.top}</div> : null}

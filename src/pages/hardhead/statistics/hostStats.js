@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import config from 'react-global-configuration';
 import axios from 'axios';
 import { Post } from '../../../components';
-import Author from '../../../components/author';
+import AuthorOld from '../../../components/authorOld';
 
 const HostStats = () => {
     const [data, setData] = useState({ stats: null, isLoading: false, visible: false })
@@ -84,8 +84,8 @@ const HostStats = () => {
                                     <td>{i + 1}</td>
                                     <td>
                                         {typeof stat.user.profilePhoto !== 'undefined' && stat.user.profilePhoto !== null ?
-                                            <Author ID={stat.user.id} Username={stat.user.username} UserPath="/hardhead/users/" ProfilePhoto={stat.user.profilePhoto.href} /> :
-                                            <Author ID={stat.user.id} Username={stat.user.username} UserPath="/hardhead/users/" />
+                                            <AuthorOld ID={stat.user.id} Username={stat.user.username} UserPath="/hardhead/users/" ProfilePhoto={stat.user.profilePhoto.href} /> :
+                                            <AuthorOld ID={stat.user.id} Username={stat.user.username} UserPath="/hardhead/users/" />
                                         }
                                     </td>
                                     <td>{stat.attendedCount}</td>
