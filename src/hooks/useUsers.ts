@@ -11,7 +11,12 @@ interface UseUsersResult {
   refetch: () => Promise<void>;
 }
 
-export const useUsers = (role: string): UseUsersResult => {
+export enum UserRole {
+  Hardhead = "US_L_HEAD",
+  All = "",
+}
+
+export const useUsers = (role: string = UserRole.All): UseUsersResult => {
   const [users, setUsers] = useState<User[]>();
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<AxiosError | null>(null);
@@ -29,11 +34,11 @@ export const useUsers = (role: string): UseUsersResult => {
         throw new Error("Role parameter must contain only letters, numbers, underscores, or hyphens");
       }
 
-      const url = `${config.get("path")}/api/users?role=${role}&code=${config.get("code")}`;
+      const url = `${config.get("path")}/api/users?${role === UserRole.All ? "" : `role=${role}`}&code=${config.get("code")}`;
       const response = await axios.get<User[]>(url, {
         headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
       });
-      setUsers(response.data);
+      setUsers(response.data.sort((a, b) => a.Name.localeCompare(b.Name)));
       setError(null);
     } catch (e) {
       if (axios.isAxiosError(e)) {

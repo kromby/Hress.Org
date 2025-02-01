@@ -81,7 +81,6 @@ const GuestsEdit = ({ hardheadID, users }) => {
             >
               <option value="">- Veldu gest? -</option>
               {users
-                .sort((a, b) => (a.Name > b.Name ? 1 : -1))
                 .map((user) => (
                   <option key={user.ID} value={user.ID}>
                     {user.Name}
