@@ -5,12 +5,12 @@ import config from "react-global-configuration";
 
 import { useUserById } from "../../../hooks/useSingleUser";
 import { MiniPost } from "../../../components";
-import LastFilm from "./lastfilm";
 import { StatisticBase } from "../../../types/stats";
+import LastFilm from "./lastfilm";
 
 const HHUserSidebar = () => {
   const params = useParams();
-  const { user, loading, error } = useUserById(params.id);
+  const { user, error } = useUserById(params.id);
   const [stats, setStats] = useState<StatisticBase>();
   
   useEffect(() => {
@@ -31,47 +31,53 @@ const HHUserSidebar = () => {
     }
   }, []);
 
+  if (error) {
+    return (
+      <section id="sidebar" className="error-container">
+        <h3>Error loading profile</h3>
+        <p>{error.message || 'An unexpected error occurred'}</p>
+      </section>
+    );
+  }
+
   return (
-    
-      <section id="sidebar">
-        <section id="intro">
-          <span className="logo">
-            <img
-              src={
-                user?.profilePhoto
-                  ? `${config.get("apiPath")}${
-                      user.profilePhoto.href
-                    }?width=80&height=80`
-                  : undefined
-              }
-              alt=""
-            />
-          </span>
-          <header>
-            <h2>{user ? user.name : null}</h2>
-            <p>{stats ? `Mætti fyrst ${stats.firstAttendedString}` : null}</p>
-          </header>
-        </section>
+    <section id="sidebar">
+      <section id="intro">
+        <span className="logo">
+          <img
+            src={             
+                `${config.get("apiPath")}${
+                    user?.profilePhoto?.href ?? '/api/images/278634/content'
+                  }?width=80&height=80`                
+                }
+            alt={user?.name}
+          />
+        </span>
+        <header>
+          <h2>{user?.name}</h2>
+          <p>{stats ? `Mætti fyrst ${stats.firstAttendedString}` : null}</p>
+        </header>
+      </section>
         {/* <!-- Intro --> */}
 
         {/* <!-- Mini Posts --> */}
-        <section>
-          <div className="mini-posts">
+      <section>
+        <div className="mini-posts">
             {/* <!-- Mini Post --> */}
-            <MiniPost
-              title="Mæting"
+          <MiniPost
+            title="Mæting"
               // href="/hardhead/awards"
               description={
                 stats ? `Hefur mætt á ${stats.attendedCount} kvöld` : null
               }
-              date={stats ? stats.firstAttended : null}
+            date={stats ? stats.firstAttended : null}
               // dateString={stats ? "Frá " + stats.FirstAttendedString : null}
               // userHref={"http://www.hress.org/Gang/Single.aspx?Id=" + data.awards.Winner.ID}
               // userPhoto={config.get('path') + data.awards.Winner.ProfilePhoto.Href + "?code=" + config.get('code')}
               // userText={data.awards.Winner.Username}
-            />
+          />
 
-            <LastFilm userID={params.id} />
+          <LastFilm userID={params.id} />
 
             {/* <!-- Mini Post --> */}
             {/* <article class="mini-post">
@@ -82,8 +88,8 @@ const HHUserSidebar = () => {
                         </header>
                         <a href="single.html" class="image"><img src="images/pic05.jpg" alt=""/></a>
                     </article> */}
-          </div>
-        </section>
+        </div>
+      </section>
 
         {/* <!-- Posts List --> */}
         <section>
@@ -119,27 +125,27 @@ const HHUserSidebar = () => {
             </section> */}
 
         {/* <!-- Footer --> */}
-        <section id="footer">
-          <ul className="icons">
-            <li>
-              <a
-                href="https://www.facebook.com/groups/988193164623754/"
-                className="icon brands fa-facebook-f"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span className="label">Facebook</span>
-              </a>
-            </li>
-          </ul>
-          <p className="copyright">
-            &copy; Hress.Org - Guðjón Karl Arnarson.
-            <br />
-            Design: <a href="http://html5up.net">HTML5 UP</a>.
-          </p>
-        </section>
+      <section id="footer">
+        <ul className="icons">
+          <li>
+            <a
+              href="https://www.facebook.com/groups/988193164623754/"
+              className="icon brands fa-facebook-f"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <span className="label">Facebook</span>
+            </a>
+          </li>
+        </ul>
+        <p className="copyright">
+          &copy; Hress.Org - Guðjón Karl Arnarson.
+          <br />
+          Design: <a href="http://html5up.net">HTML5 UP</a>.
+        </p>
       </section>
-    )
+    </section>
+  );
 };
 
 export default HHUserSidebar;
