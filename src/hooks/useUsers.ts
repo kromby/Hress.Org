@@ -1,8 +1,9 @@
-import { useState, useEffect } from "react";
+import { useMemo } from "react";
 import axios, { AxiosError } from "axios";
 import config from "react-global-configuration";
 import { useAuth } from "../context/auth";
 import { User } from "../types/legacy/user";
+import { useQuery } from "@tanstack/react-query";
 
 interface UseUsersResult {
   users: User[] | undefined;
@@ -17,45 +18,41 @@ export enum UserRole {
 }
 
 export const useUsers = (role: string = UserRole.All): UseUsersResult => {
-  const [users, setUsers] = useState<User[]>();
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<AxiosError | null>(null);
   const { authTokens } = useAuth();
 
-  const fetchUsers = async (): Promise<void> => {
-    try {
-      setLoading(true);
-
-      if (!authTokens?.token) {
-        throw new Error("Authentication token is required");
-      }
-
-      if (role && !/^[a-zA-Z0-9_-]+$/.test(role)) {
-        throw new Error("Role parameter must contain only letters, numbers, underscores, or hyphens");
-      }
-
-      const url = `${config.get("path")}/api/users?${role === UserRole.All ? "" : `role=${role}`}&code=${config.get("code")}`;
-      const response = await axios.get<User[]>(url, {
-        headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
-      });
-      setUsers(response.data.sort((a, b) => a.Name.localeCompare(b.Name)));
-      setError(null);
-    } catch (e) {
-      if (axios.isAxiosError(e)) {
-        console.error("Failed to fetch users:", e.message);
-        setError(e);
-      } else {
-        console.error("An unexpected error occurred:", e);
-        setError(new AxiosError("An unexpected error occurred"));
-      }
-    } finally {
-      setLoading(false);
+  const fetchUsers = async (): Promise<User[]> => {
+    if (!authTokens?.token) {
+      throw new Error("Authentication token is required");
     }
+
+    if (role && !/^[a-zA-Z0-9_-]+$/.test(role)) {
+      throw new Error("Role parameter must contain only letters, numbers, underscores, or hyphens");
+    }
+
+    const url = `${config.get("path")}/api/users?${role === UserRole.All ? "" : `role=${role}`}&code=${config.get("code")}`;
+    const response = await axios.get<User[]>(url, {
+      headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
+    });
+    return response.data;
   };
 
-  useEffect(() => {
-    fetchUsers();
-  }, [authTokens?.token, role]);
+  const { data: unsortedUsers, isLoading, error, refetch } = useQuery({
+    queryKey: ['users', role, authTokens?.token],
+    queryFn: fetchUsers,
+    staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
+    gcTime: 30 * 60 * 1000, // Keep unused data in cache for 30 minutes
+    enabled: !!authTokens?.token,
+  });
 
-  return { users, loading, error, refetch: fetchUsers };
+  const users = useMemo(() => 
+    unsortedUsers?.sort((a, b) => a.Name.localeCompare(b.Name)),
+    [unsortedUsers]
+  );
+
+  return {
+    users,
+    loading: isLoading,
+    error: error as AxiosError | null,
+    refetch: async () => { await refetch(); }
+  };
 };
