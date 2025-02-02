@@ -19,7 +19,7 @@ export const useAward = (awardId: number) => {
                 setAward(response.data);
             } catch (e) {
                 if (axios.isAxiosError(e)) {
-                    console.error("Failed to fetch user:", e.message);
+                    console.error("Failed to fetch award:", e.message);
                     setError(e);
                   } else {
                     console.error("An unexpected error occurred:", e);

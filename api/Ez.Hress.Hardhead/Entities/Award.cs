@@ -16,14 +16,12 @@ public class Award : EntityBase<int>
 
     public string? Href { get; set; }
 
-
     public IList<YearEntity> Years { get; set; } = new List<YearEntity>();
 }
 
 public class YearEntity : EntityBase<int>
 {
     public int GuestCount { get; set; }
-    public string Description { get; set; }
     public int? PhotoID { private get; set; }
     public HrefEntity Photo
     {
@@ -39,5 +37,5 @@ public class YearEntity : EntityBase<int>
         }
     }
 
-    public UserBasicEntity Hardhead { get; set; }
+    public UserBasicEntity Hardhead { get; set; } = new();
 }
