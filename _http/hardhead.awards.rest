@@ -1,1 +1,5 @@
+### Get nominations for a specific award
 GET {{legacyHost}}/api/hardhead/awards/5284/nominations?code={{apiCode}}
+
+### Get award by ID
+GET {{host}}/api/hardhead/awards/360
