@@ -15,7 +15,7 @@ const AwardsByType = () => {
         <div id="main">
             {isLoading && <div className="loading">Loading award details...</div>}
             {error && <div className="error">Error loading award: {error.message}</div>}
-            {award && award.years ? award.years.map((year) =>
+            {award?.years ? award.years.map((year) =>
                         <Post key={year.id}
                             title={`${award.name} ${year.name}`}
                             description={`Harðhausar sem fengu atkvæði: ${year.guestCount}`}
