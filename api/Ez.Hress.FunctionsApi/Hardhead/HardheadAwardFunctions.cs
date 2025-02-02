@@ -19,12 +19,18 @@ public class HardheadAwardFunctions
     private readonly AwardNominateInteractor _awardWriteInteractor;
     private readonly AwardNominationInteractor _awardReadInteractor;
     private readonly AuthenticationInteractor _authenticationInteractor;
+    private readonly HardheadAwardInteractor _hardheadAwardInteractor;
 
-    public HardheadAwardFunctions(AuthenticationInteractor authenticationInteractor, AwardNominateInteractor awardWriteInteractor, AwardNominationInteractor awardReadInteractor)
+    public HardheadAwardFunctions(
+        AuthenticationInteractor authenticationInteractor, 
+        AwardNominateInteractor awardWriteInteractor, 
+        AwardNominationInteractor awardReadInteractor,
+        HardheadAwardInteractor hardheadAwardInteractor)
     {
         _authenticationInteractor = authenticationInteractor;
         _awardWriteInteractor = awardWriteInteractor;
         _awardReadInteractor = awardReadInteractor;
+        _hardheadAwardInteractor = hardheadAwardInteractor;
     }
 
     [FunctionName("hardheadAwardsNominations")]
@@ -106,5 +112,42 @@ public class HardheadAwardFunctions
             return new NotFoundResult();
 
         return new OkObjectResult(list);
+    }
+
+    [FunctionName("hardheadAward")]
+    public async Task<IActionResult> RunGetAward(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/awards/{id}")] HttpRequest req,
+        string id,
+        ILogger log)
+    {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        log.LogInformation("[GetAward] C# HTTP trigger function processed a request.");
+        log.LogInformation($"[GetAward] Host: {req.Host.Value}");
+
+        try
+        {
+            if (!int.TryParse(id, out int awardId))
+            {
+                log.LogWarning("[GetAward] Invalid award ID format: {ID}", id);
+                return new BadRequestObjectResult("Invalid award ID format");
+            }
+
+            var award = await _hardheadAwardInteractor.GetAwardAsync(awardId);
+            if (award == null)
+            {
+                log.LogWarning("[GetAward] Award not found: {ID}", awardId);
+                return new NotFoundResult();
+            }
+
+            log.LogInformation("[GetAward] Request completed in {ElapsedMilliseconds}ms", stopwatch.ElapsedMilliseconds);
+            return new OkObjectResult(award);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "[GetAward] Error processing request");
+            return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+        }
     }
 }

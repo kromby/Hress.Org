@@ -1,4 +1,4 @@
-﻿using Azure.Data.Tables;
+using Azure.Data.Tables;
 using Ez.Hress.Administration.DataAccess;
 using Ez.Hress.Administration.UseCases;
 using Ez.Hress.Albums.DataAccess;
@@ -130,6 +130,7 @@ public class Startup : FunctionsStartup
 
         // Hardhead - Award
         services.AddSingleton<IAwardDataAccess, AwardSqlAccess>();
+        services.AddSingleton<HardheadAwardInteractor>();
         services.AddSingleton<AwardNominateInteractor>();
         services.AddSingleton<IAwardNominateDataAccess, AwardNominateTableDataAccess>();
         services.AddSingleton<AwardNominationInteractor>();

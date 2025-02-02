@@ -1,4 +1,4 @@
-﻿using Ez.Hress.Hardhead.Entities;
+using Ez.Hress.Hardhead.Entities;
 using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
@@ -61,5 +61,52 @@ public class AwardSqlAccess : IAwardDataAccess
             }
         }
         return list;
+    }
+
+    public async Task<Award> GetAward(int id)
+    {
+        var sql = @"SELECT	evnt.Id, txt.TextValue, evnt.Date, grp.Id 'YearID', grp.Number 'YearNumber', COUNT(usr.id) 'VotedCount'
+                        FROM	rep_Event evnt
+                        JOIN	rep_Text txt ON evnt.Id = txt.EventId AND txt.TypeId = 16
+                        JOIN	rep_User usr ON evnt.Id = usr.EventId
+                        JOIN	rep_Event grp ON usr.GroupId = grp.Id
+                        WHERE	evnt.Id = @id
+                        GROUP BY evnt.Id, txt.TextValue, evnt.Date, grp.Id, grp.Number
+                        ORDER BY grp.Id DESC";
+        
+        _log.LogInformation("[{Class}] Getting award with ID: '{ID}'", nameof(GetAward), id);
+
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("id", id));
+
+            var reader = await command.ExecuteReaderAsync();
+            Award award = null;
+
+            while (await reader.ReadAsync())
+            {
+                if (award == null)
+                {
+                    award = new Award
+                    {
+                        ID = reader.GetInt32(0),
+                        Name = reader.GetString(1),
+                        Inserted = reader.GetDateTime(2)
+                    };
+                }
+
+                var year = new YearEntity
+                {
+                    ID = reader.GetInt32(3),          // YearID
+                    Description = reader.GetInt32(4).ToString(),  // YearNumber
+                    GuestCount = reader.GetInt32(5)   // VotedCount
+                };
+
+                award.Years.Add(year);
+            }
+            return award;
+        }
     }
 }
