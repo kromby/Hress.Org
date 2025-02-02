@@ -100,7 +100,7 @@ public class AwardSqlAccess : IAwardDataAccess
                 var year = new YearEntity
                 {
                     ID = reader.GetInt32(3),          // YearID
-                    Description = reader.GetInt32(4).ToString(),  // YearNumber
+                    Name = reader.GetInt32(4).ToString(),  // YearNumber
                     GuestCount = reader.GetInt32(5)   // VotedCount
                 };
 
