@@ -10,7 +10,10 @@ const AwardsByYear = () => {
   }, []);
 
   const params = useParams();
-  const { awards, error, isLoading } = useAwards(Number(params.id));
+  const year = Number(params.id);
+  const { awards, error, isLoading } = useAwards(
+    !isNaN(year) && year > 0 ? year : undefined
+  );
 
   return (
     <div id="main">
