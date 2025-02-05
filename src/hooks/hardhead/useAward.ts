@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios, { AxiosError } from 'axios';
 import config from "react-global-configuration";
-import { Award } from '../types/award';
+import { Award } from '../../types/award';
 
 export const useAward = (awardId: number) => {
     const [award, setAward] = useState<Award | null>(null);
