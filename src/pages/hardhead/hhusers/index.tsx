@@ -16,7 +16,6 @@ const HHUsers = () => {
   useEffect(() => {
     if (!params.id) {
       navigate('/hardhead');
-      return;
     }
   }, [params.id, navigate]);
 

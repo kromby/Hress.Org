@@ -11,7 +11,7 @@ export const useAwards = (year: number | undefined = undefined) => {
     const fetchAwards = useCallback(async () => {           
         setIsLoading(true);
         try {
-            const url = `${config.get('apiPath')}/api/hardhead/awards${year ? '?year=' + year : ''}`;
+            const url = `${config.get('apiPath')}/api/hardhead/awards${year ? `?year=${year}` : ''}`;
             const response = await axios.get(url);
             setAwards(response.data);
         } catch (e) {
