@@ -140,17 +140,15 @@ public class HardheadAwardFunctions
                 log.LogInformation("[GetAward] Request completed in {ElapsedMilliseconds}ms", stopwatch.ElapsedMilliseconds);
                 return new OkObjectResult(award);
             }
-            else
+            
+            int? year = null;
+            if(req.Query.ContainsKey("year") && int.TryParse(req.Query["year"], out int tempYear))
             {
-                int? year = null;
-                if(req.Query.ContainsKey("year") && int.TryParse(req.Query["year"], out int tempYear))
-                {
-                    year = tempYear;
-                }
-
-                var list = await _hardheadAwardInteractor.GetAwardsAsync(year);
-                return new OkObjectResult(list);
+                year = tempYear;
             }
+
+            var list = await _hardheadAwardInteractor.GetAwardsAsync(year);
+            return new OkObjectResult(list);
         }
         catch (Exception ex)
         {
