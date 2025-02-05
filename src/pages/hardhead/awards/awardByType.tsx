@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 
-import { useAward } from '../../../hooks/useAward';
+import { useAward } from '../../../hooks/hardhead/useAward';
 import { Post } from "../../../components";
 import AwardsWinners from "./awardsWinners";
 

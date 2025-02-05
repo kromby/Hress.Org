@@ -10,7 +10,7 @@ import LastFilm from "./lastfilm";
 
 const HHUserSidebar = () => {
   const params = useParams();
-  const { user, error } = useUserById(params.id);
+  const { user, error } = useUserById(Number(params.id));
   const [stats, setStats] = useState<StatisticBase>();
   
   useEffect(() => {

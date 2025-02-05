@@ -1,28 +1,13 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
-import config from 'react-global-configuration';
 import { Post } from "../../../components";
 import UserAwardDetail from "./userAwardDetail";
+import { useAwards } from "../../../hooks/hardhead/useAwards";
 
-const UserAwards = ({id}) => {
-    const [awards, setAwards] = useState();
+interface UserAwardsProps {
+    id: number;
+}
 
-    useEffect(() => {
-        const getAwards = async () => {
-            const url = config.get('path') + '/api/hardhead/awards?code=' + config.get('code');
-
-            try {
-                const response = await axios.get(url);
-                setAwards(response.data);
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        if (!awards) {
-            getAwards();
-        }
-    }, [id])
+const UserAwards = ({ id }: UserAwardsProps) => {
+    const { awards, error, isLoading } = useAwards();
 
     return (
         <Post 
@@ -30,7 +15,22 @@ const UserAwards = ({id}) => {
             description="Efstu þrjú sætin"
             body={
                 <section>
-                    {awards ? awards.map(award => <UserAwardDetail key={award.ID} awardID={award.ID} name={award.Name} userID={id} />) : null}
+                    {isLoading ? (
+                        <div className="loading">Sæki verðlaun...</div>
+                    ) : error ? (
+                        <div className="error">Villa kom upp við að sækja verðlaun</div>
+                    ) : awards?.length ? (
+                        awards.map(award => 
+                            <UserAwardDetail 
+                                key={award.id} 
+                                awardID={award.id} 
+                                name={award.name} 
+                                userID={id} 
+                            />
+                        )
+                    ) : (
+                        <div>Engin verðlaun fundust</div>
+                    )}
                 </section>
             }
         />
