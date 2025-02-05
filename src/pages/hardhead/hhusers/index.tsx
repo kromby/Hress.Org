@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 
 import { useUserById } from "../../../hooks/useSingleUser";
 import UserAwards from "./userAwards";
@@ -11,7 +11,16 @@ import "../../../components/utils/loading.css";
 
 const HHUsers = () => {
   const params = useParams();
-  const { user, loading, error } = useUserById(params.id);
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    if (!params.id) {
+      navigate('/hardhead');
+    }
+  }, [params.id, navigate]);
+
+  const userId = Number(params.id);
+  const { user, loading, error } = useUserById(userId);
 
   useEffect(() => {
     if (user?.name) {
@@ -39,16 +48,16 @@ const HHUsers = () => {
 
   return (
     <div id="main">
-      <UserAwards key="one" id={params.id} />
-      <UserStatistics key="two" id={params.id} />
+      <UserAwards key="one" id={userId} />
+      <UserStatistics key="two" id={userId} />
       {user ? (
         <Challenge
-          id={params.id}
+          id={userId}
           username={user.name}
           profilePhoto={user.profilePhoto?.href}
         />
       ) : null}
-      <Streak id={params.id} />
+      <Streak id={userId} />
     </div>
   );
 };

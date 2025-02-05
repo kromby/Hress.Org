@@ -116,8 +116,8 @@ public class HardheadAwardFunctions
 
     [FunctionName("hardheadAward")]
     public async Task<IActionResult> RunGetAward(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/awards/{id}")] HttpRequest req,
-        string id,
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/awards/{id?}")] HttpRequest req,
+        int? id,
         ILogger log)
     {
         var stopwatch = new Stopwatch();
@@ -128,21 +128,27 @@ public class HardheadAwardFunctions
 
         try
         {
-            if (!int.TryParse(id, out int awardId))
+            if (id.HasValue)
             {
-                log.LogWarning("[GetAward] Invalid award ID format: {ID}", id);
-                return new BadRequestObjectResult("Invalid award ID format");
+                var award = await _hardheadAwardInteractor.GetAwardAsync(id.Value);
+                if (award == null)
+                {
+                    log.LogWarning("[GetAward] Award not found: {ID}", id.Value);
+                    return new NotFoundResult();
+                }
+
+                log.LogInformation("[GetAward] Request completed in {ElapsedMilliseconds}ms", stopwatch.ElapsedMilliseconds);
+                return new OkObjectResult(award);
+            }
+            
+            int? year = null;
+            if(req.Query.ContainsKey("year") && int.TryParse(req.Query["year"], out int tempYear))
+            {
+                year = tempYear;
             }
 
-            var award = await _hardheadAwardInteractor.GetAwardAsync(awardId);
-            if (award == null)
-            {
-                log.LogWarning("[GetAward] Award not found: {ID}", awardId);
-                return new NotFoundResult();
-            }
-
-            log.LogInformation("[GetAward] Request completed in {ElapsedMilliseconds}ms", stopwatch.ElapsedMilliseconds);
-            return new OkObjectResult(award);
+            var list = await _hardheadAwardInteractor.GetAwardsAsync(year);
+            return new OkObjectResult(list);
         }
         catch (Exception ex)
         {
