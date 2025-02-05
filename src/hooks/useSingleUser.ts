@@ -69,7 +69,6 @@ export const useUserByHref = (href: string | undefined): UseSingleUserResult => 
   return { user, loading, error, refetch };
 };
 
-export const useUserById = (id: string | undefined): UseSingleUserResult => {
-  const href = id ? `/api/users/${id}` : undefined;
-  return useUserByHref(href);
+export const useUserById = (id: number): UseSingleUserResult => {
+  return useUserByHref(`/api/users/${id}`);
 };
