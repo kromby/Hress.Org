@@ -76,37 +76,35 @@ public class AwardSqlAccess : IAwardDataAccess
         
         _log.LogInformation("[{Class}] Getting award with ID: '{ID}'", nameof(GetAward), id);
 
-        using (var connection = new SqlConnection(_connectionString))
+        using var connection = new SqlConnection(_connectionString);
+        connection.Open();
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add(new SqlParameter("id", id));
+
+        var reader = await command.ExecuteReaderAsync();
+        Award? award = null;
+
+        while (await reader.ReadAsync())
         {
-            connection.Open();
-            using var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("id", id));
-
-            var reader = await command.ExecuteReaderAsync();
-            Award award = null;
-
-            while (await reader.ReadAsync())
+            if (award == null)
             {
-                if (award == null)
+                award = new Award
                 {
-                    award = new Award
-                    {
-                        ID = reader.GetInt32(0),
-                        Name = reader.GetString(1),
-                        Inserted = reader.GetDateTime(2)
-                    };
-                }
-
-                var year = new YearEntity
-                {
-                    ID = reader.GetInt32(3),          // YearID
-                    Description = reader.GetInt32(4).ToString(),  // YearNumber
-                    GuestCount = reader.GetInt32(5)   // VotedCount
+                    ID = reader.GetInt32(0),
+                    Name = reader.GetString(1),
+                    Inserted = reader.GetDateTime(2)
                 };
-
-                award.Years.Add(year);
             }
-            return award;
+
+            var year = new YearEntity
+            {
+                ID = reader.GetInt32(3),          // YearID
+                Name = reader.GetInt32(4).ToString(),  // YearNumber
+                GuestCount = reader.GetInt32(5)   // VotedCount
+            };
+
+            award.Years.Add(year);
         }
+        return award;
     }
 }
