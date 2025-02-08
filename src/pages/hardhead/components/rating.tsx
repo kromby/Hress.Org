@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import config from "react-global-configuration";
 import { useAuth } from "../../../context/auth";
 import axios from "axios";
-import StarRatings from "react-star-ratings";
+//import StarRatings from "react-star-ratings";
 
 const HardheadRating = ({
   id,
@@ -88,6 +88,7 @@ const HardheadRating = ({
 
   return (
     <ul className="stats">
+      <li>Einkunnagjöf er í dvala</li>
       {authTokens && data.visible ? null : (
         <li>Skráðu þig inn til þess að gefa einkunn</li>
       )}
@@ -106,7 +107,7 @@ const HardheadRating = ({
                 rating.MyRating === undefined &&
                 rating.AverageRating === undefined ? null : (
                   <>
-                    <StarRatings
+{/*                     <StarRatings
                       rating={
                         data.ratings.Readonly
                           ? rating.AverageRating
@@ -122,7 +123,7 @@ const HardheadRating = ({
                       name={`rating_${rating.Code}`}
                       starDimension="20px"
                       starSpacing="2px"
-                    />
+                    /> */}                    
                     <div style={{ paddingTop: "5px" }}>
                       {getRatingText(
                         data.ratings.Readonly
