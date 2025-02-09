@@ -4,7 +4,7 @@ import { NewsEntity } from '../../../types/newsEntity';
 import { isMobile } from 'react-device-detect';
 
 const MAX_IMAGE_HEIGHT = 500;
-const getImageHeight = (image: any) => {
+const getImageHeight = (image: { height: number; href: string } | null) => {
     if (image) {
         if (image.height > MAX_IMAGE_HEIGHT) {
             return MAX_IMAGE_HEIGHT;
