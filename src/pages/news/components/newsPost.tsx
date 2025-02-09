@@ -39,7 +39,7 @@ const NewsPost = ({ singleNews }: { singleNews: NewsEntity }) => {
                         </span> : null}
                     <span dangerouslySetInnerHTML={{ __html: singleNews.content }} /> {/* skipcq: JS-0440 */}
                 </p>}
-            image={isMobile || singleNews.imageAlign === 4 ? config.get('apiPath') + singleNews.image.href + "?width=1400" : null}
+            image={isMobile || singleNews.imageAlign === 4 ? `${config.get('apiPath') + singleNews.image.href}?width=1400` : null}
             actions={<p />}
         />
     );

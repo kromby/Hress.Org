@@ -25,13 +25,13 @@ const HistoryNews = () => {
         let url = "";
         if (parsed.year) {
             if(parsed.month) {
-                url = config.get("apiPath") + "/api/news/?year=" + parsed.year + "&month=" + parsed.month;   
+                url = `${config.get("apiPath")}/api/news/?year=${parsed.year}&month=${parsed.month}`;   
             } else {            
-                url = config.get("apiPath") + "/api/news/?year=" + parsed.year;   
+                url = `${config.get("apiPath")}/api/news/?year=${parsed.year}`;
             }
-            document.title = "Fréttir ársins " + parsed.year + " | Hress.Org";         
+            document.title = `Fréttir ársins ${parsed.year} | Hress.Org`;
         } else {
-            url = config.get("apiPath") + "/api/news/?type=onthisday";
+            url = `${config.get("apiPath")}/api/news/?type=onthisday`;
             document.title = "Gamlar fréttir | Hress.Org";
         }        
 
