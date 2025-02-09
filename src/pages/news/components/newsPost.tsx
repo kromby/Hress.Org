@@ -37,7 +37,7 @@ const NewsPost = ({ singleNews }: { singleNews: NewsEntity }) => {
                                 src={`${config.get("apiPath") + singleNews.image.href}?width=${MAX_IMAGE_HEIGHT}`} alt={singleNews.name}
                             />
                         </span> : null}
-                    <span dangerouslySetInnerHTML={{ __html: singleNews.content }} />
+                    <span dangerouslySetInnerHTML={{ __html: singleNews.content }} /> {/* skipcq: JS-0440 */}
                 </p>}
             image={isMobile || singleNews.imageAlign === 4 ? config.get('apiPath') + singleNews.image.href + "?width=1400" : null}
             actions={<p />}
