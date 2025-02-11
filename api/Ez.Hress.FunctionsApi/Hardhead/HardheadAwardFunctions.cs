@@ -156,4 +156,55 @@ public class HardheadAwardFunctions
             return new StatusCodeResult(StatusCodes.Status500InternalServerError);
         }
     }
+
+    [FunctionName("hardheadAwardWinners")]
+    public async Task<IActionResult> RunGetAwardWinners(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/awards/{id}/winners")] HttpRequest req,
+        int id,
+        ILogger log)
+    {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        log.LogInformation("[GetAwardWinners] C# HTTP trigger function processed a request.");
+        log.LogInformation($"[GetAwardWinners] Host: {req.Host.Value}");
+
+        try
+        {
+            // Parse optional year and position parameters
+            int? year = null;
+            if (req.Query.ContainsKey("year") && int.TryParse(req.Query["year"], out int tempYear))
+            {
+                year = tempYear;
+            }
+
+            int? position = null;
+            if (req.Query.ContainsKey("position") && int.TryParse(req.Query["position"], out int tempPosition))
+            {
+                position = tempPosition;
+            }
+
+            // Call the interactor method to retrieve winners
+            var winners = await _hardheadAwardInteractor.GetAwardWinnersAsync(id, year, position);
+
+            if (winners == null || winners.Count == 0)
+            {
+                log.LogWarning("[GetAwardWinners] No winners found for award {AwardId}", id);
+                return new NotFoundResult();
+            }
+
+            log.LogInformation("[GetAwardWinners] Request completed in {ElapsedMilliseconds}ms", stopwatch.ElapsedMilliseconds);
+            return new OkObjectResult(winners);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "[GetAwardWinners] Error processing request");
+            return new StatusCodeResult(StatusCodes.Status500InternalServerError);
+        }
+        finally
+        {
+            stopwatch.Stop();
+            log.LogInformation($"[GetAwardWinners] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+        }
+    }
 }

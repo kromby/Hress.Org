@@ -6,4 +6,5 @@ public interface IAwardDataAccess
 {
     Task<IList<Award>> GetAwards(int? year = null);
     Task<Award> GetAward(int id);
+    Task<IList<WinnerEntity>> GetAwardWinners(int awardId, int? year = null, int? position = null);
 }

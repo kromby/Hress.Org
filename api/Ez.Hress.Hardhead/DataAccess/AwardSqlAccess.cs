@@ -1,5 +1,6 @@
 using Ez.Hress.Hardhead.Entities;
 using Ez.Hress.Hardhead.UseCases;
+using Ez.Hress.Shared.DataAccess;
 using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
 using System.Data.SqlClient;
@@ -106,5 +107,81 @@ public class AwardSqlAccess : IAwardDataAccess
             award.Years.Add(year);
         }
         return award;
+    }
+
+    public async Task<IList<WinnerEntity>> GetAwardWinners(int awardId, int? year = null, int? position = null)
+    {
+        var sql = @"SELECT	winner.Id, winner.UserId, hressUser.Username, userPhoto.ImageId, winner.Position, 
+                            eventYear.Number, winner.Value, winner.Text, winner.MeasurementTypeId, 
+                            measurementType.Shortcode, measurementType.Name
+                    FROM	rep_User winner
+                    JOIN	rep_Event eventYear ON winner.GroupId = eventYear.Id
+                    JOIN	adm_User hressUser ON winner.UserId = hressUser.Id
+                    LEFT OUTER JOIN	upf_Image userPhoto ON hressUser.Id = userPhoto.UserId AND userPhoto.TypeId = 14
+                    LEFT OUTER JOIN	gen_Type measurementType ON winner.MeasurementTypeId = measurementType.Id
+                    WHERE	winner.EventId = @awardId";
+
+        if (year.HasValue)
+        {
+            sql += " AND eventYear.Id = @year";
+        }
+
+        if (position.HasValue)
+        {
+            sql += " AND winner.Position = @position";
+        }
+
+        sql += " ORDER BY eventYear.Number DESC, winner.Position";
+
+        _log.LogInformation("[{Class}] Executing SQL: '{SQL}'", nameof(GetAwardWinners), sql);
+
+        var winners = new List<WinnerEntity>();
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            connection.Open();
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("awardId", awardId));
+
+            if (year.HasValue)
+            {
+                command.Parameters.Add(new SqlParameter("year", year.Value));
+            }
+
+            if (position.HasValue)
+            {
+                command.Parameters.Add(new SqlParameter("position", position.Value));
+            }
+
+            using var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var winner = new WinnerEntity
+                {
+                    ID = reader.GetInt32(reader.GetOrdinal("Id")),
+                    WinnerUserId = reader.GetInt32(reader.GetOrdinal("UserId")),
+                    Winner = new UserBasicEntity
+                    {
+                        ID = reader.GetInt32(reader.GetOrdinal("UserId")),
+                        Username = reader.GetString(reader.GetOrdinal("Username")),
+                        ProfilePhotoId = reader.IsDBNull(reader.GetOrdinal("ImageId")) ? 0 : reader.GetInt32(reader.GetOrdinal("ImageId"))
+                    },
+                    Position = reader.GetInt32(reader.GetOrdinal("Position")),
+                    Year = reader.GetInt32(reader.GetOrdinal("Number")),
+                    Value = reader.IsDBNull(reader.GetOrdinal("Value")) ? null : reader.GetDecimal(reader.GetOrdinal("Value")),
+                    Text = reader.IsDBNull(reader.GetOrdinal("Text")) ? string.Empty : reader.GetString(reader.GetOrdinal("Text")),
+                    MeasurementType = reader.IsDBNull(reader.GetOrdinal("MeasurementTypeId")) 
+                        ? null 
+                        : new TypeEntity(reader.GetInt32(reader.GetOrdinal("MeasurementTypeId")))
+                        {
+                            Code = reader.GetString(reader.GetOrdinal("Shortcode")),
+                            Name = reader.GetString(reader.GetOrdinal("Name"))
+                        }
+                };
+
+                winners.Add(winner);
+            }
+        }
+
+        return winners;
     }
 }
