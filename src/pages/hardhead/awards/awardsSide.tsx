@@ -22,16 +22,16 @@ const AwardsSide = () => {
             <span>
               Harðhaus ársins
               <br />
-              {winners[0].winner.username} með {winners[0].value} atkvæði
+              {winners[0]?.winner?.username} með {winners[0]?.value} atkvæði
             </span>
           }
-          date={`1.1.${winners[0].year}`}
-          dateString={winners[0].year.toString()}
-          userHref={`/hardhead/users/${winners[0].winner.id}`}
+          date={`1.1.${winners[0]?.year}`}
+          dateString={winners[0]?.year?.toString()}
+          userHref={`/hardhead/users/${winners[0]?.winner?.id}`}
           userPhoto={`${config.get("path")}${
-            winners[0].winner.profilePhoto?.href
+            winners[0]?.winner?.profilePhoto?.href
           }?code=${config.get("code")}`}
-          userText={winners[0].winner.username}
+          userText={winners[0]?.winner?.username}
         />
       )}
     </div>
