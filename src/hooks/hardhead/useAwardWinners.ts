@@ -19,16 +19,13 @@ export const useAwardWinners = (
         const baseUrl = `${config.get(
           "apiPath"
         )}/api/hardhead/awards/${awardId}/winners`;
-
-        const userCondition = userId ? `user=${userId}` : undefined;
-        const positionCondition =
-          position !== undefined ? `position=${position}` : undefined;
-
-        const queryParams = [userCondition, positionCondition]
-          .filter(Boolean)
-          .join("&");
-
-        const url = `${baseUrl}?${queryParams}`;
+        const params = new URLSearchParams();
+        if (userId) params.append("user", userId.toString());
+        if (position !== undefined)
+          params.append("position", position.toString());
+        const url = `${baseUrl}${
+          params.toString() ? "?" + params.toString() : ""
+        }`;
 
         const response = await axios.get(url);
         setWinners(response.data);
