@@ -3,8 +3,12 @@ import config from "react-global-configuration";
 import axios, { AxiosError } from "axios";
 import { WinnerEntity } from "../../types/winnerEntity";
 
-export const useAwardWinners = (position?: number) => {
-  const [winners, setWinners] = useState<WinnerEntity>();
+export const useAwardWinners = (
+  awardId: number,
+  userId?: number,
+  position?: number
+) => {
+  const [winners, setWinners] = useState<WinnerEntity[]>();
   const [error, setError] = useState<AxiosError | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -14,11 +18,20 @@ export const useAwardWinners = (position?: number) => {
       try {
         const baseUrl = `${config.get(
           "apiPath"
-        )}/api/hardhead/awards/364/winners`;
-        const url =
-          position !== undefined ? `${baseUrl}?position=${position}` : baseUrl;
+        )}/api/hardhead/awards/${awardId}/winners`;
+
+        const userCondition = userId ? `user=${userId}` : undefined;
+        const positionCondition =
+          position !== undefined ? `position=${position}` : undefined;
+
+        const queryParams = [userCondition, positionCondition]
+          .filter(Boolean)
+          .join("&");
+
+        const url = `${baseUrl}?${queryParams}`;
+
         const response = await axios.get(url);
-        setWinners(response.data[0]);
+        setWinners(response.data);
       } catch (e) {
         if (axios.isAxiosError(e)) {
           console.error("Failed to fetch winners:", e.message);
