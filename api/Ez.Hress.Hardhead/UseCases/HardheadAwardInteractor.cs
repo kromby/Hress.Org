@@ -31,11 +31,18 @@ public class HardheadAwardInteractor
         return await _awardDataAccess.GetAwards(year);
     }
 
-    public async Task<IList<WinnerEntity>> GetAwardWinnersAsync(int awardId, int? year = null, int? position = null)
+    public async Task<IList<WinnerEntity>> GetAwardWinnersAsync(int awardId, int? year = null, int? position = null, int? userID = null)
     {
         _log.LogInformation("[{Class}] Getting Award Winners for Award '{AwardId}', Year '{Year}', Position '{Position}'", 
             _class, awardId, year, position);
         
-        return await _awardDataAccess.GetAwardWinners(awardId, year, position);
+        var list =  await _awardDataAccess.GetAwardWinners(awardId, year, position);
+
+        if (userID.HasValue)
+        {
+            list = list.Where(w => w.Winner.ID == userID.Value).ToList();
+        }
+
+        return list;
     }
 }

@@ -184,8 +184,14 @@ public class HardheadAwardFunctions
                 position = tempPosition;
             }
 
+            int? userId = null;
+            if (req.Query.ContainsKey("user") && int.TryParse(req.Query["user"], out int tempUser))
+            {
+                userId = tempUser;
+            }
+
             // Call the interactor method to retrieve winners
-            var winners = await _hardheadAwardInteractor.GetAwardWinnersAsync(id, year, position);
+            var winners = await _hardheadAwardInteractor.GetAwardWinnersAsync(id, year, position, userId);
 
             if (winners == null || winners.Count == 0)
             {
