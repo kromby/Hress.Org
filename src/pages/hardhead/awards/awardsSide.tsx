@@ -1,37 +1,20 @@
-import { useState, useEffect } from "react";
 import config from "react-global-configuration";
 import { MiniPost } from "../../../components";
-import axios from "axios";
-import { WinnerEntity } from "../../../types/winnerEntity";
+import { useAwardWinners } from "../../../hooks/hardhead/useAwardWinners";
 
 const AwardsSide = () => {
-  const [data, setData] = useState({ isLoading: false, visible: false });
-  const [awards, setAwards] = useState<WinnerEntity>();
+  const { winners, error, isLoading } = useAwardWinners();
 
-  useEffect(() => {
-    const getAwards = async () => {
-      try {
-        const url = `${config.get(
-          "apiPath"
-        )}/api/hardhead/awards/364/winners?position=1`;
-        setData({ isLoading: true, visible: false });
-        const response = await axios.get(url);
-        setData({ isLoading: false, visible: true });
-        setAwards(response.data[0]);
-      } catch (e) {
-        console.error(e);
-        setData({ isLoading: false, visible: false });
-      }
-    };
-
-    if (!awards) {
-      getAwards();
-    }
-  }, []);
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
-      {data.visible && awards ? (
+      {winners && (
         <MiniPost
           title="Harðhausa verðlaunin"
           href="/hardhead/awards"
@@ -39,18 +22,18 @@ const AwardsSide = () => {
             <span>
               Harðhaus ársins
               <br />
-              {awards.winner.username} með {awards.value} atkvæði
+              {winners.winner.username} með {winners.value} atkvæði
             </span>
           }
-          date={`1.1.${awards.year}`}
-          dateString={awards.year.toString()}
-          userHref={`/hardhead/users/${awards.winner.id}`}
+          date={`1.1.${winners.year}`}
+          dateString={winners.year.toString()}
+          userHref={`/hardhead/users/${winners.winner.id}`}
           userPhoto={`${config.get("path")}${
-            awards.winner.profilePhoto?.href
+            winners.winner.profilePhoto?.href
           }?code=${config.get("code")}`}
-          userText={awards.winner.username}
+          userText={winners.winner.username}
         />
-      ) : null}
+      )}
     </div>
   );
 };
