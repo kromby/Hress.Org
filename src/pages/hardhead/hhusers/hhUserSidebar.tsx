@@ -70,7 +70,7 @@ const HHUserSidebar = () => {
               description={
                 stats ? `Hefur mætt á ${stats.attendedCount} kvöld` : null
               }
-            date={stats ? stats.firstAttended : null}
+            date={stats ? stats.firstAttended : ''}
               // dateString={stats ? "Frá " + stats.FirstAttendedString : null}
               // userHref={"http://www.hress.org/Gang/Single.aspx?Id=" + data.awards.Winner.ID}
               // userPhoto={config.get('path') + data.awards.Winner.ProfilePhoto.Href + "?code=" + config.get('code')}

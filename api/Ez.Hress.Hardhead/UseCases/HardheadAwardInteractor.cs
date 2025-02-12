@@ -30,4 +30,12 @@ public class HardheadAwardInteractor
 
         return await _awardDataAccess.GetAwards(year);
     }
+
+    public async Task<IList<WinnerEntity>> GetAwardWinnersAsync(int awardId, int? year = null, int? position = null)
+    {
+        _log.LogInformation("[{Class}] Getting Award Winners for Award '{AwardId}', Year '{Year}', Position '{Position}'", 
+            _class, awardId, year, position);
+        
+        return await _awardDataAccess.GetAwardWinners(awardId, year, position);
+    }
 }

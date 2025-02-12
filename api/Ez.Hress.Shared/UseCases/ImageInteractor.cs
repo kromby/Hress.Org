@@ -50,7 +50,7 @@ public class ImageInteractor
         if (contentDataAccess == null || string.IsNullOrWhiteSpace(contentDataAccess.Prefix))
         {
             _log.LogCritical("[{Class}] Invalid PhotoUrl: '{Path}'", nameof(ImageInteractor), path);
-            throw new SystemException("Invalid photo URL");
+            throw new SystemException("Invalid photo URL prefix");
         }
 
         var content = await contentDataAccess.GetContent(path);
