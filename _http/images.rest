@@ -21,7 +21,7 @@ Content-Type: application/json
 }
 
 ### Get image content - HTTP
-GET {{host}}/api/images/257503/content
+GET {{host}}/api/images/278890/content
 
 ### Get image content - Relative
 GET {{host}}/api/images/257360/content
