@@ -9,7 +9,13 @@ const UserAwardDetail = ({
   userID: number;
   name: string;
 }) => {
-  const { winners, error, isLoading } = useAwardWinners(awardID, userID);
+  const { winners, error, isLoading } = useAwardWinners(awardID, userID, 3);
+
+  const POSITION_COLORS = {
+    1: "#FBEE99", // Gold
+    2: "#F5F5F5", // Silver
+    3: "#FEE6E1", // Bronze
+  };
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -41,12 +47,11 @@ const UserAwardDetail = ({
                     <tr
                       key={winner.id}
                       style={
-                        winner.position === 1
-                          ? { backgroundColor: "#FBEE99" }
-                          : winner.position === 2
-                          ? { backgroundColor: "#F5F5F5" }
-                          : winner.position === 3
-                          ? { backgroundColor: "#FEE6E1" }
+                        winner.position <= 3
+                          ? {
+                              backgroundColor:
+                                POSITION_COLORS[winner.position as 1 | 2 | 3],
+                            }
                           : undefined
                       }
                     >
