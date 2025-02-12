@@ -46,7 +46,7 @@ export const useAwardWinners = (
     };
 
     fetchWinners();
-  }, [position]);
+  }, [awardId, userId, position]);
 
   return { winners, error, isLoading };
 };
