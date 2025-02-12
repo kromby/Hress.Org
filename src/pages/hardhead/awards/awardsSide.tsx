@@ -3,7 +3,7 @@ import { MiniPost } from "../../../components";
 import { useAwardWinners } from "../../../hooks/hardhead/useAwardWinners";
 
 const AwardsSide = () => {
-  const { winners, error, isLoading } = useAwardWinners();
+  const { winners, error, isLoading } = useAwardWinners(364, 1);
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -22,16 +22,16 @@ const AwardsSide = () => {
             <span>
               Harðhaus ársins
               <br />
-              {winners.winner.username} með {winners.value} atkvæði
+              {winners[0].winner.username} með {winners[0].value} atkvæði
             </span>
           }
-          date={`1.1.${winners.year}`}
-          dateString={winners.year.toString()}
-          userHref={`/hardhead/users/${winners.winner.id}`}
+          date={`1.1.${winners[0].year}`}
+          dateString={winners[0].year.toString()}
+          userHref={`/hardhead/users/${winners[0].winner.id}`}
           userPhoto={`${config.get("path")}${
-            winners.winner.profilePhoto?.href
+            winners[0].winner.profilePhoto?.href
           }?code=${config.get("code")}`}
-          userText={winners.winner.username}
+          userText={winners[0].winner.username}
         />
       )}
     </div>
