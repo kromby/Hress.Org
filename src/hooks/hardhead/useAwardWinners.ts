@@ -24,7 +24,7 @@ export const useAwardWinners = (
         if (position !== undefined)
           params.append("position", position.toString());
         const url = `${baseUrl}${
-          params.toString() ? "?" + params.toString() : ""
+          params.toString() ? `?${params.toString()}` : ""
         }`;
 
         const response = await axios.get(url);
