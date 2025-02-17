@@ -21,8 +21,7 @@ export const useAwardWinners = (
         )}/api/hardhead/awards/${awardId}/winners`;
         const params = new URLSearchParams();
         if (userId) params.append("user", userId.toString());
-        if (position !== undefined)
-          params.append("position", position.toString());
+        if (position) params.append("position", position.toString());
         const url = `${baseUrl}${
           params.toString() ? `?${params.toString()}` : ""
         }`;
