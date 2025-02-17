@@ -36,22 +36,21 @@ const AwardsWinners = ({
           </tr>
         </thead>
         <tbody>
-          {winners &&
-            winners.map((winner) => (
-              <tr key={winner.id}>
-                <td>{position ? winner.year : winner.position}</td>
-                <td>
-                  <Author
-                    id={winner.winner.id}
-                    username={winner.winner.username ?? ""}
-                    userPath="/hardhead/users/"
-                    profilePhoto={winner.winner.profilePhoto?.href}
-                  />
-                </td>
-                <td>{winner.value}</td>
-                <td>{winner.text}</td>
-              </tr>
-            ))}
+          {winners?.map((winner) => (
+            <tr key={winner.id}>
+              <td>{position ? winner.year : winner.position}</td>
+              <td>
+                <Author
+                  id={winner.winner.id}
+                  username={winner.winner.username ?? ""}
+                  userPath="/hardhead/users/"
+                  profilePhoto={winner.winner.profilePhoto?.href}
+                />
+              </td>
+              <td>{winner.value}</td>
+              <td>{winner.text}</td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
