@@ -12,7 +12,7 @@ const Nominations = () => {
   const [users, setUsers] = useState<any>();
   const navigate = useNavigate();
 
-  const url = `${config.get("path")}/api/hardhead/5418/users?code=${config.get(
+  const url = `${config.get("path")}/api/hardhead/5437/users?code=${config.get(
     "code"
   )}`;
 

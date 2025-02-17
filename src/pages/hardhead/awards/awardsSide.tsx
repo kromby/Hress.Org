@@ -1,9 +1,9 @@
 import config from "react-global-configuration";
 import { MiniPost } from "../../../components";
-import { useAwardWinners } from "../../../hooks/hardhead/useAwardWinners";
+import { useAwardWinnersById } from "../../../hooks/hardhead/useAwardWinners";
 
 const AwardsSide = () => {
-  const { winners, error, isLoading } = useAwardWinners(364, undefined, 1);
+  const { winners, error, isLoading } = useAwardWinnersById(364, undefined, 1);
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -28,9 +28,9 @@ const AwardsSide = () => {
           date={`1.1.${winners[0]?.year}`}
           dateString={winners[0]?.year?.toString()}
           userHref={`/hardhead/users/${winners[0]?.winner?.id}`}
-          userPhoto={`${config.get("path")}${
+          userPhoto={`${config.get("apiPath")}${
             winners[0]?.winner?.profilePhoto?.href
-          }?code=${config.get("code")}`}
+          }`}
           userText={winners[0]?.winner?.username}
         />
       )}
