@@ -1,4 +1,4 @@
-import { useAwardWinners } from "../../../hooks/hardhead/useAwardWinners";
+import { useAwardWinnersById } from "../../../hooks/hardhead/useAwardWinners";
 
 const UserAwardDetail = ({
   awardID,
@@ -9,7 +9,7 @@ const UserAwardDetail = ({
   userID: number;
   name: string;
 }) => {
-  const { winners, error, isLoading } = useAwardWinners(awardID, userID, 3);
+  const { winners, error, isLoading } = useAwardWinnersById(awardID, userID, 3);
 
   const POSITION_COLORS = {
     1: "#FBEE99", // Gold
