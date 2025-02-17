@@ -12,9 +12,10 @@ const Nominations = () => {
   const [users, setUsers] = useState<any>();
   const navigate = useNavigate();
 
-  const url = `${config.get("path")}/api/hardhead/5437/users?code=${config.get(
-    "code"
-  )}`;
+  const YEAR_ID = process.env.REACT_APP_NOMINATIONS_YEAR_ID || "5437";
+  const url = `${config.get(
+    "path"
+  )}/api/hardhead/${YEAR_ID}/users?code=${config.get("code")}`;
 
   useEffect(() => {
     if (authTokens === undefined) {
@@ -30,7 +31,8 @@ const Nominations = () => {
           response.data.filter((user: { ID: string }) => user.ID !== userID)
         );
       } catch (e) {
-        console.error(e);
+        console.error("Failed to fetch users:", e);
+        setUsers([]);
       }
     };
 
