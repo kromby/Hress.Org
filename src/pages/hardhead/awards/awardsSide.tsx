@@ -3,7 +3,7 @@ import { MiniPost } from "../../../components";
 import { useAwardWinners } from "../../../hooks/hardhead/useAwardWinners";
 
 const AwardsSide = () => {
-  const { winners, error, isLoading } = useAwardWinners(364, 1);
+  const { winners, error, isLoading } = useAwardWinners(364, undefined, 1);
 
   if (error) {
     return <div>Error: {error.message}</div>;
