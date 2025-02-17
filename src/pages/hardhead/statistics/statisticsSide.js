@@ -19,19 +19,17 @@ const StatisticsSide = () => {
 
         let url = "";
         if (new Date().getMinutes() % 2 === 0)
-          url =
-            config.get("path") +
-            "/api/hardhead/statistics/users?periodType=" +
-            periodType +
-            "&code=" +
-            config.get("code");
+          url = `${config.get(
+            "path"
+          )}/api/hardhead/statistics/users?periodType=${periodType}&code=${config.get(
+            "code"
+          )}`;
         else
-          url =
-            config.get("path") +
-            "/api/hardhead/statistics/users?guestType=53&periodType=" +
-            periodType +
-            "&code=" +
-            config.get("code");
+          url = `${config.get(
+            "path"
+          )}/api/hardhead/statistics/users?guestType=53&periodType=${periodType}&code=${config.get(
+            "code"
+          )}`;
 
         setData({ isLoading: true });
         const response = await axios.get(url);
@@ -54,12 +52,12 @@ const StatisticsSide = () => {
     else description = "Oftast haldið";
 
     // console.log(period);
-    if (period === "All") description = description + " frá upphafi";
+    if (period === "All") description = `${description} frá upphafi`;
     else if (period === "Last10")
-      description = description + " síðustu 10 árin";
-    else if (period === "Last5") description = description + " síðustu 5 árin";
-    else if (period === "Last2") description = description + " síðustu 2 árin";
-    else if (period === "ThisYear") description = description + " á þessu ári";
+      description = `${description} síðustu 10 árin`;
+    else if (period === "Last5") description = `${description} síðustu 5 árin`;
+    else if (period === "Last2") description = `${description} síðustu 2 árin`;
+    else if (period === "ThisYear") description = `${description}  á þessu ári`;
 
     return description;
   };
@@ -83,7 +81,7 @@ const StatisticsSide = () => {
           }
           date={data.stats.DateFrom}
           dateString={data.stats.DateFromString}
-          userHref={"/hardhead/users/" + data.stats.List[0].User.ID}
+          userHref={`/hardhead/users/${data.stats.List[0].User.ID}`}
           userPhoto={
             config.get("apiPath") + data.stats.List[0].User.ProfilePhoto.Href
           }
