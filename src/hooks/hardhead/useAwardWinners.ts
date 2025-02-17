@@ -3,10 +3,6 @@ import config from "react-global-configuration";
 import axios, { AxiosError } from "axios";
 import { WinnerEntity } from "../../types/winnerEntity";
 
-import { useState, useEffect } from "react";
-import axios, { AxiosError } from "axios";
-import config from "config";
-
 const useBaseAwardWinners = (
   baseUrl: string,
   userId?: number,
@@ -25,7 +21,9 @@ const useBaseAwardWinners = (
         if (userId) params.append("user", userId.toString());
         if (position) params.append("position", position.toString());
         if (year) params.append("year", year.toString());
-        const url = `${baseUrl}${params.toString() ? `?${params.toString()}` : ""}`;
+        const url = `${baseUrl}${
+          params.toString() ? `?${params.toString()}` : ""
+        }`;
 
         const response = await axios.get(url);
         setWinners(response.data);
@@ -54,7 +52,9 @@ export const useAwardWinnersById = (
   position?: number,
   year?: number
 ) => {
-  const baseUrl = `${config.get("apiPath")}/api/hardhead/awards/${awardId}/winners`;
+  const baseUrl = `${config.get(
+    "apiPath"
+  )}/api/hardhead/awards/${awardId}/winners`;
   return useBaseAwardWinners(baseUrl, userId, position, year);
 };
 
