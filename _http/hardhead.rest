@@ -90,3 +90,7 @@ Authorization: token {{apiToken}}
 
 ### Get guests by Hardhead ID
 GET {{host}}/api/hardhead/5419/guests
+
+### Get years
+GET {{host}}/api/hardhead/years
+
