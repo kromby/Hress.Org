@@ -415,4 +415,81 @@ public class HardheadSqlAccess : IHardheadDataAccess
 
         return await command.ExecuteNonQueryAsync();
     }
+
+    public async Task<IList<YearEntity>> GetYears()
+    {
+        var sql = @"
+            SELECT	
+                hhYear.Id, 
+                hhYear.Number, 
+                bestMovie.Text, 
+                img.ImageId, 
+                COUNT(guests.Id) AS GuestCount, 
+                hhOfYear.UserId, 
+                hhOfYear.Username, 
+                hhOfYear.UserImageID
+            FROM	rep_Event hhYear
+            JOIN    rep_User guests ON guests.GroupId = hhYear.Id AND guests.TypeId IN(52, 53)
+            LEFT OUTER JOIN rep_User bestMovie ON bestMovie.GroupId = hhYear.Id AND bestMovie.EventId = 361 AND bestMovie.Position = 1
+            LEFT OUTER JOIN (
+                SELECT	night.ParentId, night.Id, film.TextValue 'movie', film.TypeId
+                FROM	rep_Event night
+                JOIN	rep_Text film ON film.EventId = night.Id AND film.TypeId = 62
+                WHERE	night.TypeId = 49
+            ) movieT ON bestMovie.Text = movieT.movie AND hhYear.Id = movieT.ParentId
+            LEFT OUTER JOIN rep_Image img ON movieT.Id = img.EventId
+            LEFT OUTER JOIN (
+                SELECT	hhYear.Id, hhOfYear.UserId, usr.Username, userPhoto.ImageId 'UserImageID'
+                FROM	rep_Event hhYear
+                JOIN	rep_User hhOfYear ON hhYear.Id = hhOfYear.GroupId AND hhOfYear.EventId = 364 AND hhOfYear.Position = 1
+                JOIN	adm_User usr ON hhOfYear.UserId = usr.Id
+                LEFT OUTER JOIN	upf_Image userPhoto ON usr.Id = userPhoto.UserId AND userPhoto.TypeId = 14
+            ) hhOfYear ON hhOfYear.Id = hhYear.Id
+            WHERE hhYear.TypeId = 49 AND hhYear.ParentId IS NULL
+            GROUP BY hhYear.Id, hhYear.Number, bestMovie.Text, img.ImageId, img.Id, movieT.Id, 
+                     hhOfYear.UserId, hhOfYear.Username, hhOfYear.UserImageID
+            ORDER BY hhYear.Id DESC";
+
+        _log.LogInformation("[{Class}] Getting all Hardhead years", nameof(HardheadSqlAccess));
+        _log.LogInformation("[{Class}] Executing SQL: '{SQL}'", nameof(HardheadSqlAccess), sql);
+
+        var list = new List<YearEntity>();
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql, connection);
+            using var reader = await command.ExecuteReaderAsync();
+            while (reader.Read())
+            {
+                var entity = new YearEntity()
+                {
+                    ID = reader.GetInt32(reader.GetOrdinal("Id")),
+                    Name = reader.GetInt32(reader.GetOrdinal("Number")).ToString(),
+                    GuestCount = reader.GetInt32(reader.GetOrdinal("GuestCount")),
+                };
+
+                if (!reader.IsDBNull(reader.GetOrdinal("Text")))
+                    entity.Description = reader.GetString(reader.GetOrdinal("Text"));
+
+                if (!reader.IsDBNull(reader.GetOrdinal("ImageId")))
+                    entity.PhotoID = reader.GetInt32(reader.GetOrdinal("ImageId"));
+
+                if(!reader.IsDBNull(reader.GetOrdinal("UserId")))
+                {
+                    entity.Hardhead = new UserBasicEntity()
+                    {
+                        ID = reader.GetInt32(reader.GetOrdinal("UserID")),
+                        Username = reader.GetString(reader.GetOrdinal("Username"))
+                    };
+
+                    if (!reader.IsDBNull(reader.GetOrdinal("UserImageID")))
+                        entity.Hardhead.ProfilePhotoId = reader.GetInt32(reader.GetOrdinal("UserImageID"));
+                }
+
+                list.Add(entity);
+            }
+        }
+        return list;
+    }
 }

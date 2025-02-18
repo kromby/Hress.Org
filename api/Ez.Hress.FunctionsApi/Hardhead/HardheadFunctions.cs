@@ -119,4 +119,24 @@ public class HardheadFunctions
             throw;
         }
     }
+
+    [FunctionName("hardheadYears")]
+    public async Task<IActionResult> GetYears(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/years")] HttpRequest req,
+        ILogger log)
+    {
+        var method = nameof(GetYears);
+        log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
+
+        try
+        {
+            var years = await _hardheadInteractor.GetYearsAsync();
+            return new OkObjectResult(years);
+        }
+        catch (Exception ex)
+        {
+            log.LogError("[{Class}.{Function}] Internal error: {Message}", _class, method, ex.Message);
+            throw;
+        }
+    }
 }
