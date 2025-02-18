@@ -1,45 +1,41 @@
-import { useState, useEffect } from 'react';
-import config from 'react-global-configuration';
-import { MiniPost } from '../../../components';
-import axios from 'axios';
-import { WinnerEntity } from '../../../types/winnerEntity';
+import config from "react-global-configuration";
+import { MiniPost } from "../../../components";
+import { useAwardWinnersById } from "../../../hooks/hardhead/useAwardWinners";
 
 const AwardsSide = () => {
-    const [data, setData] = useState({ isLoading: false, visible: false })  
-    const [awards, setAwards] = useState<WinnerEntity>()
+  const { winners, error, isLoading } = useAwardWinnersById(364, undefined, 1);
 
-    useEffect(() => {
-        const getAwards = async () => {
-            try {
-                const url = `${config.get('apiPath')}/api/hardhead/awards/364/winners?position=1`;
-                setData({ isLoading: true, visible: false });
-                const response = await axios.get(url);
-                setData({ isLoading: false, visible: true });
-                setAwards(response.data[0]);
-            } catch (e) {
-                console.error(e);
-                setData({ isLoading: false, visible: false });
-            }
-        }
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
-        if (!awards) {
-            getAwards();
-        }
-    }, [])
-
-    return (
-        <div>
-            {data.visible && awards ?
-                <MiniPost title="Harðhausa verðlaunin" href="/hardhead/awards"
-                    description={<span>Harðhaus ársins<br />{awards.winner.username} með {awards.value} atkvæði</span>}
-                    date={"1.1." + awards.year}
-                    dateString={awards.year.toString()}
-                    userHref={"/hardhead/users/" + awards.winner.id}
-                    userPhoto={config.get('path') + awards.winner.profilePhoto?.href + "?code=" + config.get('code')}
-                    userText={awards.winner.username} /> :
-                null}
-        </div>
-    )
-}
+  return (
+    <div>
+      {winners && (
+        <MiniPost
+          title="Harðhausa verðlaunin"
+          href="/hardhead/awards"
+          description={
+            <span>
+              Harðhaus ársins
+              <br />
+              {winners[0]?.winner?.username} með {winners[0]?.value} atkvæði
+            </span>
+          }
+          date={`1.1.${winners[0]?.year}`}
+          dateString={winners[0]?.year?.toString()}
+          userHref={`/hardhead/users/${winners[0]?.winner?.id}`}
+          userPhoto={`${config.get("apiPath")}${
+            winners[0]?.winner?.profilePhoto?.href
+          }`}
+          userText={winners[0]?.winner?.username}
+        />
+      )}
+    </div>
+  );
+};
 
 export default AwardsSide;

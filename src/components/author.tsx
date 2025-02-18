@@ -24,27 +24,29 @@ const Author: React.FC<AuthorProps> = ({
   );
 
   const IMAGE_SIZES = {
-      Expanded: 50,
-      Compact: 25,
-      Default: 40,
-    };
-    
+    Expanded: 50,
+    Compact: 25,
+    Default: 40,
+  };
+
   const DEFAULT_PROFILE_PHOTO = "/api/images/278634/content";
 
   const user = useMemo<UserBasicEntity | undefined>(() => {
     if (href) {
       return fetchedUser;
     }
-    
+
     return {
       id,
       username,
       href: "",
       name: username,
-      profilePhoto: profilePhoto ? {
-        id: 0,
-        href: profilePhoto,
-      } : undefined,
+      profilePhoto: profilePhoto
+        ? {
+            id: 0,
+            href: profilePhoto,
+          }
+        : undefined,
       inserted: new Date().toString(),
       insertedString: "",
       insertedBy: 0,
@@ -60,31 +62,33 @@ const Author: React.FC<AuthorProps> = ({
   if (href && error) return <div>Error loading user</div>;
   if (!user) return null;
 
-  type AuthorMode = 'Expanded' | 'Compact' | 'Default';
+  type AuthorMode = "Expanded" | "Compact" | "Default";
 
   const getImageSrc = (profilePhoto: string, mode: AuthorMode) => {
     const size = IMAGE_SIZES[mode] || IMAGE_SIZES.Default;
-    const imagePath = !profilePhoto
-      ? DEFAULT_PROFILE_PHOTO
-      : profilePhoto;
+    const imagePath = !profilePhoto ? DEFAULT_PROFILE_PHOTO : profilePhoto;
     return `${config.get("apiPath")}${imagePath}?height=${size}&width=${size}`;
   };
 
   return (
     <div>
       {!user && <span className="loading">Loading...</span>}
-      {user ? 
-      <a href={userURL + user.id} className="author"  aria-label={`View ${user.username}'s profile`}>
-        <span className="name">{user.username}</span>
+      {user ? (
+        <a
+          href={userURL + user.id}
+          className="author"
+          aria-label={`View ${user.username}'s profile`}
+        >
+          <span className="name">{user.username}</span>
 
-        <img
-          src={getImageSrc(user.profilePhoto?.href ?? '', "Expanded")}
-          alt={username}
-          className="profile-photo"
-          loading="lazy"
-        />
-      </a>
-      : null}
+          <img
+            src={getImageSrc(user.profilePhoto?.href ?? "", "Expanded")}
+            alt={username}
+            className="profile-photo"
+            loading="lazy"
+          />
+        </a>
+      ) : null}
     </div>
   );
 };

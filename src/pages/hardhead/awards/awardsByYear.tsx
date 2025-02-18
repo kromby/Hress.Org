@@ -30,8 +30,8 @@ const AwardsByYear = () => {
             body={
               <AwardsWinners
                 href={award.winners.href}
-                year={params.id}
-                position=""
+                year={year}
+                position={undefined}
               />
             }
           />

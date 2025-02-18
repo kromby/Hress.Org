@@ -1,5 +1,20 @@
 ### Get nominations for a specific award
 GET {{legacyHost}}/api/hardhead/awards/5284/nominations?code={{apiCode}}
 
+### Get awards
+GET {{host}}/api/hardhead/awards/
+
+### Get awards by year
+GET {{host}}/api/hardhead/awards/?year=5398
+
 ### Get award by ID
 GET {{host}}/api/hardhead/awards/360
+
+### Get award winners by ID
+GET {{host}}/api/hardhead/awards/360/winners
+
+### Get winners for a specific award
+GET {{host}}/api/hardhead/awards/360/winners?user=2630
+
+### Get winners for a specific award
+GET {{host}}/api/hardhead/awards/364/winners?position=1
