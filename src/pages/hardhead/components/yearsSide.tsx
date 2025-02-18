@@ -15,27 +15,27 @@ const YearsSide = () => {
 
   return (
     <div>
-      {years
-        ? years.map((year) => (
-            <li key={year.id}>
-              <SidePost
-                title={`Árið ${year.name}`}
-                href={`/hardhead?parentID=${year.id}`}
-                dateString={
-                  year.hardhead?.username
-                    ? `Harðhaus ársins ${year.hardhead?.username ?? ""}`
-                    : undefined
-                }
-                image={
-                  year.photo?.href
-                    ? `${config.get("apiPath")}${year.photo.href}?width=75`
-                    : undefined
-                }
-                imageText={`Árið ${year.name}`}
-              />
-            </li>
-          ))
-        : null}
+      <ul>
+        {years?.map((year) => (
+          <li key={year.id}>
+            <SidePost
+              title={`Árið ${year.name}`}
+              href={`/hardhead?parentID=${year.id}`}
+              dateString={
+                year.hardhead?.username
+                  ? `Harðhaus ársins ${year.hardhead?.username ?? ""}`
+                  : undefined
+              }
+              image={
+                year.photo?.href
+                  ? `${config.get("apiPath")}${year.photo.href}?width=75`
+                  : undefined
+              }
+              imageText={`Árið ${year.name}`}
+            />
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
