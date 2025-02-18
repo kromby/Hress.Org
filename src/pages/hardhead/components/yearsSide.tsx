@@ -1,4 +1,3 @@
-import { useState, useEffect } from "react";
 import config from "react-global-configuration";
 import SidePost from "../../../components/sidepost";
 import { useHardheadYears } from "../../../hooks/hardhead/useHardheadYears";
