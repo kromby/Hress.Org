@@ -11,7 +11,7 @@ const SidePost = ({
   title: string;
   href: string;
   date?: string;
-  dateString: string;
+  dateString?: string;
   image?: string;
   imageText?: string;
 }) => {
