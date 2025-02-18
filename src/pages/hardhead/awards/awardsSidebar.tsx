@@ -19,11 +19,10 @@ const AwardsSidebar = () => {
       <section>
         <ul className="posts">
           {years
-            ?.filter((year: YearEntity) => year.hardhead)
+            .filter((year: YearEntity) => year.hardhead)
             .map((year) => (
               <li key={year.id}>
                 <SidePost
-                  key={year.id}
                   title={`Árið ${year.name}`}
                   href={`/hardhead/awards/year/${year.id}`}
                   dateString={`Harðhaus ársins ${
