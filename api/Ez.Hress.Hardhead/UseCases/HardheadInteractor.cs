@@ -124,4 +124,10 @@ public class HardheadInteractor
 
         return await _hardheadDataAccess.AddGuest(id, guestId, userId, DateTime.UtcNow);
     }
+
+    public async Task<IList<YearEntity>> GetYearsAsync()
+    {
+        _log.LogInformation("[{Class}] Getting all Hardhead years", _class);
+        return await _hardheadDataAccess.GetYears();
+    }
 }

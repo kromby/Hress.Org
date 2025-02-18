@@ -13,9 +13,9 @@ const AwardsByType = () => {
 
   return (
     <div id="main">
-      {isLoading && <div className="loading">Loading award details...</div>}
+      {isLoading && <div className="loading">Sæki gögn...</div>}
       {error && (
-        <div className="error">Error loading award: {error.message}</div>
+        <div className="error">Villa að sækja verðlaun: {error.message}</div>
       )}
       {award?.years
         ? award.years.map((year) => (
