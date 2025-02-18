@@ -18,11 +18,11 @@ const UserAwardDetail = ({
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div>Sæki gögn...</div>;
   }
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
+  if (error && error.response?.status !== 404) {
+    return <div>Villa við að sækja verðlaun: {error.message}</div>;
   }
 
   return (
