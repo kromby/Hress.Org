@@ -15,7 +15,7 @@ const YearsSide = () => {
 
   return (
     <div>
-      <ul>
+      <ul className="posts">
         {years?.map((year) => (
           <li key={year.id}>
             <SidePost
