@@ -30,8 +30,8 @@ const UserStatistics = ({ id }) => {
       for (let i = 0; i <= 4; i++) {
         const result = await getUserStatistics(53, i);
         tempArray = [...tempArray, result];
-        setUserStatistics(tempArray);
       }
+      setUserStatistics(tempArray);
     };
 
     if (userStatistics.length < 1) {
