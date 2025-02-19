@@ -26,10 +26,10 @@ const LastFilm = ({ userId }: { userId: number }) => {
     <div>
       {hardhead?.movie ? (
         <MiniPost
-          title={"Nýjasta harðhausakvöld: " + hardhead.number}
+          title={`Nýjasta harðhausakvöld: ${hardhead.number}`}
           description={
             <span>
-              {hardhead.guestCount + " gestir"}
+              {`${hardhead.guestCount} gestir`}
               <br />
               <br />
               {hardhead.description
