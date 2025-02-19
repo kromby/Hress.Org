@@ -12,7 +12,7 @@ const HHUserSidebar = () => {
   const params = useParams();
   const { user, error } = useUserById(Number(params.id));
   const [stats, setStats] = useState<StatisticBase>();
-  
+
   useEffect(() => {
     const getStats = async () => {
       const url = `${config.get("apiPath")}/api/hardhead/statistics/users/${
@@ -35,7 +35,7 @@ const HHUserSidebar = () => {
     return (
       <section id="sidebar" className="error-container">
         <h3>Error loading profile</h3>
-        <p>{error.message || 'An unexpected error occurred'}</p>
+        <p>{error.message || "An unexpected error occurred"}</p>
       </section>
     );
   }
@@ -45,11 +45,9 @@ const HHUserSidebar = () => {
       <section id="intro">
         <span className="logo">
           <img
-            src={             
-                `${config.get("apiPath")}${
-                    user?.profilePhoto?.href ?? '/api/images/278634/content'
-                  }?width=80&height=80`                
-                }
+            src={`${config.get("apiPath")}${
+              user?.profilePhoto?.href ?? "/api/images/278634/content"
+            }?width=80&height=80`}
             alt={user?.name}
           />
         </span>
@@ -58,29 +56,29 @@ const HHUserSidebar = () => {
           <p>{stats ? `Mætti fyrst ${stats.firstAttendedString}` : null}</p>
         </header>
       </section>
-        {/* <!-- Intro --> */}
+      {/* <!-- Intro --> */}
 
-        {/* <!-- Mini Posts --> */}
+      {/* <!-- Mini Posts --> */}
       <section>
         <div className="mini-posts">
-            {/* <!-- Mini Post --> */}
+          {/* <!-- Mini Post --> */}
           <MiniPost
             title="Mæting"
-              // href="/hardhead/awards"
-              description={
-                stats ? `Hefur mætt á ${stats.attendedCount} kvöld` : null
-              }
-            date={stats ? stats.firstAttended : ''}
-              // dateString={stats ? "Frá " + stats.FirstAttendedString : null}
-              // userHref={"http://www.hress.org/Gang/Single.aspx?Id=" + data.awards.Winner.ID}
-              // userPhoto={config.get('path') + data.awards.Winner.ProfilePhoto.Href + "?code=" + config.get('code')}
-              // userText={data.awards.Winner.Username}
+            // href="/hardhead/awards"
+            description={
+              stats ? `Hefur mætt á ${stats.attendedCount} kvöld` : null
+            }
+            date={stats ? stats.firstAttended : ""}
+            // dateString={stats ? "Frá " + stats.FirstAttendedString : null}
+            // userHref={"http://www.hress.org/Gang/Single.aspx?Id=" + data.awards.Winner.ID}
+            // userPhoto={config.get('path') + data.awards.Winner.ProfilePhoto.Href
+            // userText={data.awards.Winner.Username}
           />
 
-          <LastFilm userID={params.id} />
+          <LastFilm userId={Number(params.id)} />
 
-            {/* <!-- Mini Post --> */}
-            {/* <article class="mini-post">
+          {/* <!-- Mini Post --> */}
+          {/* <article class="mini-post">
                         <header>
                             <h3><a href="single.html">Rutrum neque accumsan</a></h3>
                             <time class="published" datetime="2015-10-19">October 19, 2015</time>
@@ -91,9 +89,9 @@ const HHUserSidebar = () => {
         </div>
       </section>
 
-        {/* <!-- Posts List --> */}
-        <section>
-          {/* <ul class="posts">
+      {/* <!-- Posts List --> */}
+      <section>
+        {/* <ul class="posts">
                     <li>
                         <article>
                             <header>
@@ -113,10 +111,10 @@ const HHUserSidebar = () => {
                         </article>
                     </li>                    
                 </ul> */}
-        </section>
+      </section>
 
-        {/* <!-- About --> */}
-        {/* <section class="blurb">
+      {/* <!-- About --> */}
+      {/* <section class="blurb">
                 <h2>About</h2>
                 <p>Mauris neque quam, fermentum ut nisl vitae, convallis maximus nisl. Sed mattis nunc id lorem euismod amet placerat. Vivamus porttitor magna enim, ac accumsan tortor cursus at phasellus sed ultricies.</p>
                 <ul class="actions">
@@ -124,7 +122,7 @@ const HHUserSidebar = () => {
                 </ul>
             </section> */}
 
-        {/* <!-- Footer --> */}
+      {/* <!-- Footer --> */}
       <section id="footer">
         <ul className="icons">
           <li>
