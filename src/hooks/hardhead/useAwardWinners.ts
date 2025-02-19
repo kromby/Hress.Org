@@ -29,8 +29,12 @@ const useBaseAwardWinners = (
         setWinners(response.data);
       } catch (e) {
         if (axios.isAxiosError(e)) {
-          console.error("Failed to fetch winners:", e.message);
-          setError(e);
+          if (e.response?.status === 404) {
+            setWinners([]);
+          } else {
+            console.error("Failed to fetch winners:", e.message);
+            setError(e);
+          }
         } else {
           console.error("An unexpected error occurred:", e);
           setError(new AxiosError("An unexpected error occurred"));
