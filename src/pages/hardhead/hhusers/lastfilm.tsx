@@ -22,32 +22,32 @@ const LastFilm = ({ userId }: { userId: number }) => {
 
   const hardhead = hardheads[0];
 
+  if (!hardhead?.movie) {
+    return null;
+  }
+
+  const imageSource = hardhead.movie.posterPhoto?.href
+    ? `${config.get("apiPath")}${hardhead.movie.posterPhoto.href}?width=410`
+    : undefined;
+
   return (
     <div>
-      {hardhead?.movie ? (
-        <MiniPost
-          title={`Nýjasta harðhausakvöld: ${hardhead.number}`}
-          description={
-            <span>
-              {`${hardhead.guestCount} gestir`}
-              <br />
-              <br />
-              {hardhead.description
-                ? hardhead.description
-                : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}
-            </span>
-          }
-          date={hardhead.date}
-          dateString={hardhead.dateString}
-          imageSource={
-            hardhead.movie.posterPhoto?.href
-              ? `${config.get("apiPath")}${
-                  hardhead.movie.posterPhoto.href
-                }?width=410`
-              : undefined
-          }
-        />
-      ) : null}
+      <MiniPost
+        title={`Nýjasta harðhausakvöld: ${hardhead.number}`}
+        description={
+          <span>
+            {`${hardhead.guestCount} gestir`}
+            <br />
+            <br />
+            {hardhead.description
+              ? hardhead.description
+              : "Líklega hefur ekkert merkilegt gerst fyrst gestgjafi hefur ekki skráð neitt."}
+          </span>
+        }
+        date={hardhead.date}
+        dateString={hardhead.dateString}
+        imageSource={imageSource}
+      />
     </div>
   );
 };
