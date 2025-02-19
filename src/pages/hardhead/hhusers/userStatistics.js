@@ -16,6 +16,7 @@ const UserStatistics = ({ id }) => {
         return response.data;
       } catch (e) {
         console.error(e);
+        return [];
       }
     };
 
