@@ -14,6 +14,12 @@ export const useHardhead = () => {
     return response.data;
   };
 
+  const fetchNextHardhead = async () => {
+    const url = `${config.get("apiPath")}/api/hardhead`;
+    const response = await axios.get(url);
+    return response.data;
+  };
+
   /*   const fetchById = async (id: string) => {
         const url = `${config.get("apiPath")}/nights/${id}`;
         const response = await axios.get(url);
@@ -35,6 +41,7 @@ export const useHardhead = () => {
   return {
     fetchByHref,
     fetchByUserId,
+    fetchNextHardhead,
     /*     fetchById,
             fetchByParentId,
             fetchByDates, */
