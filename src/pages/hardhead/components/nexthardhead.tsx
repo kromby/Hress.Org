@@ -42,7 +42,7 @@ const NextHardhead = ({ allowEdit }: { allowEdit: boolean }) => {
           userHref={`/hardhead/users/${hardhead.host.id}`}
           userPhoto={`${config.get("apiPath")}${
             hardhead.host.profilePhoto?.href
-          }`}
+          }?width=50&height=50`}
           userText={hardhead.host.username}
         />
       ) : null}
