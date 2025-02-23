@@ -17,9 +17,10 @@ const Nominations = () => {
     }
   }, [authTokens, navigate, location.pathname]);
 
-  const { users, loading, error } = useHardheadUsers({
-    excludeUserID: userID || undefined,
-  });
+  const { users, loading, error } = useHardheadUsers(
+    Number(process.env.REACT_APP_NOMINATIONS_YEAR_ID) || 5437,
+    Number(userID) || undefined
+  );
 
   useEffect(() => {
     document.title = "Tilnefningar | Hress.Org";

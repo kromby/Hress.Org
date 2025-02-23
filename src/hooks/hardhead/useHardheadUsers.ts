@@ -3,33 +3,36 @@ import axios from "axios";
 import config from "react-global-configuration";
 import { HardheadUser } from "../../types/hardhead/user";
 
-interface UseHardheadUsersProps {
-  excludeUserID?: string;
+interface UseHardheadUsersResult {
+  users: HardheadUser[];
+  loading: boolean;
+  error: string | null;
 }
 
-export const useHardheadUsers = ({
-  excludeUserID,
-}: UseHardheadUsersProps = {}) => {
+export const useHardheadUsersByHref = (
+  href: string | undefined,
+  excludeUserID?: number
+): UseHardheadUsersResult => {
   const [users, setUsers] = useState<HardheadUser[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const YEAR_ID = process.env.REACT_APP_NOMINATIONS_YEAR_ID || "5437";
-  const url = `${config.get(
-    "path"
-  )}/api/hardhead/${YEAR_ID}/users?code=${config.get("code")}`;
-
   useEffect(() => {
     const getUsers = async () => {
+      if (!href) {
+        setUsers([]);
+        setLoading(false);
+        return;
+      }
+
       try {
         setLoading(true);
         setError(null);
+        const url = config.get("apiPath") + href;
         const response = await axios.get<HardheadUser[]>(url);
         setUsers(
           excludeUserID
-            ? response.data.filter(
-                (user) => user.ID.toString() !== excludeUserID
-              )
+            ? response.data.filter((user) => user.ID !== excludeUserID)
             : response.data
         );
       } catch (e) {
@@ -42,7 +45,15 @@ export const useHardheadUsers = ({
     };
 
     getUsers();
-  }, [url, excludeUserID]);
+  }, [href, excludeUserID]);
 
   return { users, loading, error };
+};
+
+export const useHardheadUsers = (
+  yearId: number,
+  excludeUserID?: number
+): UseHardheadUsersResult => {
+  const href = `/api/hardhead/${yearId}/users?code=${config.get("code")}`;
+  return useHardheadUsersByHref(href, excludeUserID);
 };
