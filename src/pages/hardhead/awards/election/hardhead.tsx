@@ -68,37 +68,37 @@ const HardheadOfTheYear = ({
           <form onSubmit={handleSubmit}>
             <div className="row gtr-uniform">
               {users
-                ? users.map((user: any) => (
+                ? users.map((user) => (
                     <div
                       className={isMobile ? "col-12" : "col-4"}
-                      key={user.ID}
-                      onClick={() => handleUserChange(user.ID)}
+                      key={user.id}
+                      onClick={() => handleUserChange(user.id)}
                     >
                       <input
                         type="radio"
-                        checked={selectedUser === user.ID}
-                        onChange={() => handleUserChange(user.ID)}
+                        checked={selectedUser === user.id}
+                        onChange={() => handleUserChange(user.id)}
                       />
-                      <label>
+                      <label htmlFor={user.id.toString()}>
                         <h3
                           className="author"
                           style={{ width: "50%", marginLeft: "40px" }}
                         >
                           <img
                             src={`${config.get("apiPath")}${
-                              user.ProfilePhoto?.Href ??
+                              user.profilePhoto?.href ??
                               "/api/images/278634/content"
                             }?width=50&height=50`}
-                            alt={user.Name}
+                            alt={user.name}
                             style={{
                               marginRight: "10px",
                             }}
                           />
-                          <b>{user.Name}</b>
+                          <b>{user.name}</b>
                         </h3>
                       </label>
                       <br />
-                      Mætti á {user.Attended} kvöld
+                      Mætti á {user.attended} kvöld
                       <br />
                       <br />
                       <br />

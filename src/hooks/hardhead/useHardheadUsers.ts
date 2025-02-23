@@ -32,7 +32,7 @@ export const useHardheadUsersByHref = (
         const response = await axios.get<HardheadUser[]>(url);
         setUsers(
           excludeUserID
-            ? response.data.filter((user) => user.ID !== excludeUserID)
+            ? response.data.filter((user) => user.id !== excludeUserID)
             : response.data
         );
       } catch (e) {
