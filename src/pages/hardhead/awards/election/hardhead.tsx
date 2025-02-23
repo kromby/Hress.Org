@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import config from "react-global-configuration";
 import axios from "axios";
 import Post from "../../../../components/post";
@@ -6,6 +6,7 @@ import { useAuth } from "../../../../context/auth";
 import { isMobile } from "react-device-detect";
 import { ElectionModuleProps } from ".";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useHardheadUsersByHref } from "../../../../hooks/hardhead/useHardheadUsers";
 
 const HardheadOfTheYear = ({
   ID,
@@ -16,36 +17,14 @@ const HardheadOfTheYear = ({
   const navigate = useNavigate();
   const location = useLocation();
   const { authTokens } = useAuth();
-  const [users, setUsers] = useState<any[]>();
   const [savingAllowed, setSavingAllowed] = useState(false);
   const [selectedUser, setSelectedUser] = useState<number | undefined>();
 
-  useEffect(() => {
-    const getHardheadUsers = async () => {
-      try {
-        const url = `${config.get("path")}${Href}&code=${config.get("code")}`;
-        const response = await axios.get(url);
-        setUsers(response.data);
-      } catch (e) {
-        console.error(e);
-        alert(e);
-      }
-    };
+  const userID = Number(localStorage.getItem("userID"));
 
-    if (!users) {
-      getHardheadUsers();
-    }
-  }, []);
+  const { users } = useHardheadUsersByHref(Href, userID);
 
   const handleUserChange = (event: number | undefined) => {
-    const userID = Number(localStorage.getItem("userID"));
-    if (event === userID) {
-      alert(
-        "Ætlar þú í alvöru að kjósa sjálfan þig, það er ekki mjög Harðhausalegt."
-      );
-      return;
-    }
-
     setSelectedUser(event);
     setSavingAllowed(true);
   };
@@ -105,17 +84,16 @@ const HardheadOfTheYear = ({
                           className="author"
                           style={{ width: "50%", marginLeft: "40px" }}
                         >
-                          {user.ProfilePhoto ? (
-                            <img
-                              src={`${config.get("apiPath")}${
-                                user.ProfilePhoto.Href
-                              }?width=50&height=50`}
-                              alt={user.Name}
-                              style={{
-                                marginRight: "10px",
-                              }}
-                            />
-                          ) : null}
+                          <img
+                            src={`${config.get("apiPath")}${
+                              user.ProfilePhoto?.Href ??
+                              "/api/images/278634/content"
+                            }?width=50&height=50`}
+                            alt={user.Name}
+                            style={{
+                              marginRight: "10px",
+                            }}
+                          />
                           <b>{user.Name}</b>
                         </h3>
                       </label>

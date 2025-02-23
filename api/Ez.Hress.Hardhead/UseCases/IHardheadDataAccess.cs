@@ -30,4 +30,6 @@ public interface IHardheadDataAccess
     Task<int> AddGuest(int hardheadId, int guestId, int userId, DateTime createdDate);
 
     Task<IList<YearEntity>> GetYears();
+
+    Task<IList<HardheadUserEntity>> GetUsersByYear(int yearId);
 }

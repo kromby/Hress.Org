@@ -3,10 +3,17 @@ import { useAuth } from "../../../../context/auth";
 import config from "react-global-configuration";
 import axios from "axios";
 import { Post } from "../../../../components";
-import AuthorOld from "../../../../components/authorOld";
+import Author from "../../../../components/author";
 import { useNavigate } from "react-router-dom";
+import { HardheadUser } from "../../../../types/hardhead/user";
 
-const StalloneNomination = ({ Type, Users }: { Type: string; Users: [] }) => {
+const StalloneNomination = ({
+  Type,
+  Users,
+}: {
+  Type: string;
+  Users: HardheadUser[];
+}) => {
   const { authTokens } = useAuth();
   const navigate = useNavigate();
   const [buttonEnabled, setButtonEnabled] = useState(false);
@@ -180,18 +187,11 @@ const StalloneNomination = ({ Type, Users }: { Type: string; Users: [] }) => {
                 {nominations.map((nomination: any) => (
                   <tr key={nomination.id}>
                     <td>
-                      {nomination.nominee.profilePhoto ? (
-                        <AuthorOld
-                          ID={nomination.nominee.id}
-                          Username={nomination.nominee.name}
-                          ProfilePhoto={nomination.nominee.profilePhoto.href}
-                        />
-                      ) : (
-                        <AuthorOld
-                          ID={nomination.nominee.id}
-                          Username={nomination.nominee.name}
-                        />
-                      )}
+                      <Author
+                        id={nomination.nominee.id}
+                        username={nomination.nominee.name}
+                        profilePhoto={nomination.nominee.profilePhoto?.href}
+                      />
                     </td>
                     <td>{nomination.description}</td>
                   </tr>
