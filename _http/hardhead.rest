@@ -45,6 +45,9 @@ Authorization: token {{apiToken}}
 ### Get Hardhead by ID
 GET {{host}}/api/hardhead/5397
 
+### Get Hardhead guests by year ID
+GET {{host}}/api/hardhead/5437/users
+
 ### Get hardheads by userID
 GET {{host}}/api/hardhead?userID=2630
 

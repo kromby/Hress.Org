@@ -3,12 +3,19 @@ import { useAuth } from "../../../../context/auth";
 import config from "react-global-configuration";
 import axios from "axios";
 import { Post } from "../../../../components";
-import AuthorOld from "../../../../components/authorOld";
+import Author from "../../../../components/author";
+import { HardheadUser } from "../../../../types/hardhead/user";
 
-const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) => {
+const DisappointmentNomination = ({
+  Type,
+  Users,
+}: {
+  Type: string;
+  Users: HardheadUser[];
+}) => {
   const { authTokens } = useAuth();
   const [buttonEnabled, setButtonEnabled] = useState(false);
-  const [users, setUsers] = useState<any>();
+  const [users, setUsers] = useState<HardheadUser[]>();
   const [nominations, setNominations] = useState<any>();
   const [description, setDescription] = useState<string>();
   const [nominee, setNominee] = useState<string>();
@@ -16,7 +23,9 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
   const [error, setError] = useState<string>();
 
   const getNominations = () => {
-    const getUrl = `${config.get('apiPath')}/api/hardhead/awards/nominations?type=${Type}`;
+    const getUrl = `${config.get(
+      "apiPath"
+    )}/api/hardhead/awards/nominations?type=${Type}`;
     axios
       .get(getUrl, {
         headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
@@ -47,7 +56,9 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
     event.preventDefault();
 
     try {
-      const postUrl = `${config.get('apiPath')}/api/hardhead/awards/nominations`;
+      const postUrl = `${config.get(
+        "apiPath"
+      )}/api/hardhead/awards/nominations`;
       await axios.post(
         postUrl,
         {
@@ -88,7 +99,9 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
     setNominee(event.target.value);
     setButtonEnabled(allowSaving(event.target.value, description ?? ""));
   };
-  const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+  const handleDescriptionChange = (
+    event: React.ChangeEvent<HTMLTextAreaElement>
+  ) => {
     setDescription(event.target.value);
     setButtonEnabled(allowSaving(nominee ?? "", event.target.value));
   };
@@ -109,12 +122,12 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
                 >
                   <option value="">- Hvaða Harðhaus vilt þú tilnefna? -</option>
                   {users
-                    .sort((a: { Name: string }, b: { Name:string }) =>
-                      a.Name.toLowerCase() > b.Name.toLowerCase() ? 1 : -1
+                    .sort((a, b) =>
+                      a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
                     )
-                    .map((user: { ID: number, Name: string }) => (
-                      <option key={user.ID} value={user.ID}>
-                        {user.Name}
+                    .map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
                       </option>
                     ))}
                 </select>
@@ -158,8 +171,8 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
           <table>
             <thead>
               <tr>
-                <th style={{ width: '200px' }}>Harðhaus</th>
-                <th style={{ width: '900px' }}>Útskýring</th>
+                <th style={{ width: "200px" }}>Harðhaus</th>
+                <th style={{ width: "900px" }}>Útskýring</th>
                 <th>Tilnefnandi</th>
               </tr>
             </thead>
@@ -168,18 +181,11 @@ const DisappointmentNomination = ({ Type, Users }: { Type: string, Users: [] }) 
                 {nominations.map((nomination: any) => (
                   <tr key={nomination.id}>
                     <td>
-                      {nomination.nominee.profilePhoto ? (
-                        <AuthorOld
-                          ID={nomination.nominee.id}
-                          Username={nomination.nominee.name}
-                          ProfilePhoto={nomination.nominee.profilePhoto.href}
-                        />
-                      ) : (
-                        <AuthorOld
-                          ID={nomination.nominee.id}
-                          Username={nomination.nominee.name}
-                        />
-                      )}
+                      <Author
+                        id={nomination.nominee.id}
+                        username={nomination.nominee.name}
+                        profilePhoto={nomination.nominee.profilePhoto?.href}
+                      />
                     </td>
                     <td>{nomination.description}</td>
                     <td>{nomination.insertedBy}</td>

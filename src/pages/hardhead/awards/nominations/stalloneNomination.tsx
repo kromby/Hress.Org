@@ -3,14 +3,21 @@ import { useAuth } from "../../../../context/auth";
 import config from "react-global-configuration";
 import axios from "axios";
 import { Post } from "../../../../components";
-import AuthorOld from "../../../../components/authorOld";
+import Author from "../../../../components/author";
 import { useNavigate } from "react-router-dom";
+import { HardheadUser } from "../../../../types/hardhead/user";
 
-const StalloneNomination = ({ Type, Users }: { Type: string; Users: [] }) => {
+const StalloneNomination = ({
+  Type,
+  Users,
+}: {
+  Type: string;
+  Users: HardheadUser[];
+}) => {
   const { authTokens } = useAuth();
   const navigate = useNavigate();
   const [buttonEnabled, setButtonEnabled] = useState(false);
-  const [users, setUsers] = useState<any>();
+  const [users, setUsers] = useState<HardheadUser[]>();
   const [nominations, setNominations] = useState<any>();
   const [description, setDescription] = useState<string>();
   const [nominee, setNominee] = useState<string>();
@@ -122,12 +129,12 @@ const StalloneNomination = ({ Type, Users }: { Type: string; Users: [] }) => {
                 >
                   <option value="">- Hvaða Harðhaus vilt þú tilnefna? -</option>
                   {users
-                    .sort((a: { Name: string }, b: { Name: string }) =>
-                      a.Name.toLowerCase() > b.Name.toLowerCase() ? 1 : -1
+                    .sort((a, b) =>
+                      a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
                     )
-                    .map((user: any) => (
-                      <option key={user.ID} value={user.ID}>
-                        {user.Name}
+                    .map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
                       </option>
                     ))}
                 </select>
@@ -180,18 +187,11 @@ const StalloneNomination = ({ Type, Users }: { Type: string; Users: [] }) => {
                 {nominations.map((nomination: any) => (
                   <tr key={nomination.id}>
                     <td>
-                      {nomination.nominee.profilePhoto ? (
-                        <AuthorOld
-                          ID={nomination.nominee.id}
-                          Username={nomination.nominee.name}
-                          ProfilePhoto={nomination.nominee.profilePhoto.href}
-                        />
-                      ) : (
-                        <AuthorOld
-                          ID={nomination.nominee.id}
-                          Username={nomination.nominee.name}
-                        />
-                      )}
+                      <Author
+                        id={nomination.nominee.id}
+                        username={nomination.nominee.name}
+                        profilePhoto={nomination.nominee.profilePhoto?.href}
+                      />
                     </td>
                     <td>{nomination.description}</td>
                   </tr>
