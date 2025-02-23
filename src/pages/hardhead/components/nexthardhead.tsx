@@ -41,7 +41,7 @@ const NextHardhead = ({ allowEdit }: { allowEdit: boolean }) => {
           date={hardhead.date}
           userHref={`/hardhead/users/${hardhead.host.id}`}
           userPhoto={`${config.get("apiPath")}${
-            hardhead.host.profilePhoto?.href
+            hardhead.host.profilePhoto?.href ?? "/api/images/278634/content"
           }?width=50&height=50`}
           userText={hardhead.host.username}
         />
