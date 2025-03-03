@@ -130,4 +130,17 @@ public class HardheadInteractor
         _log.LogInformation("[{Class}] Getting all Hardhead years", _class);
         return await _hardheadDataAccess.GetYears();
     }
+
+    public async Task<IList<HardheadUserEntity>> GetUsersByYearAsync(int yearId, int minAttendance = 0)
+    {
+        _log.LogInformation("[{Class}] Getting users for year {yearId} with minimum attendance {minAttendance}", _class, yearId, minAttendance);
+        var users = await _hardheadDataAccess.GetUsersByYear(yearId);
+        
+        if (minAttendance > 0)
+        {
+            users = users.Where(u => u.Attended >= minAttendance).ToList();
+        }
+
+        return users;
+    }
 }

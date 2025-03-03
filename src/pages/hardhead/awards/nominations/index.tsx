@@ -1,47 +1,42 @@
-import { useEffect, useState } from "react";
-import config from "react-global-configuration";
-import axios from "axios";
-import { useAuth } from "../../../../context/auth";
+import { useEffect } from "react";
+import { useHardheadUsers } from "../../../../hooks/hardhead/useHardheadUsers";
 import StalloneNomination from "./stalloneNomination";
 import DisappointmentNomination from "./disappointmentNomination";
+import { useAuth } from "../../../../context/auth";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const Nominations = () => {
   const { authTokens } = useAuth();
   const location = useLocation();
-  const [users, setUsers] = useState<any>();
   const navigate = useNavigate();
-
-  const YEAR_ID = process.env.REACT_APP_NOMINATIONS_YEAR_ID || "5437";
-  const url = `${config.get(
-    "path"
-  )}/api/hardhead/${YEAR_ID}/users?code=${config.get("code")}`;
+  const userID = localStorage.getItem("userID");
 
   useEffect(() => {
     if (authTokens === undefined) {
       navigate("/login", { state: { from: location.pathname } });
-      return;
     }
+  }, [authTokens, navigate, location.pathname]);
 
-    const getUsers = async () => {
-      try {
-        const userID = localStorage.getItem("userID");
-        const response = await axios.get(url);
-        setUsers(
-          response.data.filter((user: { ID: string }) => user.ID !== userID)
-        );
-      } catch (e) {
-        console.error("Failed to fetch users:", e);
-        setUsers([]);
-      }
-    };
+  const { users, loading, error } = useHardheadUsers(
+    Number(process.env.REACT_APP_NOMINATIONS_YEAR_ID) || 5437,
+    Number(userID) || undefined
+  );
 
+  useEffect(() => {
     document.title = "Tilnefningar | Hress.Org";
+  }, []);
 
-    if (!users) {
-      getUsers();
-    }
-  }, [url]);
+  if (!authTokens) {
+    return null;
+  }
+
+  if (loading) {
+    return <div id="main">Loading...</div>;
+  }
+
+  if (error) {
+    return <div id="main">Error: {error}</div>;
+  }
 
   return (
     <div id="main">

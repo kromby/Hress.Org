@@ -139,4 +139,31 @@ public class HardheadFunctions
             throw;
         }
     }
+
+    [FunctionName("hardheadUsers")]
+    public async Task<IActionResult> GetUsers(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/{yearId:int}/users")] HttpRequest req,
+        int yearId,
+        ILogger log)
+    {
+        var method = nameof(GetUsers);
+        log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
+
+        try
+        {
+            int minAttendance = 0;
+            if (req.Query.ContainsKey("minAttendance") && int.TryParse(req.Query["minAttendance"], out int attendance))
+            {
+                minAttendance = attendance;
+            }
+
+            var users = await _hardheadInteractor.GetUsersByYearAsync(yearId, minAttendance);
+            return new OkObjectResult(users);
+        }
+        catch (Exception ex)
+        {
+            log.LogError("[{Class}.{Function}] Internal error: {Message}", _class, method, ex.Message);
+            throw;
+        }
+    }
 }
