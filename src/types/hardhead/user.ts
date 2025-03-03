@@ -1,20 +1,17 @@
-export interface HrefEntity {
-  ID: number;
-  Href: string;
-}
+import { HrefEntity } from "../hrefEntity";
 
 export interface HardheadUser {
-  ID: number;
-  Name: string;
-  Description?: string;
-  Username?: string;
-  ProfilePhoto?: HrefEntity;
-  Href: string;
-  Inserted: string;
-  InsertedString: string;
-  InsertedBy: number;
-  Updated?: string;
-  UpdatedBy?: number;
-  Deleted?: string;
-  Attended: number;
+  id: number;
+  name: string;
+  description?: string;
+  username?: string;
+  profilePhoto?: HrefEntity;
+  href: string;
+  inserted: string;
+  insertedString: string;
+  insertedBy: number;
+  updated?: string;
+  updatedBy?: number;
+  deleted?: string;
+  attended: number;
 }

@@ -15,7 +15,7 @@ const DisappointmentNomination = ({
 }) => {
   const { authTokens } = useAuth();
   const [buttonEnabled, setButtonEnabled] = useState(false);
-  const [users, setUsers] = useState<any>();
+  const [users, setUsers] = useState<HardheadUser[]>();
   const [nominations, setNominations] = useState<any>();
   const [description, setDescription] = useState<string>();
   const [nominee, setNominee] = useState<string>();
@@ -122,12 +122,12 @@ const DisappointmentNomination = ({
                 >
                   <option value="">- Hvaða Harðhaus vilt þú tilnefna? -</option>
                   {users
-                    .sort((a: { Name: string }, b: { Name: string }) =>
-                      a.Name.toLowerCase() > b.Name.toLowerCase() ? 1 : -1
+                    .sort((a, b) =>
+                      a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
                     )
-                    .map((user: { ID: number; Name: string }) => (
-                      <option key={user.ID} value={user.ID}>
-                        {user.Name}
+                    .map((user) => (
+                      <option key={user.id} value={user.id}>
+                        {user.name}
                       </option>
                     ))}
                 </select>
