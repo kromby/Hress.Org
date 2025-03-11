@@ -54,6 +54,6 @@ export const useHardheadUsers = (
   yearId: number,
   excludeUserID?: number
 ): UseHardheadUsersResult => {
-  const href = `/api/hardhead/${yearId}/users?code=${config.get("code")}`;
+  const href = `/api/hardhead/${yearId}/users`;
   return useHardheadUsersByHref(href, excludeUserID);
 };
