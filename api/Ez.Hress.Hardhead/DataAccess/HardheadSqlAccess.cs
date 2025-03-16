@@ -520,4 +520,14 @@ public class HardheadSqlAccess : IHardheadDataAccess
 
         return list;
     }
+
+    public Task<IDictionary<string, int>> GetMyRatingAsync(int id, int userId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task<IDictionary<string, RatingInfo>> GetAverageRatingAsync(int Id)
+    {
+        throw new NotImplementedException();
+    }
 }
