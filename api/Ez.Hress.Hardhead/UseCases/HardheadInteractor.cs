@@ -156,9 +156,11 @@ public class HardheadInteractor
         UserID = userID
     };
 
-    ratings.Ratings = new List<RatingInfo>(); // TODO Read from database GEN_TYPE table WHERE GroupType = 330
-    ratings.Ratings.Add(new RatingInfo("Einkunn", "REP_C_RTNG") );
-    ratings.Ratings.Add(new RatingInfo("Einkunn myndar", "REP_C_MRTNG"));
+    ratings.Ratings = new List<RatingInfo>
+    {
+        new RatingInfo("Einkunn", "REP_C_RTNG"),
+        new RatingInfo("Einkunn myndar", "REP_C_MRTNG")
+    }; // TODO Read from database GEN_TYPE table WHERE GroupType = 330
 
     if (night.Date.Year == currentDate.Value.Year || (currentDate.Value.Month == 1 && night.Date.Year == currentDate.Value.Year - 1))
     {

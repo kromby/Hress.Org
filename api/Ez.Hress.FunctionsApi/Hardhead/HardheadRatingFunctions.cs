@@ -7,22 +7,26 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using Ez.Hress.Shared.UseCases;
+using Ez.Hress.Hardhead.Entities;
+using Ez.Hress.Hardhead.UseCases;
 
 namespace Ez.Hress.FunctionsApi.Hardhead;
 
 public class HardheadRatingFunctions
 {
     private readonly AuthenticationInteractor _authenticationInteractor;
+    private readonly HardheadInteractor _hardheadInteractor;
     private readonly string _class = nameof(HardheadRatingFunctions);
 
-    public HardheadRatingFunctions(AuthenticationInteractor authenticationInteractor)
+    public HardheadRatingFunctions(AuthenticationInteractor authenticationInteractor, HardheadInteractor hardheadInteractor)
     {
         _authenticationInteractor = authenticationInteractor;
+        _hardheadInteractor = hardheadInteractor;
     }
 
     [FunctionName("ratings")]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)] HttpRequest req,
+        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "hardhead/{id:int}/ratings")] HttpRequest req, int id,
         ILogger log)
     {
         var stopwatch = new Stopwatch();
@@ -45,17 +49,17 @@ public class HardheadRatingFunctions
             }
             else
             {
-                //RatingEntity rating = null;
-                //if (userId == -1)
-                //    rating = await interactor.GetRating(id).ConfigureAwait(false);
-                //else
-                //    rating = await interactor.GetRating(id, userId).ConfigureAwait(false);
+                RatingEntity rating = null;
+                if (userID == -1)
+                    rating = await _hardheadInteractor.GetRating(id).ConfigureAwait(false);
+                else
+                    rating = await _hardheadInteractor.GetRating(id, userID).ConfigureAwait(false);
 
-                //if (rating != null)
-                //    return req.CreateResponse(HttpStatusCode.OK, rating, GetFormatter());
+                if (rating != null)
+                    return new OkObjectResult(rating);
 
 
-                return null;
+                return new NotFoundResult();
             }
         }
         catch (ArgumentException aex)
