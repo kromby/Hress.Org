@@ -150,17 +150,16 @@ public class HardheadInteractor
 
         var night = await _hardheadDataAccess.GetHardhead(ID).ConfigureAwait(false);
 
-        var ratings = new RatingEntity()
+        var ratings = new RatingEntity
         {
             ID = ID,
-            UserID = userID
+            UserID = userID,
+            Ratings = new List<RatingInfo>
+            {
+                new RatingInfo("Einkunn", "REP_C_RTNG"),
+                new RatingInfo("Einkunn myndar", "REP_C_MRTNG")
+            } // TODO Read from database GEN_TYPE table WHERE GroupType = 330
         };
-
-        ratings.Ratings = new List<RatingInfo>
-    {
-        new RatingInfo("Einkunn", "REP_C_RTNG"),
-        new RatingInfo("Einkunn myndar", "REP_C_MRTNG")
-    }; // TODO Read from database GEN_TYPE table WHERE GroupType = 330
 
         if (night.Date.Year == currentDate.Value.Year || (currentDate.Value.Month == 1 && night.Date.Year == currentDate.Value.Year - 1))
         {
@@ -168,7 +167,7 @@ public class HardheadInteractor
                 return null;
 
             var list = await _hardheadDataAccess.GetGuests(ID);
-            if (list != null && list.Any() && list.Count(g => g.ID == userID.Value) > 0) // User attended night
+            if (list != null && list.Count(g => g.ID == userID.Value) > 0) // User attended night
             {
                 var myRating = await _hardheadDataAccess.GetMyRatingAsync(ID, userID.Value).ConfigureAwait(false);
                 foreach (var rating in ratings.Ratings)
@@ -188,7 +187,6 @@ public class HardheadInteractor
                         rating.NumberOfRatings = ratingInfo.NumberOfRatings;
                 }
             }
-            return ratings;
         }
         else
         {
@@ -222,9 +220,8 @@ public class HardheadInteractor
 
                 }
             }
-
-            return ratings;
         }
+        return ratings;
     }
 
 }
