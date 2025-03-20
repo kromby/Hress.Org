@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import config from "react-global-configuration";
 import { useAuth } from "../../../context/auth";
 import axios from "axios";

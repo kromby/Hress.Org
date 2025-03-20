@@ -25,8 +25,8 @@ public class RatingEntity
                     Href = string.Format("/api/users/{0}", UserID)
                 };
             }
-            else
-                return null;
+            
+            return null;
         }
     }
 

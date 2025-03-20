@@ -49,11 +49,13 @@ public class HardheadRatingFunctions
             }
             else
             {
-                RatingEntity rating = null;
-                if (userID == -1)
-                    rating = await _hardheadInteractor.GetRating(id).ConfigureAwait(false);
-                else
-                    rating = await _hardheadInteractor.GetRating(id, userID).ConfigureAwait(false);
+                if (id <= 0)
+                {
+                    log.LogInformation("[{Class}.{Function}] Invalid ID: {ID}", _class, nameof(Run), id);
+                    return new BadRequestObjectResult("Invalid ID");
+                }
+
+                RatingEntity rating = await _hardheadInteractor.GetRatingAsync(id, userID == -1 ? null : userID).ConfigureAwait(false);
 
                 if (rating != null)
                     return new OkObjectResult(rating);
