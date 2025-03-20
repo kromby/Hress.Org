@@ -520,4 +520,73 @@ public class HardheadSqlAccess : IHardheadDataAccess
 
         return list;
     }
+
+    public async Task<IDictionary<string, int>> GetMyRatingAsync(int id, int userId)
+    {
+        var list = new Dictionary<string, int>();
+        var sql = @"SELECT	t.Shortcode, rating.Count
+                        FROM	rep_Count rating
+                        JOIN	gen_Type t ON rating.TypeId = t.Id
+                        WHERE	rating.EventId = @id
+                            AND rating.InsertedBy = @userId";
+
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("id", id));
+            command.Parameters.Add(new SqlParameter("userId", userId));
+
+            var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var code = reader.GetString(reader.GetOrdinal("Shortcode"));
+                var myRating = Convert.ToInt32(reader.GetDecimal(reader.GetOrdinal("Count")));
+
+                list.Add(code, myRating);
+            }
+        }
+
+        return list;
+    }
+
+    public async Task<IDictionary<string, RatingInfo>> GetAverageRatingAsync(int Id)
+    {
+        var sql = @"SELECT	rating.TypeId, t.Shortcode, t.Name, rating.AvgRating, rating.NrOfRatings
+                        FROM
+                        (
+	                        SELECT	AVG(night.Count) 'AvgRating', COUNT(night.ID) 'NrOfRatings', night.TypeId 'TypeId'
+	                        FROM	rep_Count night
+	                        WHERE	night.EventId = @id
+	                        GROUP BY night.TypeId
+                        ) rating
+                        JOIN	gen_Type t ON rating.TypeId = t.Id";
+
+        var list = new Dictionary<string, RatingInfo>();
+
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("id", Id));
+
+            var reader = await command.ExecuteReaderAsync();
+            while (await reader.ReadAsync())
+            {
+                var name = reader.GetString(reader.GetOrdinal("name"));
+                var code = reader.GetString(reader.GetOrdinal("Shortcode"));
+
+                var entity = new RatingInfo(name, code)
+                {
+                    AverageRating = reader.GetDecimal(reader.GetOrdinal("AvgRating")),
+                    NumberOfRatings = reader.GetInt32(reader.GetOrdinal("NrOfRatings"))
+                };
+                list.Add(code, entity);
+            }
+        }
+
+        return list;
+    }
 }

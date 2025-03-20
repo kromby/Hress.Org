@@ -4,7 +4,7 @@ using Ez.Hress.Shared.Entities;
 namespace Ez.Hress.Hardhead.UseCases;
 
 public interface IHardheadDataAccess
-{       
+{
     Task<IList<HardheadUser>> GetHardheadUsers(int yearID);
 
     Task<HardheadNight> GetHardhead(int id);
@@ -32,4 +32,8 @@ public interface IHardheadDataAccess
     Task<IList<YearEntity>> GetYears();
 
     Task<IList<HardheadUserEntity>> GetUsersByYear(int yearId);
+
+    Task<IDictionary<string, int>> GetMyRatingAsync(int id, int userId);
+
+    Task<IDictionary<string, RatingInfo>> GetAverageRatingAsync(int Id);
 }

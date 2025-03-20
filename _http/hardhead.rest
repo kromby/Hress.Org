@@ -26,11 +26,11 @@ GET {{legacyHost}}/api/movies/?code={{apiCode}}
 GET {{host}}/api/hardhead?filter=arnold
 
 ### Get ratings with authorization
-GET {{legacyHost}}/api/hardhead/5358/ratings?code={{apiCode}}
-Authorization: token 
+GET {{host}}/api/hardhead/5358/ratings
+X-Custom-Authorization: token {{apiToken}}
 
 ### Get ratings without authorization
-GET {{legacyHost}}/api/hardhead/ratings/5355?code={{apiCode}}
+GET {{host}}/api/hardhead/5358/ratings
 
 ### Post rating
 GET {{legacyHost}}/api/hardhead/5397/ratings?code={{apiCode}}

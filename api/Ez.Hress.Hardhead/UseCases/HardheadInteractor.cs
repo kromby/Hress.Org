@@ -117,7 +117,7 @@ public class HardheadInteractor
     {
         var list = await _hardheadDataAccess.GetGuests(guestId);
 
-        if(list.Any(g => g.ID == guestId))
+        if (list.Any(g => g.ID == guestId))
         {
             throw new SystemException("Guest already registered.");
         }
@@ -135,7 +135,7 @@ public class HardheadInteractor
     {
         _log.LogInformation("[{Class}] Getting users for year {yearId} with minimum attendance {minAttendance}", _class, yearId, minAttendance);
         var users = await _hardheadDataAccess.GetUsersByYear(yearId);
-        
+
         if (minAttendance > 0)
         {
             users = users.Where(u => u.Attended >= minAttendance).ToList();
@@ -143,4 +143,85 @@ public class HardheadInteractor
 
         return users;
     }
+
+    public async Task<RatingEntity?> GetRatingAsync(int ID, int? userID = null, DateTime? date = null)
+    {
+        var currentDate = date.HasValue ? date : DateTime.UtcNow;
+
+        var night = await _hardheadDataAccess.GetHardhead(ID).ConfigureAwait(false);
+
+        var ratings = new RatingEntity
+        {
+            ID = ID,
+            UserID = userID,
+            Ratings = new List<RatingInfo>
+            {
+                new RatingInfo("Einkunn", "REP_C_RTNG"),
+                new RatingInfo("Einkunn myndar", "REP_C_MRTNG")
+            } // TODO Read from database GEN_TYPE table WHERE GroupType = 330
+        };
+
+        if (night.Date.Year == currentDate.Value.Year || (currentDate.Value.Month == 1 && night.Date.Year == currentDate.Value.Year - 1))
+        {
+            if (!userID.HasValue)
+                return null;
+
+            var list = await _hardheadDataAccess.GetGuests(ID);
+            if (list != null && list.Count(g => g.ID == userID.Value) > 0) // User attended night
+            {
+                var myRating = await _hardheadDataAccess.GetMyRatingAsync(ID, userID.Value).ConfigureAwait(false);
+                foreach (var rating in ratings.Ratings)
+                {
+                    if (myRating.TryGetValue(rating.Code, out var currentMyRating))
+                        rating.MyRating = currentMyRating;
+                }
+            }
+            else // user is host or did not attend
+            {
+                var result = await _hardheadDataAccess.GetAverageRatingAsync(ID);
+                ratings.Readonly = true;
+
+                foreach (var rating in ratings.Ratings)
+                {
+                    if (result.TryGetValue(rating.Code, out var ratingInfo))
+                        rating.NumberOfRatings = ratingInfo.NumberOfRatings;
+                }
+            }
+        }
+        else
+        {
+            ratings.Readonly = true;
+
+            Task<IDictionary<string, RatingInfo>> avgRatingsTask = _hardheadDataAccess.GetAverageRatingAsync(ID);
+            Task<IDictionary<string, int>>? myRatingTask = null;
+            if (userID.HasValue)
+            {
+                myRatingTask = _hardheadDataAccess.GetMyRatingAsync(ID, userID.Value);
+            }
+            var result = await avgRatingsTask;
+
+            foreach (var rating in ratings.Ratings)
+            {
+                if (result.TryGetValue(rating.Code, out var ratingInfo))
+                {
+                    rating.NumberOfRatings = ratingInfo.NumberOfRatings;
+                    rating.AverageRating = ratingInfo.AverageRating.HasValue ? Math.Round(ratingInfo.AverageRating.Value, 1) : ratingInfo.AverageRating;
+                }
+
+            }
+
+            if (myRatingTask != null)
+            {
+                var myRatings = await myRatingTask;
+                foreach (var rating in ratings.Ratings)
+                {
+                    if (myRatings.TryGetValue(rating.Code, out int myRating))
+                        rating.MyRating = myRating;
+
+                }
+            }
+        }
+        return ratings;
+    }
+
 }
