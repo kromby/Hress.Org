@@ -31,7 +31,7 @@
     "react-ga4": "^2.1.0",
     "react-global-configuration": "^1.4.1",
     "react-helmet": "^6.1.0",
-    "react-router-dom": "^7.3.0",
+    "react-router-dom": "^7.4.0",
     "react-youtube": "^10.1.0",
     "webpack": "^5.98.0"
   },
