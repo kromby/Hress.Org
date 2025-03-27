@@ -418,19 +418,36 @@ public class HardheadSqlAccess : IHardheadDataAccess
 
     public async Task<IList<YearEntity>> GetYears()
     {
-        var sql = @"SELECT	year.Id, year.Number, year.Text, year.ImageId, COUNT(guest.ID) 'GuestCount',
-                            winner.UserId, winner.Username, winner.ImageId 'UserImageID'
-                        FROM	rep_Event year
-                        JOIN	rep_Event night ON night.ParentId = year.Id AND night.TypeId = 49
-                        JOIN	rep_User guest ON guest.EventId = night.Id AND guest.TypeId = 52
-                        LEFT OUTER JOIN	(SELECT	usr.Id 'UserId', usr.Username, img.ImageId, winner.EventId
-                                        FROM	rep_User winner
-                                        JOIN	adm_User usr ON winner.UserId = usr.Id
-                                        LEFT OUTER JOIN	upf_Image img ON usr.Id = img.UserId AND img.TypeId = 14
-                                        WHERE	winner.TypeId = 53) winner ON winner.EventId = year.Id
-                        WHERE	year.TypeId = 48
-                        GROUP BY	year.Id, year.Number, year.Text, year.ImageId, winner.UserId, winner.Username, winner.ImageId
-                        ORDER BY year.Number DESC";
+        var sql = @"SELECT	
+                hhYear.Id, 
+                hhYear.Number, 
+                bestMovie.Text, 
+                img.ImageId, 
+                COUNT(guests.Id) AS GuestCount, 
+                hhOfYear.UserId, 
+                hhOfYear.Username, 
+                hhOfYear.UserImageID
+            FROM	rep_Event hhYear
+            JOIN    rep_User guests ON guests.GroupId = hhYear.Id AND guests.TypeId IN(52, 53)
+            LEFT OUTER JOIN rep_User bestMovie ON bestMovie.GroupId = hhYear.Id AND bestMovie.EventId = 361 AND bestMovie.Position = 1
+            LEFT OUTER JOIN (
+                SELECT	night.ParentId, night.Id, film.TextValue 'movie', film.TypeId
+                FROM	rep_Event night
+                JOIN	rep_Text film ON film.EventId = night.Id AND film.TypeId = 62
+                WHERE	night.TypeId = 49
+            ) movieT ON bestMovie.Text = movieT.movie AND hhYear.Id = movieT.ParentId
+            LEFT OUTER JOIN rep_Image img ON movieT.Id = img.EventId
+            LEFT OUTER JOIN (
+                SELECT	hhYear.Id, hhOfYear.UserId, usr.Username, userPhoto.ImageId 'UserImageID'
+                FROM	rep_Event hhYear
+                JOIN	rep_User hhOfYear ON hhYear.Id = hhOfYear.GroupId AND hhOfYear.EventId = 364 AND hhOfYear.Position = 1
+                JOIN	adm_User usr ON hhOfYear.UserId = usr.Id
+                LEFT OUTER JOIN	upf_Image userPhoto ON usr.Id = userPhoto.UserId AND userPhoto.TypeId = 14
+            ) hhOfYear ON hhOfYear.Id = hhYear.Id
+            WHERE hhYear.TypeId = 49 AND hhYear.ParentId IS NULL
+            GROUP BY hhYear.Id, hhYear.Number, bestMovie.Text, img.ImageId, img.Id, movieT.Id, 
+                     hhOfYear.UserId, hhOfYear.Username, hhOfYear.UserImageID
+            ORDER BY hhYear.Id DESC";
 
         _log.LogInformation("[{Class}] Getting all Hardhead years", nameof(HardheadSqlAccess));
         _log.LogInformation("[{Class}] Executing SQL: '{SQL}'", nameof(HardheadSqlAccess), sql);
