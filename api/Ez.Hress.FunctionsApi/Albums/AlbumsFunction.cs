@@ -47,7 +47,7 @@ public class AlbumsFunction
         var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            _log.LogInformation("[RunMagic] JWT is not valid!");
+            _log.LogInformation("[{Function}] JWT is not valid!", nameof(RunAlbums));
             return new UnauthorizedResult();
         }
 
@@ -76,7 +76,7 @@ public class AlbumsFunction
         var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            _log.LogInformation("[RunMagic] JWT is not valid!");
+            _log.LogInformation("[{Function}] JWT is not valid!", nameof(RunAlbumImages));
             return new UnauthorizedResult();
         }
 
@@ -93,7 +93,7 @@ public class AlbumsFunction
         var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            _log.LogInformation("[CreateAlbum] JWT is not valid!");
+            _log.LogInformation("[{Function}] JWT is not valid!", nameof(RunAlbumCreate));
             return new UnauthorizedResult();
         }
 
@@ -133,7 +133,7 @@ public class AlbumsFunction
         var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            _log.LogInformation("[AddImageToAlbum] JWT is not valid!");
+            _log.LogInformation("[{Function}] JWT is not valid!", nameof(RunAlbumImagePost));
             return new UnauthorizedResult();
         }
 

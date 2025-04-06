@@ -187,7 +187,7 @@ public class HardheadRuleFunctions
 
     private async Task<IActionResult> PostRuleChange(HttpRequest req, int userID)
     {
-        _log.LogInformation("[HardheadRuleFunctions] PostAwardNominations");
+        _log.LogInformation("[HardheadRuleFunctions] PostRuleChange");
 
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         RuleChange change = JsonConvert.DeserializeObject<RuleChange>(requestBody);

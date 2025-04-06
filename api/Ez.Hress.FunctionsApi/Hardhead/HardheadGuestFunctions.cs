@@ -17,7 +17,7 @@ public class HardheadGuestFunctions
     private readonly HardheadInteractor _hardheadInteractor;
     private readonly AuthenticationInteractor _authenticationInteractor;
     private readonly ILogger<HardheadGuestFunctions> _log;
-    private readonly string _class = nameof(HardheadRatingFunctions);
+    private readonly string _class = nameof(HardheadGuestFunctions);
 
     public HardheadGuestFunctions(AuthenticationInteractor authenticationInteractor, HardheadInteractor hardheadInteractor, ILogger<HardheadGuestFunctions> log)
     {
@@ -62,12 +62,12 @@ public class HardheadGuestFunctions
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
-        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, nameof(RunPostDel));
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, nameof(RunPostDel), _class, nameof(RunPostDel));
 
         var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userId);
         if (!isJWTValid)
         {
-            _log.LogInformation("[HardheadRuleFunctions] JWT is not valid!");
+            _log.LogInformation("[{Class}.{Method}] JWT is not valid!", _class, nameof(RunPostDel));
             return new UnauthorizedResult();
         }
 
@@ -86,17 +86,17 @@ public class HardheadGuestFunctions
 
             }
 
-            _log.LogError($"[HardheadRuleFunctions] HttpMethod '{req.Method}' ist not yet supported.");
+            _log.LogError($"[{{Class}}.{{Method}}] HttpMethod '{req.Method}' ist not yet supported.", _class, nameof(RunPostDel));
             return new NotFoundResult();
         }
         catch (ArgumentException aex)
         {
-            _log.LogError(aex, "[{Class}.{Method}] Invalid input", _class, nameof(Run));
+            _log.LogError(aex, "[{Class}.{Method}] Invalid input", _class, nameof(RunPostDel));
             return new BadRequestObjectResult(aex.Message);
         }
         catch (Exception ex)
         {
-            _log.LogError(ex, "[{Class}.{Method}] Unhandled error", _class, nameof(Run));
+            _log.LogError(ex, "[{Class}.{Method}] Unhandled error", _class, nameof(RunPostDel));
             throw;
         }
         finally
