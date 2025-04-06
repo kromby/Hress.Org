@@ -33,7 +33,7 @@ public class NewsFunctions
 
         try
         {
-            IList<Scripts.Entities.News> list = null;
+            IList<Scripts.Entities.News> list = new List<Scripts.Entities.News>();
             if (id.HasValue)
             {
                 _log.LogInformation("[{Function}] Getting a single news by ID '{Id}'", nameof(RunNews), id);
