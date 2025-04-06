@@ -96,14 +96,6 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
     services.AddSingleton<ITypeDataAccess, TypeSqlAccess>();
     services.AddSingleton<ITypeInteractor, TypeInteractor>();
 
-    // Connection details
-    services.AddSingleton(dbConnectionInfo);
-    services.AddSingleton(new BlobConnectionInfo(contentStorageConnectionString));
-
-    // Types
-    services.AddSingleton<ITypeDataAccess, TypeSqlAccess>();
-    services.AddSingleton<ITypeInteractor, TypeInteractor>();
-
     // Clients
     services.AddSingleton(new TableClient(contentStorageConnectionString, "DinnerPartyElection"));
     services.AddSingleton(new TableClient(contentStorageConnectionString, "HardheadVotes"));
