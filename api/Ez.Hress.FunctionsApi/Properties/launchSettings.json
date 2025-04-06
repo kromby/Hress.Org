@@ -3,7 +3,7 @@
     "Ez.Hress.FunctionsApi": {
       "commandName": "Project",
       "commandLineArgs": "--port 7072",
-      "launchBrowser": false
+      "nativeDebugging": true
     }
   }
 }

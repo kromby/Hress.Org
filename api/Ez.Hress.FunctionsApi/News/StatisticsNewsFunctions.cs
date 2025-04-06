@@ -1,32 +1,34 @@
 using Ez.Hress.Scripts.UseCases;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Ez.Hress.FunctionsApi.News;
 
 public class StatisticsNewsFunctions
 {
     private readonly NewsInteractor _newsInteractor;
-    public StatisticsNewsFunctions(NewsInteractor newsInteractor)
+    private readonly ILogger<StatisticsNewsFunctions> _log;
+
+    public StatisticsNewsFunctions(NewsInteractor newsInteractor, ILogger<StatisticsNewsFunctions> log)
     {
         _newsInteractor = newsInteractor;
+        _log = log;
     }
 
-    [FunctionName("statisticsYear")]
+    [Function("statisticsYear")]
     public async Task<IActionResult> RunStatisticsYears(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "news/statistics/years")] HttpRequest req,
-        ILogger log)
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "news/statistics/years")] HttpRequest req)
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
         
-        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunStatisticsYears));
+        var methodName = nameof(RunStatisticsYears);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", nameof(StatisticsNewsFunctions), methodName);
 
         try
         {
@@ -35,31 +37,31 @@ public class StatisticsNewsFunctions
         }
         catch (ArgumentException aex)
         {
-            log.LogError(aex, "[{Function}] Invalid input", nameof(RunStatisticsYears));
+            _log.LogError(aex, "[{Function}] Invalid input", nameof(RunStatisticsYears));
             return new BadRequestObjectResult(aex.Message);
         }
         catch (Exception ex)
         {
-            log.LogError(ex, "[{Function}] Unhandled error", nameof(RunStatisticsYears));
+            _log.LogError(ex, "[{Function}] Unhandled error", nameof(RunStatisticsYears));
             throw;
         }
         finally
         {
             stopwatch.Stop();
-            log.LogInformation("[{Function}]  Elapsed: {Elapsed} ms.", nameof(RunStatisticsYears), stopwatch.ElapsedMilliseconds);
+            _log.LogInformation("[{Function}]  Elapsed: {Elapsed} ms.", nameof(RunStatisticsYears), stopwatch.ElapsedMilliseconds);
         }
     }
 
 
-    [FunctionName("statisticsMonth")]
+    [Function("statisticsMonth")]
     public async Task<IActionResult> RunStatisticsMonth(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "news/statistics/years/{year:int}/months")] HttpRequest req, int year,
-        ILogger log)
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "news/statistics/years/{year:int}/months")] HttpRequest req, int year)
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunStatisticsMonth));
+        var methodName = nameof(RunStatisticsMonth);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", nameof(StatisticsNewsFunctions), methodName);
 
         try
         {
@@ -68,18 +70,18 @@ public class StatisticsNewsFunctions
         }
         catch (ArgumentException aex)
         {
-            log.LogError(aex, "[{Function}] Invalid input", nameof(RunStatisticsMonth));
+            _log.LogError(aex, "[{Function}] Invalid input", nameof(RunStatisticsMonth));
             return new BadRequestObjectResult(aex.Message);
         }
         catch (Exception ex)
         {
-            log.LogError(ex, "[{Function}] Unhandled error", nameof(RunStatisticsMonth));
+            _log.LogError(ex, "[{Function}] Unhandled error", nameof(RunStatisticsMonth));
             throw;
         }
         finally
         {
             stopwatch.Stop();
-            log.LogInformation("[{Function}]  Elapsed: {Elapsed} ms.", nameof(RunStatisticsMonth), stopwatch.ElapsedMilliseconds);
+            _log.LogInformation("[{Function}]  Elapsed: {Elapsed} ms.", nameof(RunStatisticsMonth), stopwatch.ElapsedMilliseconds);
         }
     }
 }

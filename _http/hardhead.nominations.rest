@@ -28,6 +28,6 @@ X-Custom-Authorization: token {{apiToken}}
 }
 
 ### Get nominations
-GET {{host}}/api/hardhead/awards/nominations?type=207
+GET {{host}}/api/hardhead/awards/nominations?type=5284
 Content-Type: application/json
 X-Custom-Authorization: token {{apiToken}}

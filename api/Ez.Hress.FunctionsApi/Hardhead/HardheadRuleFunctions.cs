@@ -3,14 +3,13 @@ using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.Shared.UseCases;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Ez.Hress.FunctionsApi.Hardhead;
 
@@ -21,24 +20,26 @@ public class HardheadRuleFunctions
     private readonly AuthenticationInteractor _authenticationInteractor;
     private readonly RuleInteractor _ruleInteractor;
     private readonly PostElectionInteractor _postElectionInteractor;
+    private readonly ILogger<HardheadRuleFunctions> _log;
 
-    public HardheadRuleFunctions(AuthenticationInteractor authenticationInteractor, RuleInteractor ruleInteractor, PostElectionInteractor postElectionInteractor)
+    public HardheadRuleFunctions(AuthenticationInteractor authenticationInteractor, RuleInteractor ruleInteractor, PostElectionInteractor postElectionInteractor, ILogger<HardheadRuleFunctions> log)
     {
         _ruleInteractor = ruleInteractor;
         _authenticationInteractor = authenticationInteractor;
         _postElectionInteractor = postElectionInteractor;
+        _log = log;
     }
 
-    [FunctionName("hardheadRules")]
-    public async Task<IActionResult> RunRules([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/rules/{id:int?}")] HttpRequest req, int? id, ILogger log)
+    [Function("hardheadRules")]
+    public async Task<IActionResult> RunRules([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/rules/{id:int?}")] HttpRequest req, int? id)
     {
         const string method = nameof(RunRules);
 
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, method);
-        log.LogInformation("[{Class}.{Method}] Host: {Host}", _class, method, req.Host.Value);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, method);
+        _log.LogInformation("[{Class}.{Method}] Host: {Host}", _class, method, req.Host.Value);
 
         if (id.HasValue)
         {
@@ -54,21 +55,20 @@ public class HardheadRuleFunctions
         return new OkObjectResult(parentList);
     }
 
-    [FunctionName("hardheadRuleChanges")]
+    [Function("hardheadRuleChanges")]
     public async Task<IActionResult> RunRuleChanges(
-        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "hardhead/rules/changes")] HttpRequest req,
-        ILogger log)
+        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "hardhead/rules/changes")] HttpRequest req)
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        log.LogInformation("[HardheadRuleFunctions] C# HTTP trigger function processed a request.");
-        log.LogInformation($"[HardheadRuleFunctions] Host: {req.Host.Value}");
+        _log.LogInformation("[HardheadRuleFunctions] C# HTTP trigger function processed a request.");
+        _log.LogInformation($"[HardheadRuleFunctions] Host: {req.Host.Value}");
 
-        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            log.LogInformation("[HardheadRuleFunctions] JWT is not valid!");
+            _log.LogInformation("[HardheadRuleFunctions] JWT is not valid!");
             return new UnauthorizedResult();
         }
 
@@ -76,44 +76,44 @@ public class HardheadRuleFunctions
         {
             if (HttpMethods.IsPost(req.Method))
             {
-                return await PostRuleChange(req, userID, log);
+                return await PostRuleChange(req, userID);
             }
 
             if (HttpMethods.IsGet(req.Method))
             {
                 if (int.TryParse(req.Query["type"], out int typeID))
-                    return await GetRuleChanges(typeID, log);
+                    return await GetRuleChanges(typeID);
 
-                return await GetRuleChanges(log);
+                return await GetRuleChanges();
             }
 
-            log.LogError($"[HardheadRuleFunctions] HttpMethod '{req.Method}' ist not yet supported.");
+            _log.LogError($"[HardheadRuleFunctions] HttpMethod '{req.Method}' ist not yet supported.");
             return new NotFoundResult();
         }
         catch (ArgumentException aex)
         {
-            log.LogError(aex, "[HardheadRuleFunctions] Invalid input");
+            _log.LogError(aex, "[HardheadRuleFunctions] Invalid input");
             return new BadRequestObjectResult(aex.Message);
         }
         catch (Exception ex)
         {
-            log.LogError(ex, "[HardheadRuleFunctions] Unhandled error");
+            _log.LogError(ex, "[HardheadRuleFunctions] Unhandled error");
             throw;
         }
         finally
         {
             stopwatch.Stop();
-            log.LogInformation($"[HardheadRuleFunctions] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+            _log.LogInformation($"[HardheadRuleFunctions] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
         }
     }
 
-    [FunctionName("hardheadRuleIDChanges")]
-    public async Task<IActionResult> RunRuleIDChanges([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/rules/{id:int}/changes")] HttpRequest req, int id, ILogger log)
+    [Function("hardheadRuleIDChanges")]
+    public async Task<IActionResult> RunRuleIDChanges([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/rules/{id:int}/changes")] HttpRequest req, int id)
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        log.LogInformation("[{Class}.{Method}] Host: {Host}", _class, "RunRuleIDChanges", req.Host.Value);
+        _log.LogInformation("[{Class}.{Method}] Host: {Host}", _class, "RunRuleIDChanges", req.Host.Value);
 
         try
         {
@@ -122,28 +122,28 @@ public class HardheadRuleFunctions
         }
         catch (ArgumentException aex)
         {
-            log.LogError(aex, "[HardheadRuleFunctions] Invalid input");
+            _log.LogError(aex, "[HardheadRuleFunctions] Invalid input");
             return new BadRequestObjectResult(aex.Message);
         }
         catch (Exception ex)
         {
-            log.LogError(ex, "[HardheadRuleFunctions] Unhandled error");
+            _log.LogError(ex, "[HardheadRuleFunctions] Unhandled error");
             throw;
         }
         finally
         {
             stopwatch.Stop();
-            log.LogInformation($"[HardheadRuleFunctions] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+            _log.LogInformation($"[HardheadRuleFunctions] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
         }
     }
 
-    [FunctionName("hardheadRulePostElection")]
-    public async Task<IActionResult> RulePostElection([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/rules/postelection")] HttpRequest req, ILogger log)
+    [Function("hardheadRulePostElection")]
+    public async Task<IActionResult> RulePostElection([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/rules/postelection")] HttpRequest req)
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, nameof(RulePostElection));
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, nameof(RulePostElection));
 
         try
         {
@@ -152,48 +152,48 @@ public class HardheadRuleFunctions
         }
         catch (ArgumentException aex)
         {
-            log.LogError(aex, "[HardheadRuleFunctions] Invalid input");
+            _log.LogError(aex, "[HardheadRuleFunctions] Invalid input");
             return new BadRequestObjectResult(aex.Message);
         }
         catch (Exception ex)
         {
-            log.LogError(ex, "[HardheadRuleFunctions] Unhandled error");
+            _log.LogError(ex, "[HardheadRuleFunctions] Unhandled error");
             throw;
         }
         finally
         {
             stopwatch.Stop();
-            log.LogInformation($"[HardheadRuleFunctions] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+            _log.LogInformation($"[HardheadRuleFunctions] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
         }
     }
 
-    private async Task<IActionResult> GetRuleChanges(int typeID, ILogger log)
+    private async Task<IActionResult> GetRuleChanges(int typeID)
     {
-        log.LogInformation("[HardheadRuleFunctions] GetRuleChanges typeID: {typeID}", typeID);
+        _log.LogInformation("[HardheadRuleFunctions] GetRuleChanges typeID: {typeID}", typeID);
 
         var result = await _ruleInteractor.GetRuleChangesAsync(typeID);
 
         return new OkObjectResult(result);
     }
 
-    private async Task<IActionResult> GetRuleChanges(ILogger log)
+    private async Task<IActionResult> GetRuleChanges()
     {
-        log.LogInformation("[HardheadRuleFunctions] GetRuleChanges");
+        _log.LogInformation("[HardheadRuleFunctions] GetRuleChanges");
 
         var result = await _ruleInteractor.GetRuleChangesAsync();
 
         return new OkObjectResult(result);
     }
 
-    private async Task<IActionResult> PostRuleChange(HttpRequest req, int userID, ILogger log)
+    private async Task<IActionResult> PostRuleChange(HttpRequest req, int userID)
     {
-        log.LogInformation("[HardheadRuleFunctions] PostAwardNominations");
+        _log.LogInformation("[HardheadRuleFunctions] PostRuleChange");
 
         string requestBody = await new StreamReader(req.Body).ReadToEndAsync();
         RuleChange change = JsonConvert.DeserializeObject<RuleChange>(requestBody);
         change.InsertedBy = userID;
 
-        log.LogInformation($"[HardheadRuleFunctions] Request body: {requestBody}");
+        _log.LogInformation($"[HardheadRuleFunctions] Request body: {requestBody}");
 
         await _ruleInteractor.SubmitRuleChangeAsync(change);
         return new NoContentResult();

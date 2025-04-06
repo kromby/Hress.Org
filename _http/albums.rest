@@ -19,7 +19,7 @@ GET {{host}}/api/albums
 X-Custom-Authorization: token {{apiToken}}
 
 ### Get album by id
-GET {{host}}/api/albums/46125
+GET {{host}}/api/albums/46048
 X-Custom-Authorization: token {{apiToken}}
 
 

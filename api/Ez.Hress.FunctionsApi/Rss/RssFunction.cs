@@ -1,31 +1,32 @@
 using Ez.Hress.Scripts.UseCases;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Ez.Hress.FunctionsApi.Rss;
 
 public class RssFunction
 {
     private readonly NewsInteractor _newsInteractor;
+    private readonly ILogger<RssFunction> _log;
 
-    public RssFunction(NewsInteractor newsInteractor)
+    public RssFunction(NewsInteractor newsInteractor, ILogger<RssFunction> log)
     {
         _newsInteractor = newsInteractor;
+        _log = log;
     }
 
-    [FunctionName("rss")]
+    [Function("rss")]
     public async Task<IActionResult> RunAsync(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req,
-        ILogger log)
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
     {
-        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAsync));
+        var methodName = nameof(RunAsync);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", nameof(RssFunction), methodName);
 
-        log.LogInformation("[{Function}] Getting latest news", nameof(RunAsync));
+        _log.LogInformation("[{Function}] Getting latest news", nameof(RunAsync));
         var list = await _newsInteractor.GetLatestNewsAsync();
 
         StringBuilder sb = new();
@@ -34,7 +35,7 @@ public class RssFunction
         sb.AppendLine("<channel>");
         sb.AppendLine("<title>Hress.Org</title>");
         sb.AppendLine("<link>http://www.hress.org</link>");
-        sb.AppendLine("<description>Þar sem hressleikinn býr!</description>");
+        sb.AppendLine("<description>Ãžar sem hressleikinn bÃ½r!</description>");
         foreach (var item in list)
         {
             sb.AppendLine("<item>");

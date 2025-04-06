@@ -1,41 +1,42 @@
 using Ez.Hress.Scripts.UseCases;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Ez.Hress.FunctionsApi.News;
 
 public class NewsFunctions
 {
     private readonly NewsInteractor _newsInteractor;
+    private readonly ILogger<NewsFunctions> _log;
 
-    public NewsFunctions(NewsInteractor newsInteractor)
+    public NewsFunctions(NewsInteractor newsInteractor, ILogger<NewsFunctions> log)
     {
         _newsInteractor = newsInteractor;
+        _log = log;
     }
 
-    [FunctionName("news")]
+    [Function("news")]
     public async Task<IActionResult> RunNews(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "news/{id:int?}")] HttpRequest req, int? id,
-        ILogger log)
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "news/{id:int?}")] HttpRequest req, int? id)
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunNews));
+        var methodName = nameof(RunNews);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", nameof(NewsFunctions), methodName);
 
         try
         {
-            IList<Scripts.Entities.News> list = null;
+            IList<Scripts.Entities.News> list = new List<Scripts.Entities.News>();
             if (id.HasValue)
             {
-                log.LogInformation("[{Function}] Getting a single news by ID '{Id}'", nameof(RunNews), id);
+                _log.LogInformation("[{Function}] Getting a single news by ID '{Id}'", nameof(RunNews), id);
                 var entity = await _newsInteractor.GetNewsAsync(id.Value);
                 if (entity == null || entity.ID < 1)
                     return new NotFoundResult();
@@ -44,7 +45,7 @@ public class NewsFunctions
             
             if (!string.IsNullOrWhiteSpace(req.Query["type"]) && req.Query["type"].ToString().ToUpper().Equals("ONTHISDAY"))
             {
-                log.LogInformation("[{Function}] Getting news for type '{Type}'", nameof(RunNews), req.Query["type"]);
+                _log.LogInformation("[{Function}] Getting news for type '{Type}'", nameof(RunNews), req.Query["type"]);
                 int top = int.MaxValue;
                 _ = int.TryParse(req.Query["top"], out top);
 
@@ -61,35 +62,35 @@ public class NewsFunctions
                 
                 if (int.TryParse(req.Query["month"], out int month))
                 {
-                    log.LogInformation("[{Function}] Getting news for year '{Year}' and month '{Month}'", nameof(RunNews), year, month);
+                    _log.LogInformation("[{Function}] Getting news for year '{Year}' and month '{Month}'", nameof(RunNews), year, month);
                     list = await _newsInteractor.GetNewsByYearAndMonthAsync(year, month);
                 }
                 else
                 {
-                    log.LogInformation("[{Function}] Getting news by Year '{Year}'", nameof(RunNews), year);
+                    _log.LogInformation("[{Function}] Getting news by Year '{Year}'", nameof(RunNews), year);
                     list = await _newsInteractor.GetNewsByYearAsync(year);
                 }
                 return new OkObjectResult(list);
             }
 
-            log.LogInformation("[{Function}] Getting latest news", nameof(RunNews));
+            _log.LogInformation("[{Function}] Getting latest news", nameof(RunNews));
             list = await _newsInteractor.GetLatestNewsAsync();
             return new OkObjectResult(list);
         }
         catch (ArgumentException aex)
         {
-            log.LogError(aex, "[RunNews] Invalid input");
+            _log.LogError(aex, "[RunNews] Invalid input");
             return new BadRequestObjectResult(aex.Message);
         }
         catch (Exception ex)
         {
-            log.LogError(ex, "[RunNews] Unhandled error");
+            _log.LogError(ex, "[RunNews] Unhandled error");
             throw;
         }
         finally
         {
             stopwatch.Stop();
-            log.LogInformation($"[RunNews] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+            _log.LogInformation($"[RunNews] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
         }
     }
 }
