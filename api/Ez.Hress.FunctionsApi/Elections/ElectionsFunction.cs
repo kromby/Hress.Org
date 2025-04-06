@@ -2,8 +2,6 @@ using System;
 using System.IO;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -12,6 +10,7 @@ using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.Shared.Entities;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Ez.Hress.FunctionsApi.Elections;
 
@@ -19,23 +18,25 @@ public class ElectionsFunction
 {
     private readonly AuthenticationInteractor _authenticationInteractor;
     private readonly HardheadElectionInteractor _hardheadElectionInteractor;
-    public ElectionsFunction(AuthenticationInteractor authenticationInteractor, HardheadElectionInteractor hardheadElectionInteractor)
+    private readonly ILogger<ElectionsFunction> _log;
+    public ElectionsFunction(AuthenticationInteractor authenticationInteractor, HardheadElectionInteractor hardheadElectionInteractor, ILogger<ElectionsFunction> log)
     {
         _authenticationInteractor = authenticationInteractor;
         _hardheadElectionInteractor = hardheadElectionInteractor;
+        _log = log;
     }
 
-    [FunctionName("electionsAccess")]
+    [Function("electionsAccess")]
     public async Task<IActionResult> RunAccess(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "elections/{electionID:int}/voters/access")] HttpRequest req,
-        int electionID, ILogger log)
+        int electionID)
     {
-        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAccess));
+        _log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAccess));
 
-        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunAccess));
+            _log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunAccess));
             return new UnauthorizedResult();
         }
 
@@ -46,15 +47,15 @@ public class ElectionsFunction
         return new NotFoundResult();
     }
 
-    [FunctionName("electionsVote")]
-    public async Task<IActionResult> RunVote([HttpTrigger(AuthorizationLevel.Function, "post", Route = "elections/{id:int}/vote")] HttpRequest req, int id, ILogger log)
+    [Function("electionsVote")]
+    public async Task<IActionResult> RunVote([HttpTrigger(AuthorizationLevel.Function, "post", Route = "elections/{id:int}/vote")] HttpRequest req, int id)
     {
-        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunVote));
+        _log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunVote));
 
-        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunVote));
+            _log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunVote));
             return new UnauthorizedResult();
         }
         try
@@ -87,7 +88,7 @@ public class ElectionsFunction
         }
         catch (Exception ex)
         {
-            log.LogError(ex, ex.Message);
+            _log.LogError(ex, ex.Message);
             throw;
         }
     }

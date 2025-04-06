@@ -4,13 +4,12 @@ using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.Shared.UseCases;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Ez.Hress.FunctionsApi.Hardhead;
 
@@ -21,21 +20,23 @@ public class MovieFunctions
     private readonly MovieInteractor _movieInteractor;
     private readonly HardheadInteractor _hardheadInteractor;
     private readonly HardheadParser _hardheadParser;
+    private readonly ILogger<MovieFunctions> _log;
 
-    public MovieFunctions(AuthenticationInteractor authenticationInteractor, MovieInteractor movieInteractor, HardheadInteractor hardheadInteractor, HardheadParser hardheadParser)
+    public MovieFunctions(AuthenticationInteractor authenticationInteractor, MovieInteractor movieInteractor, HardheadInteractor hardheadInteractor, HardheadParser hardheadParser, ILogger<MovieFunctions> log)
     {
         _authenticationInteractor = authenticationInteractor;
         _movieInteractor = movieInteractor;
         _hardheadInteractor = hardheadInteractor;
         _hardheadParser = hardheadParser;
+        _log = log;
     }
 
-    [FunctionName("MovieFunctions")]
+    [Function("MovieFunctions")]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "movies/{id:int?}")] HttpRequest req, int? id,
-        ILogger log)
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "movies/{id:int?}")] HttpRequest req, int? id)
     {
-        log.LogInformation("[{Class}]C# HTTP trigger function processed a request.", _class);
+        var methodName = nameof(Run);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, methodName);
 
         if (HttpMethods.IsGet(req.Method))
         {
@@ -56,21 +57,20 @@ public class MovieFunctions
         return new NotFoundResult();
     }
 
-    [FunctionName("MovieInformation")]
-    public async Task<IActionResult> RunMovieInfoAsync([HttpTrigger(AuthorizationLevel.Function, "post", "put", Route = "movies/{id:int}/info")] HttpRequest req, int id,
-        ILogger log)
+    [Function("MovieInformation")]
+    public async Task<IActionResult> RunMovieInfoAsync([HttpTrigger(AuthorizationLevel.Function, "post", "put", Route = "movies/{id:int}/info")] HttpRequest req, int id)
     {
         var methodName = nameof(RunMovieInfoAsync);
-        log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, methodName);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, methodName);
 
         if (HttpMethods.IsPost(req.Method) || HttpMethods.IsPut(req.Method))
         {
             try
             {
-                var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+                var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
                 if (!isJWTValid)
                 {
-                    log.LogInformation("[{Class}.{Function}]  JWT is not valid!", _class, methodName);
+                    _log.LogInformation("[{Class}.{Function}]  JWT is not valid!", _class, methodName);
                     return new UnauthorizedResult();
                 }
 
@@ -95,7 +95,7 @@ public class MovieFunctions
             }
             catch (SystemException sex)
             {
-                log.LogError(sex, "[{Class}.{Method}] Error saving movie information.", _class, methodName);
+                _log.LogError(sex, "[{Class}.{Method}] Error saving movie information.", _class, methodName);
                 throw;
             }
         }
@@ -103,13 +103,13 @@ public class MovieFunctions
         return new NotFoundResult();
     }
 
-    [FunctionName("MovieStatistics")]
-    public async Task<IActionResult> RunStatistics([HttpTrigger(AuthorizationLevel.Function, "get", Route = "movies/statistics/{type}")] HttpRequest req, string type, ILogger log)
+    [Function("MovieStatistics")]
+    public async Task<IActionResult> RunStatistics([HttpTrigger(AuthorizationLevel.Function, "get", Route = "movies/statistics/{type}")] HttpRequest req, string type)
     {
         var stopwatch = new Stopwatch();
         stopwatch.Start();
 
-        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunStatistics));
+        _log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunStatistics));
 
         try
         {
@@ -131,18 +131,18 @@ public class MovieFunctions
         }
         catch (ArgumentException aex)
         {
-            log.LogError(aex, "[{Function}] Invalid input", nameof(RunStatistics));
+            _log.LogError(aex, "[{Function}] Invalid input", nameof(RunStatistics));
             return new BadRequestObjectResult(aex.Message);
         }
         catch (Exception ex)
         {
-            log.LogError(ex, "[{Function}] Unhandled error", nameof(RunStatistics));
+            _log.LogError(ex, "[{Function}] Unhandled error", nameof(RunStatistics));
             throw;
         }
         finally
         {
             stopwatch.Stop();
-            log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunStatistics), stopwatch.ElapsedMilliseconds);
+            _log.LogInformation("[{Function}] Elapsed: {Elapsed} ms.", nameof(RunStatistics), stopwatch.ElapsedMilliseconds);
         }
     }
 }

@@ -1,7 +1,5 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Ez.Hress.Albums.UseCases;
@@ -10,6 +8,7 @@ using System.Text.Json;
 using System.IO;
 using Ez.Hress.Albums.Entities;
 using System;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Ez.Hress.FunctionsApi.Albums;
 
@@ -29,23 +28,26 @@ public class AlbumsFunction
 {
     private readonly AlbumInteractor _albumInteractor;
     private readonly AuthenticationInteractor _authenticationInteractor;
-    public AlbumsFunction(AuthenticationInteractor authenticationInteractor, AlbumInteractor albumInteractor)
+    private readonly ILogger<AlbumsFunction> _log;
+
+    public AlbumsFunction(AuthenticationInteractor authenticationInteractor, AlbumInteractor albumInteractor, ILogger<AlbumsFunction> log)
     {
         _authenticationInteractor = authenticationInteractor;
         _albumInteractor = albumInteractor;
+        _log = log;
     }
 
-    [FunctionName("albums")]
+    [Function("albums")]
     public async Task<IActionResult> RunAlbums(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "albums/{id:int?}")] HttpRequest req,
-        int? id, ILogger log)
+        int? id)
     {
-        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbums));
+        _log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbums));
 
-        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            log.LogInformation("[RunMagic] JWT is not valid!");
+            _log.LogInformation("[RunMagic] JWT is not valid!");
             return new UnauthorizedResult();
         }
 
@@ -64,17 +66,17 @@ public class AlbumsFunction
         return new OkObjectResult(list);
     }
 
-    [FunctionName("albumImages")]
+    [Function("albumImages")]
     public async Task<IActionResult> RunAlbumImages(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "albums/{albumID:int}/images")] HttpRequest req,
-        int albumID, ILogger log)
+        int albumID)
     {
-        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbumImages));
+        _log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbumImages));
 
-        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            log.LogInformation("[RunMagic] JWT is not valid!");
+            _log.LogInformation("[RunMagic] JWT is not valid!");
             return new UnauthorizedResult();
         }
 
@@ -82,17 +84,16 @@ public class AlbumsFunction
         return new OkObjectResult(list);
     }
 
-    [FunctionName("albumPost")]
+    [Function("albumPost")]
     public async Task<IActionResult> RunAlbumCreate(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "albums")] HttpRequest req,
-        ILogger log)
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "albums")] HttpRequest req)
     {
-        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbumCreate));
+        _log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbumCreate));
 
-        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            log.LogInformation("[CreateAlbum] JWT is not valid!");
+            _log.LogInformation("[CreateAlbum] JWT is not valid!");
             return new UnauthorizedResult();
         }
 
@@ -117,23 +118,22 @@ public class AlbumsFunction
         }
         catch (ArgumentException ex)
         {
-            log.LogWarning("[CreateAlbum] Validation failed: {Message}", ex.Message);
+            _log.LogWarning("[CreateAlbum] Validation failed: {Message}", ex.Message);
             return new BadRequestObjectResult(new { error = ex.Message });
         }
     }
 
-    [FunctionName("albumImagePost")]
+    [Function("albumImagePost")]
     public async Task<IActionResult> RunAlbumImagePost(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "albums/{albumId:int}/images")] HttpRequest req,
-        int albumId,
-        ILogger log)
+        int albumId)
     {
-        log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbumImagePost));
+        _log.LogInformation("[{Function}] C# HTTP trigger function processed a request.", nameof(RunAlbumImagePost));
 
-        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            log.LogInformation("[AddImageToAlbum] JWT is not valid!");
+            _log.LogInformation("[AddImageToAlbum] JWT is not valid!");
             return new UnauthorizedResult();
         }
 
@@ -157,7 +157,7 @@ public class AlbumsFunction
         }
         catch (ArgumentException ex)
         {
-            log.LogWarning("[AddImageToAlbum] Validation failed: {Message}", ex.Message);
+            _log.LogWarning("[AddImageToAlbum] Validation failed: {Message}", ex.Message);
             return new BadRequestObjectResult(new { error = ex.Message });
         }
     }

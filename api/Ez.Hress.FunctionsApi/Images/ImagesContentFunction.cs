@@ -2,14 +2,13 @@ using Ez.Hress.Shared.Entities;
 using Ez.Hress.Shared.UseCases;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Ez.Hress.FunctionsApi.Images;
 
@@ -17,23 +16,26 @@ public class ImagesContentFunction
 {
     private readonly AuthenticationInteractor _authenticationInteractor;
     private readonly ImageInteractor _imageInteractor;
-    public ImagesContentFunction(AuthenticationInteractor authenticationInteractor, ImageInteractor imageInteractor)
+    private readonly ILogger<ImagesContentFunction> _log;
+
+    public ImagesContentFunction(AuthenticationInteractor authenticationInteractor, ImageInteractor imageInteractor, ILogger<ImagesContentFunction> log)
     {
         _authenticationInteractor = authenticationInteractor;
         _imageInteractor = imageInteractor;
+        _log = log;
     }
 
-    [FunctionName("images")]
+    [Function("images")]
     public async Task<IActionResult> RunImages(
-        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "images")] HttpRequest req,
-        ILogger log)
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "images")] HttpRequest req)
     {
-        log.LogInformation("[{Class}] C# HTTP trigger function processed a request.", nameof(RunImages));
+        var methodName = nameof(RunImages);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", nameof(ImagesContentFunction), methodName);
 
-        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunImages));
+            _log.LogInformation("[{Function}]  JWT is not valid!", nameof(RunImages));
             return new UnauthorizedResult();
         }
 
@@ -47,17 +49,18 @@ public class ImagesContentFunction
         }
         catch(ArgumentException aex)
         {
-            log.LogError(aex, requestBody);
+            _log.LogError(aex, requestBody);
             return new BadRequestResult();
         }
     }
 
-        [FunctionName("imagesContent")]
+        [Function("imagesContent")]
     public async Task<IActionResult> RunImagesContent(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "images/{id:int}/content")] HttpRequest req,
-        int id, ILogger log)
+        int id)
     {
-        log.LogInformation("[{Class}] C# HTTP trigger function processed a request.", nameof(RunImagesContent));
+        var methodName = nameof(RunImagesContent);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", nameof(ImagesContentFunction), methodName);
 
         int width = 0;
         if (!string.IsNullOrWhiteSpace(req.Query["thumb"]))

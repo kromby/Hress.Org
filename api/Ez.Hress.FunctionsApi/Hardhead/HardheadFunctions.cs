@@ -1,8 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
@@ -10,6 +8,7 @@ using Ez.Hress.Shared.UseCases;
 using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.Hardhead.Entities;
 using System.Collections.Generic;
+using Microsoft.Azure.Functions.Worker;
 
 namespace Ez.Hress.FunctionsApi.Hardhead;
 
@@ -18,26 +17,28 @@ public class HardheadFunctions
     private readonly string _class = nameof(HardheadFunctions);
     private readonly AuthenticationInteractor _authenticationInteractor;
     private readonly HardheadInteractor _hardheadInteractor;
-    public HardheadFunctions(AuthenticationInteractor authenticationInteractor, HardheadInteractor hardheadInteractor)
+    private readonly ILogger<HardheadFunctions> _log;
+
+    public HardheadFunctions(AuthenticationInteractor authenticationInteractor, HardheadInteractor hardheadInteractor, ILogger<HardheadFunctions> log)
     {
         _authenticationInteractor = authenticationInteractor;
         _hardheadInteractor = hardheadInteractor;
+        _log = log;
     }
 
-    [FunctionName("hardhead")]
+    [Function("hardhead")]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "get", "put", Route = "hardhead/{id:int?}")] HttpRequest req, int? id,
-        ILogger log)
+        [HttpTrigger(AuthorizationLevel.Function, "get", "put", Route = "hardhead/{id:int?}")] HttpRequest req, int? id)
     {
         var method = nameof(Run);
-        log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
+        _log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
 
         if (HttpMethods.IsPut(req.Method))
         {
-            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
             if (!isJWTValid)
             {
-                log.LogInformation("[{Class}.{Function}]  JWT is not valid!", _class, method);
+                _log.LogInformation("[{Class}.{Function}]  JWT is not valid!", _class, method);
                 return new UnauthorizedResult();
             }
 
@@ -49,7 +50,7 @@ public class HardheadFunctions
             }
             catch (JsonReaderException jrex)
             {
-                log.LogWarning("[{Class}.{Function}] PUT - Can't parse request body: {body}, exception: {exception}", _class, method, await req.ReadAsStringAsync(), jrex.Message);
+                _log.LogWarning("[{Class}.{Function}] PUT - Can't parse request body, exception: {exception}", _class, method, jrex.Message);
                 return new BadRequestResult();
             }
             catch (ArgumentException aex)
@@ -95,16 +96,16 @@ public class HardheadFunctions
         }
     }
 
-    [FunctionName("hardheadActions")]
-    public async Task<IActionResult> RunActions([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/{id:int}/actions")] HttpRequest req, int id, ILogger log)
+    [Function("hardheadActions")]
+    public async Task<IActionResult> RunActions([HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/{id:int}/actions")] HttpRequest req, int id)
     {
         var method = nameof(RunActions);
-        log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
+        _log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
 
-        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, log, out int userID);
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
         if (!isJWTValid)
         {
-            log.LogInformation("[{Class}.{Function}]  JWT is not valid!", _class, method);
+            _log.LogInformation("[{Class}.{Function}]  JWT is not valid!", _class, method);
             return new UnauthorizedResult();
         }
 
@@ -115,18 +116,17 @@ public class HardheadFunctions
         }
         catch (Exception ex)
         {
-            log.LogError("Internal error", ex);
+            _log.LogError("Internal error", ex);
             throw;
         }
     }
 
-    [FunctionName("hardheadYears")]
+    [Function("hardheadYears")]
     public async Task<IActionResult> GetYears(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/years")] HttpRequest req,
-        ILogger log)
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/years")] HttpRequest req)
     {
         var method = nameof(GetYears);
-        log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
+        _log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
 
         try
         {
@@ -135,19 +135,18 @@ public class HardheadFunctions
         }
         catch (Exception ex)
         {
-            log.LogError("[{Class}.{Function}] Internal error: {Message}", _class, method, ex.Message);
+            _log.LogError("[{Class}.{Function}] Internal error: {Message}", _class, method, ex.Message);
             throw;
         }
     }
 
-    [FunctionName("hardheadUsers")]
+    [Function("hardheadUsers")]
     public async Task<IActionResult> GetUsers(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "hardhead/{yearId:int}/users")] HttpRequest req,
-        int yearId,
-        ILogger log)
+        int yearId)
     {
         var method = nameof(GetUsers);
-        log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
+        _log.LogInformation("[{Class}.{Function}] C# HTTP trigger function processed a request.", _class, method);
 
         try
         {
@@ -162,7 +161,7 @@ public class HardheadFunctions
         }
         catch (Exception ex)
         {
-            log.LogError("[{Class}.{Function}] Internal error: {Message}", _class, method, ex.Message);
+            _log.LogError("[{Class}.{Function}] Internal error: {Message}", _class, method, ex.Message);
             throw;
         }
     }
