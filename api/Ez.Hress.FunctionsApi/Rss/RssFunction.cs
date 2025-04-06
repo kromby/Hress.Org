@@ -35,7 +35,7 @@ public class RssFunction
         sb.AppendLine("<channel>");
         sb.AppendLine("<title>Hress.Org</title>");
         sb.AppendLine("<link>http://www.hress.org</link>");
-        sb.AppendLine("<description>�ar sem hressleikinn b�r!</description>");
+        sb.AppendLine("<description>Þar sem hressleikinn býr!</description>");
         foreach (var item in list)
         {
             sb.AppendLine("<item>");
