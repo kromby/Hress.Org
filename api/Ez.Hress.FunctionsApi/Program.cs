@@ -45,16 +45,6 @@ var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureServices(services =>
     {
-        Console.WriteLine("[Program] Configure services");
-
-        try
-        {
-            //services.AddSingleton<IConfiguration>(config);
-        } catch (Exception ex)
-        {
-            Console.WriteLine(ex.ToString());
-        }
-
         services.AddMvcCore().AddNewtonsoftJson(options =>
         {
             options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
