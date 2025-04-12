@@ -24,6 +24,7 @@ const MovieEdit = ({ id }) => {
   const [movieKills, setMovieKills] = useState();
   const [hardheadKills, setHardheadKills] = useState();
   const [omdbData, setOmdbData] = useState();
+  const [message, setMessage] = useState("");
 
   const movieUrl = `${config.get("path")}/api/movies/${id}?code=${config.get(
     "code"
@@ -73,14 +74,18 @@ const MovieEdit = ({ id }) => {
   }, [params, movieUrl]);
 
   const saveMovieInfo = (movieInfo) => {
-    console.info("[saveMovieInfo] started");
-    const url = `${config.get("apiPath")}/api/movies/${id}/info`;
-    console.info("[saveMovieInfo] url", url);
-
-    axios.put(url, movieInfo, {
-      headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
-    });
-    console.info("[saveMovieInfo] completed");
+    try {
+      const url = `${config.get("apiPath")}/api/movies/${id}/info`;
+      axios.put(url, movieInfo, {
+        headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
+      });
+    } catch (error) {
+      setMessage(
+        "Engar áhyggjur en það tókst ekki að vista ítar upplýsingar með myndinni þinni."
+      );
+      console.error("[MovieEdit] Error saving movie info.");
+      console.error(error);
+    }
   };
 
   const handleSubmit = async (event) => {
@@ -123,6 +128,7 @@ const MovieEdit = ({ id }) => {
         console.error("[MovieEdit] Error saving movie.");
         console.error(e);
         setData({ visible: data.visible, saving: false });
+        setMessage("Villa í að vista mynd");
         setButtonEnabled(true);
       }
     }
@@ -316,6 +322,12 @@ const MovieEdit = ({ id }) => {
                 Mynd vistuð!
                 <br />
               </b>
+            ) : null}
+            {message ? (
+              <>
+                <i>{message}</i>
+                <br />
+              </>
             ) : null}
             <button className="button large" disabled={!buttonEnabled}>
               Vista mynd
