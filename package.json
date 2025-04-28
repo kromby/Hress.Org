@@ -33,7 +33,7 @@
     "react-helmet": "^6.1.0",
     "react-router-dom": "^7.4.1",
     "react-youtube": "^10.1.0",
-    "webpack": "^5.99.5"
+    "webpack": "^5.99.7"
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
