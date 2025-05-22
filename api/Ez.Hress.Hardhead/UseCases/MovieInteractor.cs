@@ -79,14 +79,9 @@ public class MovieInteractor
             try
             {
                 var youtubeUrl = new Uri(movie.YoutubeUrl);
-                if (youtubeUrl.Query.Contains(";"))
-                {
-                    movie.YoutubeUrl = youtubeUrl.Query.Substring(youtubeUrl.Query.IndexOf("v=", StringComparison.InvariantCulture) + 2, youtubeUrl.Query.IndexOf(";", StringComparison.InvariantCulture));
-                }
-                else
-                {
-                    movie.YoutubeUrl = youtubeUrl.Query.Substring(youtubeUrl.Query.IndexOf("v=", StringComparison.InvariantCulture) + 2);
-                }
+                movie.YoutubeUrl = youtubeUrl.Query.Contains(";")
+                    ? youtubeUrl.Query.Substring(youtubeUrl.Query.IndexOf("v=", StringComparison.InvariantCulture) + 2, youtubeUrl.Query.IndexOf(";", StringComparison.InvariantCulture))
+                    : youtubeUrl.Query.Substring(youtubeUrl.Query.IndexOf("v=", StringComparison.InvariantCulture) + 2);
             }
             catch (UriFormatException ufex)
             {

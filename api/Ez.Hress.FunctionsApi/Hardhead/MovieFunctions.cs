@@ -75,10 +75,8 @@ public class MovieFunctions
                 {
                     return new OkResult();
                 }
-                else
-                {
-                    return new NotFoundResult();
-                }
+                
+                return new NotFoundResult();
             }
             catch (Exception ex)
             {
