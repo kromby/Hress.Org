@@ -12,4 +12,13 @@ public interface IMovieDataAccess
     Task<IList<Movie>> GetMovies(string nameAndActorFilter);
 
     Task<IList<StatisticBase>> GetActorStatistic(DateTime fromDate);
+    
+    /// <summary>
+    /// Updates a movie with the provided information.
+    /// </summary>
+    /// <param name="id">The ID of the movie to update.</param>
+    /// <param name="userID">The ID of the user making the update.</param>
+    /// <param name="movie">The updated movie information.</param>
+    /// <returns>True if the update was successful, false otherwise.</returns>
+    Task<bool> UpdateMovie(int id, int userID, Movie movie);
 }
