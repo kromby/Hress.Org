@@ -71,14 +71,14 @@ const MovieList = () => {
                           {hardhead.guestCount} gestir
                         </td>
                         <td style={{ verticalAlign: "top" }}>
-                          {hardhead.movie.name}
+                          {hardhead.movie?.name ?? "Vantar upplýsingar"}
                           <br />
-                          (Dráp: {hardhead.movie.movieKillCount ?? "-"})
+                          (Dráp: {hardhead.movie?.movieKillCount ?? "-"})
                         </td>
                         <td style={{ verticalAlign: "top" }}>
-                          {hardhead.movie.actor}
+                          {hardhead.movie?.actor ?? "???"}
                           <br />
-                          (Dráp: {hardhead.movie.hardheadKillCount ?? "-"})
+                          (Dráp: {hardhead.movie?.hardheadKillCount ?? "-"})
                         </td>
                       </tr>
                     ))
