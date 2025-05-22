@@ -78,7 +78,7 @@ public class MovieInteractor
 
             try
             {
-                var youtubeUrl = new Uri(movie.YoutubeUrl);
+                var youtubeUrl = new Uri(youtubeUrlString);
                 movie.YoutubeUrl = youtubeUrl.Query.Contains(";")
                     ? youtubeUrl.Query.Substring(youtubeUrl.Query.IndexOf("v=", StringComparison.InvariantCulture) + 2, youtubeUrl.Query.IndexOf(";", StringComparison.InvariantCulture))
                     : youtubeUrl.Query.Substring(youtubeUrl.Query.IndexOf("v=", StringComparison.InvariantCulture) + 2);
@@ -94,9 +94,7 @@ public class MovieInteractor
         //    movie.PosterPhotoID = movie.PosterPhoto.ID;
         //}
 
-        movie.Inserted = DateTime.Now;
-        movie.InsertedBy = userID;
-        movie.Updated = DateTime.Now;
+        movie.Updated = DateTime.UtcNow;
         movie.UpdatedBy = userID;
         
         return await _movieDataAccess.UpdateMovie(id, userID, movie);
