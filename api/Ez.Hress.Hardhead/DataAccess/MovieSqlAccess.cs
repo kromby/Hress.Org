@@ -107,4 +107,19 @@ public class MovieSqlAccess : IMovieDataAccess
 
         return list;
     }
+
+    /// <summary>
+    /// Updates a movie with the provided information.
+    /// </summary>
+    /// <param name="id">The ID of the movie to update.</param>
+    /// <param name="userID">The ID of the user making the update.</param>
+    /// <param name="movie">The updated movie information.</param>
+    /// <returns>True if the update was successful, false otherwise.</returns>
+    public async Task<bool> UpdateMovie(int id, int userID, Movie movie)
+    {
+        _log.LogInformation("[{Class}.{Method}] Updating movie with ID {ID}: {Movie}", _class, nameof(UpdateMovie), id, movie);
+        
+        // Implementation will be provided later
+        throw new NotImplementedException("The SQL implementation for UpdateMovie will be provided later.");
+    }
 }

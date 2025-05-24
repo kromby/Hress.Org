@@ -33,7 +33,7 @@ public class MovieFunctions
 
     [Function("MovieFunctions")]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "movies/{id:int?}")] HttpRequest req, int? id)
+        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "movies/{id:int?}")] HttpRequest req, int? id)
     {
         var methodName = nameof(Run);
         _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, methodName);
@@ -51,6 +51,37 @@ public class MovieFunctions
                     var list = await _movieInteractor.GetMoviesAsync(value);
                     return new OkObjectResult(list);
                 }
+            }
+        }
+        else if (HttpMethods.IsPost(req.Method) && id.HasValue)
+        {
+            try
+            {
+                var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
+                if (!isJWTValid)
+                {
+                    _log.LogInformation("[{Class}.{Function}] JWT is not valid!", _class, methodName);
+                    return new UnauthorizedResult();
+                }
+
+                var movieInput = await req.ReadFromJsonAsync<Movie>();
+                if (movieInput == null)
+                {
+                    return new BadRequestObjectResult("Invalid input");
+                }
+
+                var result = await _movieInteractor.UpdateMovieAsync(id.Value, userID, movieInput);
+                if (result)
+                {
+                    return new OkResult();
+                }
+                
+                return new NotFoundResult();
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "[{Class}.{Method}] Error updating movie.", _class, methodName);
+                throw;
             }
         }
 
