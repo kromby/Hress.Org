@@ -123,11 +123,14 @@ const DisappointmentNomination = ({
                   <option value="">- Hvaða Harðhaus vilt þú tilnefna? -</option>
                   {users
                     .sort((a, b) =>
-                      a.name.toLowerCase() > b.name.toLowerCase() ? 1 : -1
+                      (a.username?.toLowerCase() ?? "") >
+                      (b.username?.toLowerCase() ?? "")
+                        ? 1
+                        : -1
                     )
                     .map((user) => (
                       <option key={user.id} value={user.id}>
-                        {user.name}
+                        {user.username}
                       </option>
                     ))}
                 </select>
