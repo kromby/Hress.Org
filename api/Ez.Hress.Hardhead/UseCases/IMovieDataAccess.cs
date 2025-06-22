@@ -2,7 +2,7 @@
 
 namespace Ez.Hress.Hardhead.UseCases;
 
-public interface IMovieDataAccess
+public interface IMovieDataAccess : IDisposable
 {
     /// <summary>
     /// Retrieves movies by a partial name.

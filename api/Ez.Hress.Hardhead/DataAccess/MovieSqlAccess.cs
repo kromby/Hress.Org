@@ -14,6 +14,7 @@ public class MovieSqlAccess : IMovieDataAccess
     private readonly string _connectionString;
     private readonly string _class = nameof(MovieSqlAccess);
     private readonly MovieModel _movieModel;
+    private bool _disposed = false;
 
     private const string SQL_GETMOVIE = @"SELECT	night.Id, film.TextValue Movie, actor.TextValue Actor, poster.ImageId poster, 
                                                         imdb.TextValue imdb, why.TextValue why, youtube.TextValue youtube, CAST(moviekills.Count as int) moviekills, CAST(hhkills.Count as int) hhkills
@@ -36,6 +37,8 @@ public class MovieSqlAccess : IMovieDataAccess
 
     public async Task<IList<Movie>> GetMovies(string nameAndActorFilter)
     {
+        ThrowIfDisposed();
+        
         var sql = string.Format("{0} {1}", SQL_GETMOVIE, "AND (film.TextValue LIKE @filter OR actor.TextValue LIKE @filter)");
         _log.LogInformation("SQL: {SQL}", sql);
 
@@ -60,6 +63,8 @@ public class MovieSqlAccess : IMovieDataAccess
 
     public async Task<Movie?> GetMovie(int id)
     {
+        ThrowIfDisposed();
+        
         var sql = string.Format("{0} {1}", SQL_GETMOVIE, "AND night.Id = @id");
         _log.LogInformation("SQL: {SQL}", sql);
 
@@ -97,7 +102,9 @@ public class MovieSqlAccess : IMovieDataAccess
     }
 
     public async Task<IList<StatisticBase>> GetActorStatistic(DateTime fromDate)
-    {            
+    {
+        ThrowIfDisposed();
+        
         var sql = @"SELECT	actor.TextValue 'Actor', COUNT(actor.Id) AttendedCount, MIN(hardhead.Date) FirstAttended, MAX(hardhead.Date) LastAttended
                         FROM	rep_Text actor
                         JOIN	rep_Event hardhead ON actor.EventId = hardhead.Id AND hardhead.TypeId = 49
@@ -142,6 +149,8 @@ public class MovieSqlAccess : IMovieDataAccess
     /// <returns>True if the update was successful, false otherwise.</returns>
     public async Task<bool> UpdateMovie(int id, int userID, Movie entity)
     {
+        ThrowIfDisposed();
+        
         _log.LogInformation("[{Class}.{Method}] Updating movie with ID {ID}: {Movie}", _class, nameof(UpdateMovie), id, entity);
 
         var movieEntity = _movieModel.Movies.Where(m => m.Id == id).FirstOrDefault();
@@ -244,6 +253,52 @@ public class MovieSqlAccess : IMovieDataAccess
                     thisCount.UpdatedBy = userId;
                 }
             }
+        }
+    }
+
+    /// <summary>
+    /// Disposes of the MovieModel and other unmanaged resources.
+    /// </summary>
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <summary>
+    /// Protected implementation of Dispose pattern.
+    /// </summary>
+    /// <param name="disposing">True if called from Dispose, false if called from finalizer.</param>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposed)
+        {
+            if (disposing)
+            {
+                // Dispose managed resources
+                _movieModel?.Dispose();
+            }
+
+            _disposed = true;
+        }
+    }
+
+    /// <summary>
+    /// Finalizer to ensure disposal if Dispose is not called.
+    /// </summary>
+    ~MovieSqlAccess()
+    {
+        Dispose(false);
+    }
+
+    /// <summary>
+    /// Throws an ObjectDisposedException if the object has been disposed.
+    /// </summary>
+    private void ThrowIfDisposed()
+    {
+        if (_disposed)
+        {
+            throw new ObjectDisposedException(nameof(MovieSqlAccess));
         }
     }
 }

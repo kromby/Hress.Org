@@ -1,8 +1,7 @@
 namespace Ez.Hress.Hardhead.DataAccess;
 
 using System;
-using System.Data.Entity;
-using System.Data.Entity.SqlServer;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Collections.Generic;
@@ -11,17 +10,16 @@ using Ez.Hress.Hardhead.DataAccess.Models;
 
 public partial class MovieModel : DbContext
 {
+    private readonly string _connectionString;
+
     public MovieModel(string connectionstring)
-        : base(connectionstring)
     {
-        Events = Set<Event>();
-        Images = Set<Image>();
-        Texts = Set<Text>();
-        Counts = Set<Count>();
-        
-        var type = typeof(SqlProviderServices);
-        if (type == null)
-            throw new SystemException("Do not remove, ensures static reference to System.Data.Entity.SqlServer");
+        _connectionString = connectionstring;
+    }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer(_connectionString);
     }
 
     public virtual DbSet<Event> Events { get; set; }
@@ -32,25 +30,25 @@ public partial class MovieModel : DbContext
     public virtual DbSet<Text> Texts { get; set; }
     public virtual DbSet<Count> Counts { get; set; }
 
-    protected override void OnModelCreating(DbModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Event>()
             .HasMany(e => e.Images)
-            .WithRequired(e => e.Event)
+            .WithOne(e => e.Event)
             .HasForeignKey(e => e.EventId)
-            .WillCascadeOnDelete(false);
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Event>()
             .HasMany(e => e.Texts)
-            .WithRequired(e => e.Event)
+            .WithOne(e => e.Event)
             .HasForeignKey(e => e.EventId)
-            .WillCascadeOnDelete(false);
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<Event>()
             .HasMany(e => e.Counts)
-            .WithRequired(e => e.Event)
+            .WithOne(e => e.Event)
             .HasForeignKey(e => e.EventId)
-            .WillCascadeOnDelete(false);
+            .OnDelete(DeleteBehavior.Restrict);
 
         //modelBuilder.Entity<Text>()
         //    .Property(e => e.TextValue)
