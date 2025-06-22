@@ -14,10 +14,6 @@ public partial class MovieModel : DbContext
     public MovieModel(string connectionstring)
         : base(connectionstring)
     {
-        Events = Set<Event>();
-        Images = Set<Image>();
-        Texts = Set<Text>();
-        Counts = Set<Count>();
         
         var type = typeof(SqlProviderServices);
         if (type == null)

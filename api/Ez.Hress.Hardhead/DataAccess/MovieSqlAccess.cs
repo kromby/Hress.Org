@@ -227,12 +227,12 @@ public class MovieSqlAccess : IMovieDataAccess
         }
     }
 
-    private static void SetCount(int newCount, int typeId, Event movieEntity, int userId, DateTime actionData)
+    private static void SetCount(int newCount, int typeId, Event movieEntity, int userId, DateTime actionDate)
     {
         if (newCount > -1)
         {
             var thisCount = movieEntity.Counts.Where(t => t.TypeId == typeId).FirstOrDefault();
-            thisCount = thisCount ?? new Count() { EventId = movieEntity.Id, Inserted = actionData, InsertedBy = userId, TypeId = typeId };
+            thisCount = thisCount ?? new Count() { EventId = movieEntity.Id, Inserted = actionDate, InsertedBy = userId, TypeId = typeId };
             if (thisCount.CountValue != newCount)
             {
                 thisCount.CountValue = newCount;
@@ -240,7 +240,7 @@ public class MovieSqlAccess : IMovieDataAccess
                     movieEntity.Counts.Add(thisCount);
                 else
                 {
-                    thisCount.Updated = actionData;
+                    thisCount.Updated = actionDate;
                     thisCount.UpdatedBy = userId;
                 }
             }
