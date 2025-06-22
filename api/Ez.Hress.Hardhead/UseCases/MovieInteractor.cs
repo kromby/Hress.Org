@@ -24,6 +24,12 @@ public class MovieInteractor
         return _movieDataAccess.GetMovies(filterBy);
     }
 
+    public async Task<Movie> GetMovieAsync(int id)
+    {
+        _log.LogInformation("Getting movie by ID: {ID}", id);
+        return await _movieDataAccess.GetMovie(id);
+    }
+
     public async Task<StatsEntity> GetActorStatisticsAsync(PeriodType periodType)
     {
         var entity = new StatsEntity("Harðhaus")

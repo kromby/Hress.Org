@@ -33,7 +33,7 @@ public class MovieFunctions
 
     [Function("MovieFunctions")]
     public async Task<IActionResult> Run(
-        [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = "movies/{id:int?}")] HttpRequest req, int? id)
+        [HttpTrigger(AuthorizationLevel.Function, "get", "post", "put", Route = "movies/{id:int?}")] HttpRequest req, int? id)
     {
         var methodName = nameof(Run);
         _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, methodName);
@@ -42,7 +42,12 @@ public class MovieFunctions
         {
             if (id.HasValue)
             {
-
+                var movie = await _movieInteractor.GetMovieAsync(id.Value);
+                if (movie == null)
+                {
+                    return new NotFoundResult();
+                }
+                return new OkObjectResult(movie);
             }
             else
             {
@@ -53,7 +58,7 @@ public class MovieFunctions
                 }
             }
         }
-        else if (HttpMethods.IsPost(req.Method) && id.HasValue)
+        else if (HttpMethods.IsPost(req.Method) || HttpMethods.IsPut(req.Method) && id.HasValue)
         {
             try
             {
