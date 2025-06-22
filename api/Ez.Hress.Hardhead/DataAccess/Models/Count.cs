@@ -11,11 +11,6 @@ namespace Ez.Hress.Hardhead.DataAccess.Models;
 [Table("rep_Count")]
 public partial class Count
 {
-    public Count()
-    {
-
-    }
-
     public int Id { get; set; }
     
     public int EventId { get; set; }

@@ -16,7 +16,7 @@ public interface IMovieDataAccess
     /// </summary>
     /// <param name="id">The ID of the movie to retrieve.</param>
     /// <returns>The movie if found, null otherwise.</returns>
-    Task<Movie> GetMovie(int id);
+    Task<Movie?> GetMovie(int id);
 
     Task<IList<StatisticBase>> GetActorStatistic(DateTime fromDate);
     

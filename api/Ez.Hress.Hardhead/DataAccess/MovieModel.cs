@@ -14,15 +14,19 @@ public partial class MovieModel : DbContext
     public MovieModel(string connectionstring)
         : base(connectionstring)
     {
+        Events = Set<Event>();
+        Images = Set<Image>();
+        Texts = Set<Text>();
+        Counts = Set<Count>();
         
         var type = typeof(SqlProviderServices);
         if (type == null)
-            throw new Exception("Do not remove, ensures static reference to System.Data.Entity.SqlServer");
+            throw new SystemException("Do not remove, ensures static reference to System.Data.Entity.SqlServer");
     }
 
     public virtual DbSet<Event> Events { get; set; }
 
-    public virtual IEnumerable<Event> Movies { get { return Events.Where(m => m.TypeId == 49 && m.ParentId != null); } }
+    public virtual IEnumerable<Event> Movies => Events.Where(m => m.TypeId == 49 && m.ParentId != null);
 
     public virtual DbSet<Image> Images { get; set; }
     public virtual DbSet<Text> Texts { get; set; }

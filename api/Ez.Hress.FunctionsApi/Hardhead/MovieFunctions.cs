@@ -49,13 +49,11 @@ public class MovieFunctions
                 }
                 return new OkObjectResult(movie);
             }
-            else
+
+            if (req.Query.TryGetValue("filter", out var value))
             {
-                if (req.Query.TryGetValue("filter", out var value))
-                {
-                    var list = await _movieInteractor.GetMoviesAsync(value);
-                    return new OkObjectResult(list);
-                }
+                var list = await _movieInteractor.GetMoviesAsync(value);
+                return new OkObjectResult(list);
             }
         }
         else if (HttpMethods.IsPost(req.Method) || HttpMethods.IsPut(req.Method) && id.HasValue)

@@ -58,7 +58,7 @@ public class MovieSqlAccess : IMovieDataAccess
         return list;
     }
 
-    public async Task<Movie> GetMovie(int id)
+    public async Task<Movie?> GetMovie(int id)
     {
         var sql = string.Format("{0} {1}", SQL_GETMOVIE, "AND night.Id = @id");
         _log.LogInformation("SQL: {SQL}", sql);
@@ -167,7 +167,7 @@ public class MovieSqlAccess : IMovieDataAccess
         {
             var thisImage = movieEntity.Images.Where(i => i.TypeId == 14).FirstOrDefault();
             thisImage = thisImage ?? new Image() { EventId = movieEntity.Id, Inserted = validInsertedDate, InsertedBy = entity.InsertedBy, TypeId = 14 };
-            if (entity.PosterPhoto != null && entity.PosterPhoto.ID != null && thisImage.ImageId != entity.PosterPhoto.ID.Value)
+            if (entity.PosterPhoto?.ID != null && thisImage.ImageId != entity.PosterPhoto.ID.Value)
             {
                 thisImage.ImageId = entity.PosterPhoto.ID.Value;
                 if (thisImage.Id == 0)
