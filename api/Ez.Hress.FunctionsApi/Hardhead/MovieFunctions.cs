@@ -56,7 +56,7 @@ public class MovieFunctions
                 return new OkObjectResult(list);
             }
         }
-        else if (HttpMethods.IsPost(req.Method) || HttpMethods.IsPut(req.Method) && id.HasValue)
+        else if ((HttpMethods.IsPost(req.Method) || HttpMethods.IsPut(req.Method)) && id.HasValue)
         {
             try
             {
