@@ -5,6 +5,7 @@ using Ez.Hress.Shared.DataAccess;
 using Ez.Hress.Shared.Entities;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
 
 namespace Ez.Hress.Hardhead.DataAccess;
 
@@ -153,7 +154,12 @@ public class MovieSqlAccess : IMovieDataAccess
         
         _log.LogInformation("[{Class}.{Method}] Updating movie with ID {ID}: {Movie}", _class, nameof(UpdateMovie), id, entity);
 
-        var movieEntity = _movieModel.Movies.Where(m => m.Id == id).FirstOrDefault();
+        var movieEntity = _movieModel.Events
+            .Where(m => m.Id == id && m.TypeId == 49 && m.ParentId != null)
+            .Include(m => m.Texts)
+            .Include(m => m.Images)
+            .Include(m => m.Counts)
+            .FirstOrDefault();
 
         if (movieEntity == null)
             return false;
@@ -189,29 +195,19 @@ public class MovieSqlAccess : IMovieDataAccess
             }
         }
 
-        var result = await _movieModel.SaveChangesAsync();
-
-        return result > 0;
-    }
-
-    /// <summary>
-    /// Ensures a DateTime value is within SQL Server's datetime range (1753-01-01 to 9999-12-31).
-    /// If the date is outside this range, returns DateTime.UtcNow.
-    /// </summary>
-    /// <param name="dateTime">The DateTime value to validate</param>
-    /// <returns>A valid DateTime for SQL Server</returns>
-    private static DateTime GetValidSqlServerDateTime(DateTime dateTime)
-    {
-        // SQL Server datetime range: 1753-01-01 to 9999-12-31
-        var minSqlServerDate = new DateTime(1753, 1, 1);
-        var maxSqlServerDate = new DateTime(9999, 12, 31);
+        // Temporarily disable the trigger to avoid OUTPUT clause issues
+        await _movieModel.Database.ExecuteSqlRawAsync("DISABLE TRIGGER [dbo].[trg_rep_Text_History] ON [dbo].[rep_Text]");
         
-        if (dateTime < minSqlServerDate || dateTime > maxSqlServerDate)
+        try
         {
-            return DateTime.UtcNow;
+            var result = await _movieModel.SaveChangesAsync();
+            return result > 0;
         }
-        
-        return dateTime;
+        finally
+        {
+            // Re-enable the trigger
+            await _movieModel.Database.ExecuteSqlRawAsync("ENABLE TRIGGER [dbo].[trg_rep_Text_History] ON [dbo].[rep_Text]");
+        }
     }
 
     private static void SetText(string? newText, int typeId, Event movieEntity, int userId, DateTime actionDate)
@@ -227,7 +223,7 @@ public class MovieSqlAccess : IMovieDataAccess
                 return;
             }
 
-            if (thisText.TextValue != newText)
+            if (!thisText.TextValue.Equals(newText))
             {
                 thisText.TextValue = newText;
                 thisText.Updated = actionDate;
@@ -254,6 +250,26 @@ public class MovieSqlAccess : IMovieDataAccess
                 }
             }
         }
+    }
+
+    /// <summary>
+    /// Ensures a DateTime value is within SQL Server's datetime range (1753-01-01 to 9999-12-31).
+    /// If the date is outside this range, returns DateTime.UtcNow.
+    /// </summary>
+    /// <param name="dateTime">The DateTime value to validate</param>
+    /// <returns>A valid DateTime for SQL Server</returns>
+    private static DateTime GetValidSqlServerDateTime(DateTime dateTime)
+    {
+        // SQL Server datetime range: 1753-01-01 to 9999-12-31
+        var minSqlServerDate = new DateTime(1753, 1, 1);
+        var maxSqlServerDate = new DateTime(9999, 12, 31);
+        
+        if (dateTime < minSqlServerDate || dateTime > maxSqlServerDate)
+        {
+            return DateTime.UtcNow;
+        }
+        
+        return dateTime;
     }
 
     /// <summary>

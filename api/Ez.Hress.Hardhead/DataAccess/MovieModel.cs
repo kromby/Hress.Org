@@ -19,7 +19,10 @@ public partial class MovieModel : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(_connectionString);
+        optionsBuilder.UseSqlServer(_connectionString, options => 
+            options.EnableRetryOnFailure()
+                .UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery)
+        );
     }
 
     public virtual DbSet<Event> Events { get; set; }
@@ -49,6 +52,17 @@ public partial class MovieModel : DbContext
             .WithOne(e => e.Event)
             .HasForeignKey(e => e.EventId)
             .OnDelete(DeleteBehavior.Restrict);
+
+        // Configure Event entity to work with database triggers
+        modelBuilder.Entity<Event>()
+            .ToTable("rep_Event")
+            .Property(e => e.Id)
+            .ValueGeneratedOnAdd();
+
+        modelBuilder.Entity<Text>()
+            .ToTable("rep_Text")
+            .Property(e => e.Id)
+            .ValueGeneratedOnAdd();
 
         //modelBuilder.Entity<Text>()
         //    .Property(e => e.TextValue)
