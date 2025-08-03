@@ -26,9 +26,7 @@ const MovieEdit = ({ id }) => {
   const [omdbData, setOmdbData] = useState();
   const [message, setMessage] = useState("");
 
-  const movieUrl = `${config.get("path")}/api/movies/${id}?code=${config.get(
-    "code"
-  )}`;
+  const movieUrl = `${config.get("apiPath")}/api/movies/${id}`;
 
   useEffect(() => {
     if (authTokens === undefined) {
@@ -41,22 +39,22 @@ const MovieEdit = ({ id }) => {
         .get(movieUrl)
         .then((response) => {
           if (response.data !== undefined) {
-            if (response.data.YoutubeUrl) {
-              response.data.YoutubeUrl = `https://www.youtube.com/watch?v=${response.data.YoutubeUrl}`;
+            if (response.data.youtubeUrl) {
+              response.data.youtubeUrl = `https://www.youtube.com/watch?v=${response.data.youtubeUrl}`;
             }
 
-            setID(response.data.ID);
-            setMovieName(response.data.Name);
-            setActor(response.data.Actor);
-            setImdbUrl(response.data.ImdbUrl);
-            setYoutubeUrl(response.data.YoutubeUrl);
-            setReason(response.data.Reason);
+            setID(response.data.id);
+            setMovieName(response.data.name);
+            setActor(response.data.actor);
+            setImdbUrl(response.data.imdbUrl);
+            setYoutubeUrl(response.data.youtubeUrl);
+            setReason(response.data.reason);
             setImagePath(
-              response.data.PosterPhoto ? response.data.PosterPhoto.Href : ""
+              response.data.posterPhoto ? response.data.posterPhoto.href : ""
             );
             setData({ visible: true });
-            setMovieKills(response.data.MovieKillCount);
-            setHardheadKills(response.data.HardheadKillCount);
+            setMovieKills(response.data.movieKillCount);
+            setHardheadKills(response.data.hardheadKillCount);
           }
         })
         .catch((error) => {
@@ -109,11 +107,13 @@ const MovieEdit = ({ id }) => {
             HardheadKillCount: hardheadKills,
           },
           {
-            headers: { Authorization: `token ${authTokens.token}` },
+            headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
           }
         );
 
-        saveMovieInfo(omdbData);
+        if (omdbData) {
+          saveMovieInfo(omdbData);
+        }
 
         setData({
           saved: true,

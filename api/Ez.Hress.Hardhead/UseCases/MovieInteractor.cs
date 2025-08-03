@@ -24,6 +24,12 @@ public class MovieInteractor
         return _movieDataAccess.GetMovies(filterBy);
     }
 
+    public async Task<Movie> GetMovieAsync(int id)
+    {
+        _log.LogInformation("Getting movie by ID: {ID}", id);
+        return await _movieDataAccess.GetMovie(id);
+    }
+
     public async Task<StatsEntity> GetActorStatisticsAsync(PeriodType periodType)
     {
         var entity = new StatsEntity("Harðhaus")
@@ -68,20 +74,20 @@ public class MovieInteractor
 
         if (!string.IsNullOrWhiteSpace(movie.YoutubeUrl))
         {
-            var youtubeUrlString = movie.YoutubeUrl.ToLowerInvariant();
+            var youtubeUrlString = movie.YoutubeUrl;
 
-            if (!youtubeUrlString.StartsWith("http", StringComparison.InvariantCulture))
+            if (!youtubeUrlString.StartsWith("http", true, CultureInfo.InvariantCulture))
                 youtubeUrlString = $"https://{movie.YoutubeUrl}";
 
-            if (!youtubeUrlString.Contains("v="))
+            if (!youtubeUrlString.Contains("v=", StringComparison.InvariantCultureIgnoreCase))
                 throw new ArgumentException("Youtube URL is invalid.", nameof(movie));
 
             try
             {
                 var youtubeUrl = new Uri(youtubeUrlString);
                 movie.YoutubeUrl = youtubeUrl.Query.Contains(";")
-                    ? youtubeUrl.Query.Substring(youtubeUrl.Query.IndexOf("v=", StringComparison.InvariantCulture) + 2, youtubeUrl.Query.IndexOf(";", StringComparison.InvariantCulture))
-                    : youtubeUrl.Query.Substring(youtubeUrl.Query.IndexOf("v=", StringComparison.InvariantCulture) + 2);
+                    ? youtubeUrl.Query.Substring(youtubeUrl.Query.IndexOf("v=", StringComparison.InvariantCultureIgnoreCase) + 2, youtubeUrl.Query.IndexOf(";", StringComparison.InvariantCultureIgnoreCase))
+                    : youtubeUrl.Query.Substring(youtubeUrl.Query.IndexOf("v=", StringComparison.InvariantCultureIgnoreCase) + 2);
             }
             catch (UriFormatException ufex)
             {
