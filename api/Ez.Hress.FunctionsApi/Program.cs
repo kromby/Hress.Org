@@ -132,10 +132,13 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
     services.AddSingleton<IImageInfoDataAccess, ImageInfoSqlDataAccess>();
     services.AddSingleton<IImageContentDataAccess, ImageContentHttpDataAccess>();
     services.AddSingleton<IImageContentDataAccess, ImageContentRelativeDataAccess>();
-    services.AddSingleton<IImageContentDataAccess, ImageContentBlobDataAccess>();
+    services.AddSingleton<IImageContentDataAccess, MediaContentBlobDataAccess>();
     services.AddSingleton<IList<IImageContentDataAccess>>(sp => 
         sp.GetServices<IImageContentDataAccess>().ToList());
     services.AddSingleton<ImageInteractor>();
+
+    // Video
+    services.AddSingleton<IVideoContentDataAccess, MediaContentBlobDataAccess>();
 
     // Albums
     services.AddSingleton<IAlbumDataAccess, AlbumSqlDataAccess>();
