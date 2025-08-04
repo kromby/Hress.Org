@@ -7,12 +7,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Ez.Hress.Shared.DataAccess;
 
-public class ImageContentBlobDataAccess : IImageContentDataAccess
+public class MediaContentBlobDataAccess : IImageContentDataAccess, IVideoContentDataAccess
 {
     private readonly BlobServiceClient _blobServiceClient;
-    private readonly ILogger<ImageContentBlobDataAccess> _log;
+    private readonly ILogger<MediaContentBlobDataAccess> _log;
 
-    public ImageContentBlobDataAccess(BlobConnectionInfo blobConnectionInfo, ILogger<ImageContentBlobDataAccess> log)
+    public MediaContentBlobDataAccess(BlobConnectionInfo blobConnectionInfo, ILogger<MediaContentBlobDataAccess> log)
     {
         _log = log;
 
