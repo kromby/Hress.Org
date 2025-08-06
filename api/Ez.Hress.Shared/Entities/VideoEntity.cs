@@ -1,8 +1,8 @@
 namespace Ez.Hress.Shared.Entities;
 
-public class VideoEntity : EntityBase<int>
+public class VideoEntity : EntityBase<Guid>
 {
-    public VideoEntity(int id, string name, string videoUrl)
+    public VideoEntity(Guid id, string name, string videoUrl)
     {
         ID = id;
         Name = name;
@@ -30,8 +30,8 @@ public class VideoEntity : EntityBase<int>
 
     public void Validate()
     {
-        if (ID < 0)
-            throw new ArgumentException("Can not be a negative number.", nameof(ID));
+        if (ID != Guid.Empty)
+            throw new ArgumentException("Can not be a empty.", nameof(ID));
 
         if (string.IsNullOrWhiteSpace(Name))
             throw new ArgumentException("Can not be null or empty.", nameof(Name));

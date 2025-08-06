@@ -39,7 +39,8 @@ public class MediaContentBlobDataAccess : IImageContentDataAccess, IVideoContent
         {
             var stringSplit = path.Replace(Prefix.ToUpper(), "").Split('/');
             var container = stringSplit[0];
-            var id = stringSplit[1];
+            var id = path.Replace(Prefix.ToUpper(), "").Replace($"{container}/", "");
+            //stringSplit[1];
 
             // Get the container client object
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(container);
@@ -56,7 +57,7 @@ public class MediaContentBlobDataAccess : IImageContentDataAccess, IVideoContent
         }
         catch (RequestFailedException rfex)
         {
-            _log.LogError(rfex, "[{Class}] Image not found '{Path}'", this.GetType().Name, path);
+            _log.LogError(rfex, "[{Class}] Media not found '{Path}'", this.GetType().Name, path);
             return null;
         }
     }

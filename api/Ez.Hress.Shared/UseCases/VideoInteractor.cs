@@ -16,16 +16,16 @@ public class VideoInteractor
         _log = log;
     }
 
-    public async Task<VideoEntity?> GetVideoAsync(int id)
+    public Task<VideoEntity?> GetVideoAsync(Guid id)
     {
         _log.LogInformation("[{Class}] Getting video: '{ID}'", nameof(VideoInteractor), id);
-        return await _videosDataAccess.GetVideo(id);
+        return Task.FromResult(_videosDataAccess.GetVideo(id));
     }
 
-    public async Task<VideoEntity?> GetContentAsync(int id)
+    public async Task<VideoEntity?> GetContentAsync(Guid id)
     {
         _log.LogInformation("[{Class}] Getting content for video: '{ID}'", nameof(VideoInteractor), id);
-        if (id < 0)
+        if (id == Guid.Empty)
         {
             _log.LogInformation("[{Class}] Invalid id: '{ID}'", nameof(VideoInteractor), id);
             throw new ArgumentNullException(nameof(id));
@@ -38,7 +38,7 @@ public class VideoInteractor
             return video;
         }
 
-        string path = video.VideoUrl;
+        string path = Path.Join("video", video.VideoUrl);
         // For videos, we typically don't want to load the entire content into memory
         // Instead, we'll populate metadata and provide streaming capabilities
         video.Content = await _contentDataAccess.GetContent(path);

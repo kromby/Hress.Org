@@ -139,6 +139,8 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
 
     // Video
     services.AddSingleton<IVideoContentDataAccess, MediaContentBlobDataAccess>();
+    services.AddSingleton<IVideoInfoDataAccess, VideoInfoTableAccess>();
+    services.AddSingleton<VideoInteractor>();
 
     // Albums
     services.AddSingleton<IAlbumDataAccess, AlbumSqlDataAccess>();
