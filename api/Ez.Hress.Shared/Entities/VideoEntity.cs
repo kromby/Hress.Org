@@ -7,6 +7,8 @@ public class VideoEntity : EntityBase<Guid>
         ID = id;
         Name = name;
         VideoUrl = videoUrl;
+
+        Validate();
     }
 
     public string VideoUrl { get; set; }
@@ -30,13 +32,13 @@ public class VideoEntity : EntityBase<Guid>
 
     public void Validate()
     {
-        if (ID != Guid.Empty)
+        if (ID == Guid.Empty)
             throw new ArgumentException("Can not be a empty.", nameof(ID));
 
         if (string.IsNullOrWhiteSpace(Name))
             throw new ArgumentException("Can not be null or empty.", nameof(Name));
 
-        if (Content == null)
-            throw new ArgumentException("Can not be null.", nameof(Content));
+        if (string.IsNullOrWhiteSpace(VideoUrl))
+            throw new ArgumentException("Can not be null or empty.", nameof(VideoUrl));
     }
 }

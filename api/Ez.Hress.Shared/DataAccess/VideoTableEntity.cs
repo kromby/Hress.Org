@@ -16,8 +16,9 @@ internal class VideoTableEntity : ITableEntity
 
     public VideoTableEntity(VideoEntity entity)
     {
-        PartitionKey = entity.ID.ToString();
-        RowKey = entity.VideoUrl[..entity.VideoUrl.IndexOf('/')];
+        RowKey = entity.ID.ToString();
+        var pathIndex = entity.VideoUrl.IndexOf('/');
+        PartitionKey = pathIndex > 0 ? entity.VideoUrl[..pathIndex] : "Default";
         Name = entity.Name ?? string.Empty;
         VideoUrl = entity.VideoUrl;
     }

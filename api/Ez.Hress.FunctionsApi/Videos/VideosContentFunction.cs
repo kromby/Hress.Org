@@ -10,7 +10,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 
-namespace Ez.Hress.FunctionsApi.Images;
+namespace Ez.Hress.FunctionsApi.Videos;
 
 public class VideosContentFunction
 {
@@ -40,7 +40,8 @@ public class VideosContentFunction
             return new NotFoundResult();
         }
 
-        req.HttpContext.Response.Headers.ContentDisposition  = $"inline; filename={entity.ID}.jpg";
+        var fileName = entity.VideoUrl.Split('/').Last();
+        req.HttpContext.Response.Headers.ContentDisposition  = $"inline; filename={fileName}";
         return new FileContentResult(entity.Content, new MediaTypeHeaderValue("video/mp4"));
     }
 }

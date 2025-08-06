@@ -7,18 +7,25 @@ namespace Ez.Hress.Shared.DataAccess;
 
 public class VideoInfoTableAccess(BlobConnectionInfo connectionInfo, ILogger<VideoInfoTableAccess> log) : IVideoInfoDataAccess
 {
-    private readonly TableClient _tableClient = new TableClient(connectionInfo.ConnectionString, "Videos");
+    private readonly TableClient _tableClient = new (connectionInfo.ConnectionString, "Videos");
 
-    public VideoEntity? GetVideo(Guid id)
+    public async Task<VideoEntity?> GetVideoAsync(Guid id)
     {
-        log.LogInformation("[{Class}] GetVideo", this.GetType().Name);
-        var result = _tableClient.Query<VideoTableEntity>(v => v.RowKey == id.ToString());
+        log.LogInformation("[{Class}] GetVideoAsync", this.GetType().Name);
+        var result = _tableClient.QueryAsync<VideoTableEntity>(v => v.RowKey == id.ToString());
 
-        if(result.Count() != 1)
+        var resultList = new List<VideoTableEntity>();
+        await foreach (var entity in result)
+        {
+            resultList.Add(entity);
+            if (resultList.Count >= 2) break; // Take at most 2 items
+        }
+
+        if(resultList.Count != 1)
             return null;
 
-        var entity = result.First();
-            var video = new VideoEntity(Guid.Parse(entity.RowKey), entity.Name, Path.Join(entity.PartitionKey, entity.VideoUrl));
+        var videoEntity = resultList.First();
+        var video = new VideoEntity(Guid.Parse(videoEntity.RowKey), videoEntity.Name, Path.Join(videoEntity.PartitionKey, videoEntity.VideoUrl));
 
        return video;
     }
