@@ -26,9 +26,6 @@ public class MediaContentBlobDataAccess : IImageContentDataAccess, IVideoContent
             _log.LogError(ex, "[{Class}] Exception '{Exception}'", this.GetType().Name, ex.Message);
             throw;
         }
-
-        _log.LogDebug("[{Class}] constructor executed", this.GetType().Name);
-
     }
 
     public string Prefix { get => "blob:/"; }
