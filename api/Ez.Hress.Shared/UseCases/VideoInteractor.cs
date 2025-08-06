@@ -38,7 +38,7 @@ public class VideoInteractor
             return video;
         }
 
-        string path = Path.Join("video", video.VideoUrl);
+        string path = $"video/{video.VideoUrl}";
         // For videos, we typically don't want to load the entire content into memory
         // Instead, we'll populate metadata and provide streaming capabilities
         video.Content = await _contentDataAccess.GetContent(path);

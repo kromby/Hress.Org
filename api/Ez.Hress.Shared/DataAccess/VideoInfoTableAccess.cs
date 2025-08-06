@@ -25,7 +25,7 @@ public class VideoInfoTableAccess(BlobConnectionInfo connectionInfo, ILogger<Vid
             return null;
 
         var videoEntity = resultList.First();
-        var video = new VideoEntity(Guid.Parse(videoEntity.RowKey), videoEntity.Name, Path.Join(videoEntity.PartitionKey, videoEntity.VideoUrl));
+        var video = new VideoEntity(Guid.Parse(videoEntity.RowKey), videoEntity.Name, $"{videoEntity.PartitionKey}/{videoEntity.VideoUrl}");
 
        return video;
     }
