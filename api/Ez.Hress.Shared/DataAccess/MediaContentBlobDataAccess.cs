@@ -42,6 +42,8 @@ public class MediaContentBlobDataAccess : IImageContentDataAccess, IVideoContent
             var id = path.Replace(Prefix.ToUpper(), "").Replace($"{container}/", "");
             //stringSplit[1];
 
+            _log.LogInformation("[{Class}] Get blob {id} from container {container}", this.GetType().Name, id, container);
+
             // Get the container client object
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(container);
 
