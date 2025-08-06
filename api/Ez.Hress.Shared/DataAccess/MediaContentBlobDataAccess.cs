@@ -26,9 +26,6 @@ public class MediaContentBlobDataAccess : IImageContentDataAccess, IVideoContent
             _log.LogError(ex, "[{Class}] Exception '{Exception}'", this.GetType().Name, ex.Message);
             throw;
         }
-
-        _log.LogDebug("[{Class}] constructor executed", this.GetType().Name);
-
     }
 
     public string Prefix { get => "blob:/"; }
@@ -41,6 +38,8 @@ public class MediaContentBlobDataAccess : IImageContentDataAccess, IVideoContent
             var container = stringSplit[0];
             var id = path.Replace(Prefix.ToUpper(), "").Replace($"{container}/", "");
             //stringSplit[1];
+
+            _log.LogInformation("[{Class}] Get blob {id} from container {container}", this.GetType().Name, id, container);
 
             // Get the container client object
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(container);
