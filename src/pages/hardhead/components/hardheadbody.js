@@ -12,6 +12,7 @@ const HardheadBody = ({
   viewGuests,
   imageHeight,
   movie,
+  dateShown,
 }) => {
   const [showNight, setShowNight] = useState(true);
   const [showMovie, setShowMovie] = useState(true);
@@ -51,7 +52,9 @@ const HardheadBody = ({
         </p>
       </section>
     ) : null,
-    showMovie ? <Movie key="movie" id={id} movie={movie} /> : null,
+    showMovie ? (
+      <Movie key="movie" id={id} movie={movie} dateShown={dateShown} />
+    ) : null,
     showGuests ? <Guests key="2" hardheadID={id} /> : null,
     <p key="3" />,
   ];
