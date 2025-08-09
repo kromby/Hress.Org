@@ -200,8 +200,8 @@ public class MovieSqlAccess : IMovieDataAccess
         
         try
         {
-            var result = await _movieModel.SaveChangesAsync();
-            return result > 0;
+            await _movieModel.SaveChangesAsync();
+            return true;
         }
         finally
         {

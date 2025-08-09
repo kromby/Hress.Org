@@ -80,6 +80,7 @@ const NightOfTheYear = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
                   viewGuests
                   movie={hardhead.movie}
                   imageHeight={"270px"}
+                  dateShown={hardhead.date}
                 />
               }
               actions={<ul className="actions" />}

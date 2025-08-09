@@ -10,12 +10,7 @@ import { useHardhead } from "../../../../hooks/hardhead/useHardhead";
 import { ElectionModuleProps } from ".";
 import { HardheadNight } from "../../../../types/hardheadNight";
 
-const MovieOfTheYear = ({
-  ID,
-  Name,
-  Href,
-  onSubmit,
-}: ElectionModuleProps) => {
+const MovieOfTheYear = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
   const { authTokens } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
@@ -67,30 +62,35 @@ const MovieOfTheYear = ({
 
       {nights
         ? nights.map((hardhead: HardheadNight) => (
-          <Post
-            key={hardhead.id}
-            id={hardhead.id}
-            title={hardhead.name}
-            date={hardhead.date}
-            dateFormatted={hardhead.dateString}
-            body={
-              <HardheadBody
-                id={hardhead.id}
-                name={hardhead.name}
-                description={hardhead.description}
-                viewMovie
-                viewNight={false}
-                viewGuests={false}
-                imageHeight={"270px"}
-                movie={hardhead.movie}
-              />
-            }
-            actions={<ul className="actions" />}
-            stats={
-              <HardheadRating id={hardhead.id} nightRatingVisible={false} movieRatingVisible />
-            }
-          />
-        ))
+            <Post
+              key={hardhead.id}
+              id={hardhead.id}
+              title={hardhead.name}
+              date={hardhead.date}
+              dateFormatted={hardhead.dateString}
+              body={
+                <HardheadBody
+                  id={hardhead.id}
+                  name={hardhead.name}
+                  description={hardhead.description}
+                  viewMovie
+                  viewNight={false}
+                  viewGuests={false}
+                  imageHeight={"270px"}
+                  movie={hardhead.movie}
+                  dateShown={hardhead.date}
+                />
+              }
+              actions={<ul className="actions" />}
+              stats={
+                <HardheadRating
+                  id={hardhead.id}
+                  nightRatingVisible={false}
+                  movieRatingVisible
+                />
+              }
+            />
+          ))
         : null}
 
       <ul className="actions pagination">

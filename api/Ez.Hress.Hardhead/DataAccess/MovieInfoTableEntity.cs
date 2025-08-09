@@ -15,6 +15,13 @@ internal class MovieInfoTableEntity : ITableEntity
     {
         PartitionKey = string.Empty;
         RowKey = string.Empty;
+        Rated = string.Empty;
+        Description = string.Empty;
+        Country = string.Empty;
+        Awards = string.Empty;
+        Genre = string.Empty;
+        Language = string.Empty;
+        Ratings = string.Empty;
     }
 
     public MovieInfoTableEntity(MovieInfo movieInfo)
@@ -28,18 +35,23 @@ internal class MovieInfoTableEntity : ITableEntity
         Age = movieInfo.Age;
         Runtime = movieInfo.Runtime;        
         Country = movieInfo.Country;
+        
+        // Serialize collections for storage: Genre/Language as comma-separated values, Ratings as JSON
+        Genre = movieInfo.Genre?.Any() == true 
+            ? string.Join(", ", movieInfo.Genre) 
+            : string.Empty;
+        Language = movieInfo.Language?.Any() == true 
+            ? string.Join(", ", movieInfo.Language) 
+            : string.Empty;
+        Ratings = movieInfo.Ratings?.Any() == true 
+            ? System.Text.Json.JsonSerializer.Serialize(movieInfo.Ratings) 
+            : string.Empty;
 
 
 
-        if (movieInfo.Description != null)
-        {
-            Description = movieInfo.Description;
-        }
+        Description = movieInfo.Description ?? string.Empty;
 
-        if(movieInfo.Awards != null)
-        {
-            Awards = movieInfo.Awards;
-        }
+        Awards = movieInfo.Awards ?? string.Empty;
 
         if (movieInfo.DVDReleased != null)
         {
@@ -90,6 +102,9 @@ internal class MovieInfoTableEntity : ITableEntity
     public string? BoxOffice { get; set; }
     public string? Production { get; set; }
     public string? Website { get; set; }
+    public string Genre { get; set; } = string.Empty;
+    public string Language { get; set; } = string.Empty;
+    public string Ratings { get; set; } = string.Empty;
 
     public string PartitionKey { get; set; }
     public string RowKey { get; set; }
