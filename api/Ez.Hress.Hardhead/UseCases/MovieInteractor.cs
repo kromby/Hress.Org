@@ -53,6 +53,12 @@ public class MovieInteractor
         return await _movieInformationDataAccess.SaveMovieInformationAsync(movieInfo);
     }
 
+    public async Task<MovieInfo?> GetMovieInformationAsync(int movieId)
+    {
+        _log.LogInformation("Getting movie information for ID: {MovieId}", movieId);
+        return await _movieInformationDataAccess.GetMovieInformationAsync(movieId);
+    }
+
     /// <summary>
     /// Updates a movie with the provided information.
     /// </summary>

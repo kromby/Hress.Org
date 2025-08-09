@@ -16,10 +16,10 @@ public class MovieInfo : EntityBase<int>
         Rated = rated;
         Country = country;
         Inserted = DateTime.UtcNow; 
-        Genre = new List<string>();
-        Crew = new List<CrewMember>();
-        Language = new List<string>();
-        Ratings = new Dictionary<string, string>();
+        Genre = [];
+        Crew = [];
+        Language = [];
+        Ratings = [];
     }
 
     public int Year { get; set; }
@@ -31,9 +31,6 @@ public class MovieInfo : EntityBase<int>
     public IList<string> Genre { get; set; }
 
     public IList<CrewMember> Crew { get; set; }
-    //public IList<string> Director { get; set; }
-    //public IList<string> Writer { get; set; }
-    //public IList<string> Actors { get; set; }
     public IList<string> Language { get; set; }
     public string Country { get; set; }
     public string? Awards { get; set; }

@@ -15,6 +15,13 @@ internal class MovieInfoTableEntity : ITableEntity
     {
         PartitionKey = string.Empty;
         RowKey = string.Empty;
+        Rated = string.Empty;
+        Description = string.Empty;
+        Country = string.Empty;
+        Awards = string.Empty;
+        Genre = string.Empty;
+        Language = string.Empty;
+        Ratings = string.Empty;
     }
 
     public MovieInfoTableEntity(MovieInfo movieInfo)
@@ -28,6 +35,17 @@ internal class MovieInfoTableEntity : ITableEntity
         Age = movieInfo.Age;
         Runtime = movieInfo.Runtime;        
         Country = movieInfo.Country;
+        
+        // Serialize collections as JSON strings for storage
+        Genre = movieInfo.Genre != null && movieInfo.Genre.Any() 
+            ? string.Join(", ", movieInfo.Genre) 
+            : string.Empty;
+        Language = movieInfo.Language != null && movieInfo.Language.Any() 
+            ? string.Join(", ", movieInfo.Language) 
+            : string.Empty;
+        Ratings = movieInfo.Ratings != null && movieInfo.Ratings.Any() 
+            ? System.Text.Json.JsonSerializer.Serialize(movieInfo.Ratings) 
+            : string.Empty;
 
 
 
@@ -90,6 +108,9 @@ internal class MovieInfoTableEntity : ITableEntity
     public string? BoxOffice { get; set; }
     public string? Production { get; set; }
     public string? Website { get; set; }
+    public string Genre { get; set; } = string.Empty;
+    public string Language { get; set; } = string.Empty;
+    public string Ratings { get; set; } = string.Empty;
 
     public string PartitionKey { get; set; }
     public string RowKey { get; set; }
