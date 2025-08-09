@@ -59,12 +59,20 @@ const Movie = ({ movie, id, dateShown }: MovieProps) => {
           {movie.name}
         </a>
       </h4>
-      <span key="movie0" style={{ color: "lightgray" }}>
-        {movieInfo?.year}
+      <span
+        key="movie0"
+        style={{
+          color: "#999999",
+          fontSize: "0.9em",
+          display: "block",
+          marginTop: "-0.5rem",
+        }}
+      >
+        {movieInfo?.year ? `frá ${movieInfo.year}` : null}
         {movieAge !== null &&
           (movieAge === 0
-            ? " - Glæný"
-            : ` - ${movieAge} ${
+            ? ", glæný"
+            : `, ${movieAge} ${
                 movieAge % 10 === 1 && movieAge % 100 !== 11 ? "árs" : "ára"
               } gömul`)}
         {movieInfo?.runtime ? ` - ${movieInfo?.runtime} mín` : null}
