@@ -36,28 +36,22 @@ internal class MovieInfoTableEntity : ITableEntity
         Runtime = movieInfo.Runtime;        
         Country = movieInfo.Country;
         
-        // Serialize collections as JSON strings for storage
-        Genre = movieInfo.Genre != null && movieInfo.Genre.Any() 
+        // Serialize collections for storage: Genre/Language as comma-separated values, Ratings as JSON
+        Genre = movieInfo.Genre?.Any() == true 
             ? string.Join(", ", movieInfo.Genre) 
             : string.Empty;
-        Language = movieInfo.Language != null && movieInfo.Language.Any() 
+        Language = movieInfo.Language?.Any() == true 
             ? string.Join(", ", movieInfo.Language) 
             : string.Empty;
-        Ratings = movieInfo.Ratings != null && movieInfo.Ratings.Any() 
+        Ratings = movieInfo.Ratings?.Any() == true 
             ? System.Text.Json.JsonSerializer.Serialize(movieInfo.Ratings) 
             : string.Empty;
 
 
 
-        if (movieInfo.Description != null)
-        {
-            Description = movieInfo.Description;
-        }
+        Description = movieInfo.Description ?? string.Empty;
 
-        if(movieInfo.Awards != null)
-        {
-            Awards = movieInfo.Awards;
-        }
+        Awards = movieInfo.Awards ?? string.Empty;
 
         if (movieInfo.DVDReleased != null)
         {

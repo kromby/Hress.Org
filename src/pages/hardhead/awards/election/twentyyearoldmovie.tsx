@@ -42,12 +42,19 @@ const TwentyYearOldMovie = ({
       await axios.post(url, [{ EventID: ID, Value: value }], {
         headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
       });
+      // Only call onSubmit if the request succeeds
+      onSubmit();
     } catch (e) {
       console.error(e);
-      setError(`Villa við að kjósa mynd ${e}`);
+      // Extract meaningful error message
+      const errorMessage =
+        e instanceof Error
+          ? e.message
+          : (e as any)?.response?.data?.message ||
+            (e as any)?.response?.statusText ||
+            "Óþekkt villa";
+      setError(`Villa við að kjósa mynd: ${errorMessage}`);
     }
-
-    onSubmit();
   };
 
   const handleChange = (event: number) => {

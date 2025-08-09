@@ -11,11 +11,7 @@ interface MovieProps {
 
 const Movie = ({ movie, id, dateShown }: MovieProps) => {
   const [trailerOpen, setTrailerOpen] = useState<boolean>(false);
-  const {
-    movieInfo,
-    loading: movieInfoLoading,
-    fetchMovieInfo,
-  } = useMovieInfo();
+  const { movieInfo, fetchMovieInfo } = useMovieInfo();
 
   const opts = {
     // width: '800',
@@ -39,6 +35,8 @@ const Movie = ({ movie, id, dateShown }: MovieProps) => {
 
       return () => clearTimeout(timeoutId);
     }
+
+    return undefined;
   }, [id, movie, fetchMovieInfo]);
 
   // Calculate movie age when it was shown
@@ -65,11 +63,11 @@ const Movie = ({ movie, id, dateShown }: MovieProps) => {
             {` (${movieInfo.year}`}
             {movieAge !== null &&
               (movieAge === 0
-                ? `, glæný`
+                ? ", glæný"
                 : `, ${movieAge} ${
                     movieAge % 10 === 1 && movieAge % 100 !== 11 ? "árs" : "ára"
                   } gömul`)}
-            {`)`}
+            {")"}
           </>
         )}
       </h4>

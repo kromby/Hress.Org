@@ -210,7 +210,13 @@ public class MovieInformationDataAccess : IMovieInformationDataAccess
                 await foreach (var crewEntity in crewResponse)
                 {
                     var crewName = crewEntity.RowKey;
-                    var role = Enum.Parse<Role>(relation.Role);
+                    
+                    // Try to parse the role enum, skip if invalid
+                    if (!Enum.TryParse<Role>(relation.Role, out var role))
+                    {
+                        continue; // Skip this crew member if role is invalid
+                    }
+                    
                     var crewRoleKey = $"{crewName}|{role}"; // Unique key for name+role combination
                     
                     // Only add if we haven't seen this exact name+role combination
