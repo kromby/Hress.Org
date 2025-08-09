@@ -58,19 +58,17 @@ const Movie = ({ movie, id, dateShown }: MovieProps) => {
         <a href={movie.imdbUrl} target="_blank" rel="noopener noreferrer">
           {movie.name}
         </a>
-        {movieInfo?.year && (
-          <>
-            {` (${movieInfo.year}`}
-            {movieAge !== null &&
-              (movieAge === 0
-                ? ", glæný"
-                : `, ${movieAge} ${
-                    movieAge % 10 === 1 && movieAge % 100 !== 11 ? "árs" : "ára"
-                  } gömul`)}
-            {")"}
-          </>
-        )}
       </h4>
+      <span key="movie0" style={{ color: "lightgray" }}>
+        {movieInfo?.year}
+        {movieAge !== null &&
+          (movieAge === 0
+            ? " - Glæný"
+            : ` - ${movieAge} ${
+                movieAge % 10 === 1 && movieAge % 100 !== 11 ? "árs" : "ára"
+              } gömul`)}
+        {movieInfo?.runtime ? ` - ${movieInfo?.runtime} mín` : null}
+      </span>
       <p key="movie1">
         {movie.actor}
         {movie.hardheadKillCount || movie.movieKillCount ? " (" : null}
