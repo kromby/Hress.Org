@@ -6,6 +6,9 @@ public class Translation
 {
     public Translation(string sourceText, string translatedText, string sourceLanguage)
     {
+        if (string.IsNullOrWhiteSpace(sourceText)) throw new ArgumentException("sourceText is required", nameof(sourceText));
+        if (string.IsNullOrWhiteSpace(translatedText)) throw new ArgumentException("translatedText is required", nameof(translatedText));
+        if (string.IsNullOrWhiteSpace(sourceLanguage)) throw new ArgumentException("sourceLanguage is required", nameof(sourceLanguage));
         SourceText = sourceText;
         TranslatedText = translatedText;
         SourceLanguage = sourceLanguage;

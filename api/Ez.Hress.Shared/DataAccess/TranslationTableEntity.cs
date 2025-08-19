@@ -1,7 +1,6 @@
 using Azure;
 using Azure.Data.Tables;
 using Ez.Hress.Shared.Entities;
-using System.Web;
 
 namespace Ez.Hress.Shared.DataAccess;
 
@@ -18,7 +17,7 @@ internal class TranslationTableEntity : ITableEntity
     public TranslationTableEntity(Translation translation)
     {
         PartitionKey = translation.SourceLanguage;
-        RowKey = HttpUtility.UrlEncode(translation.SourceText);
+        RowKey = Uri.EscapeDataString(translation.SourceText);
         TranslatedText = translation.TranslatedText;
         SourceLanguage = translation.SourceLanguage;
         Inserted = translation.Inserted;
