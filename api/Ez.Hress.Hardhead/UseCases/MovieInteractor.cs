@@ -1,4 +1,5 @@
 ﻿using Ez.Hress.Hardhead.Entities;
+using Ez.Hress.Shared.UseCases;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
@@ -9,12 +10,14 @@ public class MovieInteractor
 {
     private readonly IMovieDataAccess _movieDataAccess;
     private readonly IMovieInformationDataAccess _movieInformationDataAccess;
+    private readonly ITranslationService _translationService;
     private readonly ILogger<MovieInteractor> _log;
 
-    public MovieInteractor(IMovieDataAccess movieDataAccess, IMovieInformationDataAccess movieInformationDataAccess, ILogger<MovieInteractor> log)
+    public MovieInteractor(IMovieDataAccess movieDataAccess, IMovieInformationDataAccess movieInformationDataAccess, ITranslationService translationService, ILogger<MovieInteractor> log)
     {
         _movieDataAccess = movieDataAccess;
         _movieInformationDataAccess = movieInformationDataAccess;
+        _translationService = translationService;
         _log = log;
     }
 
@@ -50,7 +53,59 @@ public class MovieInteractor
         movieInfo.Inserted = DateTime.UtcNow;
         movieInfo.Age = hardheadDate.Subtract(movieInfo.Released).Days / 365;
 
+        // Translate movie information fields to Icelandic
+        await TranslateMovieInfoAsync(movieInfo);
+
         return await _movieInformationDataAccess.SaveMovieInformationAsync(movieInfo);
+    }
+
+    private async Task TranslateMovieInfoAsync(MovieInfo movieInfo)
+    {
+        try
+        {
+            _log.LogInformation("Translating movie information fields for movie: {MovieName}", movieInfo.Name);
+
+            // Translate Country
+            if (!string.IsNullOrWhiteSpace(movieInfo.Country))
+            {
+                var originalCountry = movieInfo.Country;
+                movieInfo.Country = await _translationService.TranslateAsync(movieInfo.Country, "en");
+                _log.LogInformation("Translated Country: '{Original}' -> '{Translated}'", originalCountry, movieInfo.Country);
+            }
+
+            // Translate Genre list
+            if (movieInfo.Genre != null && movieInfo.Genre.Count > 0)
+            {
+                var originalGenres = new List<string>(movieInfo.Genre);
+                var translatedGenres = await _translationService.TranslateListAsync(movieInfo.Genre, "en");
+                movieInfo.Genre = translatedGenres;
+                _log.LogInformation("Translated Genres: '{Original}' -> '{Translated}'", string.Join(", ", originalGenres), string.Join(", ", translatedGenres));
+            }
+
+            // Translate Language list
+            if (movieInfo.Language != null && movieInfo.Language.Count > 0)
+            {
+                var originalLanguages = new List<string>(movieInfo.Language);
+                var translatedLanguages = await _translationService.TranslateListAsync(movieInfo.Language, "en");
+                movieInfo.Language = translatedLanguages;
+                _log.LogInformation("Translated Languages: '{Original}' -> '{Translated}'", string.Join(", ", originalLanguages), string.Join(", ", translatedLanguages));
+            }
+
+            // Translate Awards
+            if (!string.IsNullOrWhiteSpace(movieInfo.Awards))
+            {
+                var originalAwards = movieInfo.Awards;
+                movieInfo.Awards = await _translationService.TranslateAsync(movieInfo.Awards, "en");
+                _log.LogInformation("Translated Awards: '{Original}' -> '{Translated}'", originalAwards, movieInfo.Awards);
+            }
+
+            _log.LogInformation("Completed translation of movie information for: {MovieName}", movieInfo.Name);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "Error translating movie information for movie: {MovieName}", movieInfo.Name);
+            // Continue with original text if translation fails
+        }
     }
 
     public async Task<MovieInfo?> GetMovieInformationAsync(int movieId)
