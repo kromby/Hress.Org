@@ -92,12 +92,30 @@ public class MovieFunctions
     }
 
     [Function("MovieInformation")]
-    public async Task<IActionResult> RunMovieInfoAsync([HttpTrigger(AuthorizationLevel.Function, "post", "put", Route = "movies/{id:int}/info")] HttpRequest req, int id)
+    public async Task<IActionResult> RunMovieInfoAsync([HttpTrigger(AuthorizationLevel.Function, "get", "post", "put", Route = "movies/{id:int}/info")] HttpRequest req, int id)
     {
         var methodName = nameof(RunMovieInfoAsync);
         _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, methodName);
 
-        if (HttpMethods.IsPost(req.Method) || HttpMethods.IsPut(req.Method))
+        if (HttpMethods.IsGet(req.Method))
+        {
+            try
+            {
+                var movieInfo = await _movieInteractor.GetMovieInformationAsync(id);
+                if (movieInfo == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                return new OkObjectResult(movieInfo);
+            }
+            catch (Exception ex)
+            {
+                _log.LogError(ex, "[{Class}.{Method}] Error retrieving movie information.", _class, methodName);
+                throw;
+            }
+        }
+        else if (HttpMethods.IsPost(req.Method) || HttpMethods.IsPut(req.Method))
         {
             try
             {

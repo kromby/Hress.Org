@@ -1,0 +1,5 @@
+### Get video content - Blob
+GET {{host}}/api/videos/29ec2508-532e-4e08-94dc-230c6664fb2a/content
+
+### Get video content - faulty?
+GET {{host}}/api/videos/267245/content

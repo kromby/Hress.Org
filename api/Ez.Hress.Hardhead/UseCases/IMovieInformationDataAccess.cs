@@ -10,4 +10,5 @@ namespace Ez.Hress.Hardhead.UseCases;
 public interface IMovieInformationDataAccess
 {
     Task<bool> SaveMovieInformationAsync(MovieInfo movieInfo);
+    Task<MovieInfo?> GetMovieInformationAsync(int movieId);
 }

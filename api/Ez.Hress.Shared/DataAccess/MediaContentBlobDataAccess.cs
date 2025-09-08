@@ -7,12 +7,12 @@ using Microsoft.Extensions.Logging;
 
 namespace Ez.Hress.Shared.DataAccess;
 
-public class ImageContentBlobDataAccess : IImageContentDataAccess
+public class MediaContentBlobDataAccess : IImageContentDataAccess, IVideoContentDataAccess
 {
     private readonly BlobServiceClient _blobServiceClient;
-    private readonly ILogger<ImageContentBlobDataAccess> _log;
+    private readonly ILogger<MediaContentBlobDataAccess> _log;
 
-    public ImageContentBlobDataAccess(BlobConnectionInfo blobConnectionInfo, ILogger<ImageContentBlobDataAccess> log)
+    public MediaContentBlobDataAccess(BlobConnectionInfo blobConnectionInfo, ILogger<MediaContentBlobDataAccess> log)
     {
         _log = log;
 
@@ -26,9 +26,6 @@ public class ImageContentBlobDataAccess : IImageContentDataAccess
             _log.LogError(ex, "[{Class}] Exception '{Exception}'", this.GetType().Name, ex.Message);
             throw;
         }
-
-        _log.LogDebug("[{Class}] constructor executed", this.GetType().Name);
-
     }
 
     public string Prefix { get => "blob:/"; }
@@ -39,7 +36,10 @@ public class ImageContentBlobDataAccess : IImageContentDataAccess
         {
             var stringSplit = path.Replace(Prefix.ToUpper(), "").Split('/');
             var container = stringSplit[0];
-            var id = stringSplit[1];
+            var id = path.Replace(Prefix.ToUpper(), "").Replace($"{container}/", "");
+            //stringSplit[1];
+
+            _log.LogInformation("[{Class}] Get blob {id} from container {container}", this.GetType().Name, id, container);
 
             // Get the container client object
             BlobContainerClient containerClient = _blobServiceClient.GetBlobContainerClient(container);
@@ -56,7 +56,7 @@ public class ImageContentBlobDataAccess : IImageContentDataAccess
         }
         catch (RequestFailedException rfex)
         {
-            _log.LogError(rfex, "[{Class}] Image not found '{Path}'", this.GetType().Name, path);
+            _log.LogError(rfex, "[{Class}] Media not found '{Path}'", this.GetType().Name, path);
             return null;
         }
     }

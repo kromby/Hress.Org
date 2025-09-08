@@ -1,14 +1,21 @@
 {
     "version": "0.2.0",
     "configurations": [
+        
+        {
+            "name": "C#: Ez.Hress.FunctionsApi Debug",
+            "type": "dotnet",
+            "request": "launch",
+            "projectPath": "${workspaceFolder}/api/Ez.Hress.FunctionsApi/Ez.Hress.FunctionsApi.csproj"
+        },
         {
             "name": ".NET Core Launch (console)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/api/Ez.Hress.UnitTest/bin/Debug/net6.0/Ez.Hress.UnitTest.dll",
+            "program": "${workspaceFolder}/api/Ez.Hress.FunctionsApi/bin/Debug/net6.0/Ez.Hress.FunctionsApi.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/api/Ez.Hress.UnitTest",
+            "cwd": "${workspaceFolder}/api/Ez.Hress.FunctionsApi",
             "console": "internalConsole",
             "stopAtEntry": false
         },
