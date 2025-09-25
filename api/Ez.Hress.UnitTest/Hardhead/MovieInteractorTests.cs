@@ -1,5 +1,6 @@
 using Ez.Hress.Hardhead.Entities;
 using Ez.Hress.Hardhead.UseCases;
+using Ez.Hress.Shared.UseCases;
 using Microsoft.Extensions.Logging;
 using Moq;
 using System;
@@ -12,12 +13,14 @@ public class MovieInteractorTests
 {
     private readonly Mock<IMovieDataAccess> _movieDataAccess;
     private readonly Mock<IMovieInformationDataAccess> _movieInfoDataAccess;
+    private readonly Mock<ITranslationService> _translationService;
     private readonly Mock<ILogger<MovieInteractor>> _log;
 
     public MovieInteractorTests()
     {
         _movieDataAccess = new Mock<IMovieDataAccess>();
         _movieInfoDataAccess = new Mock<IMovieInformationDataAccess>();
+        _translationService = new Mock<ITranslationService>();
         _log = new Mock<ILogger<MovieInteractor>>();
     }
 
@@ -45,7 +48,7 @@ public class MovieInteractorTests
             ImdbID = "tt123456"
         };
 
-        var movieInteractor = new MovieInteractor(_movieDataAccess.Object, _movieInfoDataAccess.Object, _log.Object);
+        var movieInteractor = new MovieInteractor(_movieDataAccess.Object, _movieInfoDataAccess.Object, _translationService.Object, _log.Object);
 
         // ACT
         await movieInteractor.SaveMovieInformationAsync(hardheadID, userID, hardheadDate, movieInfo);

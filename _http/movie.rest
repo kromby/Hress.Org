@@ -67,3 +67,6 @@ X-Custom-Authorization: token {{apiToken}}
   "Website": "N/A",
   "Response": "True"
 }
+
+### Get detailed movie information
+GET {{host}}/api/movies/5444/info
