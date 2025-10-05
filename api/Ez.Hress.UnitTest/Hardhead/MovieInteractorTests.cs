@@ -13,14 +13,14 @@ public class MovieInteractorTests
 {
     private readonly Mock<IMovieDataAccess> _movieDataAccess;
     private readonly Mock<IMovieInformationDataAccess> _movieInfoDataAccess;
-    private readonly Mock<ITranslationService> _translationService;
+    private readonly Mock<TranslationService> _translationService;
     private readonly Mock<ILogger<MovieInteractor>> _log;
 
     public MovieInteractorTests()
     {
         _movieDataAccess = new Mock<IMovieDataAccess>();
         _movieInfoDataAccess = new Mock<IMovieInformationDataAccess>();
-        _translationService = new Mock<ITranslationService>();
+        _translationService = new Mock<TranslationService>();
         _log = new Mock<ILogger<MovieInteractor>>();
     }
 

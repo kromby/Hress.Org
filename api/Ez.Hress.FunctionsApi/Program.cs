@@ -188,5 +188,5 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
     // Translation
     services.AddHttpClient();
     services.AddSingleton<ITranslationDataAccess, TranslationSqlDataAccess>();
-    services.AddSingleton<ITranslationService, TranslationService>();
+    services.AddSingleton<TranslationService>();
 }

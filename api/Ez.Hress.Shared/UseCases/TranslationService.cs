@@ -4,15 +4,23 @@ using Microsoft.Extensions.Logging;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Collections.Concurrent;
 
 namespace Ez.Hress.Shared.UseCases;
 
-public class TranslationService : ITranslationService
+public class TranslationService
 {
     private readonly ITranslationDataAccess _translationDataAccess;
     private readonly ILogger<TranslationService> _log;
     private readonly string _class = nameof(TranslationService);
     private readonly HttpClient _httpClient;
+    
+    // In-memory cache for frequently used translations
+    private readonly ConcurrentDictionary<string, string> _memoryCache = new();
+    private readonly object _cacheLock = new object();
+    private DateTime _lastCacheCleanup = DateTime.UtcNow;
+    private const int CACHE_CLEANUP_INTERVAL_MINUTES = 30;
+    private const int MAX_CACHE_SIZE = 1000;
 
     public TranslationService(ITranslationDataAccess translationDataAccess, ILogger<TranslationService> log, HttpClient httpClient)
     {
@@ -25,20 +33,32 @@ public class TranslationService : ITranslationService
     {
         _log.LogInformation("[{Class}] TranslateAsync for language: {Language}", _class, sourceLanguage);
 
-        // First, try to get from cache
+        // First, try in-memory cache
+        var cacheKey = $"{sourceLanguage}:{text}";
+        if (_memoryCache.TryGetValue(cacheKey, out var memoryCached))
+        {
+            _log.LogInformation("[{Class}] Returning in-memory cached translation", _class);
+            return memoryCached;
+        }
+
+        // Then, try database cache
         var cachedTranslation = await _translationDataAccess.GetTranslationAsync(text, sourceLanguage);
         if (!string.IsNullOrEmpty(cachedTranslation))
         {
-            _log.LogInformation("[{Class}] Returning cached translation", _class);
+            _log.LogInformation("[{Class}] Returning database cached translation", _class);
+            
+            // Add to in-memory cache
+            AddToMemoryCache(cacheKey, cachedTranslation);
             return cachedTranslation;
         }
 
         // If not in cache, translate using external service
         var translatedText = await TranslateWithExternalServiceAsync(text, sourceLanguage);
         
-        // Save to cache (we'll need to create a Translation entity)
+        // Save to both caches
         var translation = new Translation(text, translatedText, sourceLanguage);
         await _translationDataAccess.SaveTranslationAsync(translation);
+        AddToMemoryCache(cacheKey, translatedText);
 
         _log.LogInformation("[{Class}] Translation completed and cached", _class);
         return translatedText;
@@ -46,18 +66,15 @@ public class TranslationService : ITranslationService
 
     public async Task<IList<string>> TranslateListAsync(IList<string> texts, string sourceLanguage)
     {
-        _log.LogInformation("[{Class}] TranslateListAsync for {Count} texts, language: {Language}", 
-            _class, texts.Count, sourceLanguage);
-
-        var results = new List<string>();
+        _log.LogInformation("[{Class}] TranslateListAsync for language: {Language}", _class, sourceLanguage);
         
+        var translations = new List<string>();
         foreach (var text in texts)
         {
             var translatedText = await TranslateAsync(text, sourceLanguage);
-            results.Add(translatedText);
+            translations.Add(translatedText);
         }
-
-        return results;
+        return translations;
     }
 
     public async Task<string?> GetCachedTranslationAsync(string text, string sourceLanguage)
@@ -147,5 +164,33 @@ public class TranslationService : ITranslationService
         public string? Example { get; set; }
         public List<string>? OtherExamples { get; set; }
         public Dictionary<string, List<string>>? Synonyms { get; set; }
+    }
+
+    private void AddToMemoryCache(string cacheKey, string translation)
+    {
+        lock (_cacheLock)
+        {
+            // Cleanup cache if it's getting too large or time has passed
+            if (_memoryCache.Count >= MAX_CACHE_SIZE || 
+                DateTime.UtcNow.Subtract(_lastCacheCleanup).TotalMinutes >= CACHE_CLEANUP_INTERVAL_MINUTES)
+            {
+                CleanupMemoryCache();
+            }
+            
+            _memoryCache.TryAdd(cacheKey, translation);
+        }
+    }
+
+    private void CleanupMemoryCache()
+    {
+        // Remove oldest entries (simple FIFO cleanup)
+        var keysToRemove = _memoryCache.Keys.Take(_memoryCache.Count / 2).ToList();
+        foreach (var key in keysToRemove)
+        {
+            _memoryCache.TryRemove(key, out _);
+        }
+        
+        _lastCacheCleanup = DateTime.UtcNow;
+        _log.LogInformation("[{Class}] Cleaned up memory cache, removed {Count} entries", _class, keysToRemove.Count);
     }
 }
