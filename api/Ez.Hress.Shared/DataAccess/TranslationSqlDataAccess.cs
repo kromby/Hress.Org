@@ -13,6 +13,8 @@ public class TranslationSqlDataAccess : ITranslationDataAccess
 
     public TranslationSqlDataAccess(BlobConnectionInfo connectionInfo, ILogger<TranslationSqlDataAccess> log)
     {
+         var serviceClient = new TableServiceClient(connectionInfo.ConnectionString);
+        serviceClient.CreateTableIfNotExists("Translations");
         _tableClient = new TableClient(connectionInfo.ConnectionString, "Translations");
         _log = log;
     }

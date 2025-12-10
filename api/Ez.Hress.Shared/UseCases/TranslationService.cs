@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Collections.Concurrent;
+using System.Threading;
 
 namespace Ez.Hress.Shared.UseCases;
 
@@ -29,7 +30,7 @@ public class TranslationService
         _httpClient = httpClient;
     }
 
-    public async Task<string> TranslateAsync(string text, string sourceLanguage)
+    public async Task<string> TranslateAsync(string text, string sourceLanguage, CancellationToken cancellationToken = default)
     {
         _log.LogInformation("[{Class}] TranslateAsync for language: {Language}", _class, sourceLanguage);
 
@@ -53,7 +54,7 @@ public class TranslationService
         }
 
         // If not in cache, translate using external service
-        var translatedText = await TranslateWithExternalServiceAsync(text, sourceLanguage);
+        var translatedText = await TranslateWithExternalServiceAsync(text, sourceLanguage, cancellationToken);
         
         // Save to both caches
         var translation = new Translation(text, translatedText, sourceLanguage);
@@ -64,14 +65,14 @@ public class TranslationService
         return translatedText;
     }
 
-    public async Task<IList<string>> TranslateListAsync(IList<string> texts, string sourceLanguage)
+    public async Task<IList<string>> TranslateListAsync(IList<string> texts, string sourceLanguage, CancellationToken cancellationToken = default)
     {
         _log.LogInformation("[{Class}] TranslateListAsync for language: {Language}", _class, sourceLanguage);
         
         var translations = new List<string>();
         foreach (var text in texts)
         {
-            var translatedText = await TranslateAsync(text, sourceLanguage);
+            var translatedText = await TranslateAsync(text, sourceLanguage, cancellationToken);
             translations.Add(translatedText);
         }
         return translations;
@@ -96,7 +97,7 @@ public class TranslationService
         await _translationDataAccess.SaveTranslationAsync(translation);
     }
 
-    public async Task<string> TranslateWithExternalServiceAsync(string text, string sourceLanguage)
+    public async Task<string> TranslateWithExternalServiceAsync(string text, string sourceLanguage, CancellationToken cancellationToken = default)
     {
         try
         {
@@ -105,11 +106,11 @@ public class TranslationService
             var encodedText = Uri.EscapeDataString(text);
             var url = $"https://ftapi.pythonanywhere.com/translate?sl={sourceLanguage}&dl=is&text={encodedText}";
             
-            var response = await _httpClient.GetAsync(url);
+            var response = await _httpClient.GetAsync(url, cancellationToken);
             
             if (response.IsSuccessStatusCode)
             {
-                var responseContent = await response.Content.ReadAsStringAsync();
+                var responseContent = await response.Content.ReadAsStringAsync(cancellationToken);
                 var responseData = JsonSerializer.Deserialize<TranslationResponse>(responseContent);
                 return responseData?.DestinationText ?? text; // Return original text if translation fails
             }
@@ -118,6 +119,11 @@ public class TranslationService
                 _log.LogWarning("[{Class}] Translation service returned error: {StatusCode}", _class, response.StatusCode);
                 return text; // Return original text if translation fails
             }
+        }
+        catch (TaskCanceledException)
+        {
+            _log.LogWarning("[{Class}] Translation request was cancelled", _class);
+            throw; // Re-throw to allow caller to handle cancellation
         }
         catch (Exception ex)
         {

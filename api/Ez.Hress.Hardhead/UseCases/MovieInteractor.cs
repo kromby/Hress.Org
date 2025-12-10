@@ -3,6 +3,7 @@ using Ez.Hress.Shared.UseCases;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
+using System.Threading;
 
 namespace Ez.Hress.Hardhead.UseCases;
 
@@ -87,8 +88,13 @@ public class MovieInteractor
                 var originalCountry = movieInfo.Country;
                 try
                 {
-                    movieInfo.Country = await _translationService.TranslateAsync(movieInfo.Country, "en");
+                    movieInfo.Country = await _translationService.TranslateAsync(movieInfo.Country, "en", cts.Token);
                     _log.LogInformation("Translated Country: '{Original}' -> '{Translated}'", originalCountry, movieInfo.Country);
+                }
+                catch (TaskCanceledException)
+                {
+                    _log.LogWarning("Translation of Country for movie {MovieName} was cancelled due to timeout", movieInfo.Name);
+                    // Country remains as original value
                 }
                 catch (Exception ex)
                 {
@@ -103,9 +109,14 @@ public class MovieInteractor
                 var originalGenres = new List<string>(movieInfo.Genre);
                 try
                 {
-                    var translatedGenres = await _translationService.TranslateListAsync(movieInfo.Genre, "en");
+                    var translatedGenres = await _translationService.TranslateListAsync(movieInfo.Genre, "en", cts.Token);
                     movieInfo.Genre = translatedGenres;
                     _log.LogInformation("Translated Genres: '{Original}' -> '{Translated}'", string.Join(", ", originalGenres), string.Join(", ", translatedGenres));
+                }
+                catch (TaskCanceledException)
+                {
+                    _log.LogWarning("Translation of Genres for movie {MovieName} was cancelled due to timeout", movieInfo.Name);
+                    // Genres remain as original values
                 }
                 catch (Exception ex)
                 {
@@ -120,9 +131,14 @@ public class MovieInteractor
                 var originalLanguages = new List<string>(movieInfo.Language);
                 try
                 {
-                    var translatedLanguages = await _translationService.TranslateListAsync(movieInfo.Language, "en");
+                    var translatedLanguages = await _translationService.TranslateListAsync(movieInfo.Language, "en", cts.Token);
                     movieInfo.Language = translatedLanguages;
                     _log.LogInformation("Translated Languages: '{Original}' -> '{Translated}'", string.Join(", ", originalLanguages), string.Join(", ", translatedLanguages));
+                }
+                catch (TaskCanceledException)
+                {
+                    _log.LogWarning("Translation of Languages for movie {MovieName} was cancelled due to timeout", movieInfo.Name);
+                    // Languages remain as original values
                 }
                 catch (Exception ex)
                 {
@@ -137,8 +153,13 @@ public class MovieInteractor
                 var originalAwards = movieInfo.Awards;
                 try
                 {
-                    movieInfo.Awards = await _translationService.TranslateAsync(movieInfo.Awards, "en");
+                    movieInfo.Awards = await _translationService.TranslateAsync(movieInfo.Awards, "en", cts.Token);
                     _log.LogInformation("Translated Awards: '{Original}' -> '{Translated}'", originalAwards, movieInfo.Awards);
+                }
+                catch (TaskCanceledException)
+                {
+                    _log.LogWarning("Translation of Awards for movie {MovieName} was cancelled due to timeout", movieInfo.Name);
+                    // Awards remain as original value
                 }
                 catch (Exception ex)
                 {
