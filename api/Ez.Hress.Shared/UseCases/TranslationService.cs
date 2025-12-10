@@ -17,7 +17,7 @@ public class TranslationService
     private readonly HttpClient _httpClient;
     
     // In-memory cache for frequently used translations
-    private readonly ConcurrentDictionary<string, string> _memoryCache = new();
+    private readonly ConcurrentDictionary<string, (string Value, DateTime Added)> _memoryCache = new();
     private readonly object _cacheLock = new object();
     private DateTime _lastCacheCleanup = DateTime.UtcNow;
     private const int CACHE_CLEANUP_INTERVAL_MINUTES = 30;
@@ -39,7 +39,7 @@ public class TranslationService
         if (_memoryCache.TryGetValue(cacheKey, out var memoryCached))
         {
             _log.LogInformation("[{Class}] Returning in-memory cached translation", _class);
-            return memoryCached;
+            return memoryCached.Value;
         }
 
         // Then, try database cache
@@ -56,6 +56,12 @@ public class TranslationService
         // If not in cache, translate using external service
         var translatedText = await TranslateWithExternalServiceAsync(text, sourceLanguage, cancellationToken);
         
+        if(translatedText == text)
+        {
+            _log.LogWarning("[{Class}] Translation failed for text: {Text}", _class, text);
+            return text;
+        }
+
         // Save to both caches
         var translation = new Translation(text, translatedText, sourceLanguage);
         await _translationDataAccess.SaveTranslationAsync(translation);
@@ -114,16 +120,14 @@ public class TranslationService
                 var responseData = JsonSerializer.Deserialize<TranslationResponse>(responseContent);
                 return responseData?.DestinationText ?? text; // Return original text if translation fails
             }
-            else
-            {
-                _log.LogWarning("[{Class}] Translation service returned error: {StatusCode}", _class, response.StatusCode);
-                return text; // Return original text if translation fails
-            }
+                
+            _log.LogWarning("[{Class}] Translation service returned error: {StatusCode}", _class, response.StatusCode);
+            return text; // Return original text if translation fails
         }
         catch (TaskCanceledException)
         {
             _log.LogWarning("[{Class}] Translation request was cancelled", _class);
-            throw; // Re-throw to allow caller to handle cancellation
+            return text;
         }
         catch (Exception ex)
         {
@@ -183,14 +187,18 @@ public class TranslationService
                 CleanupMemoryCache();
             }
             
-            _memoryCache.TryAdd(cacheKey, translation);
+            _memoryCache.TryAdd(cacheKey, (translation, DateTime.UtcNow));
         }
     }
 
     private void CleanupMemoryCache()
     {
         // Remove oldest entries (simple FIFO cleanup)
-        var keysToRemove = _memoryCache.Keys.Take(_memoryCache.Count / 2).ToList();
+        var keysToRemove = _memoryCache
+            .OrderBy(kvp => kvp.Value.Added)
+            .Take(_memoryCache.Count / 2)
+            .Select(kvp => kvp.Key)
+            .ToList();
         foreach (var key in keysToRemove)
         {
             _memoryCache.TryRemove(key, out _);

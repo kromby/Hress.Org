@@ -104,7 +104,7 @@ public class MovieInteractor
             }
 
             // Translate Genre list
-            if (movieInfo.Genre != null && movieInfo.Genre.Count > 0)
+            if (movieInfo.Genre?.Count > 0)
             {
                 var originalGenres = new List<string>(movieInfo.Genre);
                 try
@@ -126,7 +126,7 @@ public class MovieInteractor
             }
 
             // Translate Language list
-            if (movieInfo.Language != null && movieInfo.Language.Count > 0)
+            if (movieInfo.Language?.Count > 0)
             {
                 var originalLanguages = new List<string>(movieInfo.Language);
                 try

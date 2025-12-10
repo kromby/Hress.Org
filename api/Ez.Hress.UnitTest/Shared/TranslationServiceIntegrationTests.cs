@@ -154,7 +154,6 @@ public class TranslationServiceIntegrationTests : IDisposable
         var sourceLanguage = "en";
         
         // Create a service with a mock HttpClient that throws an exception
-        var mockHttpClient = new Mock<HttpClient>();
         var translationServiceWithMockHttp = new TranslationService(
             _translationDataAccessMock.Object, 
             _loggerMock.Object, 
