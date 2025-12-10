@@ -1,7 +1,9 @@
 ﻿using Ez.Hress.Hardhead.Entities;
+using Ez.Hress.Shared.UseCases;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Globalization;
+using System.Threading;
 
 namespace Ez.Hress.Hardhead.UseCases;
 
@@ -9,12 +11,14 @@ public class MovieInteractor
 {
     private readonly IMovieDataAccess _movieDataAccess;
     private readonly IMovieInformationDataAccess _movieInformationDataAccess;
+    private readonly TranslationService _translationService;
     private readonly ILogger<MovieInteractor> _log;
 
-    public MovieInteractor(IMovieDataAccess movieDataAccess, IMovieInformationDataAccess movieInformationDataAccess, ILogger<MovieInteractor> log)
+    public MovieInteractor(IMovieDataAccess movieDataAccess, IMovieInformationDataAccess movieInformationDataAccess, TranslationService translationService, ILogger<MovieInteractor> log)
     {
         _movieDataAccess = movieDataAccess;
         _movieInformationDataAccess = movieInformationDataAccess;
+        _translationService = translationService;
         _log = log;
     }
 
@@ -50,13 +54,127 @@ public class MovieInteractor
         movieInfo.Inserted = DateTime.UtcNow;
         movieInfo.Age = hardheadDate.Subtract(movieInfo.Released).Days / 365;
 
+        // Store original values without translation - translations will be applied at retrieval time
         return await _movieInformationDataAccess.SaveMovieInformationAsync(movieInfo);
     }
+
 
     public async Task<MovieInfo?> GetMovieInformationAsync(int movieId)
     {
         _log.LogInformation("Getting movie information for ID: {MovieId}", movieId);
-        return await _movieInformationDataAccess.GetMovieInformationAsync(movieId);
+        var movieInfo = await _movieInformationDataAccess.GetMovieInformationAsync(movieId);
+        
+        if (movieInfo != null)
+        {
+            // Apply translations at retrieval time
+            await TranslateMovieInfoAsync(movieInfo);
+        }
+        
+        return movieInfo;
+    }
+
+    private async Task TranslateMovieInfoAsync(MovieInfo movieInfo)
+    {
+        try
+        {
+            _log.LogInformation("Translating movie information fields for movie: {MovieName}", movieInfo.Name);
+
+            // Use a timeout to prevent hanging on translation failures
+            using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            
+            // Translate Country
+            if (!string.IsNullOrWhiteSpace(movieInfo.Country))
+            {
+                var originalCountry = movieInfo.Country;
+                try
+                {
+                    movieInfo.Country = await _translationService.TranslateAsync(movieInfo.Country, "en", cts.Token);
+                    _log.LogInformation("Translated Country: '{Original}' -> '{Translated}'", originalCountry, movieInfo.Country);
+                }
+                catch (TaskCanceledException)
+                {
+                    _log.LogWarning("Translation of Country for movie {MovieName} was cancelled due to timeout", movieInfo.Name);
+                    // Country remains as original value
+                }
+                catch (Exception ex)
+                {
+                    _log.LogWarning(ex, "Failed to translate Country for movie {MovieName}, using original", movieInfo.Name);
+                    // Country remains as original value
+                }
+            }
+
+            // Translate Genre list
+            if (movieInfo.Genre?.Count > 0)
+            {
+                var originalGenres = new List<string>(movieInfo.Genre);
+                try
+                {
+                    var translatedGenres = await _translationService.TranslateListAsync(movieInfo.Genre, "en", cts.Token);
+                    movieInfo.Genre = translatedGenres;
+                    _log.LogInformation("Translated Genres: '{Original}' -> '{Translated}'", string.Join(", ", originalGenres), string.Join(", ", translatedGenres));
+                }
+                catch (TaskCanceledException)
+                {
+                    _log.LogWarning("Translation of Genres for movie {MovieName} was cancelled due to timeout", movieInfo.Name);
+                    // Genres remain as original values
+                }
+                catch (Exception ex)
+                {
+                    _log.LogWarning(ex, "Failed to translate Genres for movie {MovieName}, using original", movieInfo.Name);
+                    // Genres remain as original values
+                }
+            }
+
+            // Translate Language list
+            if (movieInfo.Language?.Count > 0)
+            {
+                var originalLanguages = new List<string>(movieInfo.Language);
+                try
+                {
+                    var translatedLanguages = await _translationService.TranslateListAsync(movieInfo.Language, "en", cts.Token);
+                    movieInfo.Language = translatedLanguages;
+                    _log.LogInformation("Translated Languages: '{Original}' -> '{Translated}'", string.Join(", ", originalLanguages), string.Join(", ", translatedLanguages));
+                }
+                catch (TaskCanceledException)
+                {
+                    _log.LogWarning("Translation of Languages for movie {MovieName} was cancelled due to timeout", movieInfo.Name);
+                    // Languages remain as original values
+                }
+                catch (Exception ex)
+                {
+                    _log.LogWarning(ex, "Failed to translate Languages for movie {MovieName}, using original", movieInfo.Name);
+                    // Languages remain as original values
+                }
+            }
+
+            // Translate Awards
+            if (!string.IsNullOrWhiteSpace(movieInfo.Awards))
+            {
+                var originalAwards = movieInfo.Awards;
+                try
+                {
+                    movieInfo.Awards = await _translationService.TranslateAsync(movieInfo.Awards, "en", cts.Token);
+                    _log.LogInformation("Translated Awards: '{Original}' -> '{Translated}'", originalAwards, movieInfo.Awards);
+                }
+                catch (TaskCanceledException)
+                {
+                    _log.LogWarning("Translation of Awards for movie {MovieName} was cancelled due to timeout", movieInfo.Name);
+                    // Awards remain as original value
+                }
+                catch (Exception ex)
+                {
+                    _log.LogWarning(ex, "Failed to translate Awards for movie {MovieName}, using original", movieInfo.Name);
+                    // Awards remain as original value
+                }
+            }
+
+            _log.LogInformation("Completed translation of movie information for: {MovieName}", movieInfo.Name);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "Error translating movie information for movie: {MovieName}", movieInfo.Name);
+            // Continue with original text if translation fails - this is the fallback strategy
+        }
     }
 
     /// <summary>
