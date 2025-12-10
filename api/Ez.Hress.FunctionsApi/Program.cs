@@ -184,4 +184,9 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
 
     // Hardhead - PostElection
     services.AddSingleton<PostElectionInteractor>();
+
+    // Translation
+    services.AddHttpClient();
+    services.AddSingleton<ITranslationDataAccess, TranslationSqlDataAccess>();
+    services.AddSingleton<TranslationService>();
 }
