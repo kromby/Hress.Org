@@ -44,7 +44,7 @@ const DisappointmentNomination = ({
   useEffect(() => {
     setUsers(Users);
 
-    document.title = "Tilnefna Vinnbrigði | Hress.Org";
+    document.title = "Tilnefna moðhaus | Hress.Org";
 
     if (!nominations) {
       getNominations();
@@ -108,7 +108,7 @@ const DisappointmentNomination = ({
 
   return (
     <Post
-      title="Vinbrigði ársins"
+      title="moðhaus ársins"
       description="Tilnefndu Harðhaus fyrir hörmuleg mistök"
       body={[
         <form onSubmit={handleSubmit} key="Form1">
