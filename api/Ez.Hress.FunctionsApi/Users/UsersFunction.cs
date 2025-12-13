@@ -1,5 +1,6 @@
 using Ez.Hress.Shared.UseCases;
 using Ez.Hress.UserProfile.UseCases;
+using Ez.Hress.UserProfile.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -116,6 +117,138 @@ public class UsersFunction
         {
             _log.LogError(uaex, "[{Class}.{Method}] Unauthorized", _function, methodName);
             return new UnauthorizedResult();
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "[{Class}.{Method}] Unhandled error", _function, methodName);
+            throw;
+        }
+    }
+
+    [Function("userLookup")]
+    public async Task<IActionResult> RunLookup(
+        [HttpTrigger(AuthorizationLevel.Function, "get", "post", "put", "delete", Route = "users/{userId:int}/lookups/{id:int?}")] HttpRequest req,
+        int userId, int? id)
+    {
+        var methodName = nameof(RunLookup);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _function, methodName);
+
+        if (!AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int authenticatedUserID))
+        {
+            _log.LogInformation("[{Class}.{Method}] JWT is not valid!", _function, methodName);
+            return new UnauthorizedResult();
+        }
+
+        try
+        {
+            if (HttpMethods.IsGet(req.Method))
+            {
+                // Check if query parameter for typeId is provided
+                if (req.Query.ContainsKey("typeId") && int.TryParse(req.Query["typeId"], out int typeId))
+                {
+                    var lookup = await _userProfileInteractor.GetLookupByUserAndTypeAsync(userId, typeId);
+                    return lookup == null ? new NotFoundResult() : new OkObjectResult(lookup);
+                }
+
+                if (!id.HasValue)
+                {
+                    return new BadRequestObjectResult("Lookup ID is required for GET request, or provide typeId query parameter");
+                }
+
+                var lookupById = await _userProfileInteractor.GetLookupAsync(id.Value);
+                if (lookupById == null)
+                {
+                    return new NotFoundResult();
+                }
+
+                // Verify the lookup belongs to the userId in the route
+                if (lookupById.UserId != userId)
+                {
+                    _log.LogWarning("[{Class}.{Method}] Lookup {LookupId} belongs to user {LookupUserId}, not {UserId}", 
+                        _function, methodName, id.Value, lookupById.UserId, userId);
+                    return new NotFoundResult();
+                }
+
+                return new OkObjectResult(lookupById);
+            }
+            else if (HttpMethods.IsPost(req.Method))
+            {
+                // Users can only create lookups for themselves
+                if (userId != authenticatedUserID)
+                {
+                    _log.LogWarning("[{Class}.{Method}] User {AuthenticatedUserID} attempted to create lookup for user {UserId}", 
+                        _function, methodName, authenticatedUserID, userId);
+                    return new UnauthorizedObjectResult("You can only create lookups for yourself");
+                }
+
+                var lookup = await req.ReadFromJsonAsync<Lookup>();
+                if (lookup == null)
+                {
+                    return new BadRequestObjectResult("Invalid request body");
+                }
+
+                lookup.UserId = userId;
+                lookup.InsertedBy = authenticatedUserID;
+
+                var lookupId = await _userProfileInteractor.CreateLookupAsync(lookup);
+                return new CreatedResult($"/api/users/{userId}/lookups/{lookupId}", new { id = lookupId });
+            }
+            else if (HttpMethods.IsPut(req.Method))
+            {
+                if (!id.HasValue)
+                {
+                    return new BadRequestObjectResult("Lookup ID is required for PUT request");
+                }
+
+                // Users can only update lookups for themselves
+                if (userId != authenticatedUserID)
+                {
+                    _log.LogWarning("[{Class}.{Method}] User {AuthenticatedUserID} attempted to update lookup for user {UserId}", 
+                        _function, methodName, authenticatedUserID, userId);
+                    return new UnauthorizedObjectResult("You can only update your own lookups");
+                }
+
+                var lookup = await req.ReadFromJsonAsync<Lookup>();
+                if (lookup == null)
+                {
+                    return new BadRequestObjectResult("Invalid request body");
+                }
+
+                lookup.ID = id.Value;
+                lookup.UserId = userId;
+                if (!lookup.UpdatedBy.HasValue)
+                {
+                    lookup.UpdatedBy = authenticatedUserID;
+                }
+
+                var rowsAffected = await _userProfileInteractor.UpdateLookupAsync(lookup);
+                return rowsAffected > 0 ? new OkObjectResult(lookup) : new NotFoundResult();
+            }
+            else if (HttpMethods.IsDelete(req.Method))
+            {
+                if (!id.HasValue)
+                {
+                    return new BadRequestObjectResult("Lookup ID is required for DELETE request");
+                }
+
+                // Users can only delete lookups for themselves
+                if (userId != authenticatedUserID)
+                {
+                    _log.LogWarning("[{Class}.{Method}] User {AuthenticatedUserID} attempted to delete lookup for user {UserId}", 
+                        _function, methodName, authenticatedUserID, userId);
+                    return new UnauthorizedObjectResult("You can only delete your own lookups");
+                }
+
+                var rowsAffected = await _userProfileInteractor.DeleteLookupAsync(id.Value, authenticatedUserID);
+                return rowsAffected > 0 ? new NoContentResult() : new NotFoundResult();
+            }
+
+            return new BadRequestResult();
+        }
+        catch (ArgumentException aex)
+        {
+            _log.LogError(aex, "[{Class}.{Method}] Invalid input", _function, methodName);
+            return new BadRequestObjectResult(aex.Message);
         }
         catch (Exception ex)
         {

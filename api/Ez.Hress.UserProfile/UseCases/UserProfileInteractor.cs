@@ -46,4 +46,50 @@ public class UserProfileInteractor
 
         return entity;
     }
+
+    public async Task<Lookup?> GetLookupAsync(int id)
+    {
+        _log.LogInformation("[{Class}] GetLookup id: {id}", GetType().Name, id);
+        return await _userDataAccess.GetLookup(id);
+    }
+
+    public async Task<Lookup?> GetLookupByUserAndTypeAsync(int userId, int typeId)
+    {
+        _log.LogInformation("[{Class}] GetLookupByUserAndType userId: {userId}, typeId: {typeId}", GetType().Name, userId, typeId);
+        return await _userDataAccess.GetLookupByUserAndType(userId, typeId);
+    }
+
+    public async Task<int> CreateLookupAsync(Lookup lookup)
+    {
+        _log.LogInformation("[{Class}] CreateLookup UserId: {UserId}, TypeId: {TypeId}, ValueId: {ValueId}", 
+            GetType().Name, lookup.UserId, lookup.TypeId, lookup.ValueId);
+
+        if (lookup.Inserted == default(DateTime))
+        {
+            lookup.Inserted = DateTime.UtcNow;
+        }
+
+        return await _userDataAccess.CreateLookup(lookup);
+    }
+
+    public async Task<int> UpdateLookupAsync(Lookup lookup)
+    {
+        _log.LogInformation("[{Class}] UpdateLookup Id: {Id}, UserId: {UserId}, TypeId: {TypeId}, ValueId: {ValueId}", 
+            GetType().Name, lookup.ID, lookup.UserId, lookup.TypeId, lookup.ValueId);
+
+        if (!lookup.UpdatedBy.HasValue && lookup.InsertedBy > 0)
+        {
+            lookup.UpdatedBy = lookup.InsertedBy;
+        }
+
+        return await _userDataAccess.UpdateLookup(lookup);
+    }
+
+    public async Task<int> DeleteLookupAsync(int id, int deletedBy)
+    {
+        _log.LogInformation("[{Class}] DeleteLookup Id: {Id}, DeletedBy: {DeletedBy}", 
+            GetType().Name, id, deletedBy);
+
+        return await _userDataAccess.DeleteLookup(id, deletedBy);
+    }
 }

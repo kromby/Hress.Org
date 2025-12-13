@@ -77,6 +77,7 @@ public class HardheadElectionInteractor
 
     private static Award? GetNextElectionStep(int lastStepID, int twentyYearOldID, IList<Award> awardList)
     {
+        awardList.Insert(0, new Award() { ID = 50, Name = "Bolastærð" });
         awardList.Insert(0, new Award() { ID = 100, Name = "Nýjar reglur" });
         awardList.Insert(1, new Award() { ID = 101, Name = "Reglubreytingar" });
         awardList.Insert(2, item: new Award() { ID = 102, Name = "Mynd á uppgjörskvöld", Href=$"/api/hardhead?parentID={twentyYearOldID}" });

@@ -1,0 +1,44 @@
+### Authenticate with user and pass
+# @prompt username
+# @prompt password
+
+# @name login
+POST {{host}}/api/authenticate
+Content-Type: application/json
+
+{
+	"username": "{{username}}",
+	"password": "{{password}}"
+}
+
+###
+@apiToken = {{login.response.body.*}}
+
+### Get lookup by ID
+GET {{host}}/api/users/2630/lookups/3617
+X-Custom-Authorization: token {{apiToken}}
+
+### Create lookup - ValueId 227
+POST {{host}}/api/users/2630/lookups
+X-Custom-Authorization: token {{apiToken}}
+Content-Type: application/json
+
+{
+	"typeId": 226,
+	"valueId": 227
+}
+
+### Update lookup (replace {lookupId} with actual ID from create response)
+PUT {{host}}/api/users/2630/lookups/3616
+X-Custom-Authorization: token {{apiToken}}
+Content-Type: application/json
+
+{
+	"typeId": 226,
+	"valueId": 228
+}
+
+### Delete lookup (soft delete - replace {lookupId} with actual ID)
+DELETE {{host}}/api/users/2630/lookups/3616
+X-Custom-Authorization: token {{apiToken}}
+
