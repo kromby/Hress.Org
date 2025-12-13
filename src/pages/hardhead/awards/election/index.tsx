@@ -80,7 +80,13 @@ const Election = () => {
   const getElement = (ID: number, Name: string, Href: string) => {
     if (ID === 50) {
       /*Bolastærð*/ return (
-        <TShirtSize key={ID} ID={ID} Name={Name} onSubmit={handleSubmit} />
+        <TShirtSize
+          key={ID}
+          ID={ID}
+          Name={Name}
+          Href={Href}
+          onSubmit={handleSubmit}
+        />
       );
     } else if (ID === 100) {
       /*Lög og reglur - nýjar og niðurfelldar reglur*/ return (

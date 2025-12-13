@@ -1,35 +1,47 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
-import config from 'react-global-configuration';
+import { useEffect, useState, useMemo } from "react";
+import config from "react-global-configuration";
 import { Post } from "../../../../components";
 import { useAuth } from "../../../../context/auth";
 import { ElectionModuleProps } from ".";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useLookup } from "../../../../hooks/useLookup";
+import { useTypes } from "../../../../hooks/useTypes";
 
-interface TShirtSize {
-  id: number;
-  name: string;
-}
-
-const TShirtSize = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
+const TShirtSize = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
   const { authTokens } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [selectedSize, setSelectedSize] = useState<number | undefined>(undefined);
+  const [selectedSize, setSelectedSize] = useState<number | undefined>(
+    undefined
+  );
   const [savingAllowed, setSavingAllowed] = useState(false);
-  const [existingLookupId, setExistingLookupId] = useState<number | undefined>(undefined);
-  const [loading, setLoading] = useState(true);
 
   const userID = Number(localStorage.getItem("userID"));
-  const typeId = 226; // T-shirt size TypeId
 
-  // T-shirt sizes: 227 = S, 228 = M, 229 = L, 230 = XL (based on test data)
-  const tShirtSizes: TShirtSize[] = [
-    { id: 227, name: "S" },
-    { id: 228, name: "M" },
-    { id: 229, name: "L" },
-    { id: 230, name: "XL" },
-  ];
+  const {
+    types: tShirtSizes,
+    loading: typesLoading,
+    error: typesError,
+  } = useTypes(Href);
+  const {
+    existingLookup,
+    loading: lookupLoading,
+    error: lookupError,
+  } = useLookup(Href, userID);
+
+  const loading = typesLoading || lookupLoading;
+  const error = typesError || lookupError;
+
+  // Parse parentId from Href for lookup query (e.g., "/api/types?parentId=226")
+  const getParentIdFromHref = (href: string | undefined): number | null => {
+    if (!href) return null;
+    const urlParams = new URLSearchParams(href.split("?")[1]);
+    const parentId = urlParams.get("parentId");
+    return parentId ? parseInt(parentId, 10) : null;
+  };
+
+  const existingLookupId = useMemo(() => existingLookup?.id, [existingLookup]);
 
   useEffect(() => {
     if (authTokens === undefined) {
@@ -37,33 +49,25 @@ const TShirtSize = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
       return;
     }
 
-    const getExistingTShirtSize = async () => {
-      try {
-        // Check if user already has a t-shirt size lookup
-        const url = `${config.get("apiPath")}/api/users/${userID}/lookups?typeId=${typeId}`;
-        const response = await axios.get(url, {
-          headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
-        }).catch(() => null);
-        
-        if (response?.data) {
-          setSelectedSize(response.data.valueId);
-          if (response.data.id) {
-            setExistingLookupId(response.data.id);
-          }
-          setSavingAllowed(true);
-        }
-        setLoading(false);
-      } catch (e) {
-        // 404 is expected if no lookup exists yet
-        if (axios.isAxiosError(e) && e.response?.status !== 404) {
-          console.error(e);
-        }
-        setLoading(false);
-      }
-    };
+    if (!Href) {
+      console.error("No Href provided");
+      return;
+    }
 
-    getExistingTShirtSize();
-  }, [authTokens, navigate, location]);
+    const typeId = getParentIdFromHref(Href);
+    if (!typeId) {
+      console.error("No parentId found in Href");
+      return;
+    }
+  }, [authTokens, navigate, location, Href]);
+
+  // Set selected size when existing lookup is loaded
+  useEffect(() => {
+    if (existingLookup) {
+      setSelectedSize(existingLookup.valueId);
+      setSavingAllowed(true);
+    }
+  }, [existingLookup]);
 
   const handleChange = (sizeId: number) => {
     setSelectedSize(sizeId);
@@ -85,9 +89,16 @@ const TShirtSize = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
       return;
     }
 
+    const typeId = getParentIdFromHref(Href);
+    if (!typeId) {
+      alert("Villa: Ekki tókst að finna parentId");
+      setSavingAllowed(true);
+      return;
+    }
+
     try {
       const url = `${config.get("apiPath")}/api/users/${userID}/lookups`;
-      
+
       if (existingLookupId) {
         // Update existing lookup
         const updateUrl = `${url}/${existingLookupId}`;
@@ -142,30 +153,47 @@ const TShirtSize = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
     return <Post id={ID} title={Name} body={<div>Sæki upplýsingar...</div>} />;
   }
 
+  if (error) {
+    return (
+      <Post
+        id={ID}
+        title={Name}
+        body={<div>Villa við að sækja upplýsingar: {error.message}</div>}
+      />
+    );
+  }
+
   return (
     <div>
       <Post
         id={ID}
         title={Name}
+        description="Hvaða stærð af Harðhausabol notar þú?"
         body={
           <section>
-            <p>Vinsamlegast veldu stærð á bol sem þú vilt fá:</p>
             <form onSubmit={handleSubmit}>
               <div className="row gtr-uniform">
-                {tShirtSizes.map((size) => (
-                  <div className="col-6" key={size.id}>
-                    <input
-                      type="radio"
-                      id={`size_${size.id}`}
-                      name="tshirtSize"
-                      checked={selectedSize === size.id}
-                      onChange={() => handleChange(size.id)}
-                    />
-                    <label htmlFor={`size_${size.id}`} style={{ marginLeft: "10px", cursor: "pointer" }}>
-                      <b>{size.name}</b>
-                    </label>
-                  </div>
-                ))}
+                {tShirtSizes && tShirtSizes.length > 0 ? (
+                  tShirtSizes.map((size) => (
+                    <div className="col-12" key={size.id}>
+                      <input
+                        type="radio"
+                        id={`size_${size.id}`}
+                        name="tshirtSize"
+                        checked={selectedSize === size.id}
+                        onChange={() => handleChange(size.id)}
+                      />
+                      <label
+                        htmlFor={`size_${size.id}`}
+                        style={{ marginLeft: "10px", cursor: "pointer" }}
+                      >
+                        {size.name}
+                      </label>
+                    </div>
+                  ))
+                ) : (
+                  <div>Sæki stærðir...</div>
+                )}
               </div>
               <ul className="actions pagination" style={{ marginTop: "20px" }}>
                 <li>
@@ -187,4 +215,3 @@ const TShirtSize = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
 };
 
 export default TShirtSize;
-
