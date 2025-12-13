@@ -34,4 +34,10 @@ public class TypeInteractor : ITypeInteractor
         var type = list.First(t => t.ID == id);
         return type;
     }
+
+    public async Task<IList<TypeEntity>> GetEzTypesByParentId(int parentId)
+    {
+        _log.LogInformation("[{Class}] GetTypesByParentId parentId: {ParentId}", _class, parentId);
+        return await _typeDataAccess.GetTypesByParentId(parentId);
+    }
 }
