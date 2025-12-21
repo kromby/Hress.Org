@@ -34,18 +34,18 @@ public class TypesFunction
                 var type = await _typeInteractor.GetEzType(id.Value);
                 return new OkObjectResult(type);
             }
-            else if (req.Query.ContainsKey("parentId") && int.TryParse(req.Query["parentId"], out int parentId))
+            
+            if (req.Query.ContainsKey("parentId") && int.TryParse(req.Query["parentId"], out int parentId))
             {
                 // Get types by parent ID
                 var types = await _typeInteractor.GetEzTypesByParentId(parentId);
                 return new OkObjectResult(types);
             }
-            else
-            {
-                // Get all types
-                var types = await _typeInteractor.GetEzTypes();
-                return new OkObjectResult(types);
-            }
+        
+            // Get all types
+            var types = await _typeInteractor.GetEzTypes();
+            return new OkObjectResult(types);
+        
         }
         catch (ArgumentException aex)
         {

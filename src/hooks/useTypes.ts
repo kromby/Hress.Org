@@ -34,7 +34,7 @@ export const useTypes = (href: string | undefined): UseTypesResult => {
   } = useQuery({
     queryKey: ["types", href],
     queryFn: fetchTypes,
-    enabled: !!href && !!authTokens?.token,
+    enabled: Boolean(href) && Boolean(authTokens?.token),
     staleTime: 5 * 60 * 1000, // Consider data fresh for 5 minutes
     gcTime: 30 * 60 * 1000, // Keep unused data in cache for 30 minutes
   });
@@ -48,4 +48,3 @@ export const useTypes = (href: string | undefined): UseTypesResult => {
     },
   };
 };
-

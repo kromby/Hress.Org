@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo, useRef } from "react";
 import config from "react-global-configuration";
 import { Post } from "../../../../components";
 import { useAuth } from "../../../../context/auth";
@@ -16,6 +16,8 @@ const TShirtSize = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
     undefined
   );
   const [savingAllowed, setSavingAllowed] = useState(false);
+  const [submitError, setSubmitError] = useState("");
+  const formRef = useRef<HTMLFormElement>(null);
 
   const userID = Number(localStorage.getItem("userID"));
 
@@ -57,7 +59,6 @@ const TShirtSize = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
     const typeId = getParentIdFromHref(Href);
     if (!typeId) {
       console.error("No parentId found in Href");
-      return;
     }
   }, [authTokens, navigate, location, Href]);
 
@@ -77,6 +78,7 @@ const TShirtSize = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setSavingAllowed(false);
+    setSubmitError("");
 
     if (authTokens === undefined) {
       navigate("/login", { state: { from: location.pathname } });
@@ -84,14 +86,14 @@ const TShirtSize = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
     }
 
     if (!selectedSize) {
-      alert("Vinsamlegast veldu stærð");
+      setSubmitError("Vinsamlegast veldu stærð");
       setSavingAllowed(true);
       return;
     }
 
     const typeId = getParentIdFromHref(Href);
     if (!typeId) {
-      alert("Villa: Ekki tókst að finna parentId");
+      setSubmitError("Villa: Ekki tókst að finna parentId");
       setSavingAllowed(true);
       return;
     }
@@ -105,7 +107,7 @@ const TShirtSize = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
         await axios.put(
           updateUrl,
           {
-            typeId: typeId,
+            typeId,
             valueId: selectedSize,
           },
           {
@@ -117,7 +119,7 @@ const TShirtSize = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
         await axios.post(
           url,
           {
-            typeId: typeId,
+            typeId,
             valueId: selectedSize,
           },
           {
@@ -141,7 +143,7 @@ const TShirtSize = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
       );
     } catch (e) {
       console.error(e);
-      alert("Villa við að vista stærð: " + e);
+      setSubmitError(`Villa við að vista stærð: ${e}`);
       setSavingAllowed(true);
       return;
     }
@@ -171,7 +173,7 @@ const TShirtSize = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
         description="Hvaða stærð af Harðhausabol notar þú?"
         body={
           <section>
-            <form onSubmit={handleSubmit}>
+            <form ref={formRef} onSubmit={handleSubmit}>
               <div className="row gtr-uniform">
                 {tShirtSizes && tShirtSizes.length > 0 ? (
                   tShirtSizes.map((size) => (
@@ -195,19 +197,28 @@ const TShirtSize = ({ ID, Name, Href, onSubmit }: ElectionModuleProps) => {
                   <div>Sæki stærðir...</div>
                 )}
               </div>
-              <ul className="actions pagination" style={{ marginTop: "20px" }}>
-                <li>
-                  <button
-                    type="submit"
-                    disabled={!savingAllowed}
-                    className="button large next"
-                  >
-                    Vista stærð
-                  </button>
-                </li>
-              </ul>
             </form>
           </section>
+        }
+        actions={
+          <ul className="actions pagination">
+            {submitError ? (
+              <li>
+                {submitError}
+                <br />
+              </li>
+            ) : null}
+            <li>
+              <button
+                type="button"
+                onClick={() => formRef.current?.requestSubmit()}
+                disabled={!savingAllowed}
+                className="button large next"
+              >
+                Vista stærð
+              </button>
+            </li>
+          </ul>
         }
       />
     </div>

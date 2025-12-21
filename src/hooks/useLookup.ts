@@ -3,7 +3,6 @@ import axios, { AxiosError } from "axios";
 import config from "react-global-configuration";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../context/auth";
-import { useTypes } from "./useTypes";
 
 interface Lookup {
   id: number;
@@ -64,7 +63,7 @@ export const useLookup = (
   } = useQuery({
     queryKey: ["lookup", userId, typeId],
     queryFn: fetchLookup,
-    enabled: !!typeId && !!userId && !!authTokens?.token,
+    enabled: Boolean(typeId) && Boolean(userId) && Boolean(authTokens?.token),
     staleTime: 2 * 60 * 1000, // Consider data fresh for 2 minutes
     gcTime: 10 * 60 * 1000, // Keep unused data in cache for 10 minutes
   });
