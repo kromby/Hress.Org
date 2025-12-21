@@ -171,7 +171,8 @@ public class UsersFunction
 
                 return new OkObjectResult(lookupById);
             }
-            else if (HttpMethods.IsPost(req.Method))
+            
+            if (HttpMethods.IsPost(req.Method))
             {
                 // Users can only create lookups for themselves
                 if (userId != authenticatedUserID)
@@ -193,7 +194,8 @@ public class UsersFunction
                 var lookupId = await _userProfileInteractor.CreateLookupAsync(lookup);
                 return new CreatedResult($"/api/users/{userId}/lookups/{lookupId}", new { id = lookupId });
             }
-            else if (HttpMethods.IsPut(req.Method))
+            
+            if (HttpMethods.IsPut(req.Method))
             {
                 if (!id.HasValue)
                 {
@@ -216,15 +218,13 @@ public class UsersFunction
 
                 lookup.ID = id.Value;
                 lookup.UserId = userId;
-                if (!lookup.UpdatedBy.HasValue)
-                {
-                    lookup.UpdatedBy = authenticatedUserID;
-                }
+                lookup.UpdatedBy = authenticatedUserID;
 
                 var rowsAffected = await _userProfileInteractor.UpdateLookupAsync(lookup);
                 return rowsAffected > 0 ? new OkObjectResult(lookup) : new NotFoundResult();
             }
-            else if (HttpMethods.IsDelete(req.Method))
+            
+            if (HttpMethods.IsDelete(req.Method))
             {
                 if (!id.HasValue)
                 {

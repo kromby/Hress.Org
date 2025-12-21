@@ -2,6 +2,7 @@
 using Ez.Hress.Shared.UseCases;
 using Microsoft.Extensions.Logging;
 using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace Ez.Hress.Shared.DataAccess;
 
@@ -62,7 +63,12 @@ public class TypeSqlAccess : ITypeDataAccess
         using var connection = new SqlConnection(_connectionString);
         await connection.OpenAsync();
         using var command = new SqlCommand(sql, connection);
-        command.Parameters.AddWithValue("parentId", parentId);
+        command.Parameters.Add(new SqlParameter
+        {
+            ParameterName = "@parentId",
+            SqlDbType = SqlDbType.Int,
+            Value = parentId
+        });
 
         IList<TypeEntity> list = new List<TypeEntity>();
         using (var reader = await command.ExecuteReaderAsync())

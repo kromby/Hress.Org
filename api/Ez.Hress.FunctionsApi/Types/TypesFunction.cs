@@ -43,9 +43,14 @@ public class TypesFunction
             }
         
             // Get all types
-            var types = await _typeInteractor.GetEzTypes();
-            return new OkObjectResult(types);
+            var allTypes = await _typeInteractor.GetEzTypes();
+            return new OkObjectResult(allTypes);
         
+        }
+        catch (InvalidOperationException ioex)
+        {
+            _log.LogWarning(ioex, "[{Class}.{Method}] Type not found", _function, methodName);
+            return new NotFoundResult();
         }
         catch (ArgumentException aex)
         {
