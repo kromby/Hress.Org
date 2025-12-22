@@ -5,4 +5,6 @@ namespace Ez.Hress.Shared.UseCases;
 public interface ITypeDataAccess
 {
     Task<IList<TypeEntity>> GetTypes();
+
+    Task<IList<TypeEntity>> GetTypesByParentId(int parentId);
 }

@@ -11,6 +11,7 @@ import Rules from "./rules";
 import RulesNewOld from "./rulesnewold";
 import Disappointment from "./disappointment";
 import TwentyYearOldMovie from "./twentyyearoldmovie";
+import TShirtSize from "./tshirtsize";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Award } from "../../../../types/award";
 
@@ -77,7 +78,17 @@ const Election = () => {
   };
 
   const getElement = (ID: number, Name: string, Href: string) => {
-    if (ID === 100) {
+    if (ID === 50) {
+      /*Bolastærð*/ return (
+        <TShirtSize
+          key={ID}
+          ID={ID}
+          Name={Name}
+          Href={Href}
+          onSubmit={handleSubmit}
+        />
+      );
+    } else if (ID === 100) {
       /*Lög og reglur - nýjar og niðurfelldar reglur*/ return (
         <RulesNewOld key={ID} ID={ID} Name={Name} onSubmit={handleSubmit} />
       );

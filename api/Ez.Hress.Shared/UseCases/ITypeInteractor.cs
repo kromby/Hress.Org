@@ -9,4 +9,6 @@ public interface ITypeInteractor
     Task<TypeEntity> GetEzType(string code);
 
     Task<TypeEntity> GetEzType(int id);
+
+    Task<IList<TypeEntity>> GetEzTypesByParentId(int parentId);
 }
