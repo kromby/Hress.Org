@@ -54,7 +54,7 @@ public class HardheadElectionInteractor
 
         awardList.First(a => a.ID == 361).Href = $"/api/hardhead?parentID={votingYearID}";
         awardList.First(a => a.ID == 362).Href = $"/api/hardhead?parentID={votingYearID}";
-        awardList.First(a => a.ID == 364).Href = $"/api/hardhead/{votingYearID}/users?attended=8";
+        awardList.First(a => a.ID == 364).Href = $"/api/hardhead/{votingYearID}/users?minAttendance=8";
 
         if (user.Attended >= requiredNightCount)
         {

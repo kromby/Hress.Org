@@ -89,12 +89,12 @@ const HardheadOfTheYear = ({
                               user.profilePhoto?.href ??
                               "/api/images/278634/content"
                             }?width=50&height=50`}
-                            alt={user.name}
+                            alt={user.username}
                             style={{
                               marginRight: "10px",
                             }}
                           />
-                          <b>{user.name}</b>
+                          <b>{user.username}</b>
                         </h3>
                       </label>
                       <br />
