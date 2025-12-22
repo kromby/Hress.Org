@@ -34,16 +34,7 @@ public class TypeSqlAccess : ITypeDataAccess
         {
             while(await reader.ReadAsync())
             {
-                var entity = new TypeEntity(SqlHelper.GetInt(reader, "Id"))
-                {
-                    Name = reader.GetString(reader.GetOrdinal("Name")),
-                    Description = reader.GetString(reader.GetOrdinal("Description")),
-                    ParentID = SqlHelper.GetNullableInt(reader, "ParentId"),
-                    Code = reader.GetString(reader.GetOrdinal("Shortcode")),
-                    GroupType = SqlHelper.GetInt(reader, "GroupType"),
-                    Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
-                    InsertedBy = SqlHelper.GetInt(reader, "InsertedBy")
-                };
+                var entity = MapTypeEntity(reader);
                 list.Add(entity);
             }
         }
@@ -75,20 +66,25 @@ public class TypeSqlAccess : ITypeDataAccess
         {
             while(await reader.ReadAsync())
             {
-                var entity = new TypeEntity(SqlHelper.GetInt(reader, "Id"))
-                {
-                    Name = reader.GetString(reader.GetOrdinal("Name")),
-                    Description = reader.GetString(reader.GetOrdinal("Description")),
-                    ParentID = SqlHelper.GetNullableInt(reader, "ParentId"),
-                    Code = reader.GetString(reader.GetOrdinal("Shortcode")),
-                    GroupType = SqlHelper.GetInt(reader, "GroupType"),
-                    Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
-                    InsertedBy = SqlHelper.GetInt(reader, "InsertedBy")
-                };
+                var entity = MapTypeEntity(reader);
                 list.Add(entity);
             }
         }
 
         return list;
+    }
+
+    private TypeEntity MapTypeEntity(SqlDataReader reader)
+    {
+        return new TypeEntity(SqlHelper.GetInt(reader, "Id"))
+        {
+            Name = reader.GetString(reader.GetOrdinal("Name")),
+            Description = reader.GetString(reader.GetOrdinal("Description")),
+            ParentID = SqlHelper.GetNullableInt(reader, "ParentId"),
+            Code = reader.GetString(reader.GetOrdinal("Shortcode")),
+            GroupType = SqlHelper.GetInt(reader, "GroupType"),
+            Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
+            InsertedBy = SqlHelper.GetInt(reader, "InsertedBy")
+        };
     }
 }
