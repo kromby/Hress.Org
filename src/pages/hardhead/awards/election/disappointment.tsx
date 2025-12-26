@@ -29,7 +29,7 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
         setDisappointments(response.data);
       } catch (e) {
         console.error(e);
-        setError(`Villa við að sækja lista af breytingum: ${e}`);
+        setError(`Villa við að sækja lista af moðhaus tilnefningum: ${e}`);
       }
     };
 
@@ -54,7 +54,7 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
       });
     } catch (e) {
       console.error(e);
-      setError(`Villa við að kjósa breytingu: ${e}`);
+      setError(`Villa við að kjósa moðhaus: ${e}`);
       setSavingAllowed(true);
     }
 

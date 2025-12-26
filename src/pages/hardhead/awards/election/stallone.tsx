@@ -30,34 +30,30 @@ const Stallone = ({
         const url = `${config.get(
           "apiPath"
         )}/api/hardhead/awards/nominations?type=${ID}`;
-        console.info("[Stallone] URL: ", url);
         const response = await axios.get(url, {
           headers: { "X-Custom-Authorization": "token " + authTokens.token },
         });
-        console.info("[Stallone] Response: ", response.data);
         setStallones(response.data);
       } catch (e) {
         console.error(e);
-        alert(e);
+        setError(`Villa við að sækja lista af Stallone tilnefningum: ${e}`);
       }
     };
 
-    console.info("[Stallone] Getting nominations");
     if (stallones.length < 1) {
-      console.info("[Stallone] Getting nominations 2");
       getNominations();
     }
   }, [ID]);
 
   const handleChange = (event: string) => {
     if (authTokens === undefined) {
-      alert("Þú þarf að skrá þig inn");
+      navigate("/login", { state: { from: location.pathname } });
       return;
     }
 
     const userID = localStorage.getItem("userID");
     if (event === userID) {
-      alert(
+      setError(
         "Ætlar þú í alvöru að kjósa sjálfan þig, það er ekki mjög Harðhausalegt."
       );
       return;
