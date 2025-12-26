@@ -93,7 +93,7 @@ const Movie = ({ movie, id, dateShown }: MovieProps) => {
           ? movie.reason
           : "Gestgjafi hefur ekki skráð ástæðu fyrir mynd :("}
       </p>
-      {movieInfo?.ratings ? <h4>Nánari upplýsingar</h4> : null}
+      <h4>Nánari upplýsingar</h4>
       <div className="row" style={{ marginBottom: "1em" }}>
         {movieInfo?.genre?.length && movieInfo.genre.length > 0 ? (
           <div className="col-4">
