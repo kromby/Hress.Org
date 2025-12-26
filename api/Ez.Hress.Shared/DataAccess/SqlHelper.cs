@@ -15,6 +15,12 @@ public static class SqlHelper
     {
         int columnIndex = reader.GetOrdinal(columnName);
         return (reader.IsDBNull(columnIndex) ? -1 : reader.GetInt32(columnIndex));
+    }
+
+    public static int GetInt(SqlDataReader reader, string columnName)
+    {
+        int columnIndex = reader.GetOrdinal(columnName);
+        return (reader.IsDBNull(columnIndex) ? -1 : reader.GetInt32(columnIndex));
     }        
     public static int? GetNullableInt(System.Data.SqlClient.SqlDataReader reader, string columnName)
     {
@@ -39,7 +45,19 @@ public static class SqlHelper
         int columnIndex = reader.GetOrdinal(columnName);
         return (reader.IsDBNull(columnIndex)) ? new DateTime() : reader.GetDateTime(columnIndex);
     }
+
+    public static DateTime GetDateTime(SqlDataReader reader, string columnName)
+    {
+        int columnIndex = reader.GetOrdinal(columnName);
+        return (reader.IsDBNull(columnIndex)) ? new DateTime() : reader.GetDateTime(columnIndex);
+    }
     public static DateTime? GetDateTimeNullable(System.Data.SqlClient.SqlDataReader reader, string columnName)
+    {
+        int columnIndex = reader.GetOrdinal(columnName);
+        return (reader.IsDBNull(columnIndex)) ? new DateTime?() : reader.GetDateTime(columnIndex);
+    }
+
+    public static DateTime? GetDateTimeNullable(SqlDataReader reader, string columnName)
     {
         int columnIndex = reader.GetOrdinal(columnName);
         return (reader.IsDBNull(columnIndex)) ? new DateTime?() : reader.GetDateTime(columnIndex);

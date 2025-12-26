@@ -3,7 +3,7 @@ using Ez.Hress.Shared.Entities;
 using Ez.Hress.UserProfile.Entities;
 using Ez.Hress.UserProfile.UseCases;
 using Microsoft.Extensions.Logging;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace Ez.Hress.UserProfile.DataAccess;
 
@@ -157,5 +157,171 @@ public class UserProfileSqlDataAccess : IUserProfileDataAccess
         }
 
         return list;
+    }
+
+    public async Task<Lookup?> GetLookup(int id)
+    {
+        const string sql = @"SELECT	[Id], [UserId], [TypeId], [ValueId], [Inserted], [InsertedBy], [Updated], [UpdatedBy], [Deleted]
+                                FROM	[dbo].[upf_Lookup]
+                                WHERE	[Id] = @id
+                                AND	[Deleted] IS NULL";
+
+        _log.LogInformation("[{Class}.{Method}] id: {id}", _class, nameof(GetLookup), id);
+        _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", _class, nameof(GetLookup), sql);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.AddWithValue("id", id);
+
+        using var reader = await command.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            var lookup = new Lookup(
+                SqlHelper.GetInt(reader, "UserId"),
+                SqlHelper.GetInt(reader, "TypeId"),
+                SqlHelper.GetInt(reader, "ValueId"))
+            {
+                ID = SqlHelper.GetInt(reader, "Id"),
+                Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
+                InsertedBy = SqlHelper.GetInt(reader, "InsertedBy"),
+                Updated = SqlHelper.GetDateTimeNullable(reader, "Updated"),
+                UpdatedBy = SqlHelper.GetNullableInt(reader, "UpdatedBy"),
+                Deleted = SqlHelper.GetDateTimeNullable(reader, "Deleted")
+            };
+
+            return lookup;
+        }
+
+        return null;
+    }
+
+    public async Task<Lookup?> GetLookupByUserAndType(int userId, int typeId)
+    {
+        const string sql = @"SELECT	[Id], [UserId], [TypeId], [ValueId], [Inserted], [InsertedBy], [Updated], [UpdatedBy], [Deleted]
+                                FROM	[dbo].[upf_Lookup]
+                                WHERE	[UserId] = @userId
+                                AND	[TypeId] = @typeId
+                                AND	[Deleted] IS NULL";
+
+        _log.LogInformation("[{Class}.{Method}] userId: {userId}, typeId: {typeId}", _class, nameof(GetLookupByUserAndType), userId, typeId);
+        _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", _class, nameof(GetLookupByUserAndType), sql);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.AddWithValue("userId", userId);
+        command.Parameters.AddWithValue("typeId", typeId);
+
+        using var reader = await command.ExecuteReaderAsync();
+        if (await reader.ReadAsync())
+        {
+            var lookup = new Lookup(
+                SqlHelper.GetInt(reader, "UserId"),
+                SqlHelper.GetInt(reader, "TypeId"),
+                SqlHelper.GetInt(reader, "ValueId"))
+            {
+                ID = SqlHelper.GetInt(reader, "Id"),
+                Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
+                InsertedBy = SqlHelper.GetInt(reader, "InsertedBy"),
+                Updated = SqlHelper.GetDateTimeNullable(reader, "Updated"),
+                UpdatedBy = SqlHelper.GetNullableInt(reader, "UpdatedBy"),
+                Deleted = SqlHelper.GetDateTimeNullable(reader, "Deleted")
+            };
+
+            return lookup;
+        }
+
+        return null;
+    }
+
+    public async Task<int> CreateLookup(Lookup lookup)
+    {
+        const string sql = @"INSERT INTO [dbo].[upf_Lookup]
+                                   ([UserId]
+                                   ,[TypeId]
+                                   ,[ValueId]
+                                   ,[Inserted]
+                                   ,[InsertedBy])
+                                VALUES (@userId, @typeId, @valueId, @inserted, @insertedBy);
+                                SELECT SCOPE_IDENTITY();";
+
+        _log.LogInformation("[{Class}.{Method}] UserId: {UserId}, TypeId: {TypeId}, ValueId: {ValueId}", 
+            _class, nameof(CreateLookup), lookup.UserId, lookup.TypeId, lookup.ValueId);
+        _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", _class, nameof(CreateLookup), sql);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.AddWithValue("userId", lookup.UserId);
+        command.Parameters.AddWithValue("typeId", lookup.TypeId);
+        command.Parameters.AddWithValue("valueId", lookup.ValueId);
+        command.Parameters.AddWithValue("inserted", lookup.Inserted);
+        command.Parameters.AddWithValue("insertedBy", lookup.InsertedBy);
+
+        var result = await command.ExecuteScalarAsync();
+        if (result == null)
+            return -1;
+        return Convert.ToInt32(result);
+    }
+
+    public async Task<int> UpdateLookup(Lookup lookup)
+    {
+        if (lookup.ID <= 0)
+        {
+            throw new ArgumentException("Lookup ID is required for update", nameof(lookup));
+        }
+
+        var lookupId = lookup.ID;
+
+        const string sql = @"UPDATE [dbo].[upf_Lookup]
+                                SET [UserId] = @userId,
+                                    [TypeId] = @typeId,
+                                    [ValueId] = @valueId,
+                                    [Updated] = GetDate(),
+                                    [UpdatedBy] = @updatedBy
+                                WHERE [Id] = @id
+                                AND [Deleted] IS NULL";
+
+        _log.LogInformation("[{Class}.{Method}] Id: {Id}, UserId: {UserId}, TypeId: {TypeId}, ValueId: {ValueId}", 
+            _class, nameof(UpdateLookup), lookupId, lookup.UserId, lookup.TypeId, lookup.ValueId);
+        _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", _class, nameof(UpdateLookup), sql);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.AddWithValue("id", lookupId);
+        command.Parameters.AddWithValue("userId", lookup.UserId);
+        command.Parameters.AddWithValue("typeId", lookup.TypeId);
+        command.Parameters.AddWithValue("valueId", lookup.ValueId);
+        command.Parameters.AddWithValue("updatedBy", lookup.UpdatedBy ?? lookup.InsertedBy);
+
+        return await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<int> DeleteLookup(int id, int deletedBy)
+    {
+        const string sql = @"UPDATE [dbo].[upf_Lookup]
+                                SET [Deleted] = GetDate(),
+                                    [DeletedBy] = @deletedBy
+                                WHERE [Id] = @id
+                                AND [Deleted] IS NULL";
+
+        _log.LogInformation("[{Class}.{Method}] Id: {Id}, DeletedBy: {DeletedBy}", 
+            _class, nameof(DeleteLookup), id, deletedBy);
+        _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", _class, nameof(DeleteLookup), sql);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.AddWithValue("id", id);
+        command.Parameters.AddWithValue("deletedBy", deletedBy);
+
+        return await command.ExecuteNonQueryAsync();
     }
 }

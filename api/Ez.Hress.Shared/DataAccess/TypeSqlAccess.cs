@@ -1,7 +1,8 @@
 ﻿using Ez.Hress.Shared.Entities;
 using Ez.Hress.Shared.UseCases;
 using Microsoft.Extensions.Logging;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
+using System.Data;
 
 namespace Ez.Hress.Shared.DataAccess;
 
@@ -33,20 +34,57 @@ public class TypeSqlAccess : ITypeDataAccess
         {
             while(await reader.ReadAsync())
             {
-                var entity = new TypeEntity(SqlHelper.GetInt(reader, "Id"))
-                {
-                    Name = reader.GetString(reader.GetOrdinal("Name")),
-                    Description = reader.GetString(reader.GetOrdinal("Description")),
-                    ParentID = SqlHelper.GetNullableInt(reader, "ParentId"),
-                    Code = reader.GetString(reader.GetOrdinal("Shortcode")),
-                    GroupType = SqlHelper.GetInt(reader, "GroupType"),
-                    Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
-                    InsertedBy = SqlHelper.GetInt(reader, "InsertedBy")
-                };
+                var entity = MapTypeEntity(reader);
                 list.Add(entity);
             }
         }
 
         return list;
+    }
+
+    public async Task<IList<TypeEntity>> GetTypesByParentId(int parentId)
+    {
+        string sql = @"SELECT	t.Id, t.Name, t.Description, t.ParentId, t.Shortcode, t.GroupType, t.Inserted, t.InsertedBy
+                            FROM	gen_Type t
+                            WHERE	t.Deleted IS NULL
+                            AND	t.ParentId = @parentId
+                            ORDER BY t.Id";
+        _log.LogInformation("[{Class}] GetTypesByParentId parentId: {ParentId}, sql: {SQL}", _class, parentId, sql);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add(new SqlParameter
+        {
+            ParameterName = "@parentId",
+            SqlDbType = SqlDbType.Int,
+            Value = parentId
+        });
+
+        IList<TypeEntity> list = new List<TypeEntity>();
+        using (var reader = await command.ExecuteReaderAsync())
+        {
+            while(await reader.ReadAsync())
+            {
+                var entity = MapTypeEntity(reader);
+                list.Add(entity);
+            }
+        }
+
+        return list;
+    }
+
+    private TypeEntity MapTypeEntity(SqlDataReader reader)
+    {
+        return new TypeEntity(SqlHelper.GetInt(reader, "Id"))
+        {
+            Name = reader.GetString(reader.GetOrdinal("Name")),
+            Description = reader.GetString(reader.GetOrdinal("Description")),
+            ParentID = SqlHelper.GetNullableInt(reader, "ParentId"),
+            Code = reader.GetString(reader.GetOrdinal("Shortcode")),
+            GroupType = SqlHelper.GetInt(reader, "GroupType"),
+            Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
+            InsertedBy = SqlHelper.GetInt(reader, "InsertedBy")
+        };
     }
 }

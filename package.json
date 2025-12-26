@@ -1,6 +1,6 @@
 {
   "name": "ez.hress.reactweb",
-  "version": "2.1.3",
+  "version": "2.2.1",
   "private": true,
   "scripts": {
     "start": "react-app-rewired start",

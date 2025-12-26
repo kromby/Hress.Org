@@ -54,7 +54,7 @@ public class HardheadElectionInteractor
 
         awardList.First(a => a.ID == 361).Href = $"/api/hardhead?parentID={votingYearID}";
         awardList.First(a => a.ID == 362).Href = $"/api/hardhead?parentID={votingYearID}";
-        awardList.First(a => a.ID == 364).Href = $"/api/hardhead/{votingYearID}/users?attended=8";
+        awardList.First(a => a.ID == 364).Href = $"/api/hardhead/{votingYearID}/users?minAttendance=8";
 
         if (user.Attended >= requiredNightCount)
         {
@@ -66,7 +66,7 @@ public class HardheadElectionInteractor
         {
             // TODO: Check if voter is Centurion
             // skipcq: CS-R1039
-            if (userID == 2665 || userID == 2637 || userID == 2635 || userID == 2638 || userID == 2663 || userID == 2763)
+            if (userID == 2665 || userID == 2637 || userID == 2635 || userID == 2638 || userID == 2663 || userID == 2763 || userID == 2668 || userID == 2632)
             {
                 return GetNextElectionStep(lastStepID, twentyYearOldID, awardList);
             }
@@ -77,9 +77,10 @@ public class HardheadElectionInteractor
 
     private static Award? GetNextElectionStep(int lastStepID, int twentyYearOldID, IList<Award> awardList)
     {
-        awardList.Insert(0, new Award() { ID = 100, Name = "Nýjar reglur" });
-        awardList.Insert(1, new Award() { ID = 101, Name = "Reglubreytingar" });
-        awardList.Insert(2, item: new Award() { ID = 102, Name = "Mynd á uppgjörskvöld", Href=$"/api/hardhead?parentID={twentyYearOldID}" });
+        awardList.Insert(0, new Award() { ID = 50, Name = "Bolastærð", Href= "/api/types?parentId=226" });
+        awardList.Insert(1, new Award() { ID = 100, Name = "Nýjar reglur" });
+        awardList.Insert(2, new Award() { ID = 101, Name = "Reglubreytingar" });
+        awardList.Insert(3, item: new Award() { ID = 102, Name = "Mynd á uppgjörskvöld", Href=$"/api/hardhead?parentID={twentyYearOldID}" });
 
         return awardList.FirstOrDefault(a => a.ID != 363 && a.ID > lastStepID);
     }
