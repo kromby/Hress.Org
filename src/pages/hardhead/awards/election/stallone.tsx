@@ -31,7 +31,7 @@ const Stallone = ({
           "apiPath"
         )}/api/hardhead/awards/nominations?type=${ID}`;
         const response = await axios.get(url, {
-          headers: { "X-Custom-Authorization": "token " + authTokens.token },
+          headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
         });
         setStallones(response.data);
       } catch (e) {
@@ -163,7 +163,7 @@ const Stallone = ({
           disabled={!savingAllowed}
           className="button large next"
         >
-          {"Kjósa " + Name}
+          {`Kjósa ${Name}`}
         </button>
       </li>
       <li>
