@@ -19,6 +19,9 @@ export interface ElectionModuleProps {
   ID: number;
   Name: string;
   Href?: string;
+  Description?: string;
+  Date?: string;
+  Year?: string;
   onSubmit: () => void;
 }
 
