@@ -43,7 +43,7 @@ const Stallone = ({
     if (stallones.length < 1) {
       getNominations();
     }
-  }, [ID]);
+  }, [ID, authTokens]);
 
   const handleChange = (event: string) => {
     if (authTokens === undefined) {

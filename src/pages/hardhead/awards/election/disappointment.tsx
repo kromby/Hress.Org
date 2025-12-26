@@ -36,7 +36,7 @@ const Disappointment = ({ ID, Name, onSubmit }: ElectionModuleProps) => {
     if (disappointments.length < 1) {
       getNominations();
     }
-  }, [ID]);
+  }, [ID, authTokens]);
 
   const submitVote = async (voteValue: number) => {
     setSavingAllowed(false);
