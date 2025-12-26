@@ -26,7 +26,7 @@ GET {{legacyHost}}/api/movies/?code={{apiCode}}
 GET {{host}}/api/hardhead?filter=arnold
 
 ### Get ratings with authorization
-GET {{host}}/api/hardhead/5358/ratings
+GET {{host}}/api/hardhead/5449/ratings
 X-Custom-Authorization: token {{apiToken}}
 
 ### Get ratings without authorization
@@ -47,6 +47,9 @@ GET {{host}}/api/hardhead/5397
 
 ### Get Hardhead guests by year ID
 GET {{host}}/api/hardhead/5437/users
+
+### Get Hardhead guests by year ID and minimum attendance
+GET {{host}}/api/hardhead/5437/users?minAttendance=3
 
 ### Get hardheads by userID
 GET {{host}}/api/hardhead?userID=2630
