@@ -11,7 +11,7 @@ public class CrewMember: EntityBase<int>
         Name = string.Empty;    
     }
 
-    [JsonProperty(Required = Required.Always, DefaultValueHandling = DefaultValueHandling.Include)]
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
     [JsonConverter(typeof(StringEnumConverter))]
     public Role Role { get; set; } 
 

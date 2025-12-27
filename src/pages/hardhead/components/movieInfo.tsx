@@ -1,4 +1,3 @@
-import { Console } from "console";
 import { MovieInfo as MovieInfoType } from "../../../types/movieInfo";
 
 interface MovieInfoProps {
@@ -6,8 +5,6 @@ interface MovieInfoProps {
 }
 
 const getCrewRoleName = (role: string) => {
-  console.info("[getCrewRoleName] role: ", role);
-
   if (role === "Director") {
     return "leikstjóri";
   }
