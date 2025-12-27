@@ -11,7 +11,7 @@ const VoteNow = () => {
         <Post
           id="0"
           title="Harðhausakosningin"
-          dateFormatted="2024"
+          dateFormatted="2025"
           body={
             <section>
               <p>
