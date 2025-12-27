@@ -2,6 +2,7 @@ import { useCallback, useState, useEffect } from "react";
 import YouTube from "react-youtube";
 import { Movie as MovieType } from "../../../types/movie";
 import { useMovieInfo } from "../../../hooks/hardhead/useMovieInfo";
+import MovieInfo from "./movieInfo";
 
 interface MovieProps {
   movie?: MovieType;
@@ -93,58 +94,7 @@ const Movie = ({ movie, id, dateShown }: MovieProps) => {
           ? movie.reason
           : "Gestgjafi hefur ekki skráð ástæðu fyrir mynd :("}
       </p>
-      <h4>Nánari upplýsingar</h4>
-      <div className="row" style={{ marginBottom: "1em" }}>
-        {movieInfo?.genre?.length && movieInfo.genre.length > 0 ? (
-          <div className="col-4">
-            <strong>Tegund</strong>
-            <br />
-            {movieInfo.genre.join(", ")}
-          </div>
-        ) : null}
-        {movieInfo?.language?.length && movieInfo.language.length > 0 ? (
-          <div className="col-4">
-            <strong>Tungumál</strong>
-            <br />
-            {movieInfo.language.join(", ")}
-          </div>
-        ) : null}
-        {movieInfo?.country && (
-          <div className="col-4">
-            <strong>Land</strong>
-            <br />
-            {movieInfo.country}
-          </div>
-        )}
-      </div>
-      <div className="row" style={{ marginBottom: "1em" }}>
-        {movieInfo?.awards ? (
-          <div className="col-4">
-            <strong>Verðlaun</strong>
-            <br />
-            {movieInfo.awards}
-          </div>
-        ) : null}
-        {movieInfo?.boxOffice ? (
-          <div className="col-4">
-            <strong>Tekjur</strong>
-            <br />
-            {movieInfo.boxOffice}
-          </div>
-        ) : null}
-      </div>
-      {movieInfo?.ratings ? <h4>Einkunnir</h4> : null}
-      <div className="row" style={{ marginBottom: "2em" }}>
-        {movieInfo?.ratings && Object.keys(movieInfo.ratings).length > 0
-          ? Object.entries(movieInfo.ratings).map(([key, value]) => (
-              <div key={key} className="col-4">
-                <strong>{key}</strong>
-                <br />
-                {value}
-              </div>
-            ))
-          : null}
-      </div>
+      {movieInfo ? <MovieInfo movieInfo={movieInfo} /> : null}
       {movie.youtubeUrl ? (
         <p key="movie3">
           <button className="button small" onClick={toggleTrailer}>

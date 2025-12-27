@@ -1,9 +1,6 @@
 ﻿using Ez.Hress.Shared.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Ez.Hress.Hardhead.Entities;
 
@@ -14,7 +11,9 @@ public class CrewMember: EntityBase<int>
         Name = string.Empty;    
     }
 
-    public Role Role { get; set; }
+    [JsonProperty(DefaultValueHandling = DefaultValueHandling.Include)]
+    [JsonConverter(typeof(StringEnumConverter))]
+    public Role Role { get; set; } 
 
     public int MovieCounter { get; set; }
 }
