@@ -41,8 +41,6 @@ import DinnerPartySidebar from "./dinnerparties/sidebar";
 import MovieList from "./hardhead/list";
 import AlbumImageUpload from "./albums/albumImageUpload";
 
-const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
-
 function App() {
   const [authTokens, setAuthTokens] = useState();
   const [data, setData] = useState({ showMenu: false });
@@ -130,8 +128,8 @@ function App() {
             </header>
 
             {/* Main section */}
-            <SentryRoutes>
-              <Route exact path="/" element={<News />} />
+            <Routes>
+              <Route path="/" element={<News />} />
               <Route path="album">
                 <Route path="" element={<Albums />} />
                 <Route path="edit" element={<AlbumEdit />} />
@@ -166,7 +164,7 @@ function App() {
                 <Route path="defaultold.aspx" element={<LegacyFrame />} />
               </Route>
               <Route path="login">
-                <Route exact path="" element={<Login />} />
+                <Route path="" element={<Login />} />
                 <Route path="magic" element={<Magic />} />
               </Route>
               <Route path="chat" element={<LegacyFrame />} />
@@ -194,14 +192,14 @@ function App() {
               </Route>
               <Route path="rss" element={<LegacyFrame />} />
               <Route path="yearly" element={<LegacyFrame />} />
-            </SentryRoutes>
+            </Routes>
 
             {/* Sidebar */}
             <Routes>
-              <Route exact path="/" element={<MainSidebar />} />
+              <Route path="/" element={<MainSidebar />} />
               <Route path="dinnerparties" element={<DinnerPartySidebar />} />
-              <Route exact path="hardhead" element={<HardheadSidebar />} />
-              <Route exact path="hardhead/awards" element={<AwardsSidebar />} />
+              <Route path="hardhead" element={<HardheadSidebar />} />
+              <Route path="hardhead/awards" element={<AwardsSidebar />} />
               <Route path="hardhead/users/:id" element={<HHUserSidebar />} />
               <Route path="news/history" element={<HistorySidebar />} />
             </Routes>
