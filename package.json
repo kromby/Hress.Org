@@ -30,7 +30,7 @@
     "react-datepicker": "^8.10.0",
     "react-device-detect": "^2.2.3",
     "react-dom": "19.1.1",
-    "react-error-boundary": "^5.0.0",
+    "react-error-boundary": "^6.0.0",
     "react-ga4": "^2.1.0",
     "react-global-configuration": "^1.4.1",
     "react-router-dom": "^7.11.0",
