@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import config from 'react-global-configuration';
 import axios from "axios";
 import { Post } from "../../components";
-import { Helmet } from "react-helmet";
 import { useParams } from "react-router-dom";
 
 const SingleNews = () => {
@@ -29,16 +28,6 @@ const SingleNews = () => {
     return (
         <div id="main">
             {news ?
-                [
-                    <Helmet key="helmet">
-                        <title>{news.name} | Hress.Org</title>
-                        <meta name="description" content={news.name} />
-                        <meta property="og:title" content={news.name} />
-                        <meta property="og:image" content={news.image?.id ? config.get('apiPath') + news.image.href : null} />
-                        <meta property="og:image:secure_url" content={news.image?.id ? config.get('apiPath') + news.image.href : null} />
-                        <meta property="og:image:width" content="1000" />
-                        <meta property="og:image:height" content="563" />
-                    </Helmet>,
                     <Post key={news.id}
                         id={news.id}
                         title={news.name}
@@ -50,7 +39,7 @@ const SingleNews = () => {
                         image={news.image?.id ? config.get('apiPath') + news.image.href + "?width=1400" : null}
                         actions={<p />}
                     />
-                ] : null}
+                :null}
         </div>
     )
 }
