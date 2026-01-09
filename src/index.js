@@ -1,11 +1,5 @@
 import * as Sentry from "@sentry/react";
 import React, { StrictMode } from "react";
-import {
-  useLocation,
-  useNavigationType,
-  createRoutesFromChildren,
-  matchRoutes,
-} from "react-router-dom";
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import "./index.css";
@@ -18,13 +12,7 @@ const packageJson = require("../package.json");
 Sentry.init({
   dsn: process.env.REACT_APP_SENTRY_DSN,
   integrations: [
-    Sentry.reactRouterV6BrowserTracingIntegration({
-      useEffect: React.useEffect,
-      useLocation,
-      useNavigationType,
-      createRoutesFromChildren,
-      matchRoutes,
-    }),
+    Sentry.browserTracingIntegration(),
     Sentry.replayIntegration(),
   ],
   // Performance Monitoring
