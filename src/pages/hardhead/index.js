@@ -65,8 +65,9 @@ const Hardhead = () => {
 
   return (
     <div id="main">
+      {/*
       <VoteNow />
-
+      */}
       {hardheads
         ? hardheads.map((hardhead) => (
             <Post
