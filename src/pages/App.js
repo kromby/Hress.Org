@@ -27,7 +27,6 @@ import Navigation from "./frame/navigation";
 import News from "./news";
 import MainSidebar from "./news/mainSidebar";
 import SingleNews from "./news/singleNews";
-import { Helmet } from "react-helmet";
 import HistoryNews from "./news/history";
 import HistorySidebar from "./news/historySidebar";
 import DinnerParties from "./dinnerparties";
@@ -103,10 +102,6 @@ function App() {
 
   return (
     <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
-      <Helmet>
-        <meta property="og:title" key="og:title" content="Hress.Org" />
-        <meta property="og:url" key="og:url" content={window.location.href} />
-      </Helmet>
       <div className={data.class}>
         <BrowserRouter>
           <div id="wrapper">
