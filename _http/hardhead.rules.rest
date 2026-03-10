@@ -41,4 +41,4 @@ GET {{host}}/api/hardhead/rules
 GET {{host}}/api/hardhead/rules/21717
 
 ### Get rule changes after election
-GET {{host}}/api/hardhead/rules/postelection
+GET http://localhost:7072/api/hardhead/rules/postelection
