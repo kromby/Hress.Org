@@ -6,7 +6,7 @@ import queryString from "query-string";
 import HardheadActions from "./components/actions";
 import axios from "axios";
 import HardheadBody from "./components/hardheadbody";
-import VoteNow from "./awards/election/votenow";
+//import VoteNow from "./awards/election/votenow";
 import { useLocation, useParams } from "react-router-dom";
 
 const Hardhead = () => {
@@ -65,8 +65,9 @@ const Hardhead = () => {
 
   return (
     <div id="main">
+      {/*
       <VoteNow />
-
+      */}
       {hardheads
         ? hardheads.map((hardhead) => (
             <Post

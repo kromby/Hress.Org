@@ -51,7 +51,7 @@ public class PostElectionInteractor
 
             if (approved > declined)
             {
-                sb.AppendLine($"INSERT INTO rep_Text(EventID, TypeID, ParentID, TextValue, InsertedBy) VALUE(4782, 70, {rule.RuleCategoryID}, {rule.RuleText}, 2630)");
+                sb.AppendLine($"INSERT INTO rep_Text(EventID, TypeID, ParentID, TextValue, InsertedBy) VALUES (4782, 70, {rule.RuleCategoryID}, '{rule.RuleText}', 2630)");
             }
         }
         return sb.ToString();

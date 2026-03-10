@@ -27,7 +27,6 @@ import Navigation from "./frame/navigation";
 import News from "./news";
 import MainSidebar from "./news/mainSidebar";
 import SingleNews from "./news/singleNews";
-import { Helmet } from "react-helmet";
 import HistoryNews from "./news/history";
 import HistorySidebar from "./news/historySidebar";
 import DinnerParties from "./dinnerparties";
@@ -41,8 +40,6 @@ import Password from "./profile/password";
 import DinnerPartySidebar from "./dinnerparties/sidebar";
 import MovieList from "./hardhead/list";
 import AlbumImageUpload from "./albums/albumImageUpload";
-
-const SentryRoutes = Sentry.withSentryReactRouterV6Routing(Routes);
 
 function App() {
   const [authTokens, setAuthTokens] = useState();
@@ -103,10 +100,6 @@ function App() {
 
   return (
     <AuthContext.Provider value={{ authTokens, setAuthTokens: setTokens }}>
-      <Helmet>
-        <meta property="og:title" key="og:title" content="Hress.Org" />
-        <meta property="og:url" key="og:url" content={window.location.href} />
-      </Helmet>
       <div className={data.class}>
         <BrowserRouter>
           <div id="wrapper">
@@ -135,8 +128,8 @@ function App() {
             </header>
 
             {/* Main section */}
-            <SentryRoutes>
-              <Route exact path="/" element={<News />} />
+            <Routes>
+              <Route path="/" element={<News />} />
               <Route path="album">
                 <Route path="" element={<Albums />} />
                 <Route path="edit" element={<AlbumEdit />} />
@@ -171,7 +164,7 @@ function App() {
                 <Route path="defaultold.aspx" element={<LegacyFrame />} />
               </Route>
               <Route path="login">
-                <Route exact path="" element={<Login />} />
+                <Route path="" element={<Login />} />
                 <Route path="magic" element={<Magic />} />
               </Route>
               <Route path="chat" element={<LegacyFrame />} />
@@ -199,14 +192,14 @@ function App() {
               </Route>
               <Route path="rss" element={<LegacyFrame />} />
               <Route path="yearly" element={<LegacyFrame />} />
-            </SentryRoutes>
+            </Routes>
 
             {/* Sidebar */}
             <Routes>
-              <Route exact path="/" element={<MainSidebar />} />
+              <Route path="/" element={<MainSidebar />} />
               <Route path="dinnerparties" element={<DinnerPartySidebar />} />
-              <Route exact path="hardhead" element={<HardheadSidebar />} />
-              <Route exact path="hardhead/awards" element={<AwardsSidebar />} />
+              <Route path="hardhead" element={<HardheadSidebar />} />
+              <Route path="hardhead/awards" element={<AwardsSidebar />} />
               <Route path="hardhead/users/:id" element={<HHUserSidebar />} />
               <Route path="news/history" element={<HistorySidebar />} />
             </Routes>
