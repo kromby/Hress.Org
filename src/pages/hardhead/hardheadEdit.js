@@ -102,8 +102,8 @@ const HardheadEdit = () => {
 											<select id="demo-category" name="demo-category" onChange={(ev) => handleHostChange(ev)}>
 												<option value="">- Á hvern skoraðir þú? -</option>
 												{users.map(user =>
-													<option key={user.ID} value={user.ID}>
-														{user.Name}
+													<option key={user.id} value={user.id}>
+														{user.name}
 													</option>
 												)}
 											</select>

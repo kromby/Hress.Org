@@ -16,13 +16,48 @@ public class UsersFunction
     private readonly string _function = nameof(UsersFunction);
     private readonly UserProfileInteractor _userProfileInteractor;
     private readonly AuthenticationInteractor _authenticationInteractor;
+    private readonly IUserInteractor _userInteractor;
     private readonly ILogger<UsersFunction> _log;
 
-    public UsersFunction(AuthenticationInteractor authenticationInteractor, UserProfileInteractor userProfileInteractor, ILogger<UsersFunction> log)
+    public UsersFunction(AuthenticationInteractor authenticationInteractor, UserProfileInteractor userProfileInteractor, IUserInteractor userInteractor, ILogger<UsersFunction> log)
     {
         _userProfileInteractor = userProfileInteractor;
         _authenticationInteractor = authenticationInteractor;
+        _userInteractor = userInteractor;
         _log = log;
+    }
+
+    [Function("usersList")]
+    public async Task<IActionResult> RunList(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "users")] HttpRequest req)
+    {
+        var methodName = nameof(RunList);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _function, methodName);
+
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        try
+        {
+            string? role = req.Query.ContainsKey("role") ? req.Query["role"].ToString() : null;
+            var users = await _userInteractor.GetUsers(role);
+            return new OkObjectResult(users);
+        }
+        catch (ArgumentException aex)
+        {
+            _log.LogError(aex, "[{Class}.{Method}] Invalid input", _function, methodName);
+            return new BadRequestObjectResult(aex.Message);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "[{Class}.{Method}] Unhandled error", _function, methodName);
+            throw;
+        }
+        finally
+        {
+            stopwatch.Stop();
+            _log.LogInformation("[{Class}.{Method}] Elapsed: {Elapsed} ms.", _function, methodName, stopwatch.ElapsedMilliseconds);
+        }
     }
 
     [Function("users")]

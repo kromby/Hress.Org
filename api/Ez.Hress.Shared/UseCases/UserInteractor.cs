@@ -20,4 +20,16 @@ public class UserInteractor : IUserInteractor
 
         return await _userDataAccess.GetUser(id);
     }
+
+    public async Task<IList<UserBasicEntity>> GetUsers(string? role = null)
+    {
+        if (!string.IsNullOrEmpty(role))
+        {
+            _log.LogInformation("[{Class}] Getting users by role {Role}", nameof(UserInteractor), role);
+            return await _userDataAccess.GetUsersByRole(role);
+        }
+
+        _log.LogInformation("[{Class}] Getting all users", nameof(UserInteractor));
+        return await _userDataAccess.GetUsers();
+    }
 }
