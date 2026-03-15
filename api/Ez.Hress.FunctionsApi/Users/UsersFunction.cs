@@ -25,6 +25,39 @@ public class UsersFunction
         _log = log;
     }
 
+    [Function("usersList")]
+    public async Task<IActionResult> RunList(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "users")] HttpRequest req)
+    {
+        var methodName = nameof(RunList);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _function, methodName);
+
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        try
+        {
+            string? role = req.Query.ContainsKey("role") ? req.Query["role"].ToString() : null;
+            var users = await _userProfileInteractor.GetUsersAsync(role);
+            return new OkObjectResult(users);
+        }
+        catch (ArgumentException aex)
+        {
+            _log.LogError(aex, "[{Class}.{Method}] Invalid input", _function, methodName);
+            return new BadRequestObjectResult(aex.Message);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "[{Class}.{Method}] Unhandled error", _function, methodName);
+            throw;
+        }
+        finally
+        {
+            stopwatch.Stop();
+            _log.LogInformation("[{Class}.{Method}] Elapsed: {Elapsed} ms.", _function, methodName, stopwatch.ElapsedMilliseconds);
+        }
+    }
+
     [Function("users")]
     public async Task<IActionResult> Run(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "users/{id:int}")] HttpRequest req, int id)

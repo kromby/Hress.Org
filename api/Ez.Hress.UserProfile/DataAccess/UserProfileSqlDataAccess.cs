@@ -52,6 +52,78 @@ public class UserProfileSqlDataAccess : IUserProfileDataAccess
         return null;
     }
 
+    public async Task<IList<UserBasicEntity>> GetUsers()
+    {
+        const string sql = @"SELECT	usr.Id, usr.Username, usr.Inserted, img.ImageID, tName.TextValue 'Name'
+                                FROM	adm_User usr
+                                LEFT OUTER JOIN	upf_Image img ON img.UserID = usr.ID AND img.TypeId = 14
+                                LEFT OUTER JOIN upf_Text tName ON tName.UserId = usr.ID AND tName.TypeId = 83
+                                WHERE	usr.Deleted IS NULL";
+
+        _log.LogInformation("[{Class}.{Method}] Executing SQL", _class, nameof(GetUsers));
+
+        var list = new List<UserBasicEntity>();
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            list.Add(ReadUserBasicEntity(reader));
+        }
+
+        return list;
+    }
+
+    public async Task<IList<UserBasicEntity>> GetUsersByRole(string roleCode)
+    {
+        const string sql = @"SELECT	usr.Id, usr.Username, usr.Inserted, img.ImageID, tName.TextValue 'Name'
+                                FROM	adm_User usr
+                                LEFT OUTER JOIN	upf_Image img ON img.UserID = usr.ID AND img.TypeId = 14
+                                LEFT OUTER JOIN upf_Text tName ON tName.UserId = usr.ID AND tName.TypeId = 83
+                                JOIN	upf_Lookup uRole ON usr.Id = uRole.UserId AND uRole.TypeId = 107
+                                WHERE	usr.Deleted IS NULL
+                                AND	uRole.ValueId = @roleId";
+
+        int roleId = roleCode switch
+        {
+            "US_L_HRESS" => 98,
+            "US_L_FRND" => 99,
+            "US_L_HEAD" => 108,
+            _ => 0
+        };
+
+        _log.LogInformation("[{Class}.{Method}] roleCode: {RoleCode}, roleId: {RoleId}", _class, nameof(GetUsersByRole), roleCode, roleId);
+
+        var list = new List<UserBasicEntity>();
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.AddWithValue("roleId", roleId);
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            list.Add(ReadUserBasicEntity(reader));
+        }
+
+        return list;
+    }
+
+    private static UserBasicEntity ReadUserBasicEntity(SqlDataReader reader)
+    {
+        return new UserBasicEntity
+        {
+            ID = SqlHelper.GetInt(reader, "ID"),
+            Username = reader.GetString(reader.GetOrdinal("Username")),
+            ProfilePhotoId = SqlHelper.GetInt(reader, "ImageID"),
+            Inserted = SqlHelper.GetDateTime(reader, "Inserted"),
+            Name = reader.IsDBNull(reader.GetOrdinal("Name")) ? null : reader.GetString(reader.GetOrdinal("Name"))
+        };
+    }
+
     public async Task<IList<Relation>> GetRelations(int userID)
     {
         const string sql = @"SELECT	rel.Id, rel.PrimaryUserId, prim.Username 'PrimaryUsername', primUserPhoto.ImageId 'PrimaryImageId', 

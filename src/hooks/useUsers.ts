@@ -19,7 +19,7 @@ export enum UserRole {
 export const useUsers = (role: string = UserRole.All): UseUsersResult => {
 
   const fetchUsers = async (): Promise<User[]> => {
-    const url = `${config.get("path")}/api/users?${role === UserRole.All ? "" : `role=${role}`}&code=${config.get("code")}`;
+    const url = `${config.get("apiPath")}/api/users${role === UserRole.All ? "" : `?role=${role}`}`;
     const response = await axios.get<User[]>(url);
     return response.data;
   };
@@ -32,7 +32,7 @@ export const useUsers = (role: string = UserRole.All): UseUsersResult => {
   });
 
   const users = useMemo(() => 
-    unsortedUsers?.sort((a, b) => a.Name.localeCompare(b.Name)),
+    unsortedUsers?.sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "")),
     [unsortedUsers]
   );
 

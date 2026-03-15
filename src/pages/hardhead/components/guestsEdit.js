@@ -82,8 +82,8 @@ const GuestsEdit = ({ hardheadID, users }) => {
               <option value="">- Veldu gest? -</option>
               {users
                 .map((user) => (
-                  <option key={user.ID} value={user.ID}>
-                    {user.Name}
+                  <option key={user.id} value={user.id}>
+                    {user.name}
                   </option>
                 ))}
             </select>
