@@ -68,7 +68,7 @@ public class UserSqlDataAccess : IUserDataAccess
             "US_L_HRESS" => 98,
             "US_L_FRND" => 99,
             "US_L_HEAD" => 108,
-            _ => 0
+            _ => throw new ArgumentException($"Unrecognized role code: {roleCode}", nameof(roleCode))
         };
 
         _log.LogInformation("[{Class}.{Method}] roleCode: {RoleCode}, roleId: {RoleId}", nameof(UserSqlDataAccess), nameof(GetUsersByRole), roleCode, roleId);
