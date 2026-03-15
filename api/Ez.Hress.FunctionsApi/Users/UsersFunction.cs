@@ -16,12 +16,14 @@ public class UsersFunction
     private readonly string _function = nameof(UsersFunction);
     private readonly UserProfileInteractor _userProfileInteractor;
     private readonly AuthenticationInteractor _authenticationInteractor;
+    private readonly IUserInteractor _userInteractor;
     private readonly ILogger<UsersFunction> _log;
 
-    public UsersFunction(AuthenticationInteractor authenticationInteractor, UserProfileInteractor userProfileInteractor, ILogger<UsersFunction> log)
+    public UsersFunction(AuthenticationInteractor authenticationInteractor, UserProfileInteractor userProfileInteractor, IUserInteractor userInteractor, ILogger<UsersFunction> log)
     {
         _userProfileInteractor = userProfileInteractor;
         _authenticationInteractor = authenticationInteractor;
+        _userInteractor = userInteractor;
         _log = log;
     }
 
@@ -38,7 +40,7 @@ public class UsersFunction
         try
         {
             string? role = req.Query.ContainsKey("role") ? req.Query["role"].ToString() : null;
-            var users = await _userProfileInteractor.GetUsersAsync(role);
+            var users = await _userInteractor.GetUsers(role);
             return new OkObjectResult(users);
         }
         catch (ArgumentException aex)

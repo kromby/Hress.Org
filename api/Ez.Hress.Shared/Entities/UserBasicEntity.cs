@@ -4,6 +4,12 @@ public class UserBasicEntity : EntityBase<int>
 {
     public string? Username { get; set; }
 
+    public override string? Name
+    {
+        get => base.Name ?? Username;
+        set => base.Name = value;
+    }
+
     public int ProfilePhotoId { private get; set; }
 
     public string Href

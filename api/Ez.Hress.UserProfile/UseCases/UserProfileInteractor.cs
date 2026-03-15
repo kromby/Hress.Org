@@ -20,14 +20,6 @@ public class UserProfileInteractor
         return await _userDataAccess.GetUser(userID);
     }
 
-    public async Task<IList<UserBasicEntity>> GetUsersAsync(string? role = null)
-    {
-        if (!string.IsNullOrEmpty(role))
-            return await _userDataAccess.GetUsersByRole(role);
-
-        return await _userDataAccess.GetUsers();
-    }
-
     public async Task<BalanceSheet> GetBalanceSheetAsync(int userID, bool includePaid = false)
     {
         _log.LogInformation("[{Class}] GetBalanceSheet", GetType().Name);

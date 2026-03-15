@@ -132,7 +132,7 @@ const Profile = () => {
                     <option value={0}>--</option>
                     {users.map(user => (
                       <option key={user.id} value={user.id}>
-                        {user.name}
+                        {user.name ?? user.username}
                       </option>
                     ))}
                   </select>
