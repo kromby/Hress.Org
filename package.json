@@ -33,7 +33,7 @@
     "react-error-boundary": "^5.0.0",
     "react-ga4": "^2.1.0",
     "react-global-configuration": "^1.4.1",
-    "react-router-dom": "^7.12.0",
+    "react-router-dom": "^7.13.1",
     "react-youtube": "^10.1.0",
     "webpack": "^5.104.1"
   },
