@@ -27,7 +27,7 @@ const OnThisDay = () => {
 
     return (
         <ErrorBoundary
-            FallbackComponent={<div>Oops!</div>}
+            fallback={<div>Oops!</div>}
         >
             <div>
                 {news ? news.map(singleNews =>

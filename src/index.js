@@ -7,7 +7,6 @@ import "./index.css";
 import * as serviceWorker from "./serviceWorker";
 import config from "react-global-configuration";
 import App from "./pages/App";
-import dotenv from "dotenv";
 const packageJson = require("../package.json");
 
 Sentry.init({
@@ -31,8 +30,6 @@ Sentry.init({
     tags: { version: packageJson.version ?? process.env.REACT_APP_VERSION },
   },
 });
-
-dotenv.config();
 
 function setConfig() {
   config.set(
