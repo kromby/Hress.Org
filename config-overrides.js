@@ -1,5 +1,11 @@
 const webpack = require("webpack");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 module.exports = function override(config) {
+  // Remove fork-ts-checker-webpack-plugin — it's incompatible with the current ajv
+  // version mix in node_modules. TypeScript checking still runs via tsc.
+  config.plugins = (config.plugins || []).filter(
+    (p) => !(p instanceof ForkTsCheckerWebpackPlugin)
+  );
   const fallback = config.resolve.fallback || {};
   Object.assign(fallback, {
     crypto: require.resolve("crypto-browserify"),

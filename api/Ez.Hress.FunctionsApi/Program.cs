@@ -1,4 +1,5 @@
 using Azure.Data.Tables;
+using Microsoft.Azure.Functions.Worker;
 using Ez.Hress.Administration.DataAccess;
 using Ez.Hress.Administration.UseCases;
 using Ez.Hress.Albums.DataAccess;
@@ -45,6 +46,8 @@ var host = new HostBuilder()
     .ConfigureFunctionsWebApplication()
     .ConfigureServices(services =>
     {
+        services.AddApplicationInsightsTelemetryWorkerService();
+        services.ConfigureFunctionsApplicationInsights();
         services.AddMvcCore().AddNewtonsoftJson(options =>
         {
             options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
@@ -61,11 +64,6 @@ var host = new HostBuilder()
 })
     .ConfigureLogging((hostingContext, logging) =>
     {
-        logging.AddApplicationInsights(console =>
-        {
-            console.IncludeScopes = true;
-        });
-
         logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
     }).ConfigureLogging(logging => //This is for facilitating the logging functionality in Application Insights.
                                    // The Application Insights SDK adds a default logging filter that instructs ILogger to capture only Warning and more severe logs. Application Insights requires an explicit override. // Log levels can also be configured using appsettings.json. For more information, see https://learn.microsoft.com/en-us/azure/azure-monitor/app/worker-service#ilogger-logs
