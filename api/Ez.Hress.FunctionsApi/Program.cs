@@ -65,19 +65,12 @@ var host = new HostBuilder()
     .ConfigureLogging((hostingContext, logging) =>
     {
         logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-    }).ConfigureLogging(logging => //This is for facilitating the logging functionality in Application Insights.
-                                   // The Application Insights SDK adds a default logging filter that instructs ILogger to capture only Warning and more severe logs. Application Insights requires an explicit override. // Log levels can also be configured using appsettings.json. For more information, see https://learn.microsoft.com/en-us/azure/azure-monitor/app/worker-service#ilogger-logs
-
-
-    {
         logging.Services.Configure<LoggerFilterOptions>(options =>
         {
             LoggerFilterRule defaultRule = options?.Rules?.FirstOrDefault(rule => rule.ProviderName
                 == "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider");
             if (defaultRule is not null)
-            {
                 options.Rules.Remove(defaultRule);
-            }
         });
     })
     .Build();
