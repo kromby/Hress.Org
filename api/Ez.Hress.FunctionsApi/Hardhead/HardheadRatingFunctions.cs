@@ -71,22 +71,19 @@ public class HardheadRatingFunctions
                     ? new CreatedResult(string.Empty, null)
                     : new BadRequestObjectResult("Save failed");
             }
-            else
+
+            if (id <= 0)
             {
-                if (id <= 0)
-                {
-                    _log.LogInformation("[{Class}.{Function}] Invalid ID: {ID}", _class, nameof(Run), id);
-                    return new BadRequestObjectResult("Invalid ID");
-                }
-
-                RatingEntity rating = await _hardheadInteractor.GetRatingAsync(id, userID == -1 ? null : userID).ConfigureAwait(false);
-
-                if (rating != null)
-                    return new OkObjectResult(rating);
-
-
-                return new NotFoundResult();
+                _log.LogInformation("[{Class}.{Function}] Invalid ID: {ID}", _class, nameof(Run), id);
+                return new BadRequestObjectResult("Invalid ID");
             }
+
+            RatingEntity rating = await _hardheadInteractor.GetRatingAsync(id, userID == -1 ? null : userID).ConfigureAwait(false);
+
+            if (rating != null)
+                return new OkObjectResult(rating);
+
+            return new NotFoundResult();
         }
         catch (ArgumentException aex)
         {
