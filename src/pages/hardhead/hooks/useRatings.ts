@@ -22,9 +22,20 @@ export const useRatings = (id: number) => {
     }
   };
 
+  const saveRating = async (rate: number, type: string) => {
+    if (!authTokens) return;
+    const url = `${config.get("apiPath")}/api/hardhead/${id}/ratings`;
+    await axios.post(
+      url,
+      { type, rating: rate },
+      { headers: { "X-Custom-Authorization": `token ${authTokens.token}` } }
+    );
+    await getRatingData();
+  };
+
   useEffect(() => {
     getRatingData();
   }, [id, authTokens]);
 
-  return { ratings, refreshRatings: getRatingData };
+  return { ratings, refreshRatings: getRatingData, saveRating };
 };
