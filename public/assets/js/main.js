@@ -56,7 +56,7 @@
 					if (!$search.hasClass('visible')) {
 
 						// Reset form.
-							$search[0].reset();
+							if ($search[0]) $search[0].reset();
 
 						// Show.
 							$search.addClass('visible');
