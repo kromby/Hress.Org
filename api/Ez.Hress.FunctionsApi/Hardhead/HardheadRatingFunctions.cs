@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -59,11 +58,7 @@ public class HardheadRatingFunctions
                     return new BadRequestObjectResult("Invalid ID");
                 }
 
-                var body = await new StreamReader(req.Body).ReadToEndAsync();
-                var request = JsonSerializer.Deserialize<RatingSaveRequest>(body, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                var request = await req.ReadFromJsonAsync<RatingSaveRequest>();
 
                 if (request == null || string.IsNullOrWhiteSpace(request.Type))
                     return new BadRequestObjectResult("Missing type or rating");
