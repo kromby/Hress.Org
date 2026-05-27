@@ -38,4 +38,6 @@ public interface IHardheadDataAccess
     Task<IDictionary<string, RatingInfo>> GetAverageRatingAsync(int Id);
 
     Task<int> InsertRatingAsync(int eventId, int userId, string typeCode, int rating);
+
+    Task<int> UpdateRatingAsync(int eventId, int userId, string typeCode, int rating);
 }
