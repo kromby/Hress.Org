@@ -49,7 +49,7 @@ const StatisticsSide = () => {
     return description;
   };
 
-  const top = data.stats ? data.stats.list[0] : null;
+  const top = data.stats?.list?.[0] ?? null;
 
   return (
     <div>
