@@ -25,9 +25,6 @@ Create a `.env` file in the repo root:
 ```
 REACT_APP_API_PATH=http://localhost:7072
 
-REACT_APP_LEGACY_API_PATH=https://ezhressapi.azurewebsites.net
-REACT_APP_LEGACY_API_CODE=ADD CODE HERE
-
 REACT_APP_IMAGE_PATH=https://ezcontentapi.azurewebsites.net
 
 REACT_APP_OMDB=ADD KEY HERE
