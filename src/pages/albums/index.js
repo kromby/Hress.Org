@@ -42,7 +42,7 @@ const Albums = () => {
     return (
         <div id="main">
             <ErrorBoundary
-                FallbackComponent={<div>Það vantar einhvern hressleika hér!</div>}
+                fallback={<div>Það vantar einhvern hressleika hér!</div>}
             >
 
                 <Post
