@@ -47,4 +47,34 @@ public class HardheadInteractorTests
         _hardheadDataAccess.Verify(d => d.InsertRatingAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never);
         _hardheadDataAccess.Verify(d => d.GetGuests(It.IsAny<int>()), Times.Never);
     }
+
+    [Fact]
+    public async Task SaveRatingAsync_NewRating_UserAttended_InsertsAndReturnsTrue()
+    {
+        // ARRANGE
+        const int eventId = 42;
+        const int userId = 7;
+        const string typeCode = "REP_C_MRTNG";
+        const int rating = 5;
+
+        _hardheadDataAccess
+            .Setup(d => d.GetMyRatingAsync(eventId, userId))
+            .ReturnsAsync(new Dictionary<string, int>()); // no existing rating
+
+        _hardheadDataAccess
+            .Setup(d => d.GetGuests(eventId))
+            .ReturnsAsync(new List<UserBasicEntity> { new() { ID = userId } });
+
+        _hardheadDataAccess
+            .Setup(d => d.InsertRatingAsync(eventId, userId, typeCode, rating))
+            .ReturnsAsync(1);
+
+        // ACT
+        var result = await _interactor.SaveRatingAsync(eventId, userId, typeCode, rating);
+
+        // ASSERT
+        Assert.True(result);
+        _hardheadDataAccess.Verify(d => d.InsertRatingAsync(eventId, userId, typeCode, rating), Times.Once);
+        _hardheadDataAccess.Verify(d => d.UpdateRatingAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+    }
 }

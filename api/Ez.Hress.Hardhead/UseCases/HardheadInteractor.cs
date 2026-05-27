@@ -230,11 +230,16 @@ public class HardheadInteractor
 
         if (existing.ContainsKey(typeCode))
         {
-            var affected = await _hardheadDataAccess.UpdateRatingAsync(id, userId, typeCode, rating).ConfigureAwait(false);
-            return affected == 1;
+            var updated = await _hardheadDataAccess.UpdateRatingAsync(id, userId, typeCode, rating).ConfigureAwait(false);
+            return updated == 1;
         }
 
-        return false;
+        var guests = await _hardheadDataAccess.GetGuests(id).ConfigureAwait(false);
+        if (guests == null || !guests.Any(g => g.ID == userId))
+            return false;
+
+        var inserted = await _hardheadDataAccess.InsertRatingAsync(id, userId, typeCode, rating).ConfigureAwait(false);
+        return inserted == 1;
     }
 
 }
