@@ -606,4 +606,23 @@ public class HardheadSqlAccess : IHardheadDataAccess
 
         return list;
     }
+
+    public async Task<int> InsertRatingAsync(int eventId, int userId, string typeCode, int rating)
+    {
+        var sql = @"INSERT INTO [dbo].[rep_Count] ([EventId],[TypeId],[Count],[Inserted],[InsertedBy])
+                    VALUES (@hardheadID, (SELECT t.ID FROM gen_Type t WHERE t.Shortcode = @ratingCode), @rating, GETDATE(), @userId)";
+
+        using (var connection = new SqlConnection(_connectionString))
+        {
+            await connection.OpenAsync();
+
+            using var command = new SqlCommand(sql, connection);
+            command.Parameters.Add(new SqlParameter("hardheadID", eventId));
+            command.Parameters.Add(new SqlParameter("userId", userId));
+            command.Parameters.Add(new SqlParameter("ratingCode", typeCode));
+            command.Parameters.Add(new SqlParameter("rating", rating));
+
+            return await command.ExecuteNonQueryAsync();
+        }
+    }
 }
