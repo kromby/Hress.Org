@@ -41,9 +41,9 @@ const StatisticsSide = () => {
 
     if (period === "All") description = `${description} frá upphafi`;
     else if (period === "Last10")
-      description = `${description} síðustu 10 álin`;
-    else if (period === "Last5") description = `${description} síðustu 5 álin`;
-    else if (period === "Last2") description = `${description} síðustu 2 álin`;
+      description = `${description} síðustu 10 árin`;
+    else if (period === "Last5") description = `${description} síðustu 5 árin`;
+    else if (period === "Last2") description = `${description} síðustu 2 árin`;
     else if (period === "ThisYear") description = `${description}  á þessu ári`;
 
     return description;
