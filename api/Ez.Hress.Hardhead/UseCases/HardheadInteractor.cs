@@ -224,4 +224,28 @@ public class HardheadInteractor
         return ratings;
     }
 
+    public async Task<bool> SaveRatingAsync(int id, int userId, string typeCode, int rating)
+    {
+        if (rating < 1 || rating > 5)
+            throw new ArgumentException("Rating must be between 1 and 5.", nameof(rating));
+
+        if (typeCode != "REP_C_RTNG" && typeCode != "REP_C_MRTNG")
+            throw new ArgumentException("Unknown rating type.", nameof(typeCode));
+
+        var existing = await _hardheadDataAccess.GetMyRatingAsync(id, userId).ConfigureAwait(false);
+
+        if (existing.ContainsKey(typeCode))
+        {
+            var updated = await _hardheadDataAccess.UpdateRatingAsync(id, userId, typeCode, rating).ConfigureAwait(false);
+            return updated == 1;
+        }
+
+        var guests = await _hardheadDataAccess.GetGuests(id).ConfigureAwait(false);
+        if (guests == null || !guests.Any(g => g.ID == userId))
+            return false;
+
+        var inserted = await _hardheadDataAccess.InsertRatingAsync(id, userId, typeCode, rating).ConfigureAwait(false);
+        return inserted == 1;
+    }
+
 }

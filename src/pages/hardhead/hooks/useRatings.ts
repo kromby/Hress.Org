@@ -9,22 +9,28 @@ export const useRatings = (id: number) => {
   const [ratings, setRatings] = useState<RatingsResponse>();
 
   const getRatingData = async () => {
-    if (authTokens !== undefined) {
-      try {
-        const url = `${config.get("apiPath")}/api/hardhead/${id}/ratings`;
-        const response = await axios.get<RatingsResponse>(url, {
-          headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
-        });
-        setRatings(response.data);
-      } catch (e) {
-        console.error(e);
-      }
-    }
+    if (!authTokens) return;
+    const url = `${config.get("apiPath")}/api/hardhead/${id}/ratings`;
+    const response = await axios.get<RatingsResponse>(url, {
+      headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
+    });
+    setRatings(response.data);
+  };
+
+  const saveRating = async (rate: number, type: string) => {
+    if (!authTokens) return;
+    const url = `${config.get("apiPath")}/api/hardhead/${id}/ratings`;
+    await axios.post(
+      url,
+      { type, rating: rate },
+      { headers: { "X-Custom-Authorization": `token ${authTokens.token}` } }
+    );
+    await getRatingData();
   };
 
   useEffect(() => {
-    getRatingData();
+    getRatingData().catch((e) => console.error(e));
   }, [id, authTokens]);
 
-  return { ratings, refreshRatings: getRatingData };
+  return { ratings, refreshRatings: getRatingData, saveRating };
 };

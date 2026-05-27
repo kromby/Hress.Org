@@ -36,4 +36,8 @@ public interface IHardheadDataAccess
     Task<IDictionary<string, int>> GetMyRatingAsync(int id, int userId);
 
     Task<IDictionary<string, RatingInfo>> GetAverageRatingAsync(int Id);
+
+    Task<int> InsertRatingAsync(int eventId, int userId, string typeCode, int rating);
+
+    Task<int> UpdateRatingAsync(int eventId, int userId, string typeCode, int rating);
 }

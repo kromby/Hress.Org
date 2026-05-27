@@ -1,7 +1,5 @@
 import { useState } from "react";
-import config from "react-global-configuration";
 import { useAuth } from "../../../context/auth";
-import axios from "axios";
 import { useRatings } from "../hooks/useRatings";
 import { RatingEntity } from "../../../types/ratings";
 import StarRating from "../../../components/StarRating";
@@ -18,7 +16,7 @@ const HardheadRating = ({
   movieRatingVisible,
 }: HardheadRatingProps) => {
   const { authTokens } = useAuth();
-  const { ratings, refreshRatings } = useRatings(id);
+  const { ratings, saveRating } = useRatings(id);
   const [hoverRatings, setHoverRatings] = useState<{ [key: string]: number }>(
     {}
   );
@@ -39,28 +37,12 @@ const HardheadRating = ({
     else return "";
   };
 
-  const saveRating = async (rate: number, type: string) => {
-    if (authTokens !== undefined) {
-      try {
-        const url = `${config.get(
-          "path"
-        )}/api/hardhead/${id}/ratings?code=${config.get("code")}`;
-        await axios.post(
-          url,
-          {
-            type,
-            rating: rate,
-          },
-          {
-            headers: { Authorization: `token ${authTokens.token}` },
-          }
-        );
-
-        refreshRatings();
-      } catch (e) {
-        console.error(e);
-        alert("Ekki tókst að vista einkunn, reyndu aftur síðar.");
-      }
+  const handleSaveRating = async (rate: number, type: string) => {
+    try {
+      await saveRating(rate, type);
+    } catch (e) {
+      console.error(e);
+      alert("Ekki tókst að vista einkunn, reyndu aftur síðar.");
     }
   };
 
@@ -100,7 +82,7 @@ const HardheadRating = ({
                   starHoverColor="orange"
                   starEmptyColor="rgb(226, 226, 226)"
                   changeRating={(newRating: number) =>
-                    saveRating(newRating, rating.code)
+                    handleSaveRating(newRating, rating.code)
                   }
                   numberOfStars={5}
                   starDimension="20px"

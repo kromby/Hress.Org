@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,12 @@ using Ez.Hress.Hardhead.UseCases;
 using Microsoft.Azure.Functions.Worker;
 
 namespace Ez.Hress.FunctionsApi.Hardhead;
+
+public class RatingSaveRequest
+{
+    public string Type { get; set; } = string.Empty;
+    public int Rating { get; set; }
+}
 
 public class HardheadRatingFunctions
 {
@@ -45,29 +52,48 @@ public class HardheadRatingFunctions
                     return new UnauthorizedResult();
                 }
 
-                throw new NotImplementedException();
-            }
-            else
-            {
                 if (id <= 0)
                 {
                     _log.LogInformation("[{Class}.{Function}] Invalid ID: {ID}", _class, nameof(Run), id);
                     return new BadRequestObjectResult("Invalid ID");
                 }
 
-                RatingEntity rating = await _hardheadInteractor.GetRatingAsync(id, userID == -1 ? null : userID).ConfigureAwait(false);
+                var request = await req.ReadFromJsonAsync<RatingSaveRequest>();
 
-                if (rating != null)
-                    return new OkObjectResult(rating);
+                if (request == null || string.IsNullOrWhiteSpace(request.Type))
+                    return new BadRequestObjectResult("Missing type or rating");
 
+                var ok = await _hardheadInteractor
+                    .SaveRatingAsync(id, userID, request.Type, request.Rating)
+                    .ConfigureAwait(false);
 
-                return new NotFoundResult();
+                return ok
+                    ? new CreatedResult(string.Empty, null)
+                    : new BadRequestObjectResult("Save failed");
             }
+
+            if (id <= 0)
+            {
+                _log.LogInformation("[{Class}.{Function}] Invalid ID: {ID}", _class, nameof(Run), id);
+                return new BadRequestObjectResult("Invalid ID");
+            }
+
+            RatingEntity rating = await _hardheadInteractor.GetRatingAsync(id, userID == -1 ? null : userID).ConfigureAwait(false);
+
+            if (rating != null)
+                return new OkObjectResult(rating);
+
+            return new NotFoundResult();
         }
         catch (ArgumentException aex)
         {
             _log.LogError(aex, "[{Class}.{Method}] Invalid input", _class, nameof(Run));
             return new BadRequestObjectResult(aex.Message);
+        }
+        catch (JsonException jex)
+        {
+            _log.LogError(jex, "[{Class}.{Method}] Invalid JSON body", _class, nameof(Run));
+            return new BadRequestObjectResult("Invalid JSON body");
         }
         catch (Exception ex)
         {
