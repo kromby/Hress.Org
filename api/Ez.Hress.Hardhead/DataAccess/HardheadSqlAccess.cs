@@ -612,18 +612,16 @@ public class HardheadSqlAccess : IHardheadDataAccess
         var sql = @"INSERT INTO [dbo].[rep_Count] ([EventId],[TypeId],[Count],[Inserted],[InsertedBy])
                     VALUES (@hardheadID, (SELECT t.ID FROM gen_Type t WHERE t.Shortcode = @ratingCode), @rating, GETDATE(), @userId)";
 
-        using (var connection = new SqlConnection(_connectionString))
-        {
-            await connection.OpenAsync();
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
 
-            using var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("hardheadID", eventId));
-            command.Parameters.Add(new SqlParameter("userId", userId));
-            command.Parameters.Add(new SqlParameter("ratingCode", typeCode));
-            command.Parameters.Add(new SqlParameter("rating", rating));
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add(new SqlParameter("hardheadID", eventId));
+        command.Parameters.Add(new SqlParameter("userId", userId));
+        command.Parameters.Add(new SqlParameter("ratingCode", typeCode));
+        command.Parameters.Add(new SqlParameter("rating", rating));
 
-            return await command.ExecuteNonQueryAsync();
-        }
+        return await command.ExecuteNonQueryAsync();
     }
 
     public async Task<int> UpdateRatingAsync(int eventId, int userId, string typeCode, int rating)
@@ -636,17 +634,15 @@ public class HardheadSqlAccess : IHardheadDataAccess
                        AND InsertedBy = @userId
                        AND TypeId = (SELECT t.ID FROM gen_Type t WHERE t.Shortcode = @ratingCode)";
 
-        using (var connection = new SqlConnection(_connectionString))
-        {
-            await connection.OpenAsync();
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
 
-            using var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("eventId", eventId));
-            command.Parameters.Add(new SqlParameter("userId", userId));
-            command.Parameters.Add(new SqlParameter("ratingCode", typeCode));
-            command.Parameters.Add(new SqlParameter("rating", rating));
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add(new SqlParameter("eventId", eventId));
+        command.Parameters.Add(new SqlParameter("userId", userId));
+        command.Parameters.Add(new SqlParameter("ratingCode", typeCode));
+        command.Parameters.Add(new SqlParameter("rating", rating));
 
-            return await command.ExecuteNonQueryAsync();
-        }
+        return await command.ExecuteNonQueryAsync();
     }
 }
