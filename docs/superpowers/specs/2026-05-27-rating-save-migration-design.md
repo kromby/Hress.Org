@@ -36,8 +36,8 @@ Task<int> UpdateRatingAsync(int eventId, int userId, string typeCode, int rating
 
 `api/Ez.Hress.Hardhead/DataAccess/HardheadSqlAccess.cs` — implement both, ported from the legacy `Ez.Hress/Hardhead/Ez.Hress.HardheadDataAccess/HardheadSqlAccess.cs`:
 
-- **InsertRatingAsync** — `INSERT INTO rep_Count (EventId, TypeId, Count, Inserted, InsertedBy) VALUES (@hardheadID, (SELECT t.ID FROM gen_Type t WHERE t.Shortcode = @ratingCode), @rating, GETDATE(), @userID)`. Returns rows-affected.
-- **UpdateRatingAsync** — `UPDATE rep_Count SET Count = @rating, Updated = GETDATE(), UpdatedBy = @userID WHERE EventId = @id AND InsertedBy = @userId AND TypeId = (SELECT Id FROM gen_Type WHERE Shortcode = @typeCode)`. Returns rows-affected.
+- **InsertRatingAsync** — `INSERT INTO rep_Count (EventId, TypeId, Count, Inserted, InsertedBy) VALUES (@eventId, (SELECT t.ID FROM gen_Type t WHERE t.Shortcode = @typeCode), @rating, GETDATE(), @userId)`. Returns rows-affected.
+- **UpdateRatingAsync** — `UPDATE rep_Count SET Count = @rating, Updated = GETDATE(), UpdatedBy = @userId WHERE EventId = @eventId AND InsertedBy = @userId AND TypeId = (SELECT Id FROM gen_Type WHERE Shortcode = @typeCode)`. Returns rows-affected.
 
 Existence is determined by reusing the existing `GetMyRatingAsync(id, userId)`, which already returns `{ typeCode → ratingValue }`. No new `GetRatingIdAsync` is needed; the legacy `WHERE Id = @ratingID` shape is replaced by the composite-key update above.
 
