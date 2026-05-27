@@ -9,7 +9,7 @@ export const useRatings = (id: number) => {
   const [ratings, setRatings] = useState<RatingsResponse>();
 
   const getRatingData = async () => {
-    if (authTokens === undefined) return;
+    if (!authTokens) return;
     const url = `${config.get("apiPath")}/api/hardhead/${id}/ratings`;
     const response = await axios.get<RatingsResponse>(url, {
       headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
