@@ -9,17 +9,12 @@ export const useRatings = (id: number) => {
   const [ratings, setRatings] = useState<RatingsResponse>();
 
   const getRatingData = async () => {
-    if (authTokens !== undefined) {
-      try {
-        const url = `${config.get("apiPath")}/api/hardhead/${id}/ratings`;
-        const response = await axios.get<RatingsResponse>(url, {
-          headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
-        });
-        setRatings(response.data);
-      } catch (e) {
-        console.error(e);
-      }
-    }
+    if (authTokens === undefined) return;
+    const url = `${config.get("apiPath")}/api/hardhead/${id}/ratings`;
+    const response = await axios.get<RatingsResponse>(url, {
+      headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
+    });
+    setRatings(response.data);
   };
 
   const saveRating = async (rate: number, type: string) => {
@@ -34,7 +29,7 @@ export const useRatings = (id: number) => {
   };
 
   useEffect(() => {
-    getRatingData();
+    getRatingData().catch((e) => console.error(e));
   }, [id, authTokens]);
 
   return { ratings, refreshRatings: getRatingData, saveRating };
