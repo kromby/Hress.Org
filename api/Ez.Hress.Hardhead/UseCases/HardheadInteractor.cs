@@ -224,4 +224,17 @@ public class HardheadInteractor
         return ratings;
     }
 
+    public async Task<bool> SaveRatingAsync(int id, int userId, string typeCode, int rating)
+    {
+        var existing = await _hardheadDataAccess.GetMyRatingAsync(id, userId).ConfigureAwait(false);
+
+        if (existing.ContainsKey(typeCode))
+        {
+            var affected = await _hardheadDataAccess.UpdateRatingAsync(id, userId, typeCode, rating).ConfigureAwait(false);
+            return affected == 1;
+        }
+
+        return false;
+    }
+
 }
