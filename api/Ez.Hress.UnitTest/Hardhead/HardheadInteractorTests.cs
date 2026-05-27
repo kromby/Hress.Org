@@ -78,6 +78,19 @@ public class HardheadInteractorTests
         _hardheadDataAccess.Verify(d => d.UpdateRatingAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never);
     }
 
+    [Theory]
+    [InlineData(0, "REP_C_RTNG")]
+    [InlineData(6, "REP_C_RTNG")]
+    [InlineData(-1, "REP_C_RTNG")]
+    [InlineData(3, "BOGUS_CODE")]
+    [InlineData(3, "")]
+    public async Task SaveRatingAsync_InvalidInput_ThrowsArgumentException(int rating, string typeCode)
+    {
+        // ACT & ASSERT
+        await Assert.ThrowsAsync<System.ArgumentException>(
+            () => _interactor.SaveRatingAsync(42, 7, typeCode, rating));
+    }
+
     [Fact]
     public async Task SaveRatingAsync_NewRating_UserDidNotAttend_ReturnsFalse()
     {
