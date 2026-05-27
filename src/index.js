@@ -34,10 +34,8 @@ Sentry.init({
 function setConfig() {
   config.set(
     {
-      path: process.env.REACT_APP_LEGACY_API_PATH,
       apiPath: process.env.REACT_APP_API_PATH ?? window.location.hostname,
       imagePath: process.env.REACT_APP_IMAGE_PATH,
-      code: process.env.REACT_APP_LEGACY_API_CODE,
       omdb: process.env.REACT_APP_OMDB,
     },
     {
