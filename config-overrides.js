@@ -31,5 +31,6 @@ module.exports = function override(config) {
       fullySpecified: false,
     },
   });
+  config.ignoreWarnings = [/Critical dependency/];
   return config;
 };
