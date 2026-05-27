@@ -547,22 +547,20 @@ public class HardheadSqlAccess : IHardheadDataAccess
                         WHERE	rating.EventId = @id
                             AND rating.InsertedBy = @userId";
 
-        using (var connection = new SqlConnection(_connectionString))
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add(new SqlParameter("id", id));
+        command.Parameters.Add(new SqlParameter("userId", userId));
+
+        var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
         {
-            await connection.OpenAsync();
+            var code = reader.GetString(reader.GetOrdinal("Shortcode"));
+            var myRating = Convert.ToInt32(reader.GetDecimal(reader.GetOrdinal("Count")));
 
-            using var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("id", id));
-            command.Parameters.Add(new SqlParameter("userId", userId));
-
-            var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                var code = reader.GetString(reader.GetOrdinal("Shortcode"));
-                var myRating = Convert.ToInt32(reader.GetDecimal(reader.GetOrdinal("Count")));
-
-                list.Add(code, myRating);
-            }
+            list.Add(code, myRating);
         }
 
         return list;
@@ -582,26 +580,24 @@ public class HardheadSqlAccess : IHardheadDataAccess
 
         var list = new Dictionary<string, RatingInfo>();
 
-        using (var connection = new SqlConnection(_connectionString))
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add(new SqlParameter("id", Id));
+
+        var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
         {
-            await connection.OpenAsync();
+            var name = reader.GetString(reader.GetOrdinal("name"));
+            var code = reader.GetString(reader.GetOrdinal("Shortcode"));
 
-            using var command = new SqlCommand(sql, connection);
-            command.Parameters.Add(new SqlParameter("id", Id));
-
-            var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
+            var entity = new RatingInfo(name, code)
             {
-                var name = reader.GetString(reader.GetOrdinal("name"));
-                var code = reader.GetString(reader.GetOrdinal("Shortcode"));
-
-                var entity = new RatingInfo(name, code)
-                {
-                    AverageRating = reader.GetDecimal(reader.GetOrdinal("AvgRating")),
-                    NumberOfRatings = reader.GetInt32(reader.GetOrdinal("NrOfRatings"))
-                };
-                list.Add(code, entity);
-            }
+                AverageRating = reader.GetDecimal(reader.GetOrdinal("AvgRating")),
+                NumberOfRatings = reader.GetInt32(reader.GetOrdinal("NrOfRatings"))
+            };
+            list.Add(code, entity);
         }
 
         return list;
