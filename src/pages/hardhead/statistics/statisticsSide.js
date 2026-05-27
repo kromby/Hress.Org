@@ -13,23 +13,11 @@ const StatisticsSide = () => {
   useEffect(() => {
     const getAwards = async () => {
       try {
-        const min = 0;
-        const max = 4;
-        const periodType = Math.round(min + Math.random() * (max - min));
-
-        let url = "";
-        if (new Date().getMinutes() % 2 === 0)
-          url = `${config.get(
-            "path"
-          )}/api/hardhead/statistics/users?periodType=${periodType}&code=${config.get(
-            "code"
-          )}`;
-        else
-          url = `${config.get(
-            "path"
-          )}/api/hardhead/statistics/users?guestType=53&periodType=${periodType}&code=${config.get(
-            "code"
-          )}`;
+        const isHost = Math.random() < 0.5;
+        const periodType = Math.round(Math.random() * 4);
+        const params = new URLSearchParams({ periodType });
+        if (isHost) params.set("attendanceType", "53");
+        const url = `${config.get("apiPath")}/api/hardhead/statistics/users?${params}`;
 
         setData({ isLoading: true });
         const response = await axios.get(url);
@@ -51,41 +39,42 @@ const StatisticsSide = () => {
     if (guest === "gestur") description = "Oftast mætt";
     else description = "Oftast haldið";
 
-    // console.log(period);
     if (period === "All") description = `${description} frá upphafi`;
     else if (period === "Last10")
-      description = `${description} síðustu 10 árin`;
-    else if (period === "Last5") description = `${description} síðustu 5 árin`;
-    else if (period === "Last2") description = `${description} síðustu 2 árin`;
+      description = `${description} síðustu 10 álin`;
+    else if (period === "Last5") description = `${description} síðustu 5 álin`;
+    else if (period === "Last2") description = `${description} síðustu 2 álin`;
     else if (period === "ThisYear") description = `${description}  á þessu ári`;
 
     return description;
   };
 
+  const top = data.stats ? data.stats.list[0] : null;
+
   return (
     <div>
-      {data.visible ? (
+      {data.visible && top ? (
         <MiniPost
           title="Tölfræði"
           href="/hardhead/stats"
           description={
             <span>
-              {getDescription(data.stats.PeriodTypeName, data.stats.TypeName)}
+              {getDescription(data.stats.periodTypeName, data.stats.typeName)}
               <br />
-              {data.stats.List[0].User.Username} -{" "}
-              {data.stats.List[0].AttendedCount}
+              {top.user.username} - {top.attendedCount}
               <br />
-              {data.stats.List[0].FirstAttendedString} -{" "}
-              {data.stats.List[0].LastAttendedString}
+              {top.firstAttendedString} - {top.lastAttendedString}
             </span>
           }
-          date={data.stats.DateFrom}
-          dateString={data.stats.DateFromString}
-          userHref={`/hardhead/users/${data.stats.List[0].User.ID}`}
+          date={data.stats.dateFrom}
+          dateString={data.stats.dateFromString}
+          userHref={`/hardhead/users/${top.user.id}`}
           userPhoto={
-            config.get("apiPath") + data.stats.List[0].User.ProfilePhoto.Href
+            top.user.profilePhoto
+              ? config.get("apiPath") + top.user.profilePhoto.href
+              : undefined
           }
-          userText={data.stats.List[0].User.Username}
+          userText={top.user.username}
         />
       ) : null}
     </div>
