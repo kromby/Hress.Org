@@ -28,7 +28,7 @@
     "react": "19.2.6",
     "react-datepicker": "^9.1.0",
     "react-device-detect": "^2.2.3",
-    "react-dom": "19.2.6",
+    "react-dom": "19.2.7",
     "react-error-boundary": "^6.1.2",
     "react-ga4": "^3.0.1",
     "react-global-configuration": "^1.4.1",
