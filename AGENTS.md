@@ -39,7 +39,7 @@ The frontend expects the API at `http://localhost:7072` — set `REACT_APP_API_P
 
 ## Frontend architecture (`src/`)
 
-- **Mixed JS/TS** — files are `.js`, `.jsx`, `.tsx` side by side. `allowJs` is on; `tsconfig.json` is `strict`. New code should prefer TypeScript (`.tsx`/`.ts`). Match the conventions of the file you're editing.
+- **Mixed JS/TS** — files are `.js`, `.jsx`, `.tsx` side by side. `allowJs` is on; `tsconfig.json` is `strict`. New code should prefer TypeScript (`.tsx`/`.ts`).
 - **Data fetching** — `@tanstack/react-query`. Hooks live in `src/hooks/` (e.g. `useUsers.ts`, `useAlbums.ts`) and `src/hooks/hardhead/`. Add new data access as a query hook, don't fetch inline.
 - **Routing** — `react-router-dom` v7. Pages live in `src/pages/<feature>/`.
 - **Config** — `react-global-configuration`, set once in `src/index.js` from `REACT_APP_*` env vars (`apiPath`, `imagePath`, `omdb`). Read it via `config.get(...)`, don't read `process.env` deep in the tree.
