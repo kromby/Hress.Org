@@ -17,7 +17,7 @@
   },
   "dependencies": {
     "@sentry/cli": "^3.4.3",
-    "@sentry/react": "^10.54.0",
+    "@sentry/react": "^10.56.0",
     "@tanstack/react-query": "^5.100.14",
     "@types/react-star-ratings": "^2.3.3",
     "axios": "^1.16.1",
