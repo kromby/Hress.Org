@@ -84,11 +84,11 @@
     "eslint": {
       "ajv": "^6",
       "@eslint/eslintrc": {
-        "ajv": "^6"
+        "ajv": "^6.12.4"
       }
     },
     "@eslint/eslintrc": {
-      "ajv": "^6"
+      "ajv": "^6.12.4"
     }
   },
   "jest": {
