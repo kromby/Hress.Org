@@ -1,10 +1,23 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useAuth } from "../../../context/auth";
 import UserImage from "../../../components/users/userimage";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useHardheadGuests } from "../../../hooks/hardhead/useHardheadGuests";
 
-const GuestsEdit = ({ hardheadID, users, hostId }) => {
+export interface GuestCandidate {
+  id: number;
+  name?: string;
+  username?: string;
+  profilePhoto?: { href?: string };
+}
+
+interface GuestsEditProps {
+  hardheadID: number | string;
+  users?: GuestCandidate[];
+  hostId?: number;
+}
+
+const GuestsEdit: React.FC<GuestsEditProps> = ({ hardheadID, users, hostId }) => {
   const { authTokens } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -20,7 +33,7 @@ const GuestsEdit = ({ hardheadID, users, hostId }) => {
     }
   }, [authTokens, location.pathname, navigate]);
 
-  const handleGuestChange = async (event) => {
+  const handleGuestChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
     if (authTokens !== undefined && event.target.value) {
       event.preventDefault();
       try {
@@ -33,7 +46,7 @@ const GuestsEdit = ({ hardheadID, users, hostId }) => {
     }
   };
 
-  const handleRemoveGuest = async (guestID) => {
+  const handleRemoveGuest = async (guestID: number) => {
     if (authTokens !== undefined) {
       try {
         await removeGuest(Number(guestID));
@@ -108,6 +121,7 @@ const GuestsEdit = ({ hardheadID, users, hostId }) => {
                   id={guest.id}
                   username={guest.username}
                   profilePhoto={guest.profilePhoto?.href}
+                  text=""
                 />
               </div>
             ))

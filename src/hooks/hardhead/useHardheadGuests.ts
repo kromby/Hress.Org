@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosError } from "axios";
 import config from "react-global-configuration";
-import { UserBasicEntity } from "../../types/legacy/userBasicEntity";
+import { UserBasicEntity } from "../../types/userBasicEntity";
 
 interface UseHardheadGuestsResult {
   guests: UserBasicEntity[] | undefined;
