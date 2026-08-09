@@ -91,49 +91,35 @@ const GuestsEdit: React.FC<GuestsEditProps> = ({ hardheadID, users, hostId }) =>
               <div
                 className="col-2 col-12-xsmall align-center"
                 key={guest.id}
-                style={{ position: "relative" }}
               >
-                <button
-                  type="button"
-                  onClick={() => handleRemoveGuest(guest.id)}
-                  title="Fjarlægja gest"
-                  style={{
-                    position: "absolute",
-                    top: "6px",
-                    left: "calc(50% + 10px)",
-                    background: "#e74c3c",
-                    color: "#ffffff",
-                    border: "2px solid #ffffff",
-                    borderRadius: "50%",
-                    width: "20px",
-                    height: "20px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    padding: 0,
-                    cursor: "pointer",
-                    boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
-                    zIndex: 2,
-                  }}
-                >
-                  <svg
-                    width="10"
-                    height="10"
-                    viewBox="0 0 12 12"
-                    fill="none"
-                    stroke="#ffffff"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                  >
-                    <path d="M2 2L10 10M10 2L2 10" stroke="#ffffff" />
-                  </svg>
-                </button>
                 <UserImage
                   id={guest.id}
                   username={guest.username}
                   profilePhoto={guest.profilePhoto?.href}
                   text=""
                 />
+                <div style={{ marginTop: "4px" }}>
+                  <button
+                    type="button"
+                    className="button tiny"
+                    onClick={() => handleRemoveGuest(guest.id)}
+                    title="Fjarlægja gest"
+                    style={{
+                      fontSize: "10px",
+                      height: "22px",
+                      lineHeight: "20px",
+                      padding: "0 8px",
+                      background: "#e74c3c",
+                      color: "#ffffff",
+                      border: "none",
+                      borderRadius: "4px",
+                      cursor: "pointer",
+                      boxShadow: "none",
+                    }}
+                  >
+                    Fjarlægja
+                  </button>
+                </div>
               </div>
             ))
           : "Enginn skráður gestur"}
