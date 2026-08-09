@@ -1,4 +1,4 @@
-﻿using Ez.Hress.Hardhead.Entities;
+using Ez.Hress.Hardhead.Entities;
 using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
 
@@ -113,9 +113,21 @@ public class HardheadInteractor
         return await _hardheadDataAccess.GetGuests(hardheadID);
     }
 
+    public async Task<int> RemoveGuestAsync(int hardheadID, int guestID, int userID)
+    {
+        _log.LogInformation("[{Class}.{Method}] User '{UserID}' removing guest '{GuestID}' from Hardhead '{HardheadID}'", _class, nameof(RemoveGuestAsync), userID, guestID, hardheadID);
+        return await _hardheadDataAccess.RemoveGuest(hardheadID, guestID);
+    }
+
     public async Task<int> AddGuestAsync(int id, int guestId, int userId)
     {
-        var list = await _hardheadDataAccess.GetGuests(guestId);
+        var night = await _hardheadDataAccess.GetHardhead(id);
+        if (night.Host != null && night.Host.ID == guestId)
+        {
+            throw new ArgumentException("Geta ekki skráð gestgjafa sem gest.", nameof(guestId));
+        }
+
+        var list = await _hardheadDataAccess.GetGuests(id);
 
         if (list.Any(g => g.ID == guestId))
         {

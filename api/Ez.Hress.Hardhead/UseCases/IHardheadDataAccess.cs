@@ -1,4 +1,4 @@
-﻿using Ez.Hress.Hardhead.Entities;
+using Ez.Hress.Hardhead.Entities;
 using Ez.Hress.Shared.Entities;
 
 namespace Ez.Hress.Hardhead.UseCases;
@@ -28,6 +28,8 @@ public interface IHardheadDataAccess
     Task<IList<UserBasicEntity>> GetGuests(int hardheadID);
 
     Task<int> AddGuest(int hardheadId, int guestId, int userId, DateTime createdDate);
+
+    Task<int> RemoveGuest(int hardheadID, int guestID);
 
     Task<IList<YearEntity>> GetYears();
 

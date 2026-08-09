@@ -120,7 +120,7 @@ const HardheadEdit = () => {
 							</form>
 						</section>,
 						<MovieEdit key="edit2" id={hardhead.id} />,
-						<GuestsEdit key="edit3" hardheadID={hardhead.id} users={users} />
+						<GuestsEdit key="edit3" hardheadID={hardhead.id} users={users} hostId={hardhead.host?.id} />
 					]}
 				/>
 				: null}

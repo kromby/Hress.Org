@@ -49,6 +49,19 @@ function setConfig() {
 }
 setConfig();
 
+window.addEventListener("error", (e) => {
+  if (
+    e.message === "ResizeObserver loop completed with undelivered notifications." ||
+    e.message === "ResizeObserver loop limit exceeded"
+  ) {
+    const overlay = document.getElementById("webpack-dev-server-client-overlay");
+    const overlayDiv = document.getElementById("webpack-dev-server-client-overlay-div");
+    if (overlay) overlay.style.display = "none";
+    if (overlayDiv) overlayDiv.style.display = "none";
+    e.stopImmediatePropagation();
+  }
+});
+
 // skipcq: JS-0002
 console.log(
   "Hress version: " + packageJson.version ?? process.env.REACT_APP_VERSION

@@ -83,7 +83,10 @@ public class HardheadGuestFunctions
 
             if(HttpMethods.IsDelete(req.Method))
             {
-
+                var result = await _hardheadInteractor.RemoveGuestAsync(id, guestId, userId);
+                if(result == 0)
+                    return new NotFoundResult();
+                return new OkResult();
             }
 
             _log.LogError($"[{{Class}}.{{Method}}] HttpMethod '{req.Method}' ist not yet supported.", _class, nameof(RunPostDel));
