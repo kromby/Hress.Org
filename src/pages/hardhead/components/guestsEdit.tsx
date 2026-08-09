@@ -91,38 +91,40 @@ const GuestsEdit: React.FC<GuestsEditProps> = ({ hardheadID, users, hostId }) =>
               <div
                 className="col-2 col-12-xsmall align-center"
                 key={guest.id}
-                style={{ position: "relative" }}
               >
-                <button
-                  type="button"
-                  onClick={() => handleRemoveGuest(guest.id)}
-                  title="Fjarlægja gest"
-                  style={{
-                    position: "absolute",
-                    top: "-8px",
-                    right: "4px",
-                    background: "#e74c3c",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: "50%",
-                    width: "22px",
-                    height: "22px",
-                    lineHeight: "22px",
-                    padding: 0,
-                    cursor: "pointer",
-                    fontSize: "12px",
-                    fontWeight: "bold",
-                    zIndex: 2,
-                  }}
-                >
-                  &times;
-                </button>
-                <UserImage
-                  id={guest.id}
-                  username={guest.username}
-                  profilePhoto={guest.profilePhoto?.href}
-                  text=""
-                />
+                <div style={{ position: "relative", display: "inline-block" }}>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveGuest(guest.id)}
+                    title="Fjarlægja gest"
+                    style={{
+                      position: "absolute",
+                      top: "-4px",
+                      right: "-4px",
+                      background: "#e74c3c",
+                      color: "#fff",
+                      border: "none",
+                      borderRadius: "50%",
+                      width: "20px",
+                      height: "20px",
+                      lineHeight: "18px",
+                      padding: 0,
+                      cursor: "pointer",
+                      fontSize: "12px",
+                      fontWeight: "bold",
+                      zIndex: 2,
+                      boxShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                    }}
+                  >
+                    &times;
+                  </button>
+                  <UserImage
+                    id={guest.id}
+                    username={guest.username}
+                    profilePhoto={guest.profilePhoto?.href}
+                    text=""
+                  />
+                </div>
               </div>
             ))
           : "Enginn skráður gestur"}
