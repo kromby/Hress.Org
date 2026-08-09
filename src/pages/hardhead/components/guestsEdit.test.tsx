@@ -11,7 +11,7 @@ jest.mock("react-global-configuration", () => ({
 }));
 
 describe("GuestsEdit", () => {
-  let queryClient;
+  let queryClient: QueryClient;
 
   const mockUsers = [
     { id: 1, name: "Host User" },
@@ -20,7 +20,7 @@ describe("GuestsEdit", () => {
   ];
 
   const mockGuests = [
-    { id: 2, username: "Existing Guest", profilePhoto: null },
+    { id: 2, username: "Existing Guest", profilePhoto: undefined },
   ];
 
   const renderComponent = (props = {}) => {
@@ -47,7 +47,7 @@ describe("GuestsEdit", () => {
         queries: { retry: false },
       },
     });
-    axios.get.mockResolvedValue({ data: mockGuests });
+    (axios.get as jest.Mock).mockResolvedValue({ data: mockGuests });
   });
 
   it("filters out host and existing guests from dropdown options", async () => {
@@ -66,7 +66,7 @@ describe("GuestsEdit", () => {
   });
 
   it("calls delete endpoint when guest remove button is clicked", async () => {
-    axios.delete.mockResolvedValueOnce({ status: 200 });
+    (axios.delete as jest.Mock).mockResolvedValueOnce({ status: 200 });
 
     renderComponent();
 
