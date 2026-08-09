@@ -99,8 +99,8 @@ const GuestsEdit: React.FC<GuestsEditProps> = ({ hardheadID, users, hostId }) =>
                   title="Fjarlægja gest"
                   style={{
                     position: "absolute",
-                    top: "2px",
-                    left: "calc(50% + 8px)",
+                    top: "6px",
+                    left: "calc(50% + 10px)",
                     background: "#e74c3c",
                     color: "#ffffff",
                     border: "2px solid #ffffff",
