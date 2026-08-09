@@ -113,9 +113,9 @@ public class HardheadInteractor
         return await _hardheadDataAccess.GetGuests(hardheadID);
     }
 
-    public async Task<int> RemoveGuestAsync(int hardheadID, int guestID)
+    public async Task<int> RemoveGuestAsync(int hardheadID, int guestID, int userID)
     {
-        _log.LogInformation("[{Class}.{Method}] Removing guest '{GuestID}' from Hardhead '{HardheadID}'", _class, nameof(RemoveGuestAsync), guestID, hardheadID);
+        _log.LogInformation("[{Class}.{Method}] User '{UserID}' removing guest '{GuestID}' from Hardhead '{HardheadID}'", _class, nameof(RemoveGuestAsync), userID, guestID, hardheadID);
         return await _hardheadDataAccess.RemoveGuest(hardheadID, guestID);
     }
 

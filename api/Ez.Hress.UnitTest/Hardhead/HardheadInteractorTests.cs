@@ -125,13 +125,14 @@ public class HardheadInteractorTests
         // ARRANGE
         const int hardheadId = 10;
         const int guestId = 5;
+        const int userId = 1;
 
         _hardheadDataAccess
             .Setup(d => d.RemoveGuest(hardheadId, guestId))
             .ReturnsAsync(1);
 
         // ACT
-        var result = await _interactor.RemoveGuestAsync(hardheadId, guestId);
+        var result = await _interactor.RemoveGuestAsync(hardheadId, guestId, userId);
 
         // ASSERT
         Assert.Equal(1, result);

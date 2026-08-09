@@ -1,66 +1,31 @@
-import { useState, useEffect } from "react";
-import config from "react-global-configuration";
-import axios from "axios";
+import { useEffect } from "react";
 import { useAuth } from "../../../context/auth";
 import UserImage from "../../../components/users/userimage";
 import { useLocation, useNavigate } from "react-router-dom";
+import { useHardheadGuests } from "../../../hooks/hardhead/useHardheadGuests";
 
 const GuestsEdit = ({ hardheadID, users, hostId }) => {
   const { authTokens } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [guests, setGuests] = useState();
 
-  const getGuests = () => {
-    const url = `${config.get("apiPath")}/api/hardhead/${hardheadID}/guests`;
-    axios
-      .get(url)
-      .then((response) => {
-        setGuests(response.data);
-      })
-      .catch((error) => {
-        if (error.response?.status === 404) {
-          console.log(
-            "[GuestsEdit] Guests not found for Hardhead: ",
-            hardheadID
-          );
-        } else {
-          console.error(
-            "[GuestsEdit] Error retrieving guests for Hardhead: ",
-            hardheadID
-          );
-          console.error(error);
-        }
-      });
-  };
+  const { guests, addGuest, removeGuest } = useHardheadGuests(
+    hardheadID,
+    authTokens?.token
+  );
 
   useEffect(() => {
     if (authTokens === undefined) {
       navigate("/login", { state: { from: location.pathname } });
-      return;
     }
-
-    if (!guests) {
-      getGuests();
-    }
-  }, [hardheadID, authTokens]);
+  }, [authTokens, location.pathname, navigate]);
 
   const handleGuestChange = async (event) => {
     if (authTokens !== undefined && event.target.value) {
       event.preventDefault();
       try {
-        const guestID = event.target.value;
-        const url = `${config.get(
-          "apiPath"
-        )}/api/hardhead/${hardheadID}/guests/${guestID}`;
-        await axios.post(
-          url,
-          {},
-          {
-            headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
-          }
-        );
-        getGuests();
+        const guestID = Number(event.target.value);
+        await addGuest(guestID);
       } catch (e) {
         console.error("[GuestsEdit] Ekki tókst að bæta gest við.");
         console.error(e);
@@ -71,13 +36,7 @@ const GuestsEdit = ({ hardheadID, users, hostId }) => {
   const handleRemoveGuest = async (guestID) => {
     if (authTokens !== undefined) {
       try {
-        const url = `${config.get(
-          "apiPath"
-        )}/api/hardhead/${hardheadID}/guests/${guestID}`;
-        await axios.delete(url, {
-          headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
-        });
-        getGuests();
+        await removeGuest(Number(guestID));
       } catch (e) {
         console.error("[GuestsEdit] Ekki tókst að fjarlægja gest.");
         console.error(e);

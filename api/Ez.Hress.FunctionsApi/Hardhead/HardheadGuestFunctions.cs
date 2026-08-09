@@ -83,7 +83,7 @@ public class HardheadGuestFunctions
 
             if(HttpMethods.IsDelete(req.Method))
             {
-                var result = await _hardheadInteractor.RemoveGuestAsync(id, guestId);
+                var result = await _hardheadInteractor.RemoveGuestAsync(id, guestId, userId);
                 if(result == 0)
                     return new NotFoundResult();
                 return new OkResult();
