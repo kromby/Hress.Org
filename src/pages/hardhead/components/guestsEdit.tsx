@@ -99,20 +99,20 @@ const GuestsEdit: React.FC<GuestsEditProps> = ({ hardheadID, users, hostId }) =>
                   title="Fjarlægja gest"
                   style={{
                     position: "absolute",
-                    top: "-4px",
-                    left: "calc(50% + 6px)",
+                    top: "2px",
+                    left: "calc(50% + 8px)",
                     background: "#e74c3c",
                     color: "#ffffff",
                     border: "2px solid #ffffff",
                     borderRadius: "50%",
-                    width: "22px",
-                    height: "22px",
+                    width: "20px",
+                    height: "20px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     padding: 0,
                     cursor: "pointer",
-                    boxShadow: "0 2px 4px rgba(0,0,0,0.25)",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.3)",
                     zIndex: 2,
                   }}
                 >
@@ -121,11 +121,11 @@ const GuestsEdit: React.FC<GuestsEditProps> = ({ hardheadID, users, hostId }) =>
                     height="10"
                     viewBox="0 0 12 12"
                     fill="none"
-                    stroke="currentColor"
+                    stroke="#ffffff"
                     strokeWidth="2.5"
                     strokeLinecap="round"
                   >
-                    <path d="M2 2L10 10M10 2L2 10" />
+                    <path d="M2 2L10 10M10 2L2 10" stroke="#ffffff" />
                   </svg>
                 </button>
                 <UserImage
