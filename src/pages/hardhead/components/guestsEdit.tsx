@@ -91,50 +91,49 @@ const GuestsEdit: React.FC<GuestsEditProps> = ({ hardheadID, users, hostId }) =>
               <div
                 className="col-2 col-12-xsmall align-center"
                 key={guest.id}
+                style={{ position: "relative" }}
               >
-                <div style={{ position: "relative", display: "inline-block" }}>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveGuest(guest.id)}
-                    title="Fjarlægja gest"
-                    style={{
-                      position: "absolute",
-                      top: "-4px",
-                      right: "-4px",
-                      background: "#e74c3c",
-                      color: "#ffffff",
-                      border: "2px solid #ffffff",
-                      borderRadius: "50%",
-                      width: "22px",
-                      height: "22px",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      padding: 0,
-                      cursor: "pointer",
-                      boxShadow: "0 2px 4px rgba(0,0,0,0.25)",
-                      zIndex: 2,
-                    }}
+                <button
+                  type="button"
+                  onClick={() => handleRemoveGuest(guest.id)}
+                  title="Fjarlægja gest"
+                  style={{
+                    position: "absolute",
+                    top: "-4px",
+                    left: "calc(50% + 6px)",
+                    background: "#e74c3c",
+                    color: "#ffffff",
+                    border: "2px solid #ffffff",
+                    borderRadius: "50%",
+                    width: "22px",
+                    height: "22px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: 0,
+                    cursor: "pointer",
+                    boxShadow: "0 2px 4px rgba(0,0,0,0.25)",
+                    zIndex: 2,
+                  }}
+                >
+                  <svg
+                    width="10"
+                    height="10"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2.5"
+                    strokeLinecap="round"
                   >
-                    <svg
-                      width="10"
-                      height="10"
-                      viewBox="0 0 12 12"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2.5"
-                      strokeLinecap="round"
-                    >
-                      <path d="M2 2L10 10M10 2L2 10" />
-                    </svg>
-                  </button>
-                  <UserImage
-                    id={guest.id}
-                    username={guest.username}
-                    profilePhoto={guest.profilePhoto?.href}
-                    text=""
-                  />
-                </div>
+                    <path d="M2 2L10 10M10 2L2 10" />
+                  </svg>
+                </button>
+                <UserImage
+                  id={guest.id}
+                  username={guest.username}
+                  profilePhoto={guest.profilePhoto?.href}
+                  text=""
+                />
               </div>
             ))
           : "Enginn skráður gestur"}
