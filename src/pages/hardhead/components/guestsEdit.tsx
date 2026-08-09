@@ -3,6 +3,7 @@ import { useAuth } from "../../../context/auth";
 import UserImage from "../../../components/users/userimage";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useHardheadGuests } from "../../../hooks/hardhead/useHardheadGuests";
+import "./guestsEdit.css";
 
 export interface GuestCandidate {
   id: number;
@@ -98,28 +99,14 @@ const GuestsEdit: React.FC<GuestsEditProps> = ({ hardheadID, users, hostId }) =>
                   profilePhoto={guest.profilePhoto?.href}
                   text=""
                 />
-                <div style={{ marginTop: "4px" }}>
-                  <button
-                    type="button"
-                    className="button tiny"
-                    onClick={() => handleRemoveGuest(guest.id)}
-                    title="Fjarlægja gest"
-                    style={{
-                      fontSize: "10px",
-                      height: "22px",
-                      lineHeight: "20px",
-                      padding: "0 8px",
-                      background: "#e74c3c",
-                      color: "#ffffff",
-                      border: "none",
-                      borderRadius: "4px",
-                      cursor: "pointer",
-                      boxShadow: "none",
-                    }}
-                  >
-                    Fjarlægja
-                  </button>
-                </div>
+                <button
+                  type="button"
+                  className="remove-guest-btn"
+                  onClick={() => handleRemoveGuest(guest.id)}
+                  title="Fjarlægja gest"
+                >
+                  Fjarlægja
+                </button>
               </div>
             ))
           : "Enginn skráður gestur"}
