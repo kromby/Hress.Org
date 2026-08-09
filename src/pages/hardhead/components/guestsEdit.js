@@ -5,7 +5,7 @@ import { useAuth } from "../../../context/auth";
 import UserImage from "../../../components/users/userimage";
 import { useLocation, useNavigate } from "react-router-dom";
 
-const GuestsEdit = ({ hardheadID, users }) => {
+const GuestsEdit = ({ hardheadID, users, hostId }) => {
   const { authTokens } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const GuestsEdit = ({ hardheadID, users }) => {
         setGuests(response.data);
       })
       .catch((error) => {
-        if (error.response.status === 404) {
+        if (error.response?.status === 404) {
           console.log(
             "[GuestsEdit] Guests not found for Hardhead: ",
             hardheadID
@@ -46,7 +46,7 @@ const GuestsEdit = ({ hardheadID, users }) => {
   }, [hardheadID, authTokens]);
 
   const handleGuestChange = async (event) => {
-    if (authTokens !== undefined) {
+    if (authTokens !== undefined && event.target.value) {
       event.preventDefault();
       try {
         const guestID = event.target.value;
@@ -68,6 +68,31 @@ const GuestsEdit = ({ hardheadID, users }) => {
     }
   };
 
+  const handleRemoveGuest = async (guestID) => {
+    if (authTokens !== undefined) {
+      try {
+        const url = `${config.get(
+          "apiPath"
+        )}/api/hardhead/${hardheadID}/guests/${guestID}`;
+        await axios.delete(url, {
+          headers: { "X-Custom-Authorization": `token ${authTokens.token}` },
+        });
+        getGuests();
+      } catch (e) {
+        console.error("[GuestsEdit] Ekki tókst að fjarlægja gest.");
+        console.error(e);
+      }
+    }
+  };
+
+  const availableUsers = users
+    ? users.filter(
+        (user) =>
+          user.id !== hostId &&
+          !guests?.some((guest) => guest.id === user.id)
+      )
+    : [];
+
   return (
     <section>
       <h3>Gestir</h3>
@@ -78,20 +103,48 @@ const GuestsEdit = ({ hardheadID, users }) => {
               id="demo-category"
               name="demo-category"
               onChange={handleGuestChange}
+              value=""
             >
               <option value="">- Veldu gest? -</option>
-              {users
-                .map((user) => (
-                  <option key={user.id} value={user.id}>
-                    {user.name}
-                  </option>
-                ))}
+              {availableUsers.map((user) => (
+                <option key={user.id} value={user.id}>
+                  {user.name}
+                </option>
+              ))}
             </select>
           ) : null}
         </div>
-        {guests
+        {guests && guests.length > 0
           ? guests.map((guest) => (
-              <div className="col-2 col-12-xsmall align-center" key={guest.id}>
+              <div
+                className="col-2 col-12-xsmall align-center"
+                key={guest.id}
+                style={{ position: "relative" }}
+              >
+                <button
+                  type="button"
+                  onClick={() => handleRemoveGuest(guest.id)}
+                  title="Fjarlægja gest"
+                  style={{
+                    position: "absolute",
+                    top: "-8px",
+                    right: "4px",
+                    background: "#e74c3c",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "50%",
+                    width: "22px",
+                    height: "22px",
+                    lineHeight: "22px",
+                    padding: 0,
+                    cursor: "pointer",
+                    fontSize: "12px",
+                    fontWeight: "bold",
+                    zIndex: 2,
+                  }}
+                >
+                  &times;
+                </button>
                 <UserImage
                   id={guest.id}
                   username={guest.username}
