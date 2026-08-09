@@ -1,3 +1,5 @@
+using System;
+using Ez.Hress.Hardhead.Entities;
 using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
@@ -115,5 +117,41 @@ public class HardheadInteractorTests
         Assert.False(result);
         _hardheadDataAccess.Verify(d => d.InsertRatingAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never);
         _hardheadDataAccess.Verify(d => d.UpdateRatingAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task RemoveGuestAsync_ValidInput_CallsDataAccess()
+    {
+        // ARRANGE
+        const int hardheadId = 10;
+        const int guestId = 5;
+
+        _hardheadDataAccess
+            .Setup(d => d.RemoveGuest(hardheadId, guestId))
+            .ReturnsAsync(1);
+
+        // ACT
+        var result = await _interactor.RemoveGuestAsync(hardheadId, guestId);
+
+        // ASSERT
+        Assert.Equal(1, result);
+        _hardheadDataAccess.Verify(d => d.RemoveGuest(hardheadId, guestId), Times.Once);
+    }
+
+    [Fact]
+    public async Task AddGuestAsync_GuestIsHost_ThrowsArgumentException()
+    {
+        // ARRANGE
+        const int hardheadId = 10;
+        const int hostId = 5;
+        const int userId = 1;
+
+        _hardheadDataAccess
+            .Setup(d => d.GetHardhead(hardheadId))
+            .ReturnsAsync(new HardheadNight(hardheadId, 1, new UserBasicEntity { ID = hostId }));
+
+        // ACT & ASSERT
+        await Assert.ThrowsAsync<ArgumentException>(() => _interactor.AddGuestAsync(hardheadId, hostId, userId));
+        _hardheadDataAccess.Verify(d => d.AddGuest(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>()), Times.Never);
     }
 }
