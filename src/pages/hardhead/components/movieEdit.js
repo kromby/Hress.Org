@@ -154,12 +154,17 @@ const MovieEdit = ({ id }) => {
     setImagePath(event.target.value);
     setImageGetEnabled(event.target.value.length > 6 && movieName.length > 1);
   };
+  const digitsOnly = (event) => {
+    const value = event.target.value.replace(/\D/g, "");
+    event.target.value = value;
+    return value;
+  };
   const handleMovieKillsChange = (event) => {
-    setMovieKills(event.target.value);
+    setMovieKills(digitsOnly(event));
     setButtonEnabled(true);
   };
   const handleHardhaedKillsChanges = (event) => {
-    setHardheadKills(event.target.value);
+    setHardheadKills(digitsOnly(event));
     setButtonEnabled(true);
   };
 
@@ -252,6 +257,8 @@ const MovieEdit = ({ id }) => {
             <input
               id="movieKills"
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               name="movieKills"
               onChange={(ev) => handleMovieKillsChange(ev)}
               defaultValue={movieKills}
@@ -262,6 +269,8 @@ const MovieEdit = ({ id }) => {
             <input
               id="hardheadKills"
               type="text"
+              inputMode="numeric"
+              pattern="[0-9]*"
               name="hardheadKills"
               onChange={(ev) => handleHardhaedKillsChanges(ev)}
               defaultValue={hardheadKills}
