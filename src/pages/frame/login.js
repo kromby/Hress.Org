@@ -50,7 +50,13 @@ function Login() {
         <Post
           title="Innskráning"
           body={
-            <div className="row gtr-uniform">
+            <form
+              className="row gtr-uniform"
+              onSubmit={(e) => {
+                e.preventDefault();
+                postLogin();
+              }}
+            >
               <div className="col-6 col-12-xsmall">
                 <input
                   type="text"
@@ -78,8 +84,7 @@ function Login() {
               <div className="col-12">
                 <ul className="actions">
                   <li>
-                    {/* <input type="submit" value="Innskrá" /> */}
-                    <button onClick={() => postLogin()}>Innskrá</button>
+                    <button type="submit">Innskrá</button>
                   </li>
                 </ul>
               </div>
@@ -87,7 +92,7 @@ function Login() {
                 {isError &&
                   "Ó nei, það vantar meiri hressleika :( Notendanafn eða lykilorð er ekki rétt!"}
               </div>
-            </div>
+            </form>
           }
         />
       </section>
