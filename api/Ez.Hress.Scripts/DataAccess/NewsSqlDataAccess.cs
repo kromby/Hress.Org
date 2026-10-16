@@ -59,6 +59,59 @@ public class NewsSqlDataAccess : INewsDataAccess
         return list;
     }
 
+    public async Task<IList<News>> GetNewsByAuthor(int userId)
+    {
+        const string sql = @"SELECT	news.Id, news.Name, news.Inserted, news.InsertedBy, news.Hits, news.IsPublic
+                        FROM	adm_Component news
+                        WHERE	news.TypeId = 9
+                            AND	news.InsertedBy = @userId
+                            AND	news.Deleted IS NULL
+                        ORDER BY news.Inserted DESC";
+
+        _log.LogInformation("[{Class}.{Method}] userId: {UserId}", nameof(NewsSqlDataAccess), nameof(GetNewsByAuthor), userId);
+        _log.LogInformation("[{Class}.{Method}] Executing SQL: '{SQL}'", nameof(NewsSqlDataAccess), nameof(GetNewsByAuthor), sql);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql)
+        {
+            Connection = connection
+        };
+        command.Parameters.AddWithValue("userId", userId);
+
+        var list = new List<News>();
+
+        using (var reader = await command.ExecuteReaderAsync())
+        {
+            while (await reader.ReadAsync())
+            {
+                list.Add(new News()
+                {
+                    ID = reader.GetInt32(reader.GetOrdinal("Id")),
+                    Name = reader.GetString(reader.GetOrdinal("Name")),
+                    Inserted = reader.GetDateTime(reader.GetOrdinal("Inserted")),
+                    InsertedBy = reader.GetInt32(reader.GetOrdinal("InsertedBy")),
+                    Hits = GetHits(reader),
+                    Public = SqlHelper.GetBool(reader, "IsPublic"),
+                });
+            }
+        }
+
+        _log.LogInformation("[{Class}.{Method}] Found {Count} news", nameof(NewsSqlDataAccess), nameof(GetNewsByAuthor), list.Count);
+        return list;
+    }
+
+    /// <summary>
+    /// Reads adm_Component.Hits null-safely. Uses Convert.ToInt32 so the mapping works
+    /// regardless of the exact integer column type (int/bigint/smallint/decimal).
+    /// </summary>
+    private static int GetHits(SqlDataReader reader)
+    {
+        var ordinal = reader.GetOrdinal("Hits");
+        return reader.IsDBNull(ordinal) ? 0 : Convert.ToInt32(reader.GetValue(ordinal));
+    }
+
     private static News ParseNews(SqlDataReader reader)
     {
         var entity = new News()
@@ -69,6 +122,7 @@ public class NewsSqlDataAccess : INewsDataAccess
             InsertedBy = reader.GetInt32(reader.GetOrdinal("InsertedBy")),
             Updated = SqlHelper.GetDateTimeNullable(reader, "Updated"),
             UpdatedBy = SqlHelper.GetNullableInt(reader, "UpdatedBy"),
+            Hits = GetHits(reader),
             Content = reader.GetString(reader.GetOrdinal("Body")),
             Author = new UserBasicEntity()
             {

@@ -11,4 +11,6 @@ public interface INewsDataAccess
     Task<IList<News>> GetNews(DateTime date, bool useDay, bool useMonth, bool useYear);
 
     Task<IList<StatisticNewsByDate>> GetNewsStatisticsByDate(int? year);
+
+    Task<IList<News>> GetNewsByAuthor(int userId);
 }
