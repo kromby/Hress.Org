@@ -57,7 +57,19 @@ const MyNews = () => {
 
   return (
     <div id="main">
-      <Post title="Mínar fréttir" body={renderBody()} />
+      <Post
+        title="Mínar fréttir"
+        body={renderBody()}
+        actions={
+          <ul className="actions">
+            <li>
+              <Link to="/news/new" className="button">
+                Skrifa frétt
+              </Link>
+            </li>
+          </ul>
+        }
+      />
     </div>
   );
 };

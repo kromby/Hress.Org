@@ -1,0 +1,34 @@
+.rich-text-editor {
+  border: solid 1px rgba(160, 160, 160, 0.3);
+}
+
+.rich-text-editor__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25em;
+  padding: 0.5em;
+  border-bottom: solid 1px rgba(160, 160, 160, 0.3);
+}
+
+.rich-text-editor__toolbar .button {
+  min-width: 2.75em;
+  margin: 0;
+  padding: 0 0.75em;
+  font-size: 0.9em;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.rich-text-editor__content {
+  min-height: 12em;
+  padding: 0.75em 1em;
+  outline: none;
+}
+
+.rich-text-editor__content:focus {
+  box-shadow: inset 0 0 0 1px #2ebaae;
+}
+
+.rich-text-editor__content p:last-child {
+  margin-bottom: 0;
+}
