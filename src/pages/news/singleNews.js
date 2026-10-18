@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import config from 'react-global-configuration';
 import axios from "axios";
 import { Post } from "../../components";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { sanitizeNewsHtml } from "../../utils/sanitizeHtml";
+
+const isAuthor = (news) =>
+    String(news.insertedBy ?? news.author?.id) === localStorage.getItem("userID");
 
 const SingleNews = () => {
     const [news, setNews] = useState();
@@ -38,7 +41,11 @@ const SingleNews = () => {
                         // skipcq: JS-0440
                         body={<span dangerouslySetInnerHTML={{ __html: sanitizeNewsHtml(news.content) }} />}
                         image={news.image?.id ? config.get('apiPath') + news.image.href + "?width=1400" : null}
-                        actions={<p />}
+                        actions={isAuthor(news) ?
+                            <ul className="actions">
+                                <li><Link to={`/news/${news.id}/edit`} className="button">Breyta</Link></li>
+                            </ul>
+                            : <p />}
                     />
                 :null}
         </div>

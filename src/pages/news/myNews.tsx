@@ -36,17 +36,21 @@ const MyNews = () => {
               <th>Dagsetning</th>
               <th>Lestrar</th>
               <th>Opinber</th>
+              <th aria-label="Skoða frétt" />
             </tr>
           </thead>
           <tbody>
             {news.map((item) => (
               <tr key={item.id}>
                 <td>
-                  <Link to={`/news/${item.id}`}>{item.name}</Link>
+                  <Link to={`/news/${item.id}/edit`}>{item.name}</Link>
                 </td>
                 <td>{item.insertedString}</td>
                 <td>{item.hits ?? 0}</td>
                 <td>{item.public ? "✓" : ""}</td>
+                <td>
+                  <Link to={`/news/${item.id}`}>Skoða</Link>
+                </td>
               </tr>
             ))}
           </tbody>

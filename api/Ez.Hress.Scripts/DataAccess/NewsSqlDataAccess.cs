@@ -21,7 +21,7 @@ public class NewsSqlDataAccess : INewsDataAccess
 
     public async Task<IList<News>> GetLatestNews(int top)
     {
-        var sql = @"SELECT	TOP (@top) news.Id, news.Name, news.Hits, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId, gImg.Description 'ImageName', gImg.Height, gImg.Width
+        var sql = @"SELECT	TOP (@top) news.Id, news.Name, news.Hits, news.IsPublic, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId, gImg.Description 'ImageName', gImg.Height, gImg.Width
                         FROM	adm_Component news
                         JOIN	adm_User author ON author.Id = news.InsertedBy
                         JOIN	scr_Text body ON body.ComponentId = news.Id AND body.TypeId = 36
@@ -326,6 +326,7 @@ public class NewsSqlDataAccess : INewsDataAccess
             Updated = SqlHelper.GetDateTimeNullable(reader, "Updated"),
             UpdatedBy = SqlHelper.GetNullableInt(reader, "UpdatedBy"),
             Hits = GetHits(reader),
+            Public = SqlHelper.GetBool(reader, "IsPublic"),
             Content = reader.GetString(reader.GetOrdinal("Body")),
             Author = new UserBasicEntity()
             {
@@ -353,7 +354,7 @@ public class NewsSqlDataAccess : INewsDataAccess
 
     public async Task<News> GetNews(int id)
     {
-        var sql = @"SELECT	news.Id, news.Name, news.Hits, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId, gImg.Description 'ImageName', gImg.Height, gImg.Width
+        var sql = @"SELECT	news.Id, news.Name, news.Hits, news.IsPublic, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId, gImg.Description 'ImageName', gImg.Height, gImg.Width
                         FROM	adm_Component news
                         JOIN	adm_User author ON author.Id = news.InsertedBy
                         JOIN	scr_Text body ON body.ComponentId = news.Id AND body.TypeId = 36
@@ -405,7 +406,7 @@ public class NewsSqlDataAccess : INewsDataAccess
             where.Append("AND DATEPART(YEAR,	news.Inserted) = @year ");
         }
 
-        var sql = $@"SELECT	news.Id, news.Name, news.Hits, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId, gImg.Description 'ImageName', gImg.Height, gImg.Width
+        var sql = $@"SELECT	news.Id, news.Name, news.Hits, news.IsPublic, news.Inserted, news.InsertedBy, author.Username, userPhoto.ImageId 'AuthorImageID', news.Updated, news.UpdatedBy, body.TextValue 'Body', img.Align, img.ImageId, gImg.Description 'ImageName', gImg.Height, gImg.Width
                         FROM	adm_Component news
                         JOIN	adm_User author ON author.Id = news.InsertedBy
                         JOIN	scr_Text body ON body.ComponentId = news.Id AND body.TypeId = 36

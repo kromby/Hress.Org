@@ -41,4 +41,44 @@ describe("SingleNews", () => {
     expect(container.querySelector("script")).toBeNull();
     expect(container.querySelector("[onerror]")).toBeNull();
   });
+
+  it("shows an edit link to the author", async () => {
+    localStorage.setItem("userID", "2630");
+    mockedAxios.get.mockResolvedValue({
+      data: {
+        id: 42,
+        name: "Mín frétt",
+        content: "<p>Texti</p>",
+        insertedBy: 2630,
+      },
+    });
+
+    renderPage();
+
+    expect(await screen.findByRole("link", { name: "Breyta" })).toHaveAttribute(
+      "href",
+      "/news/42/edit"
+    );
+    localStorage.removeItem("userID");
+  });
+
+  it("hides the edit link from other users", async () => {
+    localStorage.setItem("userID", "999");
+    mockedAxios.get.mockResolvedValue({
+      data: {
+        id: 42,
+        name: "Frétt",
+        content: "<p>Texti</p>",
+        insertedBy: 2630,
+      },
+    });
+
+    renderPage();
+
+    expect(await screen.findByText("Texti")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Breyta" })
+    ).not.toBeInTheDocument();
+    localStorage.removeItem("userID");
+  });
 });

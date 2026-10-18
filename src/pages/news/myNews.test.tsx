@@ -47,11 +47,16 @@ describe("MyNews", () => {
 
     expect(document.title).toBe("Mínar fréttir | Hress.Org");
     const publicLink = screen.getByRole("link", { name: "Public news" });
-    expect(publicLink).toHaveAttribute("href", "/news/42");
+    expect(publicLink).toHaveAttribute("href", "/news/42/edit");
     expect(screen.getByRole("link", { name: "Private news" })).toHaveAttribute(
       "href",
-      "/news/43"
+      "/news/43/edit"
     );
+    const viewLinks = screen.getAllByRole("link", { name: "Skoða" });
+    expect(viewLinks.map((link) => link.getAttribute("href"))).toEqual([
+      "/news/42",
+      "/news/43",
+    ]);
 
     const rows = screen.getAllByRole("row");
     // header + 2 data rows
