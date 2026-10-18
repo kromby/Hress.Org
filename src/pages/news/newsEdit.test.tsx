@@ -3,8 +3,12 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import NewsEdit from "./newsEdit";
 import { AuthContext } from "../../context/auth";
 import { useCreateNews } from "../../hooks/useCreateNews";
+import { useNews } from "../../hooks/useNews";
+import { useUpdateNews } from "../../hooks/useUpdateNews";
 
 jest.mock("../../hooks/useCreateNews");
+jest.mock("../../hooks/useNews");
+jest.mock("../../hooks/useUpdateNews");
 
 // The real Tiptap editor needs layout APIs jsdom lacks; a textarea stands in for it.
 jest.mock("../../components/editor/richTextEditor", () => {
@@ -29,6 +33,8 @@ jest.mock("../../components/editor/richTextEditor", () => {
 });
 
 const mockedUseCreateNews = useCreateNews as jest.Mock;
+const mockedUseNews = useNews as jest.Mock;
+const mockedUseUpdateNews = useUpdateNews as jest.Mock;
 
 const renderPage = (loggedIn = true) =>
   render(
@@ -52,6 +58,16 @@ describe("NewsEdit", () => {
     jest.clearAllMocks();
     mockedUseCreateNews.mockReturnValue({
       mutateAsync,
+      isPending: false,
+      error: null,
+    });
+    mockedUseNews.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: null,
+    });
+    mockedUseUpdateNews.mockReturnValue({
+      mutateAsync: jest.fn(),
       isPending: false,
       error: null,
     });
@@ -173,5 +189,136 @@ describe("NewsEdit", () => {
     renderPage(false);
 
     expect(await screen.findByText("Login page")).toBeInTheDocument();
+  });
+});
+
+describe("NewsEdit in edit mode", () => {
+  const updateNews = jest.fn();
+  const existing = {
+    id: 42,
+    name: "Gömul frétt",
+    content: "<p>Gamalt efni</p>",
+    insertedBy: 2630,
+    image: { id: 55, height: 300, href: "/api/images/55/content" },
+    imageAlign: 2,
+    public: true,
+  };
+
+  const renderEditPage = () =>
+    render(
+      <MemoryRouter initialEntries={["/news/42/edit"]}>
+        <AuthContext.Provider value={{ authTokens: { token: "fake-token" } }}>
+          <Routes>
+            <Route path="/news/:id/edit" element={<NewsEdit />} />
+            <Route path="/news/:id" element={<p>Article page</p>} />
+          </Routes>
+        </AuthContext.Provider>
+      </MemoryRouter>
+    );
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    localStorage.setItem("userID", "2630");
+    mockedUseCreateNews.mockReturnValue({
+      mutateAsync: jest.fn(),
+      isPending: false,
+      error: null,
+    });
+    mockedUseNews.mockReturnValue({
+      data: existing,
+      isLoading: false,
+      error: null,
+    });
+    mockedUseUpdateNews.mockReturnValue({
+      mutateAsync: updateNews,
+      isPending: false,
+      error: null,
+    });
+  });
+
+  afterEach(() => {
+    localStorage.removeItem("userID");
+  });
+
+  it("prefills the form from the existing news", () => {
+    renderEditPage();
+
+    expect(mockedUseNews).toHaveBeenCalledWith(42);
+    expect(mockedUseUpdateNews).toHaveBeenCalledWith(42);
+    expect(screen.getByLabelText("Fyrirsögn")).toHaveValue("Gömul frétt");
+    expect(screen.getByLabelText("Meginmál")).toHaveValue("<p>Gamalt efni</p>");
+    expect(screen.getByLabelText("Opinber")).toBeChecked();
+    expect(
+      screen.getByRole("button", { name: "Vista breytingar" })
+    ).toBeInTheDocument();
+  });
+
+  it("saves the changes, keeps the existing image and opens the article", async () => {
+    updateNews.mockResolvedValue({ id: 42 });
+    renderEditPage();
+
+    fireEvent.change(screen.getByLabelText("Fyrirsögn"), {
+      target: { value: "Breytt frétt" },
+    });
+    fireEvent.click(screen.getByLabelText("Opinber"));
+    fireEvent.click(screen.getByRole("button", { name: "Vista breytingar" }));
+
+    await waitFor(() =>
+      expect(updateNews).toHaveBeenCalledWith({
+        name: "Breytt frétt",
+        content: "<p>Gamalt efni</p>",
+        public: false,
+        imageId: 55,
+        imageAlign: 2,
+      })
+    );
+    expect(await screen.findByText("Article page")).toBeInTheDocument();
+  });
+
+  it("treats a missing public flag as not public", () => {
+    mockedUseNews.mockReturnValue({
+      data: { ...existing, public: undefined },
+      isLoading: false,
+      error: null,
+    });
+    renderEditPage();
+
+    expect(screen.getByLabelText("Opinber")).not.toBeChecked();
+  });
+
+  it("tells non-authors they can only edit their own news", () => {
+    localStorage.setItem("userID", "999");
+    renderEditPage();
+
+    expect(
+      screen.getByText("Þú getur aðeins breytt þínum eigin fréttum.")
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText("Fyrirsögn")).not.toBeInTheDocument();
+  });
+
+  it("shows a message when the news does not exist", () => {
+    mockedUseNews.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      error: { response: { status: 404 } },
+    });
+    renderEditPage();
+
+    expect(screen.getByText("Fréttin fannst ekki.")).toBeInTheDocument();
+  });
+
+  it("shows a friendly message when saving is forbidden", () => {
+    mockedUseUpdateNews.mockReturnValue({
+      mutateAsync: updateNews,
+      isPending: false,
+      error: { response: { status: 403 } },
+    });
+    renderEditPage();
+
+    expect(
+      screen.getByText(
+        "Ekki tókst að vista frétt: Þú getur aðeins breytt þínum eigin fréttum."
+      )
+    ).toBeInTheDocument();
   });
 });

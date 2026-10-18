@@ -187,6 +187,7 @@ function App() {
               <Route path="news">
                 <Route path="mine" element={<MyNews />} />
                 <Route path="new" element={<NewsEdit />} />
+                <Route path=":id/edit" element={<NewsEdit />} />
                 <Route path=":id" element={<SingleNews />} />
                 <Route path="history" element={<HistoryNews />} />
               </Route>
