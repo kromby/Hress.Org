@@ -85,6 +85,30 @@ describe("NewsEdit", () => {
     expect(bodyError.id).not.toBe("");
   });
 
+  it("clears a field's error when the field is edited", async () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole("button", { name: "Birta frétt" }));
+    expect(await screen.findByText("Fyrirsögn vantar.")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Fyrirsögn"), {
+      target: { value: "Ný frétt" },
+    });
+    fireEvent.change(screen.getByLabelText("Meginmál"), {
+      target: { value: "<p>Halló</p>" },
+    });
+
+    expect(screen.queryByText("Fyrirsögn vantar.")).not.toBeInTheDocument();
+    expect(screen.queryByText("Meginmál vantar.")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Fyrirsögn")).toHaveAttribute(
+      "aria-invalid",
+      "false"
+    );
+    expect(screen.getByLabelText("Meginmál")).not.toHaveAttribute(
+      "aria-describedby"
+    );
+  });
+
   it("only submits once when the button is clicked twice quickly", async () => {
     let resolveSave: ((value: { id: number }) => void) | undefined;
     mutateAsync.mockReturnValue(

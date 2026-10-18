@@ -38,6 +38,12 @@ const NewsEdit = () => {
     }
   }, [authTokens]);
 
+  const clearError = (field: keyof ValidationErrors) => {
+    setErrors((current) =>
+      current[field] ? { ...current, [field]: undefined } : current
+    );
+  };
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (submitting.current) return;
@@ -81,7 +87,10 @@ const NewsEdit = () => {
                   id="news-name"
                   type="text"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    clearError("name");
+                  }}
                   aria-invalid={Boolean(errors.name)}
                   aria-describedby={errors.name ? "news-name-error" : undefined}
                 />
@@ -96,7 +105,10 @@ const NewsEdit = () => {
                 <RichTextEditor
                   id="news-content-label"
                   value={content}
-                  onChange={setContent}
+                  onChange={(html) => {
+                    setContent(html);
+                    clearError("content");
+                  }}
                   errorId={errors.content ? "news-content-error" : undefined}
                   invalid={Boolean(errors.content)}
                 />

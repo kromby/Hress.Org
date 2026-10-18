@@ -162,10 +162,12 @@ public class NewsInteractor
     }
 
     private static readonly Regex HtmlTag = new(@"<[^>]*>", RegexOptions.Compiled);
+    // Runs on sanitized output, where an unsafe src has already been removed.
+    private static readonly Regex ImageWithSource = new(@"<img\b[^>]*\bsrc\s*=\s*[""'][^""'\s]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private static bool HasVisibleContent(string html)
     {
-        return html.Contains("<img", StringComparison.OrdinalIgnoreCase)
+        return ImageWithSource.IsMatch(html)
             || !string.IsNullOrWhiteSpace(System.Net.WebUtility.HtmlDecode(HtmlTag.Replace(html, string.Empty)));
     }
 

@@ -241,15 +241,34 @@ public class NewsInteractorTests
         Assert.Equal(content, saved!.Content);
     }
 
-    [Fact]
-    public async Task CreateNewsBodyEmptyAfterSanitizing_TestAsync()
+    [Theory]
+    [InlineData("<script>alert(1)</script>")]
+    [InlineData("<img>")]
+    [InlineData("<p><img src=\"\"></p>")]
+    [InlineData("<img src=\"javascript:alert(1)\">")]
+    public async Task CreateNewsBodyEmptyAfterSanitizing_TestAsync(string content)
     {
         // ARRANGE
         var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
-        var news = new News { Name = "Headline", Content = "<script>alert(1)</script>" };
+        var news = new News { Name = "Headline", Content = content };
 
         // ACT & ASSERT
         await Assert.ThrowsAsync<ArgumentException>(() => interactor.CreateNewsAsync(news, 2630));
         _newsDataAccess.Verify(x => x.CreateNews(It.IsAny<News>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CreateNewsImageOnlyBodyIsAllowed_TestAsync()
+    {
+        // ARRANGE
+        _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>())).Returns(Task.FromResult(1));
+        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var news = new News { Name = "Headline", Content = "<p><img src=\"https://hress.org/a.png\"></p>" };
+
+        // ACT
+        var result = await interactor.CreateNewsAsync(news, 2630);
+
+        // ASSERT
+        Assert.Equal(1, result.ID);
     }
 }
