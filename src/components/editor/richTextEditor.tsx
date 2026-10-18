@@ -1,5 +1,5 @@
 import "./richTextEditor.css";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
@@ -32,6 +32,12 @@ const RichTextEditor = ({
   invalid,
 }: RichTextEditorProps) => {
   const [linkHref, setLinkHref] = useState<string | null>(null);
+  const linkInput = useRef<HTMLInputElement>(null);
+  const linkFieldOpen = linkHref !== null;
+
+  useEffect(() => {
+    if (linkFieldOpen) linkInput.current?.focus();
+  }, [linkFieldOpen]);
 
   const editor = useEditor({
     extensions: [
@@ -167,7 +173,7 @@ const RichTextEditor = ({
             type="url"
             aria-label="Slóð tengils"
             value={linkHref}
-            autoFocus
+            ref={linkInput}
             onChange={(e) => setLinkHref(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") applyLink(e);

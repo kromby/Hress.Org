@@ -86,7 +86,7 @@ describe("NewsEdit", () => {
   });
 
   it("only submits once when the button is clicked twice quickly", async () => {
-    let resolveSave: (value: { id: number }) => void = () => {};
+    let resolveSave: ((value: { id: number }) => void) | undefined;
     mutateAsync.mockReturnValue(
       new Promise((resolve) => {
         resolveSave = resolve;
@@ -105,7 +105,7 @@ describe("NewsEdit", () => {
     fireEvent.click(submit);
 
     expect(mutateAsync).toHaveBeenCalledTimes(1);
-    resolveSave({ id: 77 });
+    resolveSave?.({ id: 77 });
     expect(await screen.findByText("Article page")).toBeInTheDocument();
   });
 
