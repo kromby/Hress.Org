@@ -21,7 +21,16 @@ public class CreateNewsRequest
     public string Content { get; set; } = string.Empty;
     public bool Public { get; set; } = true;
     public int? ImageId { get; set; }
+    public CreateNewsImageRequest? Image { get; set; }
     public int? ImageAlign { get; set; }
+
+    // Accept both { "imageId": 1 } and { "image": { "id": 1 } }.
+    public int? ResolvedImageId => ImageId ?? Image?.Id;
+}
+
+public class CreateNewsImageRequest
+{
+    public int Id { get; set; }
 }
 
 public class NewsFunctions
@@ -180,7 +189,7 @@ public class NewsFunctions
                 Name = request.Name,
                 Content = request.Content,
                 Public = request.Public,
-                Image = request.ImageId.HasValue ? new ImageHrefEntity(request.ImageId.Value, string.Empty) : null,
+                Image = request.ResolvedImageId.HasValue ? new ImageHrefEntity(request.ResolvedImageId.Value, string.Empty) : null,
                 ImageAlign = (Align)(request.ImageAlign ?? 0),
             };
 

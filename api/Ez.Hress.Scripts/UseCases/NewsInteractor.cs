@@ -133,12 +133,15 @@ public class NewsInteractor
     }
 
     // Ported from legacy ContentManager.HandleHyperlinks: external links open in a new tab.
-    private static readonly Regex ExternalLinkWithoutTarget = new(
-        @"<a(?![^>]*\btarget=)(\s+href=""https?:)",
-        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex AnchorTag = new(@"<a\s[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex TargetAttribute = new(@"(?<![\w-])target\s*=", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex ExternalHref = new(@"(?<![\w-])href\s*=\s*[""']?https?:", RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     private static string OpenExternalLinksInNewTab(string html)
     {
-        return ExternalLinkWithoutTarget.Replace(html, m => m.Value.Insert(2, " target=\"_blank\""));
+        return AnchorTag.Replace(html, m =>
+            ExternalHref.IsMatch(m.Value) && !TargetAttribute.IsMatch(m.Value)
+                ? m.Value.Insert(2, " target=\"_blank\"")
+                : m.Value);
     }
 }

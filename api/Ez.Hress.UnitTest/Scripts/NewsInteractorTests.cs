@@ -128,6 +128,10 @@ public class NewsInteractorTests
     [InlineData("<A href=\"https://hress.org\">x</A>", "<A target=\"_blank\" href=\"https://hress.org\">x</A>")]
     [InlineData("<a target=\"_self\" href=\"http://hress.org\">x</a>", "<a target=\"_self\" href=\"http://hress.org\">x</a>")]
     [InlineData("<a href=\"/news/1\">x</a>", "<a href=\"/news/1\">x</a>")]
+    [InlineData("<a class=\"story\" href=\"http://hress.org\">x</a>", "<a target=\"_blank\" class=\"story\" href=\"http://hress.org\">x</a>")]
+    [InlineData("<a href=\"http://hress.org\" data-target=\"x\">x</a>", "<a target=\"_blank\" href=\"http://hress.org\" data-target=\"x\">x</a>")]
+    [InlineData("<a href=\"http://hress.org\" TARGET='_top'>x</a>", "<a href=\"http://hress.org\" TARGET='_top'>x</a>")]
+    [InlineData("<abbr title=\"http://x\">x</abbr>", "<abbr title=\"http://x\">x</abbr>")]
     public async Task CreateNewsOpensExternalLinksInNewTab_TestAsync(string content, string expected)
     {
         // ARRANGE
