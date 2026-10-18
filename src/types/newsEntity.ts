@@ -7,4 +7,6 @@ export type NewsEntity = {
   image: { height: number; href: string };
   imageAlign: number;
   content: string;
+  hits?: number;
+  public?: boolean;
 };

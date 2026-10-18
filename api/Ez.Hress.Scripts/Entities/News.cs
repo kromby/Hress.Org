@@ -18,4 +18,7 @@ public class News : EntityBase<int>
     public Align ImageAlign { get; set; }
     public ImageHrefEntity? Image { get; set; }
     public UserBasicEntity? Author { get; set; }
+
+    public int Hits { get; set; }
+    public bool Public { get; set; }
 }

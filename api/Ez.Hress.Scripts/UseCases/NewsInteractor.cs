@@ -75,4 +75,15 @@ public class NewsInteractor
     {
         return await _newsDataAccess.GetNewsStatisticsByDate(year);
     }
+
+    public async Task<IList<News>> GetNewsByAuthorAsync(int userId)
+    {
+        if (userId < 1)
+        {
+            throw new ArgumentException("User ID must be a positive number", nameof(userId));
+        }
+
+        _log.LogInformation("[{Class}.{Method}] Get news by author '{UserId}'", nameof(NewsInteractor), nameof(GetNewsByAuthorAsync), userId);
+        return await _newsDataAccess.GetNewsByAuthor(userId);
+    }
 }

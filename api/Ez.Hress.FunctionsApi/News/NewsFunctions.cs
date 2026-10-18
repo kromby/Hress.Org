@@ -1,4 +1,5 @@
 using Ez.Hress.Scripts.UseCases;
+using Ez.Hress.Shared.UseCases;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -12,11 +13,13 @@ namespace Ez.Hress.FunctionsApi.News;
 
 public class NewsFunctions
 {
+    private readonly AuthenticationInteractor _authenticationInteractor;
     private readonly NewsInteractor _newsInteractor;
     private readonly ILogger<NewsFunctions> _log;
 
-    public NewsFunctions(NewsInteractor newsInteractor, ILogger<NewsFunctions> log)
+    public NewsFunctions(AuthenticationInteractor authenticationInteractor, NewsInteractor newsInteractor, ILogger<NewsFunctions> log)
     {
+        _authenticationInteractor = authenticationInteractor;
         _newsInteractor = newsInteractor;
         _log = log;
     }
@@ -91,6 +94,46 @@ public class NewsFunctions
         {
             stopwatch.Stop();
             _log.LogInformation($"[RunNews] Elapsed: {stopwatch.ElapsedMilliseconds} ms.");
+        }
+    }
+
+    [Function("newsMine")]
+    public async Task<IActionResult> RunNewsMine(
+        [HttpTrigger(AuthorizationLevel.Function, "get", Route = "news/mine")] HttpRequest req)
+    {
+        var stopwatch = new Stopwatch();
+        stopwatch.Start();
+
+        var methodName = nameof(RunNewsMine);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", nameof(NewsFunctions), methodName);
+
+        try
+        {
+            var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
+            if (!isJWTValid)
+            {
+                _log.LogInformation("[{Class}.{Method}] JWT is not valid!", nameof(NewsFunctions), methodName);
+                return new UnauthorizedResult();
+            }
+
+            _log.LogInformation("[{Class}.{Method}] Getting news for author '{UserId}'", nameof(NewsFunctions), methodName, userID);
+            var list = await _newsInteractor.GetNewsByAuthorAsync(userID);
+            return new OkObjectResult(list);
+        }
+        catch (ArgumentException aex)
+        {
+            _log.LogError(aex, "[{Class}.{Method}] Invalid input", nameof(NewsFunctions), methodName);
+            return new BadRequestObjectResult(aex.Message);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "[{Class}.{Method}] Unhandled error", nameof(NewsFunctions), methodName);
+            throw;
+        }
+        finally
+        {
+            stopwatch.Stop();
+            _log.LogInformation("[{Class}.{Method}] Elapsed: {Elapsed} ms.", nameof(NewsFunctions), methodName, stopwatch.ElapsedMilliseconds);
         }
     }
 }
