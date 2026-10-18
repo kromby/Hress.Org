@@ -271,4 +271,88 @@ public class NewsInteractorTests
         // ASSERT
         Assert.Equal(1, result.ID);
     }
+
+    private void SetupExistingNews(int id, int authorId)
+    {
+        _newsDataAccess.Setup(x => x.GetNews(id))
+            .Returns(Task.FromResult(new News { ID = id, Name = "Gamla", InsertedBy = authorId, Hits = 42 }));
+    }
+
+    [Fact]
+    public async Task UpdateNewsOK_TestAsync()
+    {
+        // ARRANGE
+        const int userId = 2630;
+        SetupExistingNews(5, userId);
+        News? saved = null;
+        _newsDataAccess.Setup(x => x.UpdateNews(It.IsAny<News>()))
+            .Callback<News>(n => saved = n)
+            .Returns(Task.CompletedTask);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var news = new News
+        {
+            Name = "  Breytt frétt  ",
+            Content = "<p>Nýtt <a href=\"https://hress.org\">efni</a></p><script>alert(1)</script>",
+            Public = false,
+            Image = new ImageHrefEntity(55, string.Empty),
+        };
+
+        // ACT
+        var result = await interactor.UpdateNewsAsync(5, news, userId);
+
+        // ASSERT
+        Assert.NotNull(saved);
+        Assert.Equal(5, saved!.ID);
+        Assert.Equal("Breytt frétt", saved.Name);
+        Assert.Equal("<p>Nýtt <a target=\"_blank\" href=\"https://hress.org\">efni</a></p>", saved.Content);
+        Assert.False(saved.Public);
+        Assert.Equal(userId, saved.UpdatedBy);
+        Assert.NotNull(saved.Updated);
+        Assert.Equal(55, saved.Image!.ID);
+        Assert.Equal(Align.Left, saved.ImageAlign);
+        Assert.Same(saved, result);
+    }
+
+    [Fact]
+    public async Task UpdateNewsNotFound_TestAsync()
+    {
+        // ARRANGE
+        _newsDataAccess.Setup(x => x.GetNews(5)).Returns(Task.FromResult(new News()));
+        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var news = new News { Name = "Headline", Content = "<p>Body</p>" };
+
+        // ACT & ASSERT
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => interactor.UpdateNewsAsync(5, news, 2630));
+        _newsDataAccess.Verify(x => x.UpdateNews(It.IsAny<News>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task UpdateNewsNotAuthor_TestAsync()
+    {
+        // ARRANGE
+        SetupExistingNews(5, authorId: 999);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var news = new News { Name = "Headline", Content = "<p>Body</p>" };
+
+        // ACT & ASSERT
+        await Assert.ThrowsAsync<UnauthorizedAccessException>(() => interactor.UpdateNewsAsync(5, news, 2630));
+        _newsDataAccess.Verify(x => x.UpdateNews(It.IsAny<News>()), Times.Never);
+    }
+
+    [Theory]
+    [InlineData(0, 2630, "Headline", "<p>Body</p>")]
+    [InlineData(5, 0, "Headline", "<p>Body</p>")]
+    [InlineData(5, 2630, " ", "<p>Body</p>")]
+    [InlineData(5, 2630, "Headline", "<script>alert(1)</script>")]
+    public async Task UpdateNewsInvalidInput_TestAsync(int id, int userId, string name, string content)
+    {
+        // ARRANGE
+        SetupExistingNews(5, 2630);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var news = new News { Name = name, Content = content };
+
+        // ACT & ASSERT
+        await Assert.ThrowsAsync<ArgumentException>(() => interactor.UpdateNewsAsync(id, news, userId));
+        _newsDataAccess.Verify(x => x.UpdateNews(It.IsAny<News>()), Times.Never);
+    }
 }

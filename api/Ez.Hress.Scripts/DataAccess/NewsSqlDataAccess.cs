@@ -161,6 +161,113 @@ public class NewsSqlDataAccess : INewsDataAccess
         }
     }
 
+    public async Task UpdateNews(News news)
+    {
+        const string componentSql = @"UPDATE adm_Component
+                            SET Name = @Name, IsPublic = @IsPublic, Updated = @Updated, UpdatedBy = @UpdatedBy
+                            WHERE Id = @Id AND TypeId = 9 AND Deleted IS NULL";
+        const string updateTextSql = @"UPDATE scr_Text
+                            SET TextValue = @TextValue, Updated = @Updated, UpdatedBy = @UpdatedBy
+                            WHERE ComponentId = @ComponentId AND TypeId = @TypeId AND Deleted IS NULL";
+        const string insertTextSql = @"INSERT INTO scr_Text (ComponentId, TypeId, TextValue, InsertedBy, Inserted)
+                            VALUES (@ComponentId, @TypeId, @TextValue, @UpdatedBy, @Updated)";
+        const string updateImageSql = @"UPDATE scr_Image
+                            SET ImageId = @ImageId, Align = @Align, Updated = @Updated, UpdatedBy = @UpdatedBy
+                            WHERE ComponentId = @ComponentId AND TypeId = @TypeId";
+        const string insertImageSql = @"INSERT INTO scr_Image (ComponentId, TypeId, ImageId, Align, InsertedBy, Inserted)
+                            VALUES (@ComponentId, @TypeId, @ImageId, @Align, @UpdatedBy, @Updated)";
+        // Hard delete, as the legacy NHibernate cascade did; the read queries don't filter scr_Image.Deleted.
+        const string deleteImageSql = @"DELETE FROM scr_Image WHERE ComponentId = @ComponentId AND TypeId = @TypeId";
+
+        _log.LogInformation("[{Class}.{Method}] Updating news '{Id}' by user '{UserId}'", nameof(NewsSqlDataAccess), nameof(UpdateNews), news.ID, news.UpdatedBy);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+        using var transaction = connection.BeginTransaction();
+
+        try
+        {
+            using (var command = new SqlCommand(componentSql, connection, transaction))
+            {
+                command.Parameters.AddWithValue("@Id", news.ID);
+                command.Parameters.AddWithValue("@Name", news.Name);
+                command.Parameters.AddWithValue("@IsPublic", news.Public);
+                AddUpdatedParameters(command, news);
+                if (await command.ExecuteNonQueryAsync() != 1)
+                {
+                    throw new KeyNotFoundException($"News '{news.ID}' not found");
+                }
+            }
+
+            var subjectTypeId = await GetTypeId(connection, transaction, "TXT_SUBJECT");
+            // Body text type is hardcoded as 36 in every read query, so it must match here.
+            const int bodyTypeId = 36;
+
+            foreach (var (typeId, text) in new[] { (subjectTypeId, news.Name!), (bodyTypeId, news.Content!) })
+            {
+                var parameters = new Action<SqlCommand>(command =>
+                {
+                    command.Parameters.AddWithValue("@ComponentId", news.ID);
+                    command.Parameters.AddWithValue("@TypeId", typeId);
+                    command.Parameters.AddWithValue("@TextValue", text);
+                    AddUpdatedParameters(command, news);
+                });
+                await UpdateOrInsert(connection, transaction, updateTextSql, insertTextSql, parameters);
+            }
+
+            var mainImageTypeId = await GetTypeId(connection, transaction, "IMG_MAIN");
+            if (news.Image == null)
+            {
+                using var command = new SqlCommand(deleteImageSql, connection, transaction);
+                command.Parameters.AddWithValue("@ComponentId", news.ID);
+                command.Parameters.AddWithValue("@TypeId", mainImageTypeId);
+                await command.ExecuteNonQueryAsync();
+            }
+            else
+            {
+                var parameters = new Action<SqlCommand>(command =>
+                {
+                    command.Parameters.AddWithValue("@ComponentId", news.ID);
+                    command.Parameters.AddWithValue("@TypeId", mainImageTypeId);
+                    command.Parameters.AddWithValue("@ImageId", news.Image.ID);
+                    command.Parameters.AddWithValue("@Align", (int)news.ImageAlign);
+                    AddUpdatedParameters(command, news);
+                });
+                await UpdateOrInsert(connection, transaction, updateImageSql, insertImageSql, parameters);
+            }
+
+            await transaction.CommitAsync();
+            _log.LogInformation("[{Class}.{Method}] Updated news '{Id}'", nameof(NewsSqlDataAccess), nameof(UpdateNews), news.ID);
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    private static void AddUpdatedParameters(SqlCommand command, News news)
+    {
+        command.Parameters.AddWithValue("@Updated", news.Updated ?? DateTime.UtcNow);
+        command.Parameters.AddWithValue("@UpdatedBy", news.UpdatedBy ?? news.InsertedBy);
+    }
+
+    private static async Task UpdateOrInsert(SqlConnection connection, SqlTransaction transaction, string updateSql, string insertSql, Action<SqlCommand> addParameters)
+    {
+        using (var update = new SqlCommand(updateSql, connection, transaction))
+        {
+            addParameters(update);
+            if (await update.ExecuteNonQueryAsync() > 0)
+            {
+                return;
+            }
+        }
+
+        using var insert = new SqlCommand(insertSql, connection, transaction);
+        addParameters(insert);
+        await insert.ExecuteNonQueryAsync();
+    }
+
     private static async Task<int> InsertNewsComponent(SqlConnection connection, SqlTransaction transaction, string sql, News news)
     {
         using var command = new SqlCommand(sql, connection, transaction);

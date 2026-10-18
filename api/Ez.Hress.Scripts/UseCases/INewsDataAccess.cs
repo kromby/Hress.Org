@@ -15,4 +15,6 @@ public interface INewsDataAccess
     Task<IList<News>> GetNewsByAuthor(int userId);
 
     Task<int> CreateNews(News news);
+
+    Task UpdateNews(News news);
 }
