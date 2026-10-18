@@ -77,4 +77,19 @@ describe("MyNews", () => {
     ).toBeInTheDocument();
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
+
+  it("links to the page for writing news", () => {
+    mockedUseMyNews.mockReturnValue({
+      data: [],
+      isLoading: false,
+      error: null,
+    });
+
+    renderPage();
+
+    expect(screen.getByRole("link", { name: "Skrifa frétt" })).toHaveAttribute(
+      "href",
+      "/news/new"
+    );
+  });
 });

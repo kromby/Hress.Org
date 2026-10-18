@@ -125,13 +125,13 @@ public class NewsInteractorTests
 
     [Theory]
     [InlineData("<a href=\"http://hress.org\">x</a>", "<a target=\"_blank\" href=\"http://hress.org\">x</a>")]
-    [InlineData("<A href=\"https://hress.org\">x</A>", "<A target=\"_blank\" href=\"https://hress.org\">x</A>")]
+    [InlineData("<A href=\"https://hress.org\">x</A>", "<a target=\"_blank\" href=\"https://hress.org\">x</a>")]
     [InlineData("<a target=\"_self\" href=\"http://hress.org\">x</a>", "<a target=\"_self\" href=\"http://hress.org\">x</a>")]
     [InlineData("<a href=\"/news/1\">x</a>", "<a href=\"/news/1\">x</a>")]
-    [InlineData("<a class=\"story\" href=\"http://hress.org\">x</a>", "<a target=\"_blank\" class=\"story\" href=\"http://hress.org\">x</a>")]
-    [InlineData("<a href=\"http://hress.org\" data-target=\"x\">x</a>", "<a target=\"_blank\" href=\"http://hress.org\" data-target=\"x\">x</a>")]
-    [InlineData("<a href=\"http://hress.org\" TARGET='_top'>x</a>", "<a href=\"http://hress.org\" TARGET='_top'>x</a>")]
-    [InlineData("<abbr title=\"http://x\">x</abbr>", "<abbr title=\"http://x\">x</abbr>")]
+    [InlineData("<a title=\"story\" href=\"http://hress.org\">x</a>", "<a target=\"_blank\" title=\"story\" href=\"http://hress.org\">x</a>")]
+    [InlineData("<a href=\"http://hress.org\" data-target=\"x\">x</a>", "<a target=\"_blank\" href=\"http://hress.org\">x</a>")]
+    [InlineData("<a href=\"http://hress.org\" TARGET='_top'>x</a>", "<a href=\"http://hress.org\" target=\"_top\">x</a>")]
+    [InlineData("<p title=\"http://x\">x</p>", "<p title=\"http://x\">x</p>")]
     public async Task CreateNewsOpensExternalLinksInNewTab_TestAsync(string content, string expected)
     {
         // ARRANGE
@@ -196,5 +196,79 @@ public class NewsInteractorTests
 
         // ACT & ASSERT
         await Assert.ThrowsAsync<ArgumentException>(() => interactor.CreateNewsAsync(news, 2630));
+    }
+
+    [Theory]
+    [InlineData("<p>Texti</p><script>alert(1)</script>", "<script")]
+    [InlineData("<p>Texti</p><img src=\"x.png\" onerror=\"alert(1)\">", "onerror")]
+    [InlineData("<p><a href=\"javascript:alert(1)\">Texti</a></p>", "javascript:")]
+    [InlineData("<p style=\"background:url(x)\">Texti</p>", "style")]
+    [InlineData("<p>Texti</p><iframe src=\"https://evil.example\"></iframe>", "<iframe")]
+    public async Task CreateNewsSanitizesBody_TestAsync(string content, string forbidden)
+    {
+        // ARRANGE
+        News? saved = null;
+        _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>()))
+            .Callback<News>(n => saved = n)
+            .Returns(Task.FromResult(1));
+        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+
+        // ACT
+        await interactor.CreateNewsAsync(new News { Name = "Headline", Content = content }, 2630);
+
+        // ASSERT
+        Assert.DoesNotContain(forbidden, saved!.Content, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Texti", saved.Content);
+    }
+
+    [Fact]
+    public async Task CreateNewsKeepsEditorFormatting_TestAsync()
+    {
+        // ARRANGE
+        const string content = "<h2>Fyrirsögn</h2><p><strong>Feitt</strong> <em>skáletrað</em> <s>yfirstrikað</s></p>"
+            + "<ul><li><p>Liður</p></li></ul><ol><li><p>Númer</p></li></ol>"
+            + "<blockquote><p>Tilvitnun</p></blockquote><p><a href=\"/news/1\">innri</a></p>";
+        News? saved = null;
+        _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>()))
+            .Callback<News>(n => saved = n)
+            .Returns(Task.FromResult(1));
+        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+
+        // ACT
+        await interactor.CreateNewsAsync(new News { Name = "Headline", Content = content }, 2630);
+
+        // ASSERT
+        Assert.Equal(content, saved!.Content);
+    }
+
+    [Theory]
+    [InlineData("<script>alert(1)</script>")]
+    [InlineData("<img>")]
+    [InlineData("<p><img src=\"\"></p>")]
+    [InlineData("<img src=\"javascript:alert(1)\">")]
+    public async Task CreateNewsBodyEmptyAfterSanitizing_TestAsync(string content)
+    {
+        // ARRANGE
+        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var news = new News { Name = "Headline", Content = content };
+
+        // ACT & ASSERT
+        await Assert.ThrowsAsync<ArgumentException>(() => interactor.CreateNewsAsync(news, 2630));
+        _newsDataAccess.Verify(x => x.CreateNews(It.IsAny<News>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CreateNewsImageOnlyBodyIsAllowed_TestAsync()
+    {
+        // ARRANGE
+        _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>())).Returns(Task.FromResult(1));
+        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var news = new News { Name = "Headline", Content = "<p><img src=\"https://hress.org/a.png\"></p>" };
+
+        // ACT
+        var result = await interactor.CreateNewsAsync(news, 2630);
+
+        // ASSERT
+        Assert.Equal(1, result.ID);
     }
 }

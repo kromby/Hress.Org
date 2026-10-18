@@ -29,6 +29,7 @@ import MainSidebar from "./news/mainSidebar";
 import SingleNews from "./news/singleNews";
 import HistoryNews from "./news/history";
 import MyNews from "./news/myNews";
+import NewsEdit from "./news/newsEdit";
 import HistorySidebar from "./news/historySidebar";
 import DinnerParties from "./dinnerparties";
 import DinnerParty from "./dinnerparties/dinnerparty";
@@ -185,6 +186,7 @@ function App() {
               <Route path="mission" element={<LegacyFrame />} />
               <Route path="news">
                 <Route path="mine" element={<MyNews />} />
+                <Route path="new" element={<NewsEdit />} />
                 <Route path=":id" element={<SingleNews />} />
                 <Route path="history" element={<HistoryNews />} />
               </Route>
