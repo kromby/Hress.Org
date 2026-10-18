@@ -91,6 +91,49 @@ public class NewsInteractor
 
     public async Task<News> CreateNewsAsync(News news, int userId)
     {
+        ValidateAndPrepare(news, userId);
+        news.InsertedBy = userId;
+        news.Inserted = DateTime.UtcNow;
+
+        _log.LogInformation("[{Class}.{Method}] Creating news '{Name}' for user '{UserId}'", nameof(NewsInteractor), nameof(CreateNewsAsync), news.Name, userId);
+        news.ID = await _newsDataAccess.CreateNews(news);
+        return news;
+    }
+
+    public async Task<News> UpdateNewsAsync(int id, News news, int userId)
+    {
+        if (id < 1)
+        {
+            throw new ArgumentException("News ID must be a positive number", nameof(id));
+        }
+
+        ValidateAndPrepare(news, userId);
+
+        var existing = await _newsDataAccess.GetNews(id);
+        if (existing == null || existing.ID < 1)
+        {
+            throw new KeyNotFoundException($"News '{id}' not found");
+        }
+
+        if (existing.InsertedBy != userId)
+        {
+            _log.LogWarning("[{Class}.{Method}] User '{UserId}' is not the author of news '{Id}'", nameof(NewsInteractor), nameof(UpdateNewsAsync), userId, id);
+            throw new UnauthorizedAccessException("Only the author can edit this news");
+        }
+
+        news.ID = id;
+        news.InsertedBy = existing.InsertedBy;
+        news.Inserted = existing.Inserted;
+        news.UpdatedBy = userId;
+        news.Updated = DateTime.UtcNow;
+
+        _log.LogInformation("[{Class}.{Method}] Updating news '{Id}' for user '{UserId}'", nameof(NewsInteractor), nameof(UpdateNewsAsync), id, userId);
+        await _newsDataAccess.UpdateNews(news);
+        return news;
+    }
+
+    private static void ValidateAndPrepare(News news, int userId)
+    {
         if (userId < 1)
         {
             throw new ArgumentException("User ID must be a positive number", nameof(userId));
@@ -131,12 +174,6 @@ public class NewsInteractor
 
         news.Name = news.Name.Trim();
         news.Content = OpenExternalLinksInNewTab(content);
-        news.InsertedBy = userId;
-        news.Inserted = DateTime.UtcNow;
-
-        _log.LogInformation("[{Class}.{Method}] Creating news '{Name}' for user '{UserId}'", nameof(NewsInteractor), nameof(CreateNewsAsync), news.Name, userId);
-        news.ID = await _newsDataAccess.CreateNews(news);
-        return news;
     }
 
     // News bodies are user-authored HTML; only the formatting the editor (and legacy news) uses is kept.

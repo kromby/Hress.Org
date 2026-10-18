@@ -15,20 +15,29 @@ using Microsoft.Azure.Functions.Worker;
 
 namespace Ez.Hress.FunctionsApi.News;
 
-public class CreateNewsRequest
+public class NewsRequest
 {
     public string Name { get; set; } = string.Empty;
     public string Content { get; set; } = string.Empty;
     public bool Public { get; set; } = true;
     public int? ImageId { get; set; }
-    public CreateNewsImageRequest? Image { get; set; }
+    public NewsImageRequest? Image { get; set; }
     public int? ImageAlign { get; set; }
 
     // Accept both { "imageId": 1 } and { "image": { "id": 1 } }.
     public int? ResolvedImageId => ImageId ?? Image?.Id;
+
+    public Scripts.Entities.News ToNews() => new()
+    {
+        Name = Name,
+        Content = Content,
+        Public = Public,
+        Image = ResolvedImageId.HasValue ? new ImageHrefEntity(ResolvedImageId.Value, string.Empty) : null,
+        ImageAlign = (Align)(ImageAlign ?? 0),
+    };
 }
 
-public class CreateNewsImageRequest
+public class NewsImageRequest
 {
     public int Id { get; set; }
 }
@@ -38,6 +47,8 @@ public class NewsFunctions
     private readonly AuthenticationInteractor _authenticationInteractor;
     private readonly NewsInteractor _newsInteractor;
     private readonly ILogger<NewsFunctions> _log;
+
+    private static readonly JsonSerializerOptions RequestJsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     public NewsFunctions(AuthenticationInteractor authenticationInteractor, NewsInteractor newsInteractor, ILogger<NewsFunctions> log)
     {
@@ -176,24 +187,11 @@ public class NewsFunctions
         try
         {
             var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
-            var request = JsonSerializer.Deserialize<CreateNewsRequest>(requestBody, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            });
-
+            var request = JsonSerializer.Deserialize<NewsRequest>(requestBody, RequestJsonOptions);
             if (request == null)
                 return new BadRequestResult();
 
-            var news = new Scripts.Entities.News
-            {
-                Name = request.Name,
-                Content = request.Content,
-                Public = request.Public,
-                Image = request.ResolvedImageId.HasValue ? new ImageHrefEntity(request.ResolvedImageId.Value, string.Empty) : null,
-                ImageAlign = (Align)(request.ImageAlign ?? 0),
-            };
-
-            var created = await _newsInteractor.CreateNewsAsync(news, userID);
+            var created = await _newsInteractor.CreateNewsAsync(request.ToNews(), userID);
             return new CreatedResult($"/api/news/{created.ID}", created);
         }
         catch (JsonException)
@@ -204,6 +202,55 @@ public class NewsFunctions
         {
             _log.LogWarning("[{Class}.{Method}] Validation failed: {Message}", nameof(NewsFunctions), methodName, aex.Message);
             return new BadRequestObjectResult(new { error = aex.Message });
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "[{Class}.{Method}] Unhandled error", nameof(NewsFunctions), methodName);
+            throw;
+        }
+    }
+
+    [Function("newsPut")]
+    public async Task<IActionResult> RunNewsUpdateAsync(
+        [HttpTrigger(AuthorizationLevel.Function, "put", Route = "news/{id:int}")] HttpRequest req, int id)
+    {
+        var methodName = nameof(RunNewsUpdateAsync);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", nameof(NewsFunctions), methodName);
+
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
+        if (!isJWTValid)
+        {
+            _log.LogInformation("[{Class}.{Method}] JWT is not valid!", nameof(NewsFunctions), methodName);
+            return new UnauthorizedResult();
+        }
+
+        try
+        {
+            var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            var request = JsonSerializer.Deserialize<NewsRequest>(requestBody, RequestJsonOptions);
+            if (request == null)
+                return new BadRequestResult();
+
+            var updated = await _newsInteractor.UpdateNewsAsync(id, request.ToNews(), userID);
+            return new OkObjectResult(updated);
+        }
+        catch (JsonException)
+        {
+            return new BadRequestResult();
+        }
+        catch (ArgumentException aex)
+        {
+            _log.LogWarning("[{Class}.{Method}] Validation failed: {Message}", nameof(NewsFunctions), methodName, aex.Message);
+            return new BadRequestObjectResult(new { error = aex.Message });
+        }
+        catch (KeyNotFoundException)
+        {
+            return new NotFoundResult();
+        }
+        catch (UnauthorizedAccessException uaex)
+        {
+            _log.LogWarning("[{Class}.{Method}] Forbidden: {Message}", nameof(NewsFunctions), methodName, uaex.Message);
+            return new StatusCodeResult(StatusCodes.Status403Forbidden);
         }
         catch (Exception ex)
         {
