@@ -1,33 +1,15 @@
-import { useEffect, useState } from "react";
 import config from 'react-global-configuration';
-import axios from "axios";
 import { Post } from "../../components";
 import { Link, useParams } from "react-router-dom";
+import { useNews } from "../../hooks/useNews";
 import { sanitizeNewsHtml } from "../../utils/sanitizeHtml";
 
 const isAuthor = (news) =>
     String(news.insertedBy ?? news.author?.id) === localStorage.getItem("userID");
 
 const SingleNews = () => {
-    const [news, setNews] = useState();
     const params = useParams();
-
-    useEffect(() => {
-        const getNews = async () => {
-
-            const url = config.get("apiPath") + "/api/news/" + params.id;
-            try {
-                const response = await axios.get(url);
-                setNews(response.data);
-            } catch (e) {
-                console.error(e);
-            }
-        }
-
-        if (!news) {
-            getNews();
-        }
-    }, [])
+    const { data: news } = useNews(Number(params.id));
 
     return (
         <div id="main">

@@ -1,5 +1,6 @@
-import { render, screen } from "@testing-library/react";
-import { MemoryRouter, Route, Routes } from "react-router-dom";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Link, MemoryRouter, Route, Routes } from "react-router-dom";
 import axios from "axios";
 import SingleNews from "./singleNews";
 
@@ -12,11 +13,18 @@ const mockedAxios = axios as jest.Mocked<typeof axios>;
 
 const renderPage = () =>
   render(
-    <MemoryRouter initialEntries={["/news/42"]}>
-      <Routes>
-        <Route path="/news/:id" element={<SingleNews />} />
-      </Routes>
-    </MemoryRouter>
+    <QueryClientProvider
+      client={
+        new QueryClient({ defaultOptions: { queries: { retry: false } } })
+      }
+    >
+      <MemoryRouter initialEntries={["/news/42"]}>
+        <Link to="/news/43">Næsta frétt</Link>
+        <Routes>
+          <Route path="/news/:id" element={<SingleNews />} />
+        </Routes>
+      </MemoryRouter>
+    </QueryClientProvider>
   );
 
 describe("SingleNews", () => {
@@ -80,5 +88,22 @@ describe("SingleNews", () => {
       screen.queryByRole("link", { name: "Breyta" })
     ).not.toBeInTheDocument();
     localStorage.removeItem("userID");
+  });
+
+  it("loads the new article when the id in the URL changes", async () => {
+    mockedAxios.get.mockImplementation((url: string) =>
+      Promise.resolve({
+        data: url.endsWith("/43")
+          ? { id: 43, name: "Seinni", content: "<p>Frétt 43</p>" }
+          : { id: 42, name: "Fyrri", content: "<p>Frétt 42</p>" },
+      })
+    );
+
+    renderPage();
+    expect(await screen.findByText("Frétt 42")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("link", { name: "Næsta frétt" }));
+
+    expect(await screen.findByText("Frétt 43")).toBeInTheDocument();
   });
 });
