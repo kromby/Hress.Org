@@ -11,9 +11,16 @@ jest.mock("../../components/editor/richTextEditor", () => {
   const React = jest.requireActual("react");
   return {
     __esModule: true,
-    default: (props: { value: string; onChange: (html: string) => void }) =>
+    default: (props: {
+      value: string;
+      onChange: (html: string) => void;
+      errorId?: string;
+      invalid?: boolean;
+    }) =>
       React.createElement("textarea", {
         "aria-label": "Meginmál",
+        "aria-describedby": props.errorId,
+        "aria-invalid": props.invalid,
         value: props.value,
         onChange: (e: { target: { value: string } }) =>
           props.onChange(e.target.value),
@@ -60,6 +67,48 @@ describe("NewsEdit", () => {
     expect(mutateAsync).not.toHaveBeenCalled();
   });
 
+  it("links validation errors to their fields", async () => {
+    renderPage();
+
+    fireEvent.click(screen.getByRole("button", { name: "Birta frétt" }));
+
+    const headline = screen.getByLabelText("Fyrirsögn");
+    const body = screen.getByLabelText("Meginmál");
+    const headlineError = await screen.findByText("Fyrirsögn vantar.");
+    const bodyError = screen.getByText("Meginmál vantar.");
+
+    expect(headline).toHaveAttribute("aria-invalid", "true");
+    expect(headline).toHaveAttribute("aria-describedby", headlineError.id);
+    expect(body).toHaveAttribute("aria-invalid", "true");
+    expect(body).toHaveAttribute("aria-describedby", bodyError.id);
+    expect(headlineError.id).not.toBe("");
+    expect(bodyError.id).not.toBe("");
+  });
+
+  it("only submits once when the button is clicked twice quickly", async () => {
+    let resolveSave: (value: { id: number }) => void = () => {};
+    mutateAsync.mockReturnValue(
+      new Promise((resolve) => {
+        resolveSave = resolve;
+      })
+    );
+    renderPage();
+
+    fireEvent.change(screen.getByLabelText("Fyrirsögn"), {
+      target: { value: "Ný frétt" },
+    });
+    fireEvent.change(screen.getByLabelText("Meginmál"), {
+      target: { value: "<p>Halló</p>" },
+    });
+    const submit = screen.getByRole("button", { name: "Birta frétt" });
+    fireEvent.click(submit);
+    fireEvent.click(submit);
+
+    expect(mutateAsync).toHaveBeenCalledTimes(1);
+    resolveSave({ id: 77 });
+    expect(await screen.findByText("Article page")).toBeInTheDocument();
+  });
+
   it("creates the news and opens the article", async () => {
     mutateAsync.mockResolvedValue({ id: 77 });
     renderPage();
@@ -83,7 +132,7 @@ describe("NewsEdit", () => {
     expect(await screen.findByText("Article page")).toBeInTheDocument();
   });
 
-  it("shows the server error when saving fails", async () => {
+  it("shows the server error when saving fails", () => {
     mockedUseCreateNews.mockReturnValue({
       mutateAsync,
       isPending: false,

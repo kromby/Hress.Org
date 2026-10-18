@@ -1,5 +1,5 @@
 import "./richTextEditor.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { EditorContent, useEditor, useEditorState } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 
@@ -7,9 +7,32 @@ type RichTextEditorProps = {
   value: string;
   onChange: (html: string) => void;
   id?: string;
+  errorId?: string;
+  invalid?: boolean;
 };
 
-const RichTextEditor = ({ value, onChange, id }: RichTextEditorProps) => {
+const contentAttributes = (
+  id?: string,
+  errorId?: string,
+  invalid?: boolean
+): Record<string, string> => ({
+  class: "rich-text-editor__content",
+  role: "textbox",
+  "aria-multiline": "true",
+  ...(id ? { "aria-labelledby": id } : {}),
+  ...(errorId ? { "aria-describedby": errorId } : {}),
+  ...(invalid ? { "aria-invalid": "true" } : {}),
+});
+
+const RichTextEditor = ({
+  value,
+  onChange,
+  id,
+  errorId,
+  invalid,
+}: RichTextEditorProps) => {
+  const [linkHref, setLinkHref] = useState<string | null>(null);
+
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -22,14 +45,15 @@ const RichTextEditor = ({ value, onChange, id }: RichTextEditorProps) => {
       onChange(current.isEmpty ? "" : current.getHTML());
     },
     editorProps: {
-      attributes: {
-        class: "rich-text-editor__content",
-        role: "textbox",
-        "aria-multiline": "true",
-        ...(id ? { "aria-labelledby": id } : {}),
-      },
+      attributes: contentAttributes(id, errorId, invalid),
     },
   });
+
+  useEffect(() => {
+    editor?.setOptions({
+      editorProps: { attributes: contentAttributes(id, errorId, invalid) },
+    });
+  }, [editor, id, errorId, invalid]);
 
   // Keep the editor in sync when the value is replaced from outside (e.g. loaded for editing).
   useEffect(() => {
@@ -55,20 +79,36 @@ const RichTextEditor = ({ value, onChange, id }: RichTextEditorProps) => {
     return null;
   }
 
-  const setLink = () => {
+  const openLinkField = () => {
     const previous = editor.getAttributes("link").href as string | undefined;
-    const href = window.prompt("Slóð tengils", previous ?? "https://");
-    if (href === null) return;
-    if (href.trim() === "") {
+    setLinkHref(previous ?? "https://");
+  };
+
+  const applyLink = (event?: { preventDefault: () => void }) => {
+    event?.preventDefault();
+    const href = (linkHref ?? "").trim();
+    setLinkHref(null);
+
+    if (href === "" || href === "https://") {
       editor.chain().focus().extendMarkRange("link").unsetLink().run();
       return;
     }
-    editor
-      .chain()
-      .focus()
-      .extendMarkRange("link")
-      .setLink({ href: href.trim() })
-      .run();
+
+    if (editor.state.selection.empty && !editor.isActive("link")) {
+      // Nothing selected: insert the URL itself as the link text.
+      editor
+        .chain()
+        .focus()
+        .insertContent({
+          type: "text",
+          text: href,
+          marks: [{ type: "link", attrs: { href } }],
+        })
+        .run();
+      return;
+    }
+
+    editor.chain().focus().extendMarkRange("link").setLink({ href }).run();
   };
 
   const buttons = [
@@ -100,7 +140,7 @@ const RichTextEditor = ({ value, onChange, id }: RichTextEditorProps) => {
       label: "Tengill",
       text: "🔗",
       active: state?.link,
-      run: setLink,
+      run: openLinkField,
     },
   ];
 
@@ -121,6 +161,35 @@ const RichTextEditor = ({ value, onChange, id }: RichTextEditorProps) => {
           </button>
         ))}
       </div>
+      {linkHref !== null && (
+        <div className="rich-text-editor__link">
+          <input
+            type="url"
+            aria-label="Slóð tengils"
+            value={linkHref}
+            autoFocus
+            onChange={(e) => setLinkHref(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") applyLink(e);
+              if (e.key === "Escape") setLinkHref(null);
+            }}
+          />
+          <button
+            type="button"
+            className="button small"
+            onClick={() => applyLink()}
+          >
+            Setja tengil
+          </button>
+          <button
+            type="button"
+            className="button small"
+            onClick={() => setLinkHref(null)}
+          >
+            Hætta við
+          </button>
+        </div>
+      )}
       <EditorContent editor={editor} />
     </div>
   );

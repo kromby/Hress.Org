@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import { Post } from "../../components";
@@ -28,6 +28,8 @@ const NewsEdit = () => {
   const [content, setContent] = useState("");
   const [isPublic, setIsPublic] = useState(true);
   const [errors, setErrors] = useState<ValidationErrors>({});
+  // isPending only flips after a re-render; this guards against a fast double submit.
+  const submitting = useRef(false);
 
   useEffect(() => {
     document.title = "Skrifa frétt | Hress.Org";
@@ -38,6 +40,7 @@ const NewsEdit = () => {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    if (submitting.current) return;
 
     const validation: ValidationErrors = {};
     if (!name.trim()) validation.name = "Fyrirsögn vantar.";
@@ -45,6 +48,7 @@ const NewsEdit = () => {
     setErrors(validation);
     if (validation.name || validation.content) return;
 
+    submitting.current = true;
     try {
       const created = await mutateAsync({
         name: name.trim(),
@@ -55,6 +59,8 @@ const NewsEdit = () => {
     } catch (e) {
       // Shown through the mutation's error state.
       console.error(e);
+    } finally {
+      submitting.current = false;
     }
   };
 
@@ -77,8 +83,13 @@ const NewsEdit = () => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   aria-invalid={Boolean(errors.name)}
+                  aria-describedby={errors.name ? "news-name-error" : undefined}
                 />
-                {errors.name && <div className="error">{errors.name}</div>}
+                {errors.name && (
+                  <div id="news-name-error" className="error">
+                    {errors.name}
+                  </div>
+                )}
               </div>
               <div className="col-12">
                 <label id="news-content-label">Meginmál</label>
@@ -86,9 +97,13 @@ const NewsEdit = () => {
                   id="news-content-label"
                   value={content}
                   onChange={setContent}
+                  errorId={errors.content ? "news-content-error" : undefined}
+                  invalid={Boolean(errors.content)}
                 />
                 {errors.content && (
-                  <div className="error">{errors.content}</div>
+                  <div id="news-content-error" className="error">
+                    {errors.content}
+                  </div>
                 )}
               </div>
               <div className="col-12">
