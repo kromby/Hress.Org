@@ -3,6 +3,7 @@ import config from 'react-global-configuration';
 import axios from "axios";
 import { Post } from "../../components";
 import { useParams } from "react-router-dom";
+import { sanitizeNewsHtml } from "../../utils/sanitizeHtml";
 
 const SingleNews = () => {
     const [news, setNews] = useState();
@@ -35,7 +36,7 @@ const SingleNews = () => {
                         dateFormatted={news.insertedString}
                         author={news.author}
                         // skipcq: JS-0440
-                        body={<span dangerouslySetInnerHTML={{ __html: news.content }} />}
+                        body={<span dangerouslySetInnerHTML={{ __html: sanitizeNewsHtml(news.content) }} />}
                         image={news.image?.id ? config.get('apiPath') + news.image.href + "?width=1400" : null}
                         actions={<p />}
                     />

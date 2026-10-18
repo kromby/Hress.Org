@@ -2,7 +2,7 @@ import Post from "../../../components/post";
 import config from "react-global-configuration";
 import { NewsEntity } from "../../../types/newsEntity";
 import { isMobile } from "react-device-detect";
-import DOMPurify from "dompurify";
+import { sanitizeNewsHtml } from "../../../utils/sanitizeHtml";
 
 const MAX_IMAGE_HEIGHT = 500;
 const getImageHeight = (
@@ -60,7 +60,7 @@ const NewsPost = ({ singleNews }: { singleNews: NewsEntity }) => {
           ) : null}
           <span
             dangerouslySetInnerHTML={{
-              __html: DOMPurify.sanitize(singleNews.content),
+              __html: sanitizeNewsHtml(singleNews.content),
             }}
           />{" "}
           {/* skipcq: JS-0440 */}
