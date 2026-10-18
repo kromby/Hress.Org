@@ -151,10 +151,10 @@ public class NewsFunctions
     }
 
     [Function("newsPost")]
-    public async Task<IActionResult> RunNewsCreate(
+    public async Task<IActionResult> RunNewsCreateAsync(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "news")] HttpRequest req)
     {
-        var methodName = nameof(RunNewsCreate);
+        var methodName = nameof(RunNewsCreateAsync);
         _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", nameof(NewsFunctions), methodName);
 
         var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);

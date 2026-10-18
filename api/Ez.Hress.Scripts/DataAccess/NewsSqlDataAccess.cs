@@ -124,16 +124,7 @@ public class NewsSqlDataAccess : INewsDataAccess
             // Body text type is hardcoded as 36 in every read query, so it must match here.
             const int bodyTypeId = 36;
 
-            int newsId;
-            using (var command = new SqlCommand(componentSql, connection, transaction))
-            {
-                command.Parameters.AddWithValue("@IsPublic", news.Public);
-                command.Parameters.AddWithValue("@Name", news.Name);
-                command.Parameters.AddWithValue("@InsertedBy", news.InsertedBy);
-                command.Parameters.AddWithValue("@Inserted", news.Inserted);
-                newsId = (int)(await command.ExecuteScalarAsync()
-                    ?? throw new InvalidOperationException("Failed to get inserted news ID"));
-            }
+            var newsId = await InsertNewsComponent(connection, transaction, componentSql, news);
 
             foreach (var (typeId, text) in new[] { (subjectTypeId, news.Name!), (bodyTypeId, news.Content!) })
             {
@@ -168,6 +159,18 @@ public class NewsSqlDataAccess : INewsDataAccess
             await transaction.RollbackAsync();
             throw;
         }
+    }
+
+    private static async Task<int> InsertNewsComponent(SqlConnection connection, SqlTransaction transaction, string sql, News news)
+    {
+        using var command = new SqlCommand(sql, connection, transaction);
+        command.Parameters.AddWithValue("@IsPublic", news.Public);
+        command.Parameters.AddWithValue("@Name", news.Name);
+        command.Parameters.AddWithValue("@InsertedBy", news.InsertedBy);
+        command.Parameters.AddWithValue("@Inserted", news.Inserted);
+
+        var result = await command.ExecuteScalarAsync();
+        return result is int id ? id : throw new InvalidOperationException("Failed to get inserted news ID");
     }
 
     // Type ids are resolved by shortcode as the legacy NHibernate code did, rather than hardcoded.
