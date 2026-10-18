@@ -1,4 +1,6 @@
+using Ez.Hress.Scripts.Entities;
 using Ez.Hress.Scripts.UseCases;
+using Ez.Hress.Shared.Entities;
 using Ez.Hress.Shared.UseCases;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -6,10 +8,21 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Azure.Functions.Worker;
 
 namespace Ez.Hress.FunctionsApi.News;
+
+public class CreateNewsRequest
+{
+    public string Name { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
+    public bool Public { get; set; } = true;
+    public int? ImageId { get; set; }
+    public int? ImageAlign { get; set; }
+}
 
 public class NewsFunctions
 {
@@ -134,6 +147,59 @@ public class NewsFunctions
         {
             stopwatch.Stop();
             _log.LogInformation("[{Class}.{Method}] Elapsed: {Elapsed} ms.", nameof(NewsFunctions), methodName, stopwatch.ElapsedMilliseconds);
+        }
+    }
+
+    [Function("newsPost")]
+    public async Task<IActionResult> RunNewsCreate(
+        [HttpTrigger(AuthorizationLevel.Function, "post", Route = "news")] HttpRequest req)
+    {
+        var methodName = nameof(RunNewsCreate);
+        _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", nameof(NewsFunctions), methodName);
+
+        var isJWTValid = AuthenticationUtil.GetAuthenticatedUserID(_authenticationInteractor, req.Headers, _log, out int userID);
+        if (!isJWTValid)
+        {
+            _log.LogInformation("[{Class}.{Method}] JWT is not valid!", nameof(NewsFunctions), methodName);
+            return new UnauthorizedResult();
+        }
+
+        try
+        {
+            var requestBody = await new StreamReader(req.Body).ReadToEndAsync();
+            var request = JsonSerializer.Deserialize<CreateNewsRequest>(requestBody, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (request == null)
+                return new BadRequestResult();
+
+            var news = new Scripts.Entities.News
+            {
+                Name = request.Name,
+                Content = request.Content,
+                Public = request.Public,
+                Image = request.ImageId.HasValue ? new ImageHrefEntity(request.ImageId.Value, string.Empty) : null,
+                ImageAlign = (Align)(request.ImageAlign ?? 0),
+            };
+
+            var created = await _newsInteractor.CreateNewsAsync(news, userID);
+            return new CreatedResult($"/api/news/{created.ID}", created);
+        }
+        catch (JsonException)
+        {
+            return new BadRequestResult();
+        }
+        catch (ArgumentException aex)
+        {
+            _log.LogWarning("[{Class}.{Method}] Validation failed: {Message}", nameof(NewsFunctions), methodName, aex.Message);
+            return new BadRequestObjectResult(new { error = aex.Message });
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "[{Class}.{Method}] Unhandled error", nameof(NewsFunctions), methodName);
+            throw;
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Ez.Hress.Scripts.Entities;
 using Microsoft.Extensions.Logging;
+using System.Text.RegularExpressions;
 
 namespace Ez.Hress.Scripts.UseCases;
 
@@ -85,5 +86,59 @@ public class NewsInteractor
 
         _log.LogInformation("[{Class}.{Method}] Get news by author '{UserId}'", nameof(NewsInteractor), nameof(GetNewsByAuthorAsync), userId);
         return await _newsDataAccess.GetNewsByAuthor(userId);
+    }
+
+    public async Task<News> CreateNewsAsync(News news, int userId)
+    {
+        if (userId < 1)
+        {
+            throw new ArgumentException("User ID must be a positive number", nameof(userId));
+        }
+
+        if (string.IsNullOrWhiteSpace(news.Name))
+        {
+            throw new ArgumentException("Headline is required", nameof(news));
+        }
+
+        if (string.IsNullOrWhiteSpace(news.Content))
+        {
+            throw new ArgumentException("Body is required", nameof(news));
+        }
+
+        if (news.Image != null)
+        {
+            if (news.Image.ID < 1)
+            {
+                throw new ArgumentException("Image ID must be a positive number", nameof(news));
+            }
+
+            if (news.ImageAlign == default)
+            {
+                news.ImageAlign = Align.Left;
+            }
+            else if (!Enum.IsDefined(news.ImageAlign))
+            {
+                throw new ArgumentException($"Invalid image alignment '{(int)news.ImageAlign}'", nameof(news));
+            }
+        }
+
+        news.Name = news.Name.Trim();
+        news.Content = OpenExternalLinksInNewTab(news.Content);
+        news.InsertedBy = userId;
+        news.Inserted = DateTime.UtcNow;
+
+        _log.LogInformation("[{Class}.{Method}] Creating news '{Name}' for user '{UserId}'", nameof(NewsInteractor), nameof(CreateNewsAsync), news.Name, userId);
+        news.ID = await _newsDataAccess.CreateNews(news);
+        return news;
+    }
+
+    // Ported from legacy ContentManager.HandleHyperlinks: external links open in a new tab.
+    private static readonly Regex ExternalLinkWithoutTarget = new(
+        @"<a(?![^>]*\btarget=)(\s+href=""https?:)",
+        RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static string OpenExternalLinksInNewTab(string html)
+    {
+        return ExternalLinkWithoutTarget.Replace(html, m => m.Value.Insert(2, " target=\"_blank\""));
     }
 }

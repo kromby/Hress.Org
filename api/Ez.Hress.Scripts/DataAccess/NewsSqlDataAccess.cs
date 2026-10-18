@@ -102,6 +102,99 @@ public class NewsSqlDataAccess : INewsDataAccess
         return list;
     }
 
+    public async Task<int> CreateNews(News news)
+    {
+        const string componentSql = @"INSERT INTO adm_Component (TypeId, GroupType, IsPublic, Name, Hits, InsertedBy, Inserted)
+                            OUTPUT INSERTED.Id
+                            VALUES (9, 'CONTENT', @IsPublic, @Name, 0, @InsertedBy, @Inserted)";
+        const string textSql = @"INSERT INTO scr_Text (ComponentId, TypeId, TextValue, InsertedBy, Inserted)
+                            VALUES (@ComponentId, @TypeId, @TextValue, @InsertedBy, @Inserted)";
+        const string imageSql = @"INSERT INTO scr_Image (ComponentId, TypeId, ImageId, Align, InsertedBy, Inserted)
+                            VALUES (@ComponentId, @TypeId, @ImageId, @Align, @InsertedBy, @Inserted)";
+
+        _log.LogInformation("[{Class}.{Method}] Creating news '{Name}' for user '{UserId}'", nameof(NewsSqlDataAccess), nameof(CreateNews), news.Name, news.InsertedBy);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+        using var transaction = connection.BeginTransaction();
+
+        try
+        {
+            var subjectTypeId = await GetTypeId(connection, transaction, "TXT_SUBJECT");
+            // Body text type is hardcoded as 36 in every read query, so it must match here.
+            const int bodyTypeId = 36;
+
+            int newsId;
+            using (var command = new SqlCommand(componentSql, connection, transaction))
+            {
+                command.Parameters.AddWithValue("@IsPublic", news.Public);
+                command.Parameters.AddWithValue("@Name", news.Name);
+                command.Parameters.AddWithValue("@InsertedBy", news.InsertedBy);
+                command.Parameters.AddWithValue("@Inserted", news.Inserted);
+                newsId = (int)(await command.ExecuteScalarAsync()
+                    ?? throw new InvalidOperationException("Failed to get inserted news ID"));
+            }
+
+            foreach (var (typeId, text) in new[] { (subjectTypeId, news.Name!), (bodyTypeId, news.Content!) })
+            {
+                using var command = new SqlCommand(textSql, connection, transaction);
+                command.Parameters.AddWithValue("@ComponentId", newsId);
+                command.Parameters.AddWithValue("@TypeId", typeId);
+                command.Parameters.AddWithValue("@TextValue", text);
+                command.Parameters.AddWithValue("@InsertedBy", news.InsertedBy);
+                command.Parameters.AddWithValue("@Inserted", news.Inserted);
+                await command.ExecuteNonQueryAsync();
+            }
+
+            if (news.Image != null)
+            {
+                var mainImageTypeId = await GetTypeId(connection, transaction, "IMG_MAIN");
+                using var command = new SqlCommand(imageSql, connection, transaction);
+                command.Parameters.AddWithValue("@ComponentId", newsId);
+                command.Parameters.AddWithValue("@TypeId", mainImageTypeId);
+                command.Parameters.AddWithValue("@ImageId", news.Image.ID);
+                command.Parameters.AddWithValue("@Align", (int)news.ImageAlign);
+                command.Parameters.AddWithValue("@InsertedBy", news.InsertedBy);
+                command.Parameters.AddWithValue("@Inserted", news.Inserted);
+                await command.ExecuteNonQueryAsync();
+            }
+
+            await transaction.CommitAsync();
+            _log.LogInformation("[{Class}.{Method}] Created news '{Id}'", nameof(NewsSqlDataAccess), nameof(CreateNews), newsId);
+            return newsId;
+        }
+        catch
+        {
+            await transaction.RollbackAsync();
+            throw;
+        }
+    }
+
+    // Type ids are resolved by shortcode as the legacy NHibernate code did, rather than hardcoded.
+    private static async Task<int> GetTypeId(SqlConnection connection, SqlTransaction transaction, string shortcode)
+    {
+        const string sql = "SELECT Id FROM gen_Type WHERE Shortcode = @Shortcode";
+
+        using var command = new SqlCommand(sql, connection, transaction);
+        command.Parameters.AddWithValue("@Shortcode", shortcode);
+
+        var ids = new List<int>();
+        using (var reader = await command.ExecuteReaderAsync())
+        {
+            while (await reader.ReadAsync())
+            {
+                ids.Add(reader.GetInt32(0));
+            }
+        }
+
+        if (ids.Count != 1)
+        {
+            throw new InvalidOperationException($"Expected exactly one gen_Type with shortcode '{shortcode}' but found {ids.Count}");
+        }
+
+        return ids[0];
+    }
+
     /// <summary>
     /// Reads adm_Component.Hits null-safely. Uses Convert.ToInt32 so the mapping works
     /// regardless of the exact integer column type (int/bigint/smallint/decimal).
