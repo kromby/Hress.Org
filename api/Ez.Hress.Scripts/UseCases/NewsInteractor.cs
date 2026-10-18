@@ -1,5 +1,6 @@
 ﻿using Ez.Hress.Scripts.Entities;
 using Microsoft.Extensions.Logging;
+using Ganss.Xss;
 using System.Text.RegularExpressions;
 
 namespace Ez.Hress.Scripts.UseCases;
@@ -122,14 +123,50 @@ public class NewsInteractor
             }
         }
 
+        var content = NewsHtmlSanitizer.Sanitize(news.Content);
+        if (!HasVisibleContent(content))
+        {
+            throw new ArgumentException("Body is required", nameof(news));
+        }
+
         news.Name = news.Name.Trim();
-        news.Content = OpenExternalLinksInNewTab(news.Content);
+        news.Content = OpenExternalLinksInNewTab(content);
         news.InsertedBy = userId;
         news.Inserted = DateTime.UtcNow;
 
         _log.LogInformation("[{Class}.{Method}] Creating news '{Name}' for user '{UserId}'", nameof(NewsInteractor), nameof(CreateNewsAsync), news.Name, userId);
         news.ID = await _newsDataAccess.CreateNews(news);
         return news;
+    }
+
+    // News bodies are user-authored HTML; only the formatting the editor (and legacy news) uses is kept.
+    private static readonly HtmlSanitizer NewsHtmlSanitizer = CreateSanitizer();
+
+    private static HtmlSanitizer CreateSanitizer()
+    {
+        var options = new HtmlSanitizerOptions
+        {
+            AllowedTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "p", "br", "strong", "b", "em", "i", "u", "s", "span", "div",
+                "ul", "ol", "li", "h2", "h3", "blockquote", "code", "pre", "a", "img",
+            },
+            AllowedAttributes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "href", "target", "src", "alt", "title", "width", "height",
+            },
+            AllowedSchemes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "http", "https", "mailto" },
+            UriAttributes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "href", "src" },
+        };
+        return new HtmlSanitizer(options);
+    }
+
+    private static readonly Regex HtmlTag = new(@"<[^>]*>", RegexOptions.Compiled);
+
+    private static bool HasVisibleContent(string html)
+    {
+        return html.Contains("<img", StringComparison.OrdinalIgnoreCase)
+            || !string.IsNullOrWhiteSpace(System.Net.WebUtility.HtmlDecode(HtmlTag.Replace(html, string.Empty)));
     }
 
     // Ported from legacy ContentManager.HandleHyperlinks: external links open in a new tab.
