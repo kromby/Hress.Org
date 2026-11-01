@@ -1,6 +1,7 @@
 using Azure.Data.Tables;
 using Ez.Hress.BeerRater.Entities;
 using Ez.Hress.BeerRater.UseCases;
+using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
 
 namespace Ez.Hress.BeerRater.DataAccess;
@@ -12,11 +13,11 @@ public class BeerSeasonTableAccess : IBeerSeasonDataAccess
     private readonly ILogger<BeerSeasonTableAccess> _logger;
     private readonly string _className;
 
-    public BeerSeasonTableAccess(BeerStorageInfo storageInfo, ILogger<BeerSeasonTableAccess> logger)
+    public BeerSeasonTableAccess(BlobConnectionInfo connectionInfo, ILogger<BeerSeasonTableAccess> logger)
     {
-        _seasonsTable = new TableClient(storageInfo.ConnectionString, "BeerSeasons");
+        _seasonsTable = new TableClient(connectionInfo.ConnectionString, "BeerSeasons");
         _seasonsTable.CreateIfNotExists();
-        _seasonBeersTable = new TableClient(storageInfo.ConnectionString, "BeerSeasonBeers");
+        _seasonBeersTable = new TableClient(connectionInfo.ConnectionString, "BeerSeasonBeers");
         _seasonBeersTable.CreateIfNotExists();
         _logger = logger;
         _className = nameof(BeerSeasonTableAccess);

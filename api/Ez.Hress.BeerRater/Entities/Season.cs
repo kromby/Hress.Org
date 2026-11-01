@@ -6,7 +6,8 @@ public class Season
 
     public string Name { get; set; } = string.Empty;
 
-    public string? Type { get; set; }
+    // ID in the shared gen_Type table (SQL). Season types are not used in the MVP.
+    public int? TypeID { get; set; }
 
     public DateTime StartDate { get; set; }
 

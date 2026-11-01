@@ -12,12 +12,15 @@ jest.mock("react-global-configuration", () => ({
 
 describe("BeerHome", () => {
   let queryClient: QueryClient;
+  const setAuthTokens = jest.fn();
 
   const renderComponent = () =>
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter>
-          <AuthContext.Provider value={{ authTokens: { token: "fake-token" } }}>
+          <AuthContext.Provider
+            value={{ authTokens: { token: "fake-token" }, setAuthTokens }}
+          >
             <BeerHome />
           </AuthContext.Provider>
         </MemoryRouter>
@@ -102,7 +105,9 @@ describe("BeerHome", () => {
     render(
       <QueryClientProvider client={queryClient}>
         <MemoryRouter initialEntries={["/beer"]}>
-          <AuthContext.Provider value={{ authTokens: { token: "expired" } }}>
+          <AuthContext.Provider
+            value={{ authTokens: { token: "expired" }, setAuthTokens }}
+          >
             <Routes>
               <Route path="/beer" element={<BeerHome />} />
               <Route path="/login" element={<LoginProbe />} />
@@ -118,6 +123,25 @@ describe("BeerHome", () => {
 
     fireEvent.click(link);
     expect(screen.getByTestId("login-from")).toHaveTextContent("/beer");
+  });
+
+  it("clears the rejected token on a 401", async () => {
+    (axios.get as jest.Mock).mockRejectedValue({ response: { status: 401 } });
+
+    renderComponent();
+
+    await screen.findByTestId("login-required");
+    expect(setAuthTokens).toHaveBeenCalledTimes(1);
+    expect(setAuthTokens).toHaveBeenCalledWith();
+  });
+
+  it("keeps the token on a 500", async () => {
+    (axios.get as jest.Mock).mockRejectedValue({ response: { status: 500 } });
+
+    renderComponent();
+
+    await screen.findByTestId("season-error");
+    expect(setAuthTokens).not.toHaveBeenCalled();
   });
 
   it("shows the generic error on a 500", async () => {

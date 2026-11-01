@@ -20,7 +20,7 @@ internal class SeasonTableEntity : ITableEntity
         PartitionKey = Partition;
         RowKey = Uri.EscapeDataString(season.ID);
         Name = season.Name;
-        Type = season.Type;
+        TypeID = season.TypeID;
         StartDate = DateTime.SpecifyKind(season.StartDate, DateTimeKind.Utc);
         EndDate = season.EndDate.HasValue ? DateTime.SpecifyKind(season.EndDate.Value, DateTimeKind.Utc) : null;
     }
@@ -31,7 +31,7 @@ internal class SeasonTableEntity : ITableEntity
     public ETag ETag { get; set; }
 
     public string Name { get; set; }
-    public string? Type { get; set; }
+    public int? TypeID { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
 
@@ -39,7 +39,7 @@ internal class SeasonTableEntity : ITableEntity
     {
         ID = Uri.UnescapeDataString(RowKey),
         Name = Name,
-        Type = Type,
+        TypeID = TypeID,
         StartDate = DateTime.SpecifyKind(StartDate, DateTimeKind.Utc),
         EndDate = EndDate.HasValue ? DateTime.SpecifyKind(EndDate.Value, DateTimeKind.Utc) : null
     };

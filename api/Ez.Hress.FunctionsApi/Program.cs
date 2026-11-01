@@ -5,7 +5,6 @@ using Ez.Hress.Administration.UseCases;
 using Ez.Hress.Albums.DataAccess;
 using Ez.Hress.Albums.UseCases;
 using Ez.Hress.BeerRater.DataAccess;
-using Ez.Hress.BeerRater.Entities;
 using Ez.Hress.BeerRater.UseCases;
 using Ez.Hress.FunctionsApi;
 using Ez.Hress.Hardhead.DataAccess;
@@ -186,7 +185,7 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
 
     // BeerRater
     var beerStorage = config["Ez.Hress.BeerRater.Storage.ConnectionString"];
-    services.AddSingleton(new BeerStorageInfo(string.IsNullOrEmpty(beerStorage) ? config["Ez.Hress.Shared.ContentStorage.ConnectionString"]! : beerStorage));
-    services.AddSingleton<IBeerSeasonDataAccess, BeerSeasonTableAccess>();
+    var beerConnection = new BlobConnectionInfo(string.IsNullOrEmpty(beerStorage) ? config["Ez.Hress.Shared.ContentStorage.ConnectionString"]! : beerStorage);
+    services.AddSingleton<IBeerSeasonDataAccess>(sp => new BeerSeasonTableAccess(beerConnection, sp.GetRequiredService<ILogger<BeerSeasonTableAccess>>()));
     services.AddSingleton<SeasonInteractor>();
 }
