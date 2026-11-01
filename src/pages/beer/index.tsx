@@ -12,7 +12,7 @@ const BeerHome = () => {
   // sees a token and sends the user straight back here.
   useEffect(() => {
     if (unauthorized) signOut();
-  }, [unauthorized]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [unauthorized]);
 
   if (isLoading) {
     return <p data-testid="season-loading">Sæki tímabil…</p>;
