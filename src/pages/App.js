@@ -42,6 +42,8 @@ import Password from "./profile/password";
 import DinnerPartySidebar from "./dinnerparties/sidebar";
 import MovieList from "./hardhead/list";
 import AlbumImageUpload from "./albums/albumImageUpload";
+import RequireLogin from "./beer/RequireLogin";
+import BeerHome from "./beer";
 
 function App() {
   const [authTokens, setAuthTokens] = useState();
@@ -164,6 +166,16 @@ function App() {
                 </Route>
                 <Route path="films.aspx" element={<LegacyFrame />} />
                 <Route path="defaultold.aspx" element={<LegacyFrame />} />
+              </Route>
+              <Route path="beer">
+                <Route
+                  path=""
+                  element={
+                    <RequireLogin>
+                      <BeerHome />
+                    </RequireLogin>
+                  }
+                />
               </Route>
               <Route path="login">
                 <Route path="" element={<Login />} />
