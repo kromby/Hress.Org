@@ -37,5 +37,6 @@ public enum ImageContainer
     Profile,
     News,
     Album,
-    ATVR        
+    ATVR,
+    Beer
 }
