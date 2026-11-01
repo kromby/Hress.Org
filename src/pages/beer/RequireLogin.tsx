@@ -18,7 +18,7 @@ const RequireLogin = ({ children }: RequireLoginProps) => {
     );
   }
 
-  return <>{children}</>;
+  return children;
 };
 
 export default RequireLogin;

@@ -16,7 +16,7 @@ const renderWithAuth = (authTokens?: { token: string }) =>
 
 describe("RequireLogin", () => {
   it("renders a link to /login and not its children when logged out", () => {
-    renderWithAuth(undefined);
+    renderWithAuth();
 
     expect(screen.getByRole("link")).toHaveAttribute("href", "/login");
     expect(screen.queryByTestId("protected")).not.toBeInTheDocument();
@@ -29,7 +29,7 @@ describe("RequireLogin", () => {
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
   });
 
-  it("carries the current path as redirect-back state to /login", async () => {
+  it("carries the current path as redirect-back state to /login", () => {
     const LoginProbe = () => {
       const location = useLocation();
       return <p data-testid="login-from">{location.state?.from}</p>;

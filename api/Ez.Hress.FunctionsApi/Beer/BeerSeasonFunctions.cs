@@ -23,9 +23,9 @@ public class BeerSeasonFunctions
     }
 
     [Function("beerCurrentSeason")]
-    public async Task<IActionResult> RunCurrentSeason([HttpTrigger(AuthorizationLevel.Function, "get", Route = "beer/seasons/current")] HttpRequest req)
+    public async Task<IActionResult> RunCurrentSeasonAsync([HttpTrigger(AuthorizationLevel.Function, "get", Route = "beer/seasons/current")] HttpRequest req)
     {
-        const string method = nameof(RunCurrentSeason);
+        const string method = nameof(RunCurrentSeasonAsync);
 
         _log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", _class, method);
 
