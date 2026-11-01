@@ -43,7 +43,7 @@ public class SeasonInteractor
     {
         var season = await GetSeasonAsync(seasonID);
         if (!season.IsOpen)
-            throw new InvalidOperationException($"Season '{seasonID}' is closed.");
+            throw new SeasonClosedException(seasonID);
 
         return season;
     }

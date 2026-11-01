@@ -89,14 +89,14 @@ public class SeasonInteractorTests
     }
 
     [Fact]
-    public async Task OpenSeason_Closed_ThrowsInvalidOperation()
+    public async Task OpenSeason_Closed_ThrowsSeasonClosed()
     {
         // ARRANGE
         var interactor = Arrange(
             NewSeason("jolabjor-2025", new DateTime(2025, 11, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 1, 6, 0, 0, 0, DateTimeKind.Utc)));
 
         // ACT & ASSERT
-        await Assert.ThrowsAsync<InvalidOperationException>(() => interactor.GetOpenSeasonAsync("jolabjor-2025"));
+        await Assert.ThrowsAsync<SeasonClosedException>(() => interactor.GetOpenSeasonAsync("jolabjor-2025"));
     }
 
     [Fact]

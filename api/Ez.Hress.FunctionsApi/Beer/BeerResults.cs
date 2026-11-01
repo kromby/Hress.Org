@@ -1,3 +1,4 @@
+using Ez.Hress.BeerRater.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -19,7 +20,7 @@ internal static class BeerResults
             case KeyNotFoundException:
                 log.LogInformation(ex, "[BeerResults.From] Not found");
                 return new NotFoundObjectResult(ex.Message);
-            case InvalidOperationException:
+            case SeasonClosedException:
                 log.LogWarning(ex, "[BeerResults.From] Conflict");
                 return new ConflictObjectResult(ex.Message);
             default:
