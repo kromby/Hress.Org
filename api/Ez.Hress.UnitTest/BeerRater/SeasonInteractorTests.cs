@@ -76,6 +76,22 @@ public class SeasonInteractorTests
     }
 
     [Fact]
+    public async Task CurrentSeason_NoneRunning_ReturnsMostRecentlyEnded_NotLatestStart()
+    {
+        // ARRANGE - "short" started later but ended earlier than "long".
+        var interactor = Arrange(
+            NewSeason("long", new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2026, 3, 1, 0, 0, 0, DateTimeKind.Utc)),
+            NewSeason("short", new DateTime(2025, 6, 1, 0, 0, 0, DateTimeKind.Utc), new DateTime(2025, 7, 1, 0, 0, 0, DateTimeKind.Utc)));
+
+        // ACT
+        var result = await interactor.GetCurrentSeasonAsync();
+
+        // ASSERT
+        Assert.NotNull(result);
+        Assert.Equal("long", result.ID);
+    }
+
+    [Fact]
     public async Task CurrentSeason_NoSeasons_ReturnsNull()
     {
         // ARRANGE

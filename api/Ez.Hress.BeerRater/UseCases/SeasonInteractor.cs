@@ -24,7 +24,11 @@ public class SeasonInteractor
         if (running != null)
             return running;
 
-        return seasons.OrderByDescending(s => s.StartDate).FirstOrDefault();
+        // No season running: fall back to the most recently ended one.
+        return seasons
+            .OrderByDescending(s => s.EndDate)
+            .ThenByDescending(s => s.StartDate)
+            .FirstOrDefault();
     }
 
     public async Task<Season> GetSeasonAsync(string seasonID)

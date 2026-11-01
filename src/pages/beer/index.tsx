@@ -1,10 +1,20 @@
-import { useCurrentSeason } from "./hooks/useBeerApi";
+import LoginLink from "./LoginLink";
+import { isUnauthorized, useCurrentSeason } from "./hooks/useBeerApi";
 
 const BeerHome = () => {
-  const { data: season, isLoading, isError } = useCurrentSeason();
+  const { data: season, isLoading, isError, error } = useCurrentSeason();
 
   if (isLoading) {
     return <p data-testid="season-loading">Sæki tímabil…</p>;
+  }
+
+  if (isError && isUnauthorized(error)) {
+    return (
+      <section data-testid="login-required">
+        <p>Innskráningin er útrunnin. Skráðu þig inn aftur.</p>
+        <LoginLink />
+      </section>
+    );
   }
 
   if (isError) {

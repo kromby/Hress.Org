@@ -14,6 +14,10 @@ const isNotFound = (error: unknown): boolean =>
   (error as { response?: { status?: number } } | null)?.response?.status ===
   404;
 
+export const isUnauthorized = (error: unknown): boolean =>
+  (error as { response?: { status?: number } } | null)?.response?.status ===
+  401;
+
 export const useCurrentSeason = () => {
   const { isLoggedIn, headers } = useHressAuth();
 
