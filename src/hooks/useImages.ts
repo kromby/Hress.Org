@@ -9,6 +9,7 @@ interface UploadImageParams {
   source?: string;
   name: string;
   albumId: number;
+  container?: ImageContainer;
 }
 
 export const useImages = () => {
@@ -35,7 +36,12 @@ export const useImages = () => {
     return null;
   };
 
-  const uploadImage = async ({ file, source, name }: UploadImageParams) => {
+  const uploadImage = async ({
+    file,
+    source,
+    name,
+    container = ImageContainer.Album,
+  }: UploadImageParams) => {
     setLoading(true);
     setError(null);
 
@@ -59,7 +65,7 @@ export const useImages = () => {
         const imageEntity: Partial<ImageEntity> = {
           name,
           content: base64Content,
-          container: ImageContainer.Album,
+          container,
         };
 
         return await postImage(imageEntity);
@@ -68,7 +74,7 @@ export const useImages = () => {
         const imageEntity: Partial<ImageEntity> = {
           name,
           photoUrl: source,
-          container: ImageContainer.Album,
+          container,
         };
 
         return await postImage(imageEntity);
