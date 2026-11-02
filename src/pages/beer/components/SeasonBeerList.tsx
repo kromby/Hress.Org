@@ -27,7 +27,7 @@ const ignoreRatingChange = () => undefined;
 
 const normalize = (text: string) => text.trim().toLocaleLowerCase("is");
 
-const formatAlcohol = (percentage: number) =>
+const formatAlcohol = (percentage = 0) =>
   `${percentage.toLocaleString("is-IS", { maximumFractionDigits: 1 })}%`;
 
 const BeerRow = ({ summary }: { summary: BeerSummary }) => {

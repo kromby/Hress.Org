@@ -11,7 +11,8 @@ export interface Beer {
   id: string;
   name: string;
   producer: string;
-  alcoholPercentage: number;
+  // The backend omits default values, so a 0% beer arrives without this.
+  alcoholPercentage?: number;
   country: string;
   vinbudinUrl?: string;
   registeredBy: number;

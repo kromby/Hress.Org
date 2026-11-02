@@ -91,6 +91,25 @@ describe("SeasonBeerList", () => {
     expect(rows[0]).toHaveTextContent("5,6%");
   });
 
+  it("shows 0% for a beer whose alcohol % the backend omitted", async () => {
+    (axios.get as jest.Mock).mockResolvedValue({
+      data: [
+        {
+          beer: {
+            id: "b3",
+            name: "Malt og Appelsín",
+            producer: "Ölgerðin",
+            country: "Ísland",
+          },
+        },
+      ],
+    });
+
+    renderComponent();
+
+    expect(await screen.findByTestId("beer-row")).toHaveTextContent("0%");
+  });
+
   it("shows my stars on beers I have rated, and marks the rest unrated", async () => {
     renderComponent();
 
