@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import LoginLink from "./LoginLink";
+import SeasonBeerList from "./components/SeasonBeerList";
 import { useHressAuth } from "./hress";
 import { isUnauthorized, useCurrentSeason } from "./hooks/useBeerApi";
 
@@ -32,9 +33,7 @@ const BeerHome = () => {
   }
 
   if (!season) {
-    return (
-      <p data-testid="no-season">Ekkert bjórtímabil er í gangi núna.</p>
-    );
+    return <p data-testid="no-season">Ekkert bjórtímabil er í gangi núna.</p>;
   }
 
   return (
@@ -43,6 +42,7 @@ const BeerHome = () => {
       {!season.isOpen && (
         <p data-testid="season-closed">Þetta tímabil er búið.</p>
       )}
+      <SeasonBeerList season={season} />
     </section>
   );
 };
