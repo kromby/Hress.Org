@@ -44,10 +44,10 @@ export const useSeasonBeers = (seasonID?: string) => {
 
   return useQuery<BeerSummary[]>({
     queryKey: ["beer", "season", seasonID, "beers"],
-    enabled: isLoggedIn && !!seasonID,
+    enabled: isLoggedIn && Boolean(seasonID),
     queryFn: async () => {
       const response = await axios.get<BeerSummary[]>(
-        hressApiUrl(`beer/seasons/${encodeURIComponent(seasonID!)}/beers`),
+        hressApiUrl(`beer/seasons/${encodeURIComponent(seasonID ?? "")}/beers`),
         { headers }
       );
       return response.data;

@@ -135,7 +135,8 @@ describe("SeasonBeerList", () => {
 
     const button = screen.getByTestId("register-beer");
     expect(button).toHaveAttribute("href", "/beer/register");
-    const lastRow = screen.getAllByTestId("beer-row").at(-1)!;
+    const rows = screen.getAllByTestId("beer-row");
+    const lastRow = rows[rows.length - 1];
     expect(
       lastRow.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING
     ).toBeTruthy();

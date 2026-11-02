@@ -8,6 +8,23 @@ interface SeasonBeerListProps {
   season: Season;
 }
 
+const styles = {
+  list: { listStyle: "none", padding: 0, margin: "1em 0" },
+  row: {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "space-between",
+    gap: "0.75em",
+    padding: "0.6em 0",
+    borderBottom: "solid 1px rgba(160, 160, 160, 0.3)",
+  },
+  details: { minWidth: 0, overflowWrap: "anywhere" as const },
+  rating: { flexShrink: 0 },
+};
+
+// StarRating requires a handler even when read-only.
+const ignoreRatingChange = () => undefined;
+
 const normalize = (text: string) => text.trim().toLocaleLowerCase("is");
 
 const formatAlcohol = (percentage: number) =>
@@ -38,7 +55,7 @@ const BeerRow = ({ summary }: { summary: BeerSummary }) => {
             starRatedColor="gold"
             starHoverColor="orange"
             starEmptyColor="rgb(226, 226, 226)"
-            changeRating={() => {}}
+            changeRating={ignoreRatingChange}
             numberOfStars={5}
             starDimension="18px"
             starSpacing="1px"
@@ -106,20 +123,6 @@ const SeasonBeerList = ({ season }: SeasonBeerListProps) => {
       )}
     </section>
   );
-};
-
-const styles = {
-  list: { listStyle: "none", padding: 0, margin: "1em 0" },
-  row: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "0.75em",
-    padding: "0.6em 0",
-    borderBottom: "solid 1px rgba(160, 160, 160, 0.3)",
-  },
-  details: { minWidth: 0, overflowWrap: "anywhere" as const },
-  rating: { flexShrink: 0 },
 };
 
 export default SeasonBeerList;
