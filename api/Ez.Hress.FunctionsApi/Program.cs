@@ -188,4 +188,8 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
     var beerConnection = new BlobConnectionInfo(string.IsNullOrEmpty(beerStorage) ? config["Ez.Hress.Shared.ContentStorage.ConnectionString"]! : beerStorage);
     services.AddSingleton<IBeerSeasonDataAccess>(sp => new BeerSeasonTableAccess(beerConnection, sp.GetRequiredService<ILogger<BeerSeasonTableAccess>>()));
     services.AddSingleton<SeasonInteractor>();
+    services.AddSingleton<IBeerDataAccess>(sp => new BeerTableAccess(beerConnection, sp.GetRequiredService<ILogger<BeerTableAccess>>()));
+    services.AddSingleton<BeerInteractor>();
+    services.AddSingleton<IBeerRatingDataAccess>(sp => new BeerRatingTableAccess(beerConnection, sp.GetRequiredService<ILogger<BeerRatingTableAccess>>()));
+    services.AddSingleton<SummaryInteractor>();
 }

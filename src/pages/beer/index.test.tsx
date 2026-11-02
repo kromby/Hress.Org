@@ -10,9 +10,28 @@ jest.mock("react-global-configuration", () => ({
   get: () => "http://localhost:7072",
 }));
 
+const beers = [
+  {
+    beer: {
+      id: "b1",
+      name: "Tuborg Lille Jul",
+      producer: "Carlsberg",
+      alcoholPercentage: 5.4,
+      country: "Danmörk",
+    },
+  },
+];
+
 describe("BeerHome", () => {
   let queryClient: QueryClient;
   const setAuthTokens = jest.fn();
+
+  const mockSeason = (season: object) =>
+    (axios.get as jest.Mock).mockImplementation((url: string) =>
+      Promise.resolve({
+        data: url.endsWith("/beers") ? beers : season,
+      })
+    );
 
   const renderComponent = () =>
     render(
@@ -35,14 +54,24 @@ describe("BeerHome", () => {
   });
 
   it("shows the current season's name", async () => {
-    (axios.get as jest.Mock).mockResolvedValue({
-      data: { id: "jolabjor-2026", name: "Jólabjór 2026", isOpen: true },
-    });
+    mockSeason({ id: "jolabjor-2026", name: "Jólabjór 2026", isOpen: true });
 
     renderComponent();
 
     expect(await screen.findByText("Jólabjór 2026")).toBeInTheDocument();
     expect(screen.queryByTestId("season-closed")).not.toBeInTheDocument();
+  });
+
+  it("lists the season's beers under the season name", async () => {
+    mockSeason({ id: "jolabjor-2026", name: "Jólabjór 2026", isOpen: true });
+
+    renderComponent();
+
+    expect(await screen.findAllByTestId("beer-row")).toHaveLength(1);
+    expect(axios.get).toHaveBeenCalledWith(
+      "http://localhost:7072/api/beer/seasons/jolabjor-2026/beers",
+      { headers: { "X-Custom-Authorization": "token fake-token" } }
+    );
   });
 
   it("shows an empty state when there is no season", async () => {
@@ -54,13 +83,11 @@ describe("BeerHome", () => {
   });
 
   it("marks a closed season as finished", async () => {
-    (axios.get as jest.Mock).mockResolvedValue({
-      data: {
-        id: "jolabjor-2025",
-        name: "Jólabjór 2025",
-        isOpen: false,
-        endDate: "2026-01-06T00:00:00Z",
-      },
+    mockSeason({
+      id: "jolabjor-2025",
+      name: "Jólabjór 2025",
+      isOpen: false,
+      endDate: "2026-01-06T00:00:00Z",
     });
 
     renderComponent();
@@ -70,9 +97,7 @@ describe("BeerHome", () => {
 
   it("treats a season without an isOpen key as closed", async () => {
     // The backend omits default values, so a closed season has no isOpen.
-    (axios.get as jest.Mock).mockResolvedValue({
-      data: { id: "jolabjor-2025", name: "Jólabjór 2025" },
-    });
+    mockSeason({ id: "jolabjor-2025", name: "Jólabjór 2025" });
 
     renderComponent();
 
@@ -80,9 +105,7 @@ describe("BeerHome", () => {
   });
 
   it("sends the Hress token header", async () => {
-    (axios.get as jest.Mock).mockResolvedValue({
-      data: { id: "jolabjor-2026", name: "Jólabjór 2026", isOpen: true },
-    });
+    mockSeason({ id: "jolabjor-2026", name: "Jólabjór 2026", isOpen: true });
 
     renderComponent();
 

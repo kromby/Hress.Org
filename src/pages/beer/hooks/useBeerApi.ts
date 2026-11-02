@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { hressApiUrl, useHressAuth } from "../hress";
-import { Season } from "../types";
+import { BeerSummary, Season } from "../types";
 
 // The backend omits default and null values, so a closed season arrives
 // without `isOpen` and an open season without `endDate`.
@@ -35,6 +35,22 @@ export const useCurrentSeason = () => {
         if (isNotFound(error)) return null;
         throw error;
       }
+    },
+  });
+};
+
+export const useSeasonBeers = (seasonID?: string) => {
+  const { isLoggedIn, headers } = useHressAuth();
+
+  return useQuery<BeerSummary[]>({
+    queryKey: ["beer", "season", seasonID, "beers"],
+    enabled: isLoggedIn && !!seasonID,
+    queryFn: async () => {
+      const response = await axios.get<BeerSummary[]>(
+        hressApiUrl(`beer/seasons/${encodeURIComponent(seasonID!)}/beers`),
+        { headers }
+      );
+      return response.data;
     },
   });
 };

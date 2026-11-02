@@ -6,3 +6,20 @@ export interface Season {
   endDate?: string;
   isOpen: boolean;
 }
+
+export interface Beer {
+  id: string;
+  name: string;
+  producer: string;
+  alcoholPercentage: number;
+  country: string;
+  vinbudinUrl?: string;
+  registeredBy: number;
+  registeredAt: string;
+}
+
+export interface BeerSummary {
+  beer: Beer;
+  // The current user's stars, absent if they haven't rated the beer.
+  myRating?: number;
+}
