@@ -1,7 +1,7 @@
 import { useEffect } from "react";
-import LoginLink from "./LoginLink";
+import LoginRedirect from "./LoginRedirect";
 import SeasonBeerList from "./components/SeasonBeerList";
-import { useHressAuth } from "./hress";
+import { HressPage, useHressAuth } from "./hress";
 import { isUnauthorized, useCurrentSeason } from "./hooks/useBeerApi";
 
 const BeerHome = () => {
@@ -16,34 +16,40 @@ const BeerHome = () => {
   }, [unauthorized]);
 
   if (isLoading) {
-    return <p data-testid="season-loading">Sæki tímabil…</p>;
-  }
-
-  if (unauthorized) {
     return (
-      <section data-testid="login-required">
-        <p>Innskráningin er útrunnin. Skráðu þig inn aftur.</p>
-        <LoginLink />
-      </section>
+      <HressPage title="Bjór">
+        <p data-testid="season-loading">Sæki tímabil…</p>
+      </HressPage>
     );
   }
 
+  if (unauthorized) {
+    return <LoginRedirect />;
+  }
+
   if (isError) {
-    return <p data-testid="season-error">Ekki tókst að sækja tímabilið.</p>;
+    return (
+      <HressPage title="Bjór">
+        <p data-testid="season-error">Ekki tókst að sækja tímabilið.</p>
+      </HressPage>
+    );
   }
 
   if (!season) {
-    return <p data-testid="no-season">Ekkert bjórtímabil er í gangi núna.</p>;
+    return (
+      <HressPage title="Bjór">
+        <p data-testid="no-season">Ekkert bjórtímabil er í gangi núna.</p>
+      </HressPage>
+    );
   }
 
   return (
-    <section>
-      <h1>{season.name}</h1>
+    <HressPage title={season.name} description="Bjórar tímabilsins">
       {!season.isOpen && (
         <p data-testid="season-closed">Þetta tímabil er búið.</p>
       )}
       <SeasonBeerList season={season} />
-    </section>
+    </HressPage>
   );
 };
 

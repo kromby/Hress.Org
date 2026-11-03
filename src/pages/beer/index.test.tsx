@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
 import { MemoryRouter, Route, Routes, useLocation } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -117,7 +117,7 @@ describe("BeerHome", () => {
     });
   });
 
-  it("shows the login link with redirect-back state on a 401", async () => {
+  it("redirects to login with redirect-back state on a 401", async () => {
     (axios.get as jest.Mock).mockRejectedValue({ response: { status: 401 } });
 
     const LoginProbe = () => {
@@ -140,12 +140,8 @@ describe("BeerHome", () => {
       </QueryClientProvider>
     );
 
-    const link = await screen.findByRole("link");
-    expect(link).toHaveAttribute("href", "/login");
+    expect(await screen.findByTestId("login-from")).toHaveTextContent("/beer");
     expect(screen.queryByTestId("season-error")).not.toBeInTheDocument();
-
-    fireEvent.click(link);
-    expect(screen.getByTestId("login-from")).toHaveTextContent("/beer");
   });
 
   it("clears the rejected token on a 401", async () => {
@@ -153,8 +149,7 @@ describe("BeerHome", () => {
 
     renderComponent();
 
-    await screen.findByTestId("login-required");
-    expect(setAuthTokens).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(setAuthTokens).toHaveBeenCalledTimes(1));
     expect(setAuthTokens).toHaveBeenCalledWith();
   });
 
@@ -173,6 +168,5 @@ describe("BeerHome", () => {
     renderComponent();
 
     expect(await screen.findByTestId("season-error")).toBeInTheDocument();
-    expect(screen.queryByRole("link")).not.toBeInTheDocument();
   });
 });

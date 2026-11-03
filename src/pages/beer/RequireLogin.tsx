@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import LoginLink from "./LoginLink";
+import LoginRedirect from "./LoginRedirect";
 import { useHressAuth } from "./hress";
 
 interface RequireLoginProps {
@@ -10,12 +10,7 @@ const RequireLogin = ({ children }: RequireLoginProps) => {
   const { isLoggedIn } = useHressAuth();
 
   if (!isLoggedIn) {
-    return (
-      <section data-testid="login-required">
-        <p>Þú þarft að skrá þig inn til að nota bjórhlutann.</p>
-        <LoginLink />
-      </section>
-    );
+    return <LoginRedirect />;
   }
 
   return children;
