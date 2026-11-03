@@ -303,11 +303,10 @@ describe("NewsEdit", () => {
 
   it("keeps a newer album pick when an earlier upload finishes", async () => {
     let finishUpload: ((value: { id: number }) => void) | undefined;
-    uploadImage.mockReturnValue(
-      new Promise((resolve) => {
-        finishUpload = resolve;
-      })
-    );
+    const upload = new Promise((resolve) => {
+      finishUpload = resolve;
+    });
+    uploadImage.mockReturnValue(upload);
     renderPage();
 
     fireEvent.change(screen.getByLabelText("Mynd af tölvu"), {
@@ -323,9 +322,8 @@ describe("NewsEdit", () => {
     });
     fireEvent.click(screen.getByRole("button", { name: "Ræðan" }));
 
-    await act(async () => {
-      finishUpload?.({ id: 900 });
-    });
+    finishUpload?.({ id: 900 });
+    await act(() => upload);
 
     expect(screen.getByAltText("Valin mynd")).toHaveAttribute(
       "src",
