@@ -1,0 +1,36 @@
+.news-image-picker .news-image-remove {
+  margin-top: 1em;
+}
+
+.news-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 0.5em;
+  list-style: none;
+  margin: 1em 0 0;
+  padding: 0;
+}
+
+.news-image-grid li {
+  padding: 0;
+}
+
+.news-image-grid button {
+  display: block;
+  width: 100%;
+  height: auto;
+  padding: 0;
+  line-height: 0;
+  border: 3px solid transparent;
+  box-shadow: none;
+  background: none;
+}
+
+.news-image-grid button.selected {
+  border-color: #2ebaae;
+}
+
+.news-image-grid img {
+  width: 100%;
+  height: auto;
+}

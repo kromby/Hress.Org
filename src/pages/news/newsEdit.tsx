@@ -7,6 +7,7 @@ import { useAuth } from "../../context/auth";
 import { useCreateNews } from "../../hooks/useCreateNews";
 import { useNews } from "../../hooks/useNews";
 import { useUpdateNews } from "../../hooks/useUpdateNews";
+import NewsImagePicker from "./components/newsImagePicker";
 
 type ValidationErrors = {
   name?: string;
@@ -15,6 +16,7 @@ type ValidationErrors = {
 
 const NOT_AUTHOR = "Þú getur aðeins breytt þínum eigin fréttum.";
 const NOT_FOUND = "Fréttin fannst ekki.";
+const DEFAULT_IMAGE_ALIGN = 1;
 
 const getErrorMessage = (error: unknown): string => {
   const axiosError = error as AxiosError<{ error?: string }>;
@@ -41,6 +43,8 @@ const NewsEdit = () => {
   const [name, setName] = useState("");
   const [content, setContent] = useState("");
   const [isPublic, setIsPublic] = useState(true);
+  const [imageId, setImageId] = useState<number>();
+  const [imageAlign, setImageAlign] = useState(DEFAULT_IMAGE_ALIGN);
   const [errors, setErrors] = useState<ValidationErrors>({});
   // isPending only flips after a re-render; this guards against a fast double submit.
   const submitting = useRef(false);
@@ -66,6 +70,8 @@ const NewsEdit = () => {
     setContent(loaded.content ?? "");
     // The API omits false values, so a missing flag means not public.
     setIsPublic(loaded.public === true);
+    setImageId(loaded.image?.id || undefined);
+    setImageAlign(loaded.imageAlign || DEFAULT_IMAGE_ALIGN);
   }, [loaded]);
 
   const clearError = (field: keyof ValidationErrors) => {
@@ -86,11 +92,8 @@ const NewsEdit = () => {
 
     submitting.current = true;
     try {
-      // The image picker (#707) is not built yet; keep any existing image.
-      const image =
-        isEdit && loaded?.image?.id
-          ? { imageId: loaded.image.id, imageAlign: loaded.imageAlign }
-          : {};
+      // Leaving the image out of an update removes it from the news.
+      const image = imageId ? { imageId, imageAlign } : {};
       const saved = await mutateAsync({
         name: name.trim(),
         content,
@@ -166,6 +169,14 @@ const NewsEdit = () => {
                     {errors.content}
                   </div>
                 )}
+              </div>
+              <div className="col-12">
+                <NewsImagePicker
+                  imageId={imageId}
+                  imageAlign={imageAlign}
+                  onImageChange={setImageId}
+                  onAlignChange={setImageAlign}
+                />
               </div>
               <div className="col-12">
                 <input
