@@ -42,7 +42,7 @@ const NewsPost = ({ singleNews, linked = true, actions }: NewsPostProps) => {
       body={
         <p
           style={
-            singleNews.image && singleNews.imageAlign !== 4
+            !isMobile && singleNews.image && singleNews.imageAlign !== 4
               ? { minHeight: imageHeight - 50 }
               : undefined
           }
@@ -58,7 +58,12 @@ const NewsPost = ({ singleNews, linked = true, actions }: NewsPostProps) => {
               }
             >
               <img
-                style={{ maxHeight: `${imageHeight}px` }}
+                // Width follows the height cap so portrait images keep their proportions.
+                style={{
+                  maxHeight: `${imageHeight}px`,
+                  width: "auto",
+                  maxWidth: "100%",
+                }}
                 src={`${
                   config.get("apiPath") + singleNews.image.href
                 }?width=${MAX_IMAGE_HEIGHT}`}

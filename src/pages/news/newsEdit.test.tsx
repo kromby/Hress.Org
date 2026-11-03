@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from "@testing-library/react";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import NewsEdit from "./newsEdit";
 import { AuthContext } from "../../context/auth";
@@ -276,6 +282,54 @@ describe("NewsEdit", () => {
       expect(mutateAsync).toHaveBeenCalledWith(
         expect.objectContaining({ imageId: 900, imageAlign: 4 })
       )
+    );
+  });
+
+  it("blocks saving while an image is uploading", () => {
+    mockedUseImages.mockReturnValue({
+      uploadImage,
+      loading: true,
+      error: null,
+    });
+    renderPage();
+
+    fillRequiredFields();
+    const submit = screen.getByRole("button", { name: "Birta frétt" });
+    expect(submit).toBeDisabled();
+    fireEvent.submit(submit.closest("form") as HTMLFormElement);
+
+    expect(mutateAsync).not.toHaveBeenCalled();
+  });
+
+  it("keeps a newer album pick when an earlier upload finishes", async () => {
+    let finishUpload: ((value: { id: number }) => void) | undefined;
+    uploadImage.mockReturnValue(
+      new Promise((resolve) => {
+        finishUpload = resolve;
+      })
+    );
+    renderPage();
+
+    fireEvent.change(screen.getByLabelText("Mynd af tölvu"), {
+      target: {
+        files: [new File(["mynd"], "mynd.jpg", { type: "image/jpeg" })],
+      },
+    });
+    fireEvent.change(screen.getByLabelText("Bæta við mynd"), {
+      target: { value: "album" },
+    });
+    fireEvent.change(screen.getByLabelText("Albúm"), {
+      target: { value: "3" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Ræðan" }));
+
+    await act(async () => {
+      finishUpload?.({ id: 900 });
+    });
+
+    expect(screen.getByAltText("Valin mynd")).toHaveAttribute(
+      "src",
+      "http://localhost:7072/api/images/302/content?width=400"
     );
   });
 

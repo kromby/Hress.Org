@@ -45,6 +45,7 @@ const NewsEdit = () => {
   const [isPublic, setIsPublic] = useState(true);
   const [imageId, setImageId] = useState<number>();
   const [imageAlign, setImageAlign] = useState(DEFAULT_IMAGE_ALIGN);
+  const [imageUploading, setImageUploading] = useState(false);
   const [errors, setErrors] = useState<ValidationErrors>({});
   // isPending only flips after a re-render; this guards against a fast double submit.
   const submitting = useRef(false);
@@ -82,7 +83,7 @@ const NewsEdit = () => {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (submitting.current) return;
+    if (submitting.current || imageUploading) return;
 
     const validation: ValidationErrors = {};
     if (!name.trim()) validation.name = "Fyrirsögn vantar.";
@@ -176,6 +177,7 @@ const NewsEdit = () => {
                   imageAlign={imageAlign}
                   onImageChange={setImageId}
                   onAlignChange={setImageAlign}
+                  onUploadingChange={setImageUploading}
                 />
               </div>
               <div className="col-12">
@@ -196,7 +198,7 @@ const NewsEdit = () => {
                 <button
                   className="button large primary"
                   type="submit"
-                  disabled={isPending}
+                  disabled={isPending || imageUploading}
                 >
                   {isPending
                     ? "Er að vista..."

@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import config from "react-global-configuration";
 import { useAlbumImages, useAlbumList } from "../../../hooks/useAlbumImages";
 import { useImages } from "../../../hooks/useImages";
@@ -18,6 +18,7 @@ type NewsImagePickerProps = {
   imageAlign: number;
   onImageChange: (imageId?: number) => void;
   onAlignChange: (imageAlign: number) => void;
+  onUploadingChange?: (uploading: boolean) => void;
 };
 
 const imageUrl = (id: number, size: string) =>
@@ -28,7 +29,9 @@ const SelectedImage = ({
   imageAlign,
   onImageChange,
   onAlignChange,
-}: NewsImagePickerProps & { imageId: number }) => (
+}: Omit<NewsImagePickerProps, "onUploadingChange"> & {
+  imageId: number;
+}) => (
   <div className="row gtr-uniform">
     <div className="col-6 col-12-small">
       <span className="image fit">
@@ -132,11 +135,72 @@ const AlbumImagePicker = ({
   );
 };
 
-const NewsImagePicker = (props: NewsImagePickerProps) => {
-  const { imageId, onImageChange } = props;
-  const [source, setSource] = useState<"upload" | "album">("upload");
+type ImageSource = "upload" | "album";
+
+const SourceSelect = ({
+  value,
+  hasImage,
+  onChange,
+}: {
+  value: ImageSource;
+  hasImage: boolean;
+  onChange: (source: ImageSource) => void;
+}) => (
+  <div className="col-12">
+    <label htmlFor="news-image-source">
+      {hasImage ? "Skipta um mynd" : "Bæta við mynd"}
+    </label>
+    <select
+      id="news-image-source"
+      value={value}
+      onChange={(e) => onChange(e.target.value as ImageSource)}
+    >
+      <option value="upload">Hlaða upp mynd</option>
+      <option value="album">Velja úr albúmi</option>
+    </select>
+  </div>
+);
+
+const UploadInput = ({
+  uploading,
+  onChange,
+}: {
+  uploading: boolean;
+  onChange: (event: ChangeEvent<HTMLInputElement>) => void;
+}) => (
+  <div className="col-12">
+    <label htmlFor="news-image-file">Mynd af tölvu</label>
+    <input
+      id="news-image-file"
+      type="file"
+      accept="image/*"
+      onChange={onChange}
+      disabled={uploading}
+    />
+    {uploading && <p>Hleð upp...</p>}
+  </div>
+);
+
+const NewsImagePicker = ({
+  onImageChange,
+  onUploadingChange,
+  ...props
+}: NewsImagePickerProps) => {
+  const { imageId } = props;
+  const [source, setSource] = useState<ImageSource>("upload");
   const [message, setMessage] = useState("");
   const { uploadImage, loading: uploading, error: uploadError } = useImages();
+  // Bumped on every selection, so an upload that finishes after a newer choice is ignored.
+  const selection = useRef(0);
+
+  useEffect(() => {
+    onUploadingChange?.(uploading);
+  }, [uploading]);
+
+  const selectImage = (id?: number) => {
+    selection.current += 1;
+    onImageChange(id);
+  };
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
@@ -157,13 +221,17 @@ const NewsImagePicker = (props: NewsImagePickerProps) => {
       return;
     }
 
+    selection.current += 1;
+    const uploadSelection = selection.current;
     try {
       const uploaded = await uploadImage({
         file,
         name: file.name,
         container: ImageContainer.News,
       });
-      if (uploaded?.id) onImageChange(uploaded.id);
+      if (uploaded?.id && uploadSelection === selection.current) {
+        onImageChange(uploaded.id);
+      }
     } catch (e) {
       // Shown through useImages' error state.
       console.error(e);
@@ -175,39 +243,25 @@ const NewsImagePicker = (props: NewsImagePickerProps) => {
   return (
     <fieldset className="news-image-picker">
       <legend>Aðalmynd</legend>
-      {imageId ? <SelectedImage {...props} imageId={imageId} /> : null}
+      {imageId ? (
+        <SelectedImage
+          {...props}
+          imageId={imageId}
+          onImageChange={selectImage}
+        />
+      ) : null}
 
       <div className="row gtr-uniform">
-        <div className="col-12">
-          <label htmlFor="news-image-source">
-            {imageId ? "Skipta um mynd" : "Bæta við mynd"}
-          </label>
-          <select
-            id="news-image-source"
-            value={source}
-            onChange={(e) => setSource(e.target.value as "upload" | "album")}
-          >
-            <option value="upload">Hlaða upp mynd</option>
-            <option value="album">Velja úr albúmi</option>
-          </select>
-        </div>
-
+        <SourceSelect
+          value={source}
+          hasImage={Boolean(imageId)}
+          onChange={setSource}
+        />
         {source === "upload" ? (
-          <div className="col-12">
-            <label htmlFor="news-image-file">Mynd af tölvu</label>
-            <input
-              id="news-image-file"
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              disabled={uploading}
-            />
-            {uploading && <p>Hleð upp...</p>}
-          </div>
+          <UploadInput uploading={uploading} onChange={handleFileChange} />
         ) : (
-          <AlbumImagePicker imageId={imageId} onImageChange={onImageChange} />
+          <AlbumImagePicker imageId={imageId} onImageChange={selectImage} />
         )}
-
         {(message || uploadError) && (
           <div className="col-12">
             <div className="error">{message || uploadError}</div>
