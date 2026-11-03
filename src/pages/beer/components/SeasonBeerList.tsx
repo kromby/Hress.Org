@@ -36,7 +36,9 @@ const BeerRow = ({ summary }: { summary: BeerSummary }) => {
   return (
     <li data-testid="beer-row" style={styles.row}>
       <div style={styles.details}>
-        <strong>{beer.name}</strong>
+        <Link to={`/beer/${encodeURIComponent(beer.id)}`}>
+          <strong>{beer.name}</strong>
+        </Link>
         <br />
         <small>
           {beer.producer} · {beer.country} ·{" "}

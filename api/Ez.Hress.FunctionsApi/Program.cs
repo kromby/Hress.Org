@@ -192,4 +192,5 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
     services.AddSingleton<BeerInteractor>();
     services.AddSingleton<IBeerRatingDataAccess>(sp => new BeerRatingTableAccess(beerConnection, sp.GetRequiredService<ILogger<BeerRatingTableAccess>>()));
     services.AddSingleton<SummaryInteractor>();
+    services.AddSingleton<RatingInteractor>();
 }

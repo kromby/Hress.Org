@@ -24,3 +24,12 @@ export interface BeerSummary {
   // The current user's stars, absent if they haven't rated the beer.
   myRating?: number;
 }
+
+export interface Rating {
+  seasonID: string;
+  beerID: string;
+  userID: number;
+  stars: number;
+  created: string;
+  updated: string;
+}

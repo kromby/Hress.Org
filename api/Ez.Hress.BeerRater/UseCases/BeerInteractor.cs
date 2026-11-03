@@ -31,4 +31,14 @@ public class BeerInteractor
         // A season row whose beer has been removed is skipped.
         return beers.Where(b => seasonBeerIDs.Contains(b.ID)).ToList();
     }
+
+    public async Task<Beer> GetSeasonBeerAsync(string seasonID, string beerID)
+    {
+        var beers = await GetSeasonBeersAsync(seasonID);
+        var beer = beers.FirstOrDefault(b => string.Equals(b.ID, beerID, StringComparison.Ordinal));
+        if (beer == null)
+            throw new KeyNotFoundException($"Beer '{beerID}' not found in season '{seasonID}'.");
+
+        return beer;
+    }
 }
