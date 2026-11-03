@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import LoginLink from "./LoginLink";
+import LoginRedirect from "./LoginRedirect";
 import SeasonBeerList from "./components/SeasonBeerList";
 import { HressPage, useHressAuth } from "./hress";
 import { isUnauthorized, useCurrentSeason } from "./hooks/useBeerApi";
@@ -24,14 +24,7 @@ const BeerHome = () => {
   }
 
   if (unauthorized) {
-    return (
-      <HressPage title="Bjór">
-        <section data-testid="login-required">
-          <p>Innskráningin er útrunnin. Skráðu þig inn aftur.</p>
-          <LoginLink />
-        </section>
-      </HressPage>
-    );
+    return <LoginRedirect />;
   }
 
   if (isError) {
