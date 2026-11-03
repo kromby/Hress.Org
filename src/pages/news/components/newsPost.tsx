@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import Post from "../../../components/post";
 import config from "react-global-configuration";
 import { NewsEntity } from "../../../types/newsEntity";
@@ -19,14 +20,21 @@ const getImageHeight = (
   }
 };
 
-const NewsPost = ({ singleNews }: { singleNews: NewsEntity }) => {
+type NewsPostProps = {
+  singleNews: NewsEntity;
+  // False on the article page itself, where the title shouldn't link back to it.
+  linked?: boolean;
+  actions?: ReactNode;
+};
+
+const NewsPost = ({ singleNews, linked = true, actions }: NewsPostProps) => {
   const imageHeight = getImageHeight(singleNews.image);
 
   return (
     <Post
       key={singleNews.id}
       id={singleNews.id}
-      href={`/news/${singleNews.id}`}
+      href={linked ? `/news/${singleNews.id}` : undefined}
       title={singleNews.name}
       date={singleNews.inserted}
       dateFormatted={singleNews.insertedString}
@@ -34,7 +42,7 @@ const NewsPost = ({ singleNews }: { singleNews: NewsEntity }) => {
       body={
         <p
           style={
-            singleNews.image && singleNews.imageAlign !== 4
+            !isMobile && singleNews.image && singleNews.imageAlign !== 4
               ? { minHeight: imageHeight - 50 }
               : undefined
           }
@@ -45,12 +53,17 @@ const NewsPost = ({ singleNews }: { singleNews: NewsEntity }) => {
                 singleNews.imageAlign === 1
                   ? "image left"
                   : singleNews.imageAlign === 2
-                  ? "image right"
-                  : undefined
+                    ? "image right"
+                    : undefined
               }
             >
               <img
-                style={{ maxHeight: `${imageHeight}px` }}
+                // Width follows the height cap so portrait images keep their proportions.
+                style={{
+                  maxHeight: `${imageHeight}px`,
+                  width: "auto",
+                  maxWidth: "100%",
+                }}
                 src={`${
                   config.get("apiPath") + singleNews.image.href
                 }?width=${MAX_IMAGE_HEIGHT}`}
@@ -71,7 +84,7 @@ const NewsPost = ({ singleNews }: { singleNews: NewsEntity }) => {
           ? `${config.get("apiPath") + singleNews.image.href}?width=1400`
           : null
       }
-      actions={<p />}
+      actions={actions ?? <p />}
     />
   );
 };

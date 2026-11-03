@@ -8,7 +8,7 @@ interface UploadImageParams {
   file?: File;
   source?: string;
   name: string;
-  albumId: number;
+  albumId?: number;
   container?: ImageContainer;
 }
 

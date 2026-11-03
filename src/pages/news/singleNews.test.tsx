@@ -90,6 +90,65 @@ describe("SingleNews", () => {
     localStorage.removeItem("userID");
   });
 
+  it("renders a side-aligned image next to the text", async () => {
+    mockedAxios.get.mockResolvedValue({
+      data: {
+        id: 42,
+        name: "Frétt með mynd",
+        content: "<p>Texti</p>",
+        image: { id: 55, height: 300, href: "/api/images/55/content" },
+        imageAlign: 2,
+      },
+    });
+
+    const { container } = renderPage();
+
+    expect(await screen.findByText("Texti")).toBeInTheDocument();
+    expect(container.querySelector(".image.right img")).toHaveAttribute(
+      "src",
+      "http://localhost:7072/api/images/55/content?width=500"
+    );
+    expect(container.querySelector("figure.image.featured")).toBeNull();
+  });
+
+  it("renders a top-aligned image as the featured image", async () => {
+    mockedAxios.get.mockResolvedValue({
+      data: {
+        id: 42,
+        name: "Frétt með mynd",
+        content: "<p>Texti</p>",
+        image: { id: 55, height: 300, href: "/api/images/55/content" },
+        imageAlign: 4,
+      },
+    });
+
+    const { container } = renderPage();
+
+    expect(await screen.findByText("Texti")).toBeInTheDocument();
+    expect(
+      container.querySelector("figure.image.featured img")
+    ).toHaveAttribute(
+      "src",
+      "http://localhost:7072/api/images/55/content?width=1400"
+    );
+    expect(container.querySelector(".image.right, .image.left")).toBeNull();
+  });
+
+  it("does not link the title back to the article", async () => {
+    mockedAxios.get.mockResolvedValue({
+      data: { id: 42, name: "Frétt", content: "<p>Texti</p>" },
+    });
+
+    renderPage();
+
+    expect(
+      await screen.findByRole("heading", { name: "Frétt" })
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Frétt" })
+    ).not.toBeInTheDocument();
+  });
+
   it("loads the new article when the id in the URL changes", async () => {
     mockedAxios.get.mockImplementation((url: string) =>
       Promise.resolve({
