@@ -5,7 +5,7 @@ import { useAuth } from "../context/auth";
 import { AlbumEntity } from "../types/albumEntity";
 import { ImageEntity } from "../types/image";
 
-export const useAlbumList = (enabled = true) => {
+export const useAlbumList = () => {
   const { authTokens } = useAuth();
 
   return useQuery<AlbumEntity[]>({
@@ -17,7 +17,7 @@ export const useAlbumList = (enabled = true) => {
       });
       return response.data;
     },
-    enabled: enabled && authTokens !== undefined,
+    enabled: authTokens !== undefined,
   });
 };
 

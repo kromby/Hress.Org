@@ -2,12 +2,12 @@ import { ChangeEvent, useState } from "react";
 import config from "react-global-configuration";
 import { useAlbumImages, useAlbumList } from "../../../hooks/useAlbumImages";
 import { useImages } from "../../../hooks/useImages";
-import { ImageContainer } from "../../../types/image";
+import { ImageContainer, ImageEntity } from "../../../types/image";
 import "./newsImagePicker.css";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
-export const IMAGE_ALIGN_OPTIONS = [
+const IMAGE_ALIGN_OPTIONS = [
   { value: 1, label: "Vinstri" },
   { value: 2, label: "Hægri" },
   { value: 4, label: "Top" },
@@ -16,32 +16,134 @@ export const IMAGE_ALIGN_OPTIONS = [
 type NewsImagePickerProps = {
   imageId?: number;
   imageAlign: number;
-  onImageChange: (imageId: number | undefined) => void;
+  onImageChange: (imageId?: number) => void;
   onAlignChange: (imageAlign: number) => void;
 };
 
 const imageUrl = (id: number, size: string) =>
   `${config.get("apiPath")}/api/images/${id}/content?${size}`;
 
-const NewsImagePicker = ({
+const SelectedImage = ({
   imageId,
   imageAlign,
   onImageChange,
   onAlignChange,
-}: NewsImagePickerProps) => {
-  const [source, setSource] = useState<"upload" | "album">("upload");
+}: NewsImagePickerProps & { imageId: number }) => (
+  <div className="row gtr-uniform">
+    <div className="col-6 col-12-small">
+      <span className="image fit">
+        <img src={imageUrl(imageId, "width=400")} alt="Valin mynd" />
+      </span>
+    </div>
+    <div className="col-6 col-12-small">
+      <label htmlFor="news-image-align">Staðsetning myndar</label>
+      <select
+        id="news-image-align"
+        value={imageAlign}
+        onChange={(e) => onAlignChange(Number(e.target.value))}
+      >
+        {IMAGE_ALIGN_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <button
+        type="button"
+        className="button small news-image-remove"
+        onClick={() => onImageChange()}
+      >
+        Fjarlægja mynd
+      </button>
+    </div>
+  </div>
+);
+
+type AlbumImageGridProps = {
+  images: ImageEntity[];
+  imageId?: number;
+  onImageChange: (imageId: number) => void;
+};
+
+const AlbumImageGrid = ({
+  images,
+  imageId,
+  onImageChange,
+}: AlbumImageGridProps) => (
+  <ul className="news-image-grid">
+    {images.map((image) => (
+      <li key={image.id}>
+        <button
+          type="button"
+          className={image.id === imageId ? "selected" : undefined}
+          aria-pressed={image.id === imageId}
+          onClick={() => onImageChange(image.id)}
+        >
+          <img
+            src={imageUrl(image.id, "width=200&height=150")}
+            alt={image.name || `Mynd ${image.id}`}
+          />
+        </button>
+      </li>
+    ))}
+  </ul>
+);
+
+const AlbumImagePicker = ({
+  imageId,
+  onImageChange,
+}: Pick<NewsImagePickerProps, "imageId" | "onImageChange">) => {
   const [albumId, setAlbumId] = useState<number>();
-  const [message, setMessage] = useState<string>();
+  const albums = useAlbumList();
+  const albumImages = useAlbumImages(albumId);
+
+  return (
+    <div className="col-12">
+      <label htmlFor="news-image-album">Albúm</label>
+      <select
+        id="news-image-album"
+        value={albumId ?? ""}
+        onChange={(e) =>
+          setAlbumId(e.target.value ? Number(e.target.value) : undefined)
+        }
+      >
+        <option value="">
+          {albums.isLoading ? "Sæki albúm..." : "- Veldu albúm -"}
+        </option>
+        {albums.data?.map((album) => (
+          <option key={album.id} value={album.id}>
+            {album.name}
+          </option>
+        ))}
+      </select>
+      {albums.error && <div className="error">Ekki tókst að sækja albúm.</div>}
+      {albumImages.isLoading && <p>Sæki myndir...</p>}
+      {albumImages.error && (
+        <div className="error">Ekki tókst að sækja myndir.</div>
+      )}
+      {albumImages.data && (
+        <AlbumImageGrid
+          images={albumImages.data}
+          imageId={imageId}
+          onImageChange={onImageChange}
+        />
+      )}
+    </div>
+  );
+};
+
+const NewsImagePicker = (props: NewsImagePickerProps) => {
+  const { imageId, onImageChange } = props;
+  const [source, setSource] = useState<"upload" | "album">("upload");
+  const [message, setMessage] = useState("");
   const { uploadImage, loading: uploading, error: uploadError } = useImages();
-  const albums = useAlbumList(source === "album");
-  const albumImages = useAlbumImages(source === "album" ? albumId : undefined);
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
     const file = input.files?.[0];
     if (!file) return;
 
-    setMessage(undefined);
+    setMessage("");
     if (!file.type.startsWith("image/")) {
       setMessage("Aðeins er hægt að hlaða upp myndum");
       input.value = "";
@@ -73,36 +175,7 @@ const NewsImagePicker = ({
   return (
     <fieldset className="news-image-picker">
       <legend>Aðalmynd</legend>
-      {imageId ? (
-        <div className="row gtr-uniform">
-          <div className="col-6 col-12-small">
-            <span className="image fit">
-              <img src={imageUrl(imageId, "width=400")} alt="Valin mynd" />
-            </span>
-          </div>
-          <div className="col-6 col-12-small">
-            <label htmlFor="news-image-align">Staðsetning myndar</label>
-            <select
-              id="news-image-align"
-              value={imageAlign}
-              onChange={(e) => onAlignChange(Number(e.target.value))}
-            >
-              {IMAGE_ALIGN_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-            <button
-              type="button"
-              className="button small news-image-remove"
-              onClick={() => onImageChange(undefined)}
-            >
-              Fjarlægja mynd
-            </button>
-          </div>
-        </div>
-      ) : null}
+      {imageId ? <SelectedImage {...props} imageId={imageId} /> : null}
 
       <div className="row gtr-uniform">
         <div className="col-12">
@@ -132,56 +205,12 @@ const NewsImagePicker = ({
             {uploading && <p>Hleð upp...</p>}
           </div>
         ) : (
-          <div className="col-12">
-            <label htmlFor="news-image-album">Albúm</label>
-            <select
-              id="news-image-album"
-              value={albumId ?? ""}
-              onChange={(e) =>
-                setAlbumId(e.target.value ? Number(e.target.value) : undefined)
-              }
-            >
-              <option value="">
-                {albums.isLoading ? "Sæki albúm..." : "- Veldu albúm -"}
-              </option>
-              {albums.data?.map((album) => (
-                <option key={album.id} value={album.id}>
-                  {album.name}
-                </option>
-              ))}
-            </select>
-            {albums.error && (
-              <div className="error">Ekki tókst að sækja albúm.</div>
-            )}
-            {albumImages.isLoading && <p>Sæki myndir...</p>}
-            {albumImages.error && (
-              <div className="error">Ekki tókst að sækja myndir.</div>
-            )}
-            {albumImages.data && (
-              <ul className="news-image-grid">
-                {albumImages.data.map((image) => (
-                  <li key={image.id}>
-                    <button
-                      type="button"
-                      className={image.id === imageId ? "selected" : undefined}
-                      aria-pressed={image.id === imageId}
-                      onClick={() => onImageChange(image.id)}
-                    >
-                      <img
-                        src={imageUrl(image.id, "width=200&height=150")}
-                        alt={image.name || `Mynd ${image.id}`}
-                      />
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <AlbumImagePicker imageId={imageId} onImageChange={onImageChange} />
         )}
 
         {(message || uploadError) && (
           <div className="col-12">
-            <div className="error">{message ?? uploadError}</div>
+            <div className="error">{message || uploadError}</div>
           </div>
         )}
       </div>
