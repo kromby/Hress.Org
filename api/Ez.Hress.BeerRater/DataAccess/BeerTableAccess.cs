@@ -25,9 +25,17 @@ public class BeerTableAccess : IBeerDataAccess
         _logger.LogInformation("[{Class}.{Method}] Get beers", _className, nameof(GetBeersAsync));
 
         var list = new List<Beer>();
-        await foreach (var entity in _beersTable.QueryAsync<BeerTableEntity>(e => e.PartitionKey == BeerTableEntity.Partition))
+        await foreach (var entity in _beersTable.QueryAsync<TableEntity>(e => e.PartitionKey == BeerTableEntity.Partition))
         {
-            list.Add(entity.ToBeer());
+            try
+            {
+                list.Add(BeerTableEntity.ToBeer(entity));
+            }
+            catch (FormatException ex)
+            {
+                // One bad hand-entered row shouldn't break the whole list.
+                _logger.LogWarning("[{Class}.{Method}] Skipping beer '{RowKey}': {Message}", _className, nameof(GetBeersAsync), entity.RowKey, ex.Message);
+            }
         }
 
         return list;

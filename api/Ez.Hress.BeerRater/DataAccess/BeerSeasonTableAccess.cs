@@ -28,9 +28,17 @@ public class BeerSeasonTableAccess : IBeerSeasonDataAccess
         _logger.LogInformation("[{Class}.{Method}] Get seasons", _className, nameof(GetSeasonsAsync));
 
         var list = new List<Season>();
-        await foreach (var entity in _seasonsTable.QueryAsync<SeasonTableEntity>(e => e.PartitionKey == SeasonTableEntity.Partition))
+        await foreach (var entity in _seasonsTable.QueryAsync<TableEntity>(e => e.PartitionKey == SeasonTableEntity.Partition))
         {
-            list.Add(entity.ToSeason());
+            try
+            {
+                list.Add(SeasonTableEntity.ToSeason(entity));
+            }
+            catch (FormatException ex)
+            {
+                // One bad hand-entered row shouldn't break the season lookup.
+                _logger.LogWarning("[{Class}.{Method}] Skipping season '{RowKey}': {Message}", _className, nameof(GetSeasonsAsync), entity.RowKey, ex.Message);
+            }
         }
 
         return list;
