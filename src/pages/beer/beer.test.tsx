@@ -130,6 +130,34 @@ describe("BeerPage", () => {
     );
   });
 
+  it("exposes the stars as a radio group I can rate with the keyboard", async () => {
+    (axios.put as jest.Mock).mockResolvedValue({ data: { stars: 3 } });
+    renderPage("b2");
+    await screen.findByRole("radiogroup");
+
+    const radios = screen.getAllByRole("radio");
+    expect(radios).toHaveLength(5);
+    // Only my current rating is in the tab order.
+    expect(radios[1]).toHaveAttribute("aria-checked", "true");
+    expect(radios[1]).toHaveAttribute("tabindex", "0");
+    expect(radios[0]).toHaveAttribute("tabindex", "-1");
+
+    radios[1].focus();
+    fireEvent.keyDown(radios[1], { key: "ArrowRight" });
+    expect(radios[2]).toHaveFocus();
+    expect(axios.put).not.toHaveBeenCalled();
+
+    fireEvent.keyDown(radios[2], { key: "Enter" });
+
+    await waitFor(() =>
+      expect(axios.put).toHaveBeenCalledWith(
+        expect.stringContaining("/beers/b2/rating"),
+        { stars: 3 },
+        expect.anything()
+      )
+    );
+  });
+
   it("refetches the season's beers after saving", async () => {
     (axios.put as jest.Mock).mockResolvedValue({ data: { stars: 4 } });
     renderPage();
@@ -164,6 +192,8 @@ describe("BeerPage", () => {
 
     expect(axios.put).not.toHaveBeenCalled();
     expect(screen.getByTestId("rating-closed")).toBeInTheDocument();
+    expect(screen.getByTestId("rating-stars")).toHaveAttribute("role", "img");
+    expect(screen.queryAllByRole("radio")).toHaveLength(0);
   });
 
   it("shows not-found for a beer that isn't in the season", async () => {

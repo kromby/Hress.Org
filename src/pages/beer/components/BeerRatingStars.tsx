@@ -40,7 +40,7 @@ const BeerRatingStars = ({
     <div style={styles.wrapper}>
       <span
         data-testid="rating-stars"
-        role="img"
+        role={readonly ? "img" : "radiogroup"}
         aria-label={
           shownRating
             ? `Þín einkunn: ${shownRating} af 5`
@@ -57,6 +57,7 @@ const BeerRatingStars = ({
           starDimension="44px"
           starSpacing="6px"
           readonly={readonly}
+          asRadio
         />
       </span>
       {readonly ? (
