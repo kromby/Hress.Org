@@ -94,6 +94,9 @@ const StarRating: React.FC<StarRatingProps> = ({
         event.preventDefault();
         handleClick(starPosition);
         break;
+      default:
+        // Other keys keep their normal behaviour, e.g. Tab leaves the stars.
+        break;
     }
   };
 
