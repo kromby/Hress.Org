@@ -1,6 +1,8 @@
 // The only file in src/pages/beer that depends on the rest of hress.org
-// (login, current user, API base URL). Extracting BeerRater means swapping this file.
+// (login, current user, API base URL, page layout). Extracting BeerRater means swapping this file.
+import { ReactNode } from "react";
 import config from "react-global-configuration";
+import { Post } from "../../components";
 import { useAuth } from "../../context/auth";
 
 export interface HressAuth {
@@ -33,3 +35,16 @@ export const useHressAuth = (): HressAuth => {
 
 export const hressApiUrl = (path: string): string =>
   `${config.get("apiPath")}/api/${path}`;
+
+interface HressPageProps {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}
+
+// Renders a page in the hress.org layout: the main column with a post card.
+export const HressPage = ({ title, description, children }: HressPageProps) => (
+  <div id="main">
+    <Post title={title} description={description} body={children} />
+  </div>
+);
