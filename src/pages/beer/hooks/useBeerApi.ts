@@ -1,7 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { hressApiUrl, useHressAuth } from "../hress";
-import { BeerSummary, Season } from "../types";
+import { BeerSummary, Rating, Season } from "../types";
 
 // The backend omits default and null values, so a closed season arrives
 // without `isOpen` and an open season without `endDate`.
@@ -39,11 +39,18 @@ export const useCurrentSeason = () => {
   });
 };
 
+const seasonBeersKey = (seasonID?: string) => [
+  "beer",
+  "season",
+  seasonID,
+  "beers",
+];
+
 export const useSeasonBeers = (seasonID?: string) => {
   const { isLoggedIn, headers } = useHressAuth();
 
   return useQuery<BeerSummary[]>({
-    queryKey: ["beer", "season", seasonID, "beers"],
+    queryKey: seasonBeersKey(seasonID),
     enabled: isLoggedIn && Boolean(seasonID),
     queryFn: async () => {
       const response = await axios.get<BeerSummary[]>(
@@ -51,6 +58,35 @@ export const useSeasonBeers = (seasonID?: string) => {
         { headers }
       );
       return response.data;
+    },
+  });
+};
+
+// Saves the current user's stars for a beer. Rating again replaces the earlier rating.
+export const useSaveRating = (seasonID: string, beerID: string) => {
+  const { headers } = useHressAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (stars: number): Promise<Rating> => {
+      const response = await axios.put<Rating>(
+        hressApiUrl(
+          `beer/seasons/${encodeURIComponent(seasonID)}/beers/${encodeURIComponent(beerID)}/rating`
+        ),
+        { stars },
+        { headers }
+      );
+      return response.data;
+    },
+    onSuccess: (rating) => {
+      queryClient.setQueryData<BeerSummary[]>(
+        seasonBeersKey(seasonID),
+        (summaries) =>
+          summaries?.map((s) =>
+            s.beer.id === beerID ? { ...s, myRating: rating.stars } : s
+          )
+      );
+      queryClient.invalidateQueries({ queryKey: seasonBeersKey(seasonID) });
     },
   });
 };

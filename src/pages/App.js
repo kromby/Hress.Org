@@ -44,6 +44,7 @@ import MovieList from "./hardhead/list";
 import AlbumImageUpload from "./albums/albumImageUpload";
 import RequireLogin from "./beer/RequireLogin";
 import BeerHome from "./beer";
+import BeerPage from "./beer/beer";
 
 function App() {
   const [authTokens, setAuthTokens] = useState();
@@ -173,6 +174,14 @@ function App() {
                   element={
                     <RequireLogin>
                       <BeerHome />
+                    </RequireLogin>
+                  }
+                />
+                <Route
+                  path=":beerID"
+                  element={
+                    <RequireLogin>
+                      <BeerPage />
                     </RequireLogin>
                   }
                 />
