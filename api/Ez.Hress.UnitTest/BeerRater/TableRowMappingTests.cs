@@ -116,6 +116,32 @@ public class TableRowMappingTests
         // ACT & ASSERT
         var ex = Assert.Throws<FormatException>(() => BeerTableEntity.ToBeer(row));
         Assert.Contains(property, ex.Message);
+        Assert.DoesNotContain(value, ex.Message);
+    }
+
+    [Theory]
+    [InlineData("NaN")]
+    [InlineData("Infinity")]
+    [InlineData("1e400")]
+    public void Beer_NonFiniteAlcohol_ThrowsFormat(string alcohol)
+    {
+        // ARRANGE
+        var row = BeerRow();
+        row["AlcoholPercentage"] = alcohol;
+
+        // ACT & ASSERT
+        Assert.Throws<FormatException>(() => BeerTableEntity.ToBeer(row));
+    }
+
+    [Fact]
+    public void Beer_NonFiniteTypedAlcohol_ThrowsFormat()
+    {
+        // ARRANGE
+        var row = BeerRow();
+        row["AlcoholPercentage"] = double.NaN;
+
+        // ACT & ASSERT
+        Assert.Throws<FormatException>(() => BeerTableEntity.ToBeer(row));
     }
 
     [Fact]

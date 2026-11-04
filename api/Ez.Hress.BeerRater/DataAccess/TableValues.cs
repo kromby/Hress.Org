@@ -21,11 +21,11 @@ internal static class TableValues
         GetValue(entity, key) switch
         {
             null => 0,
-            double d => d,
+            double d when double.IsFinite(d) => d,
             int i => i,
             long l => l,
             // Accept the Icelandic decimal comma as well as a point.
-            string s when double.TryParse(s.Trim().Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out var d) => d,
+            string s when double.TryParse(s.Trim().Replace(',', '.'), NumberStyles.Float, CultureInfo.InvariantCulture, out var d) && double.IsFinite(d) => d,
             var other => throw Invalid(key, other),
         };
 
@@ -57,6 +57,7 @@ internal static class TableValues
     private static object? GetValue(TableEntity entity, string key) =>
         entity.TryGetValue(key, out var value) && !(value is string s && string.IsNullOrWhiteSpace(s)) ? value : null;
 
+    // The raw value stays out of the message, which is logged when a row is skipped.
     private static FormatException Invalid(string key, object value) =>
-        new($"Property '{key}' has a value that can't be read: '{value}' ({value.GetType().Name}).");
+        new($"Property '{key}' has a {value.GetType().Name} value that can't be read.");
 }
