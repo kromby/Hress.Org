@@ -43,15 +43,15 @@ internal class BeerTableEntity : ITableEntity
     public int RegisteredBy { get; set; }
     public DateTime RegisteredAt { get; set; }
 
-    public Beer ToBeer() => new()
+    public static Beer ToBeer(TableEntity entity) => new()
     {
-        ID = Uri.UnescapeDataString(RowKey),
-        Name = Name,
-        Producer = Producer,
-        AlcoholPercentage = AlcoholPercentage,
-        Country = Country,
-        VinbudinUrl = VinbudinUrl,
-        RegisteredBy = RegisteredBy,
-        RegisteredAt = DateTime.SpecifyKind(RegisteredAt, DateTimeKind.Utc)
+        ID = Uri.UnescapeDataString(entity.RowKey),
+        Name = TableValues.GetString(entity, nameof(Name)),
+        Producer = TableValues.GetString(entity, nameof(Producer)),
+        AlcoholPercentage = TableValues.GetDouble(entity, nameof(AlcoholPercentage)),
+        Country = TableValues.GetString(entity, nameof(Country)),
+        VinbudinUrl = TableValues.GetOptionalString(entity, nameof(VinbudinUrl)),
+        RegisteredBy = TableValues.GetInt32(entity, nameof(RegisteredBy)),
+        RegisteredAt = TableValues.GetDateTime(entity, nameof(RegisteredAt))
     };
 }

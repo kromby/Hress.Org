@@ -9,6 +9,9 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.16" />
   </ItemGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="Ez.Hress.UnitTest" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\Ez.Hress.Shared\Ez.Hress.Shared.csproj" />
   </ItemGroup>
 </Project>
