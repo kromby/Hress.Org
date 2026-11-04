@@ -54,8 +54,8 @@ const BeerRatingStars = ({
           starEmptyColor="rgb(226, 226, 226)"
           changeRating={readonly ? ignoreRatingChange : handleChange}
           numberOfStars={5}
-          starDimension="44px"
-          starSpacing="6px"
+          starDimension="20px"
+          starSpacing="2px"
           readonly={readonly}
           asRadio
         />
