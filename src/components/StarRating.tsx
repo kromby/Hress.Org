@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 interface StarRatingProps {
   rating: number;
@@ -11,6 +11,8 @@ interface StarRatingProps {
   starSpacing: string;
   readonly?: boolean;
   onHoverChange?: (rating: number) => void;
+  // Exposes the stars as keyboard-operable radios. The caller must wrap them in a radiogroup.
+  asRadio?: boolean;
 }
 
 const StarRating: React.FC<StarRatingProps> = ({
@@ -24,8 +26,11 @@ const StarRating: React.FC<StarRatingProps> = ({
   starSpacing,
   readonly = false,
   onHoverChange,
+  asRadio = false,
 }) => {
   const [hoverRating, setHoverRating] = useState(0);
+  const starRefs = useRef<(SVGSVGElement | null)[]>([]);
+  const isRadio = asRadio && !readonly;
 
   const getStarColor = (starPosition: number) => {
     if (hoverRating >= starPosition && !readonly) {
@@ -57,6 +62,47 @@ const StarRating: React.FC<StarRatingProps> = ({
     }
   };
 
+  // Arrow keys move focus between stars, Enter or Space picks the focused one.
+  const handleKeyDown = (
+    event: React.KeyboardEvent<SVGSVGElement>,
+    starPosition: number
+  ) => {
+    const focusStar = (position: number) =>
+      starRefs.current[position - 1]?.focus();
+
+    switch (event.key) {
+      case "ArrowRight":
+      case "ArrowUp":
+        event.preventDefault();
+        focusStar(Math.min(starPosition + 1, numberOfStars));
+        break;
+      case "ArrowLeft":
+      case "ArrowDown":
+        event.preventDefault();
+        focusStar(Math.max(starPosition - 1, 1));
+        break;
+      case "Home":
+        event.preventDefault();
+        focusStar(1);
+        break;
+      case "End":
+        event.preventDefault();
+        focusStar(numberOfStars);
+        break;
+      case "Enter":
+      case " ":
+        event.preventDefault();
+        handleClick(starPosition);
+        break;
+      default:
+        // Other keys keep their normal behaviour, e.g. Tab leaves the stars.
+        break;
+    }
+  };
+
+  // Only one star is in the tab order: the rated one, or the first.
+  const tabStop = rating >= 1 && rating <= numberOfStars ? rating : 1;
+
   const starStyle = {
     width: starDimension,
     height: starDimension,
@@ -75,6 +121,17 @@ const StarRating: React.FC<StarRatingProps> = ({
             onClick={() => handleClick(starPosition)}
             onMouseEnter={() => handleMouseEnter(starPosition)}
             onMouseLeave={handleMouseLeave}
+            {...(isRadio && {
+              ref: (el: SVGSVGElement | null) => {
+                starRefs.current[index] = el;
+              },
+              role: "radio",
+              "aria-checked": rating === starPosition,
+              "aria-label": `${starPosition} af ${numberOfStars}`,
+              tabIndex: starPosition === tabStop ? 0 : -1,
+              onKeyDown: (event: React.KeyboardEvent<SVGSVGElement>) =>
+                handleKeyDown(event, starPosition),
+            })}
             viewBox="0 0 25 25"
             fill={getStarColor(starPosition)}
           >
