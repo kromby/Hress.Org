@@ -33,4 +33,19 @@ public class BeerRatingTableAccess : IBeerRatingDataAccess
 
         return list;
     }
+
+    public async Task<Rating?> GetRatingAsync(string seasonID, string beerID, int userID)
+    {
+        _logger.LogInformation("[{Class}.{Method}] Get rating for beer '{BeerID}' by user {UserID} in season '{SeasonID}'", _className, nameof(GetRatingAsync), beerID, userID, seasonID);
+
+        var response = await _ratingsTable.GetEntityIfExistsAsync<RatingTableEntity>(Uri.EscapeDataString(seasonID), RatingTableEntity.CreateRowKey(beerID, userID));
+        return response.HasValue ? response.Value!.ToRating() : null;
+    }
+
+    public async Task UpsertRatingAsync(Rating rating)
+    {
+        _logger.LogInformation("[{Class}.{Method}] Save rating for beer '{BeerID}' by user {UserID} in season '{SeasonID}'", _className, nameof(UpsertRatingAsync), rating.BeerID, rating.UserID, rating.SeasonID);
+
+        await _ratingsTable.UpsertEntityAsync(new RatingTableEntity(rating), TableUpdateMode.Replace);
+    }
 }

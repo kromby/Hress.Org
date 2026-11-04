@@ -16,13 +16,15 @@ internal class RatingTableEntity : ITableEntity
     public RatingTableEntity(Rating rating)
     {
         PartitionKey = Uri.EscapeDataString(rating.SeasonID);
-        RowKey = Uri.EscapeDataString($"{rating.BeerID}_{rating.UserID}");
+        RowKey = CreateRowKey(rating.BeerID, rating.UserID);
         BeerID = rating.BeerID;
         UserID = rating.UserID;
         Stars = rating.Stars;
         Created = DateTime.SpecifyKind(rating.Created, DateTimeKind.Utc);
         Updated = DateTime.SpecifyKind(rating.Updated, DateTimeKind.Utc);
     }
+
+    public static string CreateRowKey(string beerID, int userID) => Uri.EscapeDataString($"{beerID}_{userID}");
 
     public string PartitionKey { get; set; }
     public string RowKey { get; set; }
