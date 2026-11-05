@@ -10,10 +10,14 @@
   border-bottom: solid 1px rgba(160, 160, 160, 0.3);
 }
 
+/* The theme's .button has a fixed height/line-height of 4.8125em of its own font size, which
+   turns a one-character format button into a tall box. Reset both to a compact square. */
 .rich-text-editor__toolbar .button {
-  min-width: 2.75em;
+  min-width: 2.25em;
+  height: 2.25em;
+  line-height: 2.25em;
   margin: 0;
-  padding: 0 0.75em;
+  padding: 0 0.6em;
   font-size: 0.9em;
   letter-spacing: 0;
   text-transform: none;
