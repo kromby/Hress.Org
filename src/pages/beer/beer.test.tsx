@@ -105,6 +105,71 @@ describe("BeerPage", () => {
     );
   });
 
+  it("tells me I can change my existing rating", async () => {
+    renderPage("b2");
+
+    expect(await screen.findByTestId("rating-hint")).toHaveTextContent(
+      "Smelltu á aðra stjörnu til að breyta einkunninni."
+    );
+  });
+
+  it("changing my rating saves the new stars and shows them", async () => {
+    (axios.put as jest.Mock).mockResolvedValue({ data: { stars: 5 } });
+    renderPage("b2");
+    await screen.findByTestId("rating-stars");
+
+    fireEvent.click(stars()[4]);
+
+    await waitFor(() =>
+      expect(axios.put).toHaveBeenCalledWith(
+        expect.stringContaining("/beers/b2/rating"),
+        { stars: 5 },
+        expect.anything()
+      )
+    );
+    expect(await screen.findByTestId("rating-saved")).toHaveTextContent(
+      "Einkunn vistuð: 5 af 5"
+    );
+    expect(screen.getByTestId("rating-stars")).toHaveAttribute(
+      "aria-label",
+      "Þín einkunn: 5 af 5"
+    );
+  });
+
+  it("a tap while saving is sent after the earlier save, so the last tap counts", async () => {
+    const resolves: ((value: unknown) => void)[] = [];
+    (axios.put as jest.Mock).mockImplementation(
+      () => new Promise((resolve) => resolves.push(resolve))
+    );
+    renderPage();
+    await screen.findByTestId("rating-stars");
+
+    fireEvent.click(stars()[2]);
+    await waitFor(() => expect(axios.put).toHaveBeenCalledTimes(1));
+    fireEvent.click(stars()[4]);
+
+    // The stars follow the last tap, but the second save waits.
+    await waitFor(() =>
+      expect(screen.getByTestId("rating-stars")).toHaveAttribute(
+        "aria-label",
+        "Þín einkunn: 5 af 5"
+      )
+    );
+    expect(axios.put).toHaveBeenCalledTimes(1);
+
+    resolves[0]({ data: { stars: 3 } });
+    await waitFor(() => expect(axios.put).toHaveBeenCalledTimes(2));
+    expect((axios.put as jest.Mock).mock.calls.map(([, body]) => body)).toEqual(
+      [{ stars: 3 }, { stars: 5 }]
+    );
+    expect(screen.getByTestId("rating-saving")).toBeInTheDocument();
+
+    resolves[1]({ data: { stars: 5 } });
+    expect(await screen.findByTestId("rating-saved")).toHaveTextContent(
+      "Einkunn vistuð: 5 af 5"
+    );
+  });
+
   it("tapping the 4th star saves {stars: 4} and confirms", async () => {
     (axios.put as jest.Mock).mockResolvedValue({
       data: { seasonID: "jolabjor-2026", beerID: "b1", userID: 7, stars: 4 },
