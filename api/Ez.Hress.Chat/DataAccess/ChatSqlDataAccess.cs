@@ -148,29 +148,24 @@ public class ChatSqlDataAccess : IChatDataAccess
 
         try
         {
-            int messageID;
-            using (var command = new SqlCommand(insertSql, connection, transaction))
-            {
-                command.Parameters.AddWithValue("bodyTypeId", BodyTextTypeID);
-                command.Parameters.AddWithValue("textValue", html);
-                command.Parameters.AddWithValue("userId", userID);
-                command.Parameters.AddWithValue("created", created);
-                command.Parameters.AddWithValue("threadId", threadID);
-                command.Parameters.AddWithValue("chatTypeId", ChatTypeID);
+            using var insertCommand = new SqlCommand(insertSql, connection, transaction);
+            insertCommand.Parameters.AddWithValue("bodyTypeId", BodyTextTypeID);
+            insertCommand.Parameters.AddWithValue("textValue", html);
+            insertCommand.Parameters.AddWithValue("userId", userID);
+            insertCommand.Parameters.AddWithValue("created", created);
+            insertCommand.Parameters.AddWithValue("threadId", threadID);
+            insertCommand.Parameters.AddWithValue("chatTypeId", ChatTypeID);
 
-                var id = await command.ExecuteScalarAsync();
-                if (id == null || id == DBNull.Value)
-                    throw new KeyNotFoundException($"Chat thread {threadID} not found.");
-                messageID = Convert.ToInt32(id);
-            }
+            var id = await insertCommand.ExecuteScalarAsync();
+            if (id == null || id == DBNull.Value)
+                throw new KeyNotFoundException($"Chat thread {threadID} not found.");
+            var messageID = Convert.ToInt32(id);
 
-            using (var command = new SqlCommand(touchThreadSql, connection, transaction))
-            {
-                command.Parameters.AddWithValue("created", created);
-                command.Parameters.AddWithValue("userId", userID);
-                command.Parameters.AddWithValue("threadId", threadID);
-                await command.ExecuteNonQueryAsync();
-            }
+            using var touchThreadCommand = new SqlCommand(touchThreadSql, connection, transaction);
+            touchThreadCommand.Parameters.AddWithValue("created", created);
+            touchThreadCommand.Parameters.AddWithValue("userId", userID);
+            touchThreadCommand.Parameters.AddWithValue("threadId", threadID);
+            await touchThreadCommand.ExecuteNonQueryAsync();
 
             transaction.Commit();
             return messageID;
