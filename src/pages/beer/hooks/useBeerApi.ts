@@ -68,6 +68,9 @@ export const useSaveRating = (seasonID: string, beerID: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
+    // Saves for the same beer run one at a time, in the order they were made,
+    // so the last tap is the rating that's kept.
+    scope: { id: `beer-rating:${seasonID}:${beerID}` },
     mutationFn: async (stars: number): Promise<Rating> => {
       const response = await axios.put<Rating>(
         hressApiUrl(

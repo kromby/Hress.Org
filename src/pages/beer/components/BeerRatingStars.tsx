@@ -22,7 +22,7 @@ const BeerRatingStars = ({
   myRating,
 }: BeerRatingStarsProps) => {
   const saveRating = useSaveRating(season.id, beerID);
-  // Show the tapped stars while saving, so the tap feels instant, and the
+  // Show the last tapped stars while saving, so the tap feels instant, and the
   // saved stars afterwards, even before the beer list has been refetched.
   const shownRating = saveRating.isPending
     ? saveRating.variables
@@ -31,10 +31,9 @@ const BeerRatingStars = ({
       : (myRating ?? 0);
   const readonly = !season.isOpen;
 
-  const handleChange = (stars: number) => {
-    if (saveRating.isPending) return;
-    saveRating.mutate(stars);
-  };
+  // A tap while an earlier save is still running is queued behind it, so the
+  // user can change their mind straight away and the last tap wins.
+  const handleChange = (stars: number) => saveRating.mutate(stars);
 
   return (
     <div style={styles.wrapper}>
@@ -77,11 +76,11 @@ const BeerRatingStars = ({
           Einkunn vistuð: {saveRating.data.stars} af 5
         </small>
       ) : (
-        !myRating && (
-          <small data-testid="rating-hint" style={styles.message}>
-            Smelltu á stjörnu til að gefa einkunn.
-          </small>
-        )
+        <small data-testid="rating-hint" style={styles.message}>
+          {myRating
+            ? "Smelltu á aðra stjörnu til að breyta einkunninni."
+            : "Smelltu á stjörnu til að gefa einkunn."}
+        </small>
       )}
     </div>
   );
