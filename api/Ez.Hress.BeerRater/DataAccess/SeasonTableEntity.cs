@@ -35,12 +35,12 @@ internal class SeasonTableEntity : ITableEntity
     public DateTime StartDate { get; set; }
     public DateTime? EndDate { get; set; }
 
-    public Season ToSeason() => new()
+    public static Season ToSeason(TableEntity entity) => new()
     {
-        ID = Uri.UnescapeDataString(RowKey),
-        Name = Name,
-        TypeID = TypeID,
-        StartDate = DateTime.SpecifyKind(StartDate, DateTimeKind.Utc),
-        EndDate = EndDate.HasValue ? DateTime.SpecifyKind(EndDate.Value, DateTimeKind.Utc) : null
+        ID = Uri.UnescapeDataString(entity.RowKey),
+        Name = TableValues.GetString(entity, nameof(Name)),
+        TypeID = TableValues.GetOptionalInt32(entity, nameof(TypeID)),
+        StartDate = TableValues.GetDateTime(entity, nameof(StartDate)),
+        EndDate = TableValues.GetOptionalDateTime(entity, nameof(EndDate))
     };
 }
