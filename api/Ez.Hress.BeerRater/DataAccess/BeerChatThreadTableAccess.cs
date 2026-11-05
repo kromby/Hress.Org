@@ -1,3 +1,4 @@
+using Azure;
 using Azure.Data.Tables;
 using Ez.Hress.BeerRater.UseCases;
 using Ez.Hress.Shared.Entities;
@@ -25,5 +26,22 @@ public class BeerChatThreadTableAccess : IBeerChatThreadDataAccess
 
         var response = await _threadsTable.GetEntityIfExistsAsync<ChatThreadTableEntity>(Uri.EscapeDataString(seasonID), Uri.EscapeDataString(beerID));
         return response.HasValue ? response.Value!.ThreadID : null;
+    }
+
+    public async Task<bool> TryAddThreadAsync(string seasonID, string beerID, int threadID)
+    {
+        _logger.LogInformation("[{Class}.{Method}] Add chat thread {ThreadID} for beer '{BeerID}' in season '{SeasonID}'", _className, nameof(TryAddThreadAsync), threadID, beerID, seasonID);
+
+        try
+        {
+            // AddEntity fails if the row exists, so two first posts can't both save a thread.
+            await _threadsTable.AddEntityAsync(new ChatThreadTableEntity(seasonID, beerID, threadID));
+            return true;
+        }
+        catch (RequestFailedException ex) when (ex.Status == 409)
+        {
+            _logger.LogInformation("[{Class}.{Method}] Beer '{BeerID}' in season '{SeasonID}' already has a chat thread", _className, nameof(TryAddThreadAsync), beerID, seasonID);
+            return false;
+        }
     }
 }
