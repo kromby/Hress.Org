@@ -30,6 +30,7 @@
     <ProjectReference Include="..\Ez.Hress.Administration\Ez.Hress.Administration.csproj" />
     <ProjectReference Include="..\Ez.Hress.Album\Ez.Hress.Albums.csproj" />
     <ProjectReference Include="..\Ez.Hress.BeerRater\Ez.Hress.BeerRater.csproj" />
+    <ProjectReference Include="..\Ez.Hress.Chat\Ez.Hress.Chat.csproj" />
     <ProjectReference Include="..\Ez.Hress.Hardhead\Ez.Hress.Hardhead.csproj" />
     <ProjectReference Include="..\Ez.Hress.MajorEvents\Ez.Hress.MajorEvents.csproj" />
     <ProjectReference Include="..\Ez.Hress.Scripts\Ez.Hress.Scripts.csproj" />

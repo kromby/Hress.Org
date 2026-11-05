@@ -56,7 +56,7 @@ Clean-architecture layout. Each domain is its own project; all follow the same t
 - `UseCases/` — interactors (no interfaces) + data-access interfaces (`I{Entity}DataAccess`).
 - `DataAccess/` — `{Entity}TableAccess` / `{Entity}SqlAccess` implementations and `{Entity}TableEntity` (`ITableEntity`) classes.
 
-Projects: `Ez.Hress.Shared`, `Ez.Hress.Hardhead`, `Ez.Hress.Album`, `Ez.Hress.MajorEvents`, `Ez.Hress.Administration`, `Ez.Hress.UserProfile`, `Ez.Hress.Scripts`. The HTTP-trigger functions and DI wiring live in `Ez.Hress.FunctionsApi` (`Program.cs`); tests live in `Ez.Hress.UnitTest`.
+Projects: `Ez.Hress.Shared`, `Ez.Hress.Hardhead`, `Ez.Hress.Album`, `Ez.Hress.MajorEvents`, `Ez.Hress.Administration`, `Ez.Hress.UserProfile`, `Ez.Hress.Scripts`, `Ez.Hress.Chat` (shared chat threads and messages), `Ez.Hress.BeerRater`. The HTTP-trigger functions and DI wiring live in `Ez.Hress.FunctionsApi` (`Program.cs`); tests live in `Ez.Hress.UnitTest`.
 
 Key rules (full detail in [ARCHITECTURE_RULES.md](ARCHITECTURE_RULES.md)):
 

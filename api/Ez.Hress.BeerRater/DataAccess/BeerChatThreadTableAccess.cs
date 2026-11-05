@@ -1,0 +1,29 @@
+using Azure.Data.Tables;
+using Ez.Hress.BeerRater.UseCases;
+using Ez.Hress.Shared.Entities;
+using Microsoft.Extensions.Logging;
+
+namespace Ez.Hress.BeerRater.DataAccess;
+
+public class BeerChatThreadTableAccess : IBeerChatThreadDataAccess
+{
+    private readonly TableClient _threadsTable;
+    private readonly ILogger<BeerChatThreadTableAccess> _logger;
+    private readonly string _className;
+
+    public BeerChatThreadTableAccess(BlobConnectionInfo connectionInfo, ILogger<BeerChatThreadTableAccess> logger)
+    {
+        _threadsTable = new TableClient(connectionInfo.ConnectionString, "BeerChatThreads");
+        _threadsTable.CreateIfNotExists();
+        _logger = logger;
+        _className = nameof(BeerChatThreadTableAccess);
+    }
+
+    public async Task<int?> GetThreadIDAsync(string seasonID, string beerID)
+    {
+        _logger.LogInformation("[{Class}.{Method}] Get chat thread for beer '{BeerID}' in season '{SeasonID}'", _className, nameof(GetThreadIDAsync), beerID, seasonID);
+
+        var response = await _threadsTable.GetEntityIfExistsAsync<ChatThreadTableEntity>(Uri.EscapeDataString(seasonID), Uri.EscapeDataString(beerID));
+        return response.HasValue ? response.Value!.ThreadID : null;
+    }
+}
