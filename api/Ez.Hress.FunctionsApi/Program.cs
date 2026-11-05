@@ -6,6 +6,8 @@ using Ez.Hress.Albums.DataAccess;
 using Ez.Hress.Albums.UseCases;
 using Ez.Hress.BeerRater.DataAccess;
 using Ez.Hress.BeerRater.UseCases;
+using Ez.Hress.Chat.DataAccess;
+using Ez.Hress.Chat.UseCases;
 using Ez.Hress.FunctionsApi;
 using Ez.Hress.Hardhead.DataAccess;
 using Ez.Hress.Hardhead.UseCases;
@@ -117,6 +119,10 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
     services.AddSingleton<INewsDataAccess, NewsSqlDataAccess>();
     services.AddSingleton<NewsInteractor>();
 
+    // Chat
+    services.AddSingleton<IChatDataAccess, ChatSqlDataAccess>();
+    services.AddSingleton<ChatInteractor>();
+
     // Dinner Party
     services.AddSingleton<IDinnerPartyDataAccess, DinnerPartySqlDataAccess>();
     services.AddSingleton<DinnerPartyInteractor>();
@@ -193,4 +199,7 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
     services.AddSingleton<IBeerRatingDataAccess>(sp => new BeerRatingTableAccess(beerConnection, sp.GetRequiredService<ILogger<BeerRatingTableAccess>>()));
     services.AddSingleton<SummaryInteractor>();
     services.AddSingleton<RatingInteractor>();
+    services.AddSingleton<IBeerChatThreadDataAccess>(sp => new BeerChatThreadTableAccess(beerConnection, sp.GetRequiredService<ILogger<BeerChatThreadTableAccess>>()));
+    services.AddSingleton<IBeerChatDataAccess, HressChatAccess>();
+    services.AddSingleton<BeerChatInteractor>();
 }
