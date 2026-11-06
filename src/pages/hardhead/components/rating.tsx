@@ -99,7 +99,7 @@ const HardheadRating = ({
                         ? rating.averageRating
                         : rating.myRating),
                     rating.code
-                  )}
+                  ) || " "}
                   {ratings.readonly && rating.averageRating
                     ? `(${Math.round(rating.averageRating * 10) / 10})`
                     : null}
