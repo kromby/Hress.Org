@@ -13,6 +13,8 @@ public class BeerChatInteractorTests
     private const string SeasonID = "jolabjor-2026";
     private const string BeerID = "b1";
     private const int ThreadID = 1234;
+    private const int CategoryID = 77;
+    private const int UserID = 7;
 
     private readonly Mock<IBeerDataAccess> _beerMock;
     private readonly Mock<IBeerSeasonDataAccess> _seasonMock;
@@ -42,7 +44,7 @@ public class BeerChatInteractorTests
     {
         var seasonInteractor = new SeasonInteractor(_seasonMock.Object, new Mock<ILogger<SeasonInteractor>>().Object);
         var beerInteractor = new BeerInteractor(_beerMock.Object, _seasonMock.Object, seasonInteractor, new Mock<ILogger<BeerInteractor>>().Object);
-        return new BeerChatInteractor(_threadMock.Object, _chatMock.Object, beerInteractor, new Mock<ILogger<BeerChatInteractor>>().Object);
+        return new BeerChatInteractor(_threadMock.Object, _chatMock.Object, beerInteractor, seasonInteractor, new Mock<ILogger<BeerChatInteractor>>().Object);
     }
 
     [Fact]
@@ -131,7 +133,7 @@ public class BeerChatInteractorTests
             new() { ID = 5, ThreadID = ThreadID, UserID = 7, Username = "kromby", AuthorImageID = 55, Text = "Góður<br />bjór", Inserted = inserted, Updated = updated },
         });
         var chatInteractor = new ChatInteractor(chatData.Object, new Mock<ILogger<ChatInteractor>>().Object);
-        var access = new HressChatAccess(chatInteractor, new Mock<ILogger<HressChatAccess>>().Object);
+        var access = new HressChatAccess(chatInteractor, CategoryID, new Mock<ILogger<HressChatAccess>>().Object);
 
         // ACT
         var result = await access.GetMessagesAsync(ThreadID);
@@ -145,5 +147,142 @@ public class BeerChatInteractorTests
         Assert.Equal("Góður\nbjór", message.Text);
         Assert.Equal(inserted, message.Created);
         Assert.Equal(updated, message.Edited);
+    }
+
+    [Fact]
+    public async Task Post_ExistingThread_PostsTrimmedText()
+    {
+        // ARRANGE
+        _threadMock.Setup(d => d.GetThreadIDAsync(SeasonID, BeerID)).ReturnsAsync(ThreadID);
+        _chatMock.Setup(d => d.PostMessageAsync(ThreadID, UserID, "Góður")).ReturnsAsync(new ChatMessage { ID = 9, UserID = UserID, Text = "Góður" });
+        var interactor = Arrange();
+
+        // ACT
+        var result = await interactor.PostMessageAsync(SeasonID, BeerID, UserID, "  Góður \n");
+
+        // ASSERT
+        Assert.Equal(9, result.ID);
+        _chatMock.Verify(d => d.CreateThreadAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Post_FirstMessage_CreatesAndSavesThread()
+    {
+        // ARRANGE
+        _threadMock.Setup(d => d.GetThreadIDAsync(SeasonID, BeerID)).ReturnsAsync((int?)null);
+        _chatMock.Setup(d => d.CreateThreadAsync("Tuborg Lille Jul (Jólabjór 2026)", UserID)).ReturnsAsync(ThreadID);
+        _threadMock.Setup(d => d.TryAddThreadAsync(SeasonID, BeerID, ThreadID)).ReturnsAsync(true);
+        _chatMock.Setup(d => d.PostMessageAsync(ThreadID, UserID, "Fyrstur!")).ReturnsAsync(new ChatMessage { ID = 1 });
+        var interactor = Arrange();
+
+        // ACT
+        await interactor.PostMessageAsync(SeasonID, BeerID, UserID, "Fyrstur!");
+
+        // ASSERT
+        _threadMock.Verify(d => d.TryAddThreadAsync(SeasonID, BeerID, ThreadID), Times.Once);
+        _chatMock.Verify(d => d.PostMessageAsync(ThreadID, UserID, "Fyrstur!"), Times.Once);
+        _chatMock.Verify(d => d.DeleteThreadAsync(It.IsAny<int>(), It.IsAny<int>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Post_FirstMessageRace_DeletesOwnThread_UsesWinners()
+    {
+        // ARRANGE - another member saved thread 1234 between our lookup and our save.
+        const int ownThreadID = 5678;
+        _threadMock.SetupSequence(d => d.GetThreadIDAsync(SeasonID, BeerID))
+            .ReturnsAsync((int?)null)
+            .ReturnsAsync(ThreadID);
+        _chatMock.Setup(d => d.CreateThreadAsync(It.IsAny<string>(), UserID)).ReturnsAsync(ownThreadID);
+        _threadMock.Setup(d => d.TryAddThreadAsync(SeasonID, BeerID, ownThreadID)).ReturnsAsync(false);
+        _chatMock.Setup(d => d.PostMessageAsync(ThreadID, UserID, "Ég líka")).ReturnsAsync(new ChatMessage { ID = 2 });
+        var interactor = Arrange();
+
+        // ACT
+        await interactor.PostMessageAsync(SeasonID, BeerID, UserID, "Ég líka");
+
+        // ASSERT
+        _chatMock.Verify(d => d.DeleteThreadAsync(ownThreadID, UserID), Times.Once);
+        _chatMock.Verify(d => d.PostMessageAsync(ThreadID, UserID, "Ég líka"), Times.Once);
+        _chatMock.Verify(d => d.PostMessageAsync(ownThreadID, It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("   \n ")]
+    public async Task Post_BlankText_ThrowsArgument_CreatesNothing(string? text)
+    {
+        // ARRANGE
+        var interactor = Arrange();
+
+        // ACT & ASSERT
+        await Assert.ThrowsAnyAsync<ArgumentException>(() => interactor.PostMessageAsync(SeasonID, BeerID, UserID, text));
+        _chatMock.Verify(d => d.CreateThreadAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+        _chatMock.Verify(d => d.PostMessageAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Post_TextOver2000_ThrowsArgument()
+    {
+        // ARRANGE
+        var interactor = Arrange();
+
+        // ACT & ASSERT
+        await Assert.ThrowsAnyAsync<ArgumentException>(() => interactor.PostMessageAsync(SeasonID, BeerID, UserID, new string('a', 2001)));
+        _chatMock.Verify(d => d.PostMessageAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Post_ClosedSeason_ThrowsSeasonClosed()
+    {
+        // ARRANGE
+        _seasonMock.Setup(d => d.GetSeasonsAsync()).ReturnsAsync(new List<Season>
+        {
+            new() { ID = SeasonID, StartDate = new DateTime(2025, 11, 1, 0, 0, 0, DateTimeKind.Utc), EndDate = new DateTime(2026, 1, 6, 0, 0, 0, DateTimeKind.Utc) }
+        });
+        var interactor = Arrange();
+
+        // ACT & ASSERT
+        await Assert.ThrowsAsync<SeasonClosedException>(() => interactor.PostMessageAsync(SeasonID, BeerID, UserID, "Of seint"));
+        _chatMock.Verify(d => d.CreateThreadAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+        _chatMock.Verify(d => d.PostMessageAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Post_BeerNotInSeason_ThrowsKeyNotFound()
+    {
+        // ARRANGE
+        var interactor = Arrange();
+
+        // ACT & ASSERT
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => interactor.PostMessageAsync(SeasonID, "old", UserID, "Hvar?"));
+        _chatMock.Verify(d => d.CreateThreadAsync(It.IsAny<string>(), It.IsAny<int>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task HressChatAccess_NoCategorySetting_ThrowsInvalidOperation()
+    {
+        // ARRANGE
+        var chatData = new Mock<IChatDataAccess>();
+        var chatInteractor = new ChatInteractor(chatData.Object, new Mock<ILogger<ChatInteractor>>().Object);
+        var access = new HressChatAccess(chatInteractor, 0, new Mock<ILogger<HressChatAccess>>().Object);
+
+        // ACT & ASSERT - a configuration error (500), not a bad request (400).
+        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() => access.CreateThreadAsync("Tuborg Lille Jul (Jólabjór 2026)", UserID));
+        Assert.IsNotType<SeasonClosedException>(ex);
+        chatData.Verify(d => d.CreateThreadAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task HressChatAccess_UnknownCategory_ThrowsInvalidOperation()
+    {
+        // ARRANGE
+        var chatData = new Mock<IChatDataAccess>();
+        chatData.Setup(d => d.CreateThreadAsync(CategoryID, It.IsAny<string>(), UserID, It.IsAny<DateTime>())).ThrowsAsync(new KeyNotFoundException());
+        var chatInteractor = new ChatInteractor(chatData.Object, new Mock<ILogger<ChatInteractor>>().Object);
+        var access = new HressChatAccess(chatInteractor, CategoryID, new Mock<ILogger<HressChatAccess>>().Object);
+
+        // ACT & ASSERT - not a 404, since the beer exists.
+        await Assert.ThrowsAsync<InvalidOperationException>(() => access.CreateThreadAsync("Tuborg Lille Jul (Jólabjór 2026)", UserID));
     }
 }
