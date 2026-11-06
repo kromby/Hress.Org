@@ -2,10 +2,13 @@ import { useEffect } from "react";
 import { useHressAuth } from "../hress";
 import { isUnauthorized, useMessages } from "../hooks/useBeerApi";
 import { ChatMessage } from "../types";
+import ChatComposer from "./ChatComposer";
 
 interface ChatThreadProps {
   seasonID: string;
   beerID: string;
+  // Messages can only be posted while the season is open.
+  isOpen: boolean;
 }
 
 const styles = {
@@ -48,7 +51,7 @@ const Message = ({ message }: { message: ChatMessage }) => (
 
 // The beer's chat, oldest first. Everyone sees it, rated or not, also after
 // the season has ended.
-const ChatThread = ({ seasonID, beerID }: ChatThreadProps) => {
+const ChatThread = ({ seasonID, beerID, isOpen }: ChatThreadProps) => {
   const { signOut } = useHressAuth();
   const {
     data: messages,
@@ -79,6 +82,13 @@ const ChatThread = ({ seasonID, beerID }: ChatThreadProps) => {
         </ol>
       ) : (
         <p data-testid="chat-empty">Engin skilaboð enn.</p>
+      )}
+      {isOpen ? (
+        <ChatComposer seasonID={seasonID} beerID={beerID} />
+      ) : (
+        <small data-testid="chat-closed">
+          Tímabilið er búið og ekki hægt að senda skilaboð.
+        </small>
       )}
     </section>
   );

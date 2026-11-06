@@ -121,3 +121,33 @@ export const useMessages = (seasonID: string, beerID: string) => {
     },
   });
 };
+
+// Posts a plain-text message to the beer's chat. The first message also
+// creates the beer's chat thread.
+export const usePostMessage = (seasonID: string, beerID: string) => {
+  const { headers } = useHressAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (text: string): Promise<ChatMessage> => {
+      const response = await axios.post<ChatMessage>(
+        hressApiUrl(
+          `beer/seasons/${encodeURIComponent(seasonID)}/beers/${encodeURIComponent(beerID)}/messages`
+        ),
+        { text },
+        { headers }
+      );
+      return response.data;
+    },
+    onSuccess: (message) => {
+      // Show the new message right away, then refetch to pick up others' messages.
+      queryClient.setQueryData<ChatMessage[]>(
+        messagesKey(seasonID, beerID),
+        (messages) => [...(messages ?? []), message]
+      );
+      queryClient.invalidateQueries({
+        queryKey: messagesKey(seasonID, beerID),
+      });
+    },
+  });
+};
