@@ -1,4 +1,6 @@
-import { useMessages } from "../hooks/useBeerApi";
+import { useEffect } from "react";
+import { useHressAuth } from "../hress";
+import { isUnauthorized, useMessages } from "../hooks/useBeerApi";
 import { ChatMessage } from "../types";
 
 interface ChatThreadProps {
@@ -47,7 +49,20 @@ const Message = ({ message }: { message: ChatMessage }) => (
 // The beer's chat, oldest first. Everyone sees it, rated or not, also after
 // the season has ended.
 const ChatThread = ({ seasonID, beerID }: ChatThreadProps) => {
-  const { data: messages, isLoading, isError } = useMessages(seasonID, beerID);
+  const { signOut } = useHressAuth();
+  const {
+    data: messages,
+    isLoading,
+    isError,
+    error,
+  } = useMessages(seasonID, beerID);
+  const unauthorized = isError && isUnauthorized(error);
+
+  // The token expired after the beer loaded. Clearing it makes RequireLogin
+  // send the user to the login page, as the page does for its other requests.
+  useEffect(() => {
+    if (unauthorized) signOut();
+  }, [unauthorized]);
 
   return (
     <section data-testid="chat" style={styles.section}>

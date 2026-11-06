@@ -1,4 +1,4 @@
-import { render, screen, within } from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import axios from "axios";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ChatThread from "./ChatThread";
@@ -35,11 +35,14 @@ const messages: ChatMessage[] = [
 
 describe("ChatThread", () => {
   let queryClient: QueryClient;
+  const setAuthTokens = jest.fn();
 
   const renderComponent = () =>
     render(
       <QueryClientProvider client={queryClient}>
-        <AuthContext.Provider value={{ authTokens: { token: "fake-token" } }}>
+        <AuthContext.Provider
+          value={{ authTokens: { token: "fake-token" }, setAuthTokens }}
+        >
           <ChatThread seasonID="jolabjor-2026" beerID="b1" />
         </AuthContext.Provider>
       </QueryClientProvider>
@@ -101,6 +104,21 @@ describe("ChatThread", () => {
     expect(await screen.findByTestId("chat-empty")).toHaveTextContent(
       "Engin skilaboð enn."
     );
+  });
+
+  it("clears an expired token when the chat request is unauthorized", async () => {
+    (axios.get as jest.Mock).mockRejectedValue({ response: { status: 401 } });
+    renderComponent();
+
+    await waitFor(() => expect(setAuthTokens).toHaveBeenCalledWith());
+  });
+
+  it("keeps the token on other errors", async () => {
+    (axios.get as jest.Mock).mockRejectedValue({ response: { status: 500 } });
+    renderComponent();
+
+    await screen.findByTestId("chat-error");
+    expect(setAuthTokens).not.toHaveBeenCalled();
   });
 
   it("shows an error when the chat can't be fetched", async () => {
