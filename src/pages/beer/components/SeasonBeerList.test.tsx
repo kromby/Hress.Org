@@ -51,10 +51,10 @@ const findBeerPosts = async () =>
 describe("SeasonBeerList", () => {
   let queryClient: QueryClient;
 
-  const renderComponent = (season: Season = openSeason) =>
+  const renderComponent = (season: Season = openSeason, url = "/beer") =>
     render(
       <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
+        <MemoryRouter initialEntries={[url]}>
           <AuthContext.Provider value={{ authTokens: { token: "fake-token" } }}>
             <SeasonBeerList season={season} />
           </AuthContext.Provider>
@@ -154,6 +154,40 @@ describe("SeasonBeerList", () => {
       })
     ).toHaveAttribute("href", "/beer/b2");
     expect(within(rows[0]).queryByTestId("rate-beer")).not.toBeInTheDocument();
+  });
+
+  it("filters by the nav bar search query, ignoring case and spaces", async () => {
+    renderComponent(openSeason, "/beer?query=%20%20LILLE%20");
+
+    await screen.findByRole("link", { name: "Tuborg Lille Jul" });
+    const posts = await findBeerPosts();
+    expect(posts).toHaveLength(1);
+    expect(posts[0]).toHaveTextContent("Tuborg Lille Jul");
+    expect(screen.getByTestId("search-status")).toHaveTextContent(
+      "Bjórar sem passa við „LILLE“."
+    );
+    expect(screen.getByRole("link", { name: "Sýna alla" })).toHaveAttribute(
+      "href",
+      "/beer"
+    );
+  });
+
+  it("matches the search query against the producer too", async () => {
+    renderComponent(openSeason, "/beer?query=%C3%B6lger%C3%B0in");
+
+    await screen.findByRole("link", { name: "Egils Jólabjór" });
+    const posts = await findBeerPosts();
+    expect(posts).toHaveLength(1);
+    expect(posts[0]).toHaveTextContent("Egils Jólabjór");
+  });
+
+  it("says so when no beer matches the search query", async () => {
+    renderComponent(openSeason, "/beer?query=pilsner");
+
+    expect(await screen.findByTestId("search-status")).toHaveTextContent(
+      "Enginn bjór fannst fyrir „pilsner“."
+    );
+    expect(await findBeerPosts()).toHaveLength(0);
   });
 
   it("shows the register button below the list, linking to the register page", async () => {
