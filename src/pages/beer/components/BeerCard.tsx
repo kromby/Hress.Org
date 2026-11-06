@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import StarRating from "../../../components/StarRating";
-import { BeerSummary } from "../types";
+import { Beer, BeerSummary } from "../types";
 
 const border = "solid 1px rgba(160, 160, 160, 0.3)";
 
@@ -86,6 +86,59 @@ const ignoreRatingChange = () => undefined;
 const formatAlcohol = (percentage = 0) =>
   `${percentage.toLocaleString("is-IS", { maximumFractionDigits: 1 })}%`;
 
+interface BeerHeadingProps {
+  beer: Beer;
+  beerPath: string;
+}
+
+const BeerHeading = ({ beer, beerPath }: BeerHeadingProps) => (
+  <header style={styles.header}>
+    <h2 style={styles.name}>
+      <Link to={beerPath}>{beer.name}</Link>
+    </h2>
+    <p style={styles.details}>
+      {beer.producer} · {formatAlcohol(beer.alcoholPercentage)}
+    </p>
+  </header>
+);
+
+const MyStars = ({ rating }: { rating: number }) => (
+  <span
+    data-testid="my-rating"
+    role="img"
+    aria-label={`Þín einkunn: ${rating} af 5`}
+  >
+    <StarRating
+      rating={rating}
+      starRatedColor="gold"
+      starHoverColor="orange"
+      starEmptyColor="rgb(226, 226, 226)"
+      changeRating={ignoreRatingChange}
+      numberOfStars={5}
+      starDimension="14px"
+      starSpacing="1px"
+      readonly
+    />
+  </span>
+);
+
+const RatePrompt = ({ beer, beerPath }: BeerHeadingProps) => (
+  <>
+    <span data-testid="not-rated" style={styles.notRated}>
+      Ósmakaður
+    </span>
+    <Link
+      to={beerPath}
+      className="button small"
+      style={styles.rateButton}
+      data-testid="rate-beer"
+      aria-label={`Gefa ${beer.name} einkunn`}
+    >
+      Gefa einkunn
+    </Link>
+  </>
+);
+
 interface BeerCardProps {
   summary: BeerSummary;
 }
@@ -102,49 +155,13 @@ const BeerCard = ({ summary }: BeerCardProps) => {
         <div style={styles.image} aria-hidden="true">
           MYND
         </div>
-        <header style={styles.header}>
-          <h2 style={styles.name}>
-            <Link to={beerPath}>{beer.name}</Link>
-          </h2>
-          <p style={styles.details}>
-            {beer.producer} · {formatAlcohol(beer.alcoholPercentage)}
-          </p>
-        </header>
+        <BeerHeading beer={beer} beerPath={beerPath} />
       </div>
       <div style={styles.side}>
         {myRating ? (
-          <span
-            data-testid="my-rating"
-            role="img"
-            aria-label={`Þín einkunn: ${myRating} af 5`}
-          >
-            <StarRating
-              rating={myRating}
-              starRatedColor="gold"
-              starHoverColor="orange"
-              starEmptyColor="rgb(226, 226, 226)"
-              changeRating={ignoreRatingChange}
-              numberOfStars={5}
-              starDimension="14px"
-              starSpacing="1px"
-              readonly
-            />
-          </span>
+          <MyStars rating={myRating} />
         ) : (
-          <>
-            <span data-testid="not-rated" style={styles.notRated}>
-              Ósmakaður
-            </span>
-            <Link
-              to={beerPath}
-              className="button small"
-              style={styles.rateButton}
-              data-testid="rate-beer"
-              aria-label={`Gefa ${beer.name} einkunn`}
-            >
-              Gefa einkunn
-            </Link>
-          </>
+          <RatePrompt beer={beer} beerPath={beerPath} />
         )}
       </div>
     </li>
