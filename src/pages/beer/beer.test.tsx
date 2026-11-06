@@ -287,11 +287,19 @@ describe("BeerPage", () => {
     );
   });
 
-  it("shows the chat when the season is closed", async () => {
+  it("shows the chat but no message box when the season is closed", async () => {
     mockGet(closedSeason, [chatMessage]);
     renderPage();
 
     expect(await screen.findByText("Sætur en góður.")).toBeInTheDocument();
+    expect(screen.queryByTestId("chat-composer")).toBeNull();
+    expect(screen.getByTestId("chat-closed")).toBeInTheDocument();
+  });
+
+  it("has a message box when the season is open", async () => {
+    renderPage();
+
+    expect(await screen.findByTestId("chat-composer")).toBeInTheDocument();
   });
 
   it("shows not-found for a beer that isn't in the season", async () => {

@@ -83,7 +83,11 @@ const BeerPage = () => {
         beerID={beer.id}
         myRating={myRating}
       />
-      <ChatThread seasonID={season.data.id} beerID={beer.id} />
+      <ChatThread
+        seasonID={season.data.id}
+        beerID={beer.id}
+        isOpen={season.data.isOpen}
+      />
       <BackLink />
     </HressPage>
   );

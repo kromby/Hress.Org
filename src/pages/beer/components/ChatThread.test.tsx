@@ -43,7 +43,7 @@ describe("ChatThread", () => {
         <AuthContext.Provider
           value={{ authTokens: { token: "fake-token" }, setAuthTokens }}
         >
-          <ChatThread seasonID="jolabjor-2026" beerID="b1" />
+          <ChatThread seasonID="jolabjor-2026" beerID="b1" isOpen />
         </AuthContext.Provider>
       </QueryClientProvider>
     );
