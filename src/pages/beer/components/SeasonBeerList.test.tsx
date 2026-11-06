@@ -80,15 +80,30 @@ describe("SeasonBeerList", () => {
     });
   });
 
-  it("lists each beer with name, producer, country and alcohol %", async () => {
+  it("shows each beer as a card with an image placeholder, name, producer and alcohol %", async () => {
     renderComponent();
 
     const rows = await screen.findAllByTestId("beer-row");
     expect(rows).toHaveLength(2);
-    expect(rows[0]).toHaveTextContent("Egils Jólabjór");
-    expect(rows[0]).toHaveTextContent("Ölgerðin");
-    expect(rows[0]).toHaveTextContent("Ísland");
-    expect(rows[0]).toHaveTextContent("5,6%");
+    expect(within(rows[0]).getByRole("heading")).toHaveTextContent(
+      "Egils Jólabjór"
+    );
+    expect(rows[0]).toHaveTextContent("Ölgerðin · 5,6%");
+    expect(rows[0]).not.toHaveTextContent("Ísland");
+    expect(rows[0]).toHaveTextContent("MYND");
+    expect(
+      within(rows[0]).getByRole("link", { name: "Egils Jólabjór" })
+    ).toHaveAttribute("href", "/beer/b1");
+  });
+
+  it("puts the beer cards under the season's post card, not inside it", async () => {
+    renderComponent();
+
+    const rows = await screen.findAllByTestId("beer-row");
+    expect(rows[0].closest("article.post")).toBeNull();
+    expect(
+      screen.getByRole("searchbox").closest("article.post")
+    ).not.toBeNull();
   });
 
   it("shows 0% for a beer whose alcohol % the backend omitted", async () => {
@@ -121,6 +136,21 @@ describe("SeasonBeerList", () => {
     expect(within(rows[0]).queryByTestId("not-rated")).not.toBeInTheDocument();
     expect(within(rows[1]).getByTestId("not-rated")).toBeInTheDocument();
     expect(within(rows[1]).queryByTestId("my-rating")).not.toBeInTheDocument();
+  });
+
+  it("offers to rate a beer I haven't tasted, linking to its page", async () => {
+    renderComponent();
+
+    const rows = await screen.findAllByTestId("beer-row");
+    expect(within(rows[1]).getByTestId("not-rated")).toHaveTextContent(
+      "Ósmakaður"
+    );
+    expect(
+      within(rows[1]).getByRole("link", {
+        name: "Gefa Tuborg Lille Jul einkunn",
+      })
+    ).toHaveAttribute("href", "/beer/b2");
+    expect(within(rows[0]).queryByTestId("rate-beer")).not.toBeInTheDocument();
   });
 
   it("filters by beer name, ignoring case and surrounding spaces", async () => {

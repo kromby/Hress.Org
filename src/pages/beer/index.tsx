@@ -43,14 +43,7 @@ const BeerHome = () => {
     );
   }
 
-  return (
-    <HressPage title={season.name} description="Bjórar tímabilsins">
-      {!season.isOpen && (
-        <p data-testid="season-closed">Þetta tímabil er búið.</p>
-      )}
-      <SeasonBeerList season={season} />
-    </HressPage>
-  );
+  return <SeasonBeerList season={season} />;
 };
 
 export default BeerHome;
