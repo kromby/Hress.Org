@@ -40,11 +40,19 @@ interface HressPageProps {
   title: string;
   description?: string;
   children: ReactNode;
+  // Rendered under the post card, on the page background (e.g. a list of cards).
+  below?: ReactNode;
 }
 
 // Renders a page in the hress.org layout: the main column with a post card.
-export const HressPage = ({ title, description, children }: HressPageProps) => (
+export const HressPage = ({
+  title,
+  description,
+  children,
+  below,
+}: HressPageProps) => (
   <div id="main">
     <Post title={title} description={description} body={children} />
+    {below}
   </div>
 );

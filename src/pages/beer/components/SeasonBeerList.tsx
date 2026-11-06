@@ -1,78 +1,24 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import StarRating from "../../../components/StarRating";
+import { HressPage } from "../hress";
 import { useSeasonBeers } from "../hooks/useBeerApi";
-import { BeerSummary, Season } from "../types";
+import { Season } from "../types";
+import BeerCard, { cardStyle } from "./BeerCard";
 
 interface SeasonBeerListProps {
   season: Season;
 }
 
 const styles = {
-  list: { listStyle: "none", padding: 0, margin: "1em 0" },
-  row: {
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "space-between",
-    gap: "0.75em",
-    padding: "0.6em 0",
-    borderBottom: "solid 1px rgba(160, 160, 160, 0.3)",
-  },
-  details: { minWidth: 0, overflowWrap: "anywhere" as const },
-  rating: { flexShrink: 0 },
+  list: { listStyle: "none", padding: 0, margin: 0 },
+  registerCard: { ...cardStyle, padding: "1.5em" },
+  register: { margin: 0 },
 };
-
-// StarRating requires a handler even when read-only.
-const ignoreRatingChange = () => undefined;
 
 const normalize = (text: string) => text.trim().toLocaleLowerCase("is");
 
-const formatAlcohol = (percentage = 0) =>
-  `${percentage.toLocaleString("is-IS", { maximumFractionDigits: 1 })}%`;
-
-const BeerRow = ({ summary }: { summary: BeerSummary }) => {
-  const { beer, myRating } = summary;
-
-  return (
-    <li data-testid="beer-row" style={styles.row}>
-      <div style={styles.details}>
-        <Link to={`/beer/${encodeURIComponent(beer.id)}`}>
-          <strong>{beer.name}</strong>
-        </Link>
-        <br />
-        <small>
-          {beer.producer} · {beer.country} ·{" "}
-          {formatAlcohol(beer.alcoholPercentage)}
-        </small>
-      </div>
-      {myRating ? (
-        <span
-          data-testid="my-rating"
-          role="img"
-          aria-label={`Þín einkunn: ${myRating} af 5`}
-          style={styles.rating}
-        >
-          <StarRating
-            rating={myRating}
-            starRatedColor="gold"
-            starHoverColor="orange"
-            starEmptyColor="rgb(226, 226, 226)"
-            changeRating={ignoreRatingChange}
-            numberOfStars={5}
-            starDimension="18px"
-            starSpacing="1px"
-            readonly
-          />
-        </span>
-      ) : (
-        <small data-testid="not-rated" style={styles.rating}>
-          Ósmakkaður
-        </small>
-      )}
-    </li>
-  );
-};
-
+// The season's page: the season's post card with search and messages, and a
+// card per beer below it on the page background.
 const SeasonBeerList = ({ season }: SeasonBeerListProps) => {
   const { data: beers, isLoading, isError } = useSeasonBeers(season.id);
   const [search, setSearch] = useState("");
@@ -82,17 +28,46 @@ const SeasonBeerList = ({ season }: SeasonBeerListProps) => {
     return (beers ?? []).filter((s) => normalize(s.beer.name).includes(query));
   }, [beers, search]);
 
-  if (isLoading) {
-    return <p data-testid="beers-loading">Sæki bjóra…</p>;
-  }
+  const hasBeers = Boolean(beers && beers.length > 0);
 
-  if (isError) {
-    return <p data-testid="beers-error">Ekki tókst að sækja bjórana.</p>;
-  }
+  const below = (
+    <>
+      {hasBeers && filtered.length > 0 && (
+        <ul style={styles.list} aria-label="Bjórar tímabilsins">
+          {filtered.map((summary) => (
+            <BeerCard key={summary.beer.id} summary={summary} />
+          ))}
+        </ul>
+      )}
+      {!isLoading && !isError && season.isOpen && (
+        <div style={styles.registerCard}>
+          <Link
+            to="/beer/register"
+            className="button fit"
+            style={styles.register}
+            data-testid="register-beer"
+          >
+            Skrá nýjan bjór
+          </Link>
+        </div>
+      )}
+    </>
+  );
 
   return (
-    <section>
-      {beers && beers.length > 0 ? (
+    <HressPage
+      title={season.name}
+      description="Bjórar tímabilsins"
+      below={below}
+    >
+      {!season.isOpen && (
+        <p data-testid="season-closed">Þetta tímabil er búið.</p>
+      )}
+      {isLoading ? (
+        <p data-testid="beers-loading">Sæki bjóra…</p>
+      ) : isError ? (
+        <p data-testid="beers-error">Ekki tókst að sækja bjórana.</p>
+      ) : hasBeers ? (
         <>
           <input
             type="search"
@@ -101,29 +76,14 @@ const SeasonBeerList = ({ season }: SeasonBeerListProps) => {
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
-          {filtered.length > 0 ? (
-            <ul style={styles.list}>
-              {filtered.map((summary) => (
-                <BeerRow key={summary.beer.id} summary={summary} />
-              ))}
-            </ul>
-          ) : (
+          {filtered.length === 0 && (
             <p data-testid="no-match">Enginn bjór fannst.</p>
           )}
         </>
       ) : (
         <p data-testid="no-beers">Engir bjórar eru skráðir á tímabilið enn.</p>
       )}
-      {season.isOpen && (
-        <Link
-          to="/beer/register"
-          className="button fit"
-          data-testid="register-beer"
-        >
-          Skrá nýjan bjór
-        </Link>
-      )}
-    </section>
+    </HressPage>
   );
 };
 
