@@ -1,10 +1,4 @@
-import {
-  fireEvent,
-  render,
-  screen,
-  waitFor,
-  within,
-} from "@testing-library/react";
+import { render, screen, waitFor, within } from "@testing-library/react";
 import axios from "axios";
 import { MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -47,6 +41,13 @@ const summaries = [
   },
 ];
 
+// Every post on the page except the season's own.
+const findBeerPosts = async () =>
+  (await screen.findAllByRole("article")).filter(
+    (post) =>
+      within(post).queryByRole("heading", { name: "Jólabjór 2026" }) === null
+  );
+
 describe("SeasonBeerList", () => {
   let queryClient: QueryClient;
 
@@ -80,30 +81,28 @@ describe("SeasonBeerList", () => {
     });
   });
 
-  it("shows each beer as a card with an image placeholder, name, producer and alcohol %", async () => {
+  it("shows each beer as a hress.org post with its name, producer and alcohol %", async () => {
     renderComponent();
 
-    const rows = await screen.findAllByTestId("beer-row");
-    expect(rows).toHaveLength(2);
-    expect(within(rows[0]).getByRole("heading")).toHaveTextContent(
+    await screen.findAllByRole("link", { name: "Egils Jólabjór" });
+    const posts = await findBeerPosts();
+    expect(posts).toHaveLength(2);
+    expect(posts[0]).toHaveClass("post");
+    expect(within(posts[0]).getByRole("heading")).toHaveTextContent(
       "Egils Jólabjór"
     );
-    expect(rows[0]).toHaveTextContent("Ölgerðin · 5,6%");
-    expect(rows[0]).not.toHaveTextContent("Ísland");
-    expect(rows[0]).toHaveTextContent("MYND");
+    expect(posts[0]).toHaveTextContent("Ölgerðin · 5,6%");
+    expect(posts[0]).not.toHaveTextContent("Ísland");
     expect(
-      within(rows[0]).getByRole("link", { name: "Egils Jólabjór" })
+      within(posts[0]).getByRole("link", { name: "Egils Jólabjór" })
     ).toHaveAttribute("href", "/beer/b1");
   });
 
-  it("puts the beer cards under the season's post card, not inside it", async () => {
+  it("has no search box (the nav bar search is used instead)", async () => {
     renderComponent();
+    await screen.findAllByRole("link", { name: "Egils Jólabjór" });
 
-    const rows = await screen.findAllByTestId("beer-row");
-    expect(rows[0].closest("article.post")).toBeNull();
-    expect(
-      screen.getByRole("searchbox").closest("article.post")
-    ).not.toBeNull();
+    expect(screen.queryByRole("searchbox")).not.toBeInTheDocument();
   });
 
   it("shows 0% for a beer whose alcohol % the backend omitted", async () => {
@@ -122,13 +121,16 @@ describe("SeasonBeerList", () => {
 
     renderComponent();
 
-    expect(await screen.findByTestId("beer-row")).toHaveTextContent("0%");
+    await screen.findByRole("link", { name: "Malt og Appelsín" });
+    const [post] = await findBeerPosts();
+    expect(post).toHaveTextContent("Ölgerðin · 0%");
   });
 
   it("shows my stars on beers I have rated, and marks the rest unrated", async () => {
     renderComponent();
 
-    const rows = await screen.findAllByTestId("beer-row");
+    await screen.findAllByRole("link", { name: "Egils Jólabjór" });
+    const rows = await findBeerPosts();
     expect(within(rows[0]).getByTestId("my-rating")).toHaveAttribute(
       "aria-label",
       expect.stringContaining("4")
@@ -141,7 +143,8 @@ describe("SeasonBeerList", () => {
   it("offers to rate a beer I haven't tasted, linking to its page", async () => {
     renderComponent();
 
-    const rows = await screen.findAllByTestId("beer-row");
+    await screen.findAllByRole("link", { name: "Egils Jólabjór" });
+    const rows = await findBeerPosts();
     expect(within(rows[1]).getByTestId("not-rated")).toHaveTextContent(
       "Ósmakaður"
     );
@@ -153,38 +156,13 @@ describe("SeasonBeerList", () => {
     expect(within(rows[0]).queryByTestId("rate-beer")).not.toBeInTheDocument();
   });
 
-  it("filters by beer name, ignoring case and surrounding spaces", async () => {
-    renderComponent();
-    await screen.findAllByTestId("beer-row");
-
-    fireEvent.change(screen.getByRole("searchbox"), {
-      target: { value: "  LILLE " },
-    });
-
-    const rows = screen.getAllByTestId("beer-row");
-    expect(rows).toHaveLength(1);
-    expect(rows[0]).toHaveTextContent("Tuborg Lille Jul");
-  });
-
-  it("shows a no-match message when no beer name matches", async () => {
-    renderComponent();
-    await screen.findAllByTestId("beer-row");
-
-    fireEvent.change(screen.getByRole("searchbox"), {
-      target: { value: "pilsner" },
-    });
-
-    expect(screen.queryAllByTestId("beer-row")).toHaveLength(0);
-    expect(screen.getByTestId("no-match")).toBeInTheDocument();
-  });
-
   it("shows the register button below the list, linking to the register page", async () => {
     renderComponent();
-    await screen.findAllByTestId("beer-row");
+    await screen.findAllByRole("link", { name: "Egils Jólabjór" });
 
     const button = screen.getByTestId("register-beer");
     expect(button).toHaveAttribute("href", "/beer/register");
-    const rows = screen.getAllByTestId("beer-row");
+    const rows = await findBeerPosts();
     const lastRow = rows[rows.length - 1];
     expect(
       lastRow.compareDocumentPosition(button) & Node.DOCUMENT_POSITION_FOLLOWING
@@ -202,8 +180,9 @@ describe("SeasonBeerList", () => {
 
   it("hides the register button when the season is closed", async () => {
     renderComponent({ ...openSeason, isOpen: false });
-    await screen.findAllByTestId("beer-row");
+    await screen.findAllByRole("link", { name: "Egils Jólabjór" });
 
+    expect(screen.getByTestId("season-closed")).toBeInTheDocument();
     expect(screen.queryByTestId("register-beer")).not.toBeInTheDocument();
   });
 

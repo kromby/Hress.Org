@@ -22,14 +22,18 @@ export default class Post extends Component {
                             : null}
                     </div> */}
                     <div className="meta">
-                        <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>
-                        {(this.props.author?.id || this.props.author?.ID) && (
-                          <Author
-                            id={this.props.author.id || this.props.author.ID}
-                            username={this.props.author.username || this.props.author.Username}
-                            userPath={this.props.userPath}
-                            profilePhoto={this.props.author.profilePhoto?.href || this.props.author.ProfilePhoto?.Href}
-                          />
+                        {this.props.meta ?? (
+                          <>
+                            <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>
+                            {(this.props.author?.id || this.props.author?.ID) && (
+                              <Author
+                                id={this.props.author.id || this.props.author.ID}
+                                username={this.props.author.username || this.props.author.Username}
+                                userPath={this.props.userPath}
+                                profilePhoto={this.props.author.profilePhoto?.href || this.props.author.ProfilePhoto?.Href}
+                              />
+                            )}
+                          </>
                         )}
                     </div>
                 </header>
@@ -40,11 +44,14 @@ export default class Post extends Component {
                             : <img src={this.props.image} alt={this.props.title} />}
                     </figure>
                     : null}
-                {this.props.body ? <section>{this.props.body}</section> : <p />}
-                <footer>
-                    {this.props.actions}
-                    {this.props.stats}
-                </footer>
+                {/* A post with only a header (e.g. an item in a list) renders nothing below it. */}
+                {this.props.body ? <section>{this.props.body}</section> : (this.props.actions || this.props.stats) ? <p /> : null}
+                {(this.props.actions || this.props.stats) && (
+                    <footer>
+                        {this.props.actions}
+                        {this.props.stats}
+                    </footer>
+                )}
             </article>
         )
     }

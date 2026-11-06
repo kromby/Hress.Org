@@ -36,11 +36,38 @@ export const useHressAuth = (): HressAuth => {
 export const hressApiUrl = (path: string): string =>
   `${config.get("apiPath")}/api/${path}`;
 
+interface HressPostProps {
+  title: string;
+  // Makes the title a link.
+  href?: string;
+  description?: ReactNode;
+  // The right-hand column of the header (on phones, under the title).
+  meta?: ReactNode;
+  children?: ReactNode;
+}
+
+// A post card in the hress.org layout, the same one every hress.org page uses.
+export const HressPost = ({
+  title,
+  href,
+  description,
+  meta,
+  children,
+}: HressPostProps) => (
+  <Post
+    title={title}
+    href={href}
+    description={description}
+    meta={meta}
+    body={children}
+  />
+);
+
 interface HressPageProps {
   title: string;
   description?: string;
-  children: ReactNode;
-  // Rendered under the post card, on the page background (e.g. a list of cards).
+  children?: ReactNode;
+  // Rendered under the post card (e.g. more posts).
   below?: ReactNode;
 }
 
@@ -52,7 +79,9 @@ export const HressPage = ({
   below,
 }: HressPageProps) => (
   <div id="main">
-    <Post title={title} description={description} body={children} />
+    <HressPost title={title} description={description}>
+      {children}
+    </HressPost>
     {below}
   </div>
 );
