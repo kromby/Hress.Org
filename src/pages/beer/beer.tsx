@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import LoginRedirect from "./LoginRedirect";
 import BeerRatingStars from "./components/BeerRatingStars";
+import ChatThread from "./components/ChatThread";
 import { HressPage, useHressAuth } from "./hress";
 import {
   isUnauthorized,
@@ -82,6 +83,7 @@ const BeerPage = () => {
         beerID={beer.id}
         myRating={myRating}
       />
+      <ChatThread seasonID={season.data.id} beerID={beer.id} />
       <BackLink />
     </HressPage>
   );

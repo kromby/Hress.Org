@@ -33,3 +33,16 @@ export interface Rating {
   created: string;
   updated: string;
 }
+
+// A message in a beer's chat. The text is plain text: render it as text, never as HTML.
+export interface ChatMessage {
+  id: number;
+  userID: number;
+  username: string;
+  // The author's profile photo, absent if they have none.
+  authorImageID?: number;
+  text: string;
+  created: string;
+  // When the message was last edited, absent if never.
+  edited?: string;
+}

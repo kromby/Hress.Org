@@ -36,6 +36,14 @@ const summaries = [
   },
 ];
 
+const chatMessage = {
+  id: 1,
+  userID: 8,
+  username: "gummi",
+  text: "Sætur en góður.",
+  created: "2026-11-05T18:30:00Z",
+};
+
 const ratingUrl =
   "http://localhost:7072/api/beer/seasons/jolabjor-2026/beers/b1/rating";
 
@@ -43,9 +51,15 @@ describe("BeerPage", () => {
   let queryClient: QueryClient;
   const setAuthTokens = jest.fn();
 
-  const mockGet = (season: object = openSeason) =>
+  const mockGet = (season: object = openSeason, messages: object[] = []) =>
     (axios.get as jest.Mock).mockImplementation((url: string) =>
-      Promise.resolve({ data: url.endsWith("/beers") ? summaries : season })
+      Promise.resolve({
+        data: url.endsWith("/beers")
+          ? summaries
+          : url.endsWith("/messages")
+            ? messages
+            : season,
+      })
     );
 
   const renderPage = (beerID = "b1") =>
@@ -259,6 +273,25 @@ describe("BeerPage", () => {
     expect(screen.getByTestId("rating-closed")).toBeInTheDocument();
     expect(screen.getByTestId("rating-stars")).toHaveAttribute("role", "img");
     expect(screen.queryAllByRole("radio")).toHaveLength(0);
+  });
+
+  it("shows the beer's chat before I've rated it", async () => {
+    mockGet(openSeason, [chatMessage]);
+    renderPage("b1");
+
+    expect(await screen.findByText("Sætur en góður.")).toBeInTheDocument();
+    expect(screen.getByTestId("rating-hint")).toBeInTheDocument();
+    expect(axios.get).toHaveBeenCalledWith(
+      "http://localhost:7072/api/beer/seasons/jolabjor-2026/beers/b1/messages",
+      expect.anything()
+    );
+  });
+
+  it("shows the chat when the season is closed", async () => {
+    mockGet(closedSeason, [chatMessage]);
+    renderPage();
+
+    expect(await screen.findByText("Sætur en góður.")).toBeInTheDocument();
   });
 
   it("shows not-found for a beer that isn't in the season", async () => {
