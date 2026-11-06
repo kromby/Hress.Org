@@ -128,13 +128,16 @@ public class ChatSqlDataAccess : IChatDataAccess
     public async Task<int> AddMessageAsync(int threadID, int userID, string html, DateTime created)
     {
         // Inserts nothing unless the thread is a chat thread that isn't deleted.
-        const string insertSql = @"INSERT INTO scr_Text (ComponentId, TypeId, TextValue, InsertedBy, Inserted)
-                        OUTPUT INSERTED.Id
+        // scr_Text has a trigger, so OUTPUT needs INTO: SQL Server rejects a bare OUTPUT clause there.
+        const string insertSql = @"DECLARE @inserted TABLE (Id int);
+                        INSERT INTO scr_Text (ComponentId, TypeId, TextValue, InsertedBy, Inserted)
+                        OUTPUT INSERTED.Id INTO @inserted
                         SELECT	thread.Id, @bodyTypeId, @textValue, @userId, @created
                         FROM	adm_Component thread
                         WHERE	thread.Id = @threadId
                             AND	thread.TypeId = @chatTypeId
-                            AND	thread.Deleted IS NULL";
+                            AND	thread.Deleted IS NULL;
+                        SELECT Id FROM @inserted;";
         // The legacy chat sorts threads by when they were last updated.
         const string touchThreadSql = @"UPDATE	adm_Component
                         SET	Updated = @created, UpdatedBy = @userId
