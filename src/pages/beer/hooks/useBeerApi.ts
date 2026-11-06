@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { hressApiUrl, useHressAuth } from "../hress";
-import { BeerSummary, Rating, Season } from "../types";
+import { BeerSummary, ChatMessage, Rating, Season } from "../types";
 
 // The backend omits default and null values, so a closed season arrives
 // without `isOpen` and an open season without `endDate`.
@@ -90,6 +90,34 @@ export const useSaveRating = (seasonID: string, beerID: string) => {
           )
       );
       queryClient.invalidateQueries({ queryKey: seasonBeersKey(seasonID) });
+    },
+  });
+};
+
+// Not under seasonBeersKey, so saving a rating doesn't refetch the chat.
+export const messagesKey = (seasonID: string, beerID: string) => [
+  "beer",
+  "season",
+  seasonID,
+  "messages",
+  beerID,
+];
+
+// The beer's chat, oldest first. Empty until someone posts.
+export const useMessages = (seasonID: string, beerID: string) => {
+  const { isLoggedIn, headers } = useHressAuth();
+
+  return useQuery<ChatMessage[]>({
+    queryKey: messagesKey(seasonID, beerID),
+    enabled: isLoggedIn,
+    queryFn: async () => {
+      const response = await axios.get<ChatMessage[]>(
+        hressApiUrl(
+          `beer/seasons/${encodeURIComponent(seasonID)}/beers/${encodeURIComponent(beerID)}/messages`
+        ),
+        { headers }
+      );
+      return response.data;
     },
   });
 };
