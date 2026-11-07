@@ -196,6 +196,12 @@ post a:hover {
                 white-space: nowrap;
             }
 
+        /* A post with only a header: drop the space and second border under it. */
+        .post > header:last-child {
+            border-bottom: 0;
+            margin-bottom: -1em;
+        }
+
     .post > a.image.featured {
         overflow: hidden;
     }
@@ -366,6 +372,10 @@ post a:hover {
                 .post > header .title h2 {
                     font-size: 1.1em;
                 }
+
+            .post > header:last-child {
+                margin-bottom: -0.1em;
+            }
 
     }
 

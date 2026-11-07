@@ -67,7 +67,9 @@ describe("BeerHome", () => {
 
     renderComponent();
 
-    expect(await screen.findAllByTestId("beer-row")).toHaveLength(1);
+    expect(
+      await screen.findByRole("link", { name: "Tuborg Lille Jul" })
+    ).toHaveAttribute("href", "/beer/b1");
     expect(axios.get).toHaveBeenCalledWith(
       "http://localhost:7072/api/beer/seasons/jolabjor-2026/beers",
       { headers: { "X-Custom-Authorization": "token fake-token" } }
