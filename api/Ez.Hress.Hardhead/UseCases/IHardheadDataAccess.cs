@@ -27,6 +27,8 @@ public interface IHardheadDataAccess
 
     Task<IList<UserBasicEntity>> GetGuests(int hardheadID);
 
+    Task<IDictionary<int, IList<UserBasicEntity>>> GetGuestsForHardheads(IList<int> hardheadIDs);
+
     Task<int> AddGuest(int hardheadId, int guestId, int userId, DateTime createdDate);
 
     Task<int> RemoveGuest(int hardheadID, int guestID);
