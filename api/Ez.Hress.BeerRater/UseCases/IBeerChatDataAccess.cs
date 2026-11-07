@@ -8,6 +8,9 @@ public interface IBeerChatDataAccess
     // The thread's messages, oldest first, without deleted ones.
     Task<IList<ChatMessage>> GetMessagesAsync(int threadID);
 
+    // The number of messages in each thread, by thread ID. Threads with no messages are left out.
+    Task<IDictionary<int, int>> GetMessageCountsAsync(IReadOnlyCollection<int> threadIDs);
+
     // Creates a thread in BeerRater's chat category and returns its ID.
     Task<int> CreateThreadAsync(string name, int userID);
 

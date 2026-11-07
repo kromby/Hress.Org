@@ -34,6 +34,13 @@ public class HressChatAccess : IBeerChatDataAccess
         return messages.Select(ToChatMessage).ToList();
     }
 
+    public async Task<IDictionary<int, int>> GetMessageCountsAsync(IReadOnlyCollection<int> threadIDs)
+    {
+        _logger.LogInformation("[{Class}.{Method}] Count messages in {Count} threads", _className, nameof(GetMessageCountsAsync), threadIDs.Count);
+
+        return await _chatInteractor.GetMessageCountsAsync(threadIDs);
+    }
+
     public async Task<int> CreateThreadAsync(string name, int userID)
     {
         _logger.LogInformation("[{Class}.{Method}] Create thread '{Name}'", _className, nameof(CreateThreadAsync), name);

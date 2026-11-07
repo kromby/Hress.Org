@@ -31,6 +31,18 @@ public class ChatInteractor
         return messages;
     }
 
+    // The number of messages in each thread, by thread ID. Threads with no messages are left out.
+    public async Task<IDictionary<int, int>> GetMessageCountsAsync(IEnumerable<int> threadIDs)
+    {
+        var ids = threadIDs.Where(id => id > 0).Distinct().ToList();
+        _log.LogInformation("[{Class}.{Method}] Counting messages in {Count} threads", nameof(ChatInteractor), nameof(GetMessageCountsAsync), ids.Count);
+
+        if (ids.Count == 0)
+            return new Dictionary<int, int>();
+
+        return await _dataAccess.GetMessageCountsAsync(ids);
+    }
+
     public async Task<int> CreateThreadAsync(int categoryID, string name, int userID)
     {
         _log.LogInformation("[{Class}.{Method}] User {UserID} creates thread '{Name}' in category {CategoryID}", nameof(ChatInteractor), nameof(CreateThreadAsync), userID, name, categoryID);

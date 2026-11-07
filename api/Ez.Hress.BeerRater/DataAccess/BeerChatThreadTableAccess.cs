@@ -28,6 +28,20 @@ public class BeerChatThreadTableAccess : IBeerChatThreadDataAccess
         return response.HasValue ? response.Value!.ThreadID : null;
     }
 
+    public async Task<IDictionary<string, int>> GetThreadIDsAsync(string seasonID)
+    {
+        _logger.LogInformation("[{Class}.{Method}] Get chat threads for season '{SeasonID}'", _className, nameof(GetThreadIDsAsync), seasonID);
+
+        var encodedSeasonID = Uri.EscapeDataString(seasonID);
+        var threads = new Dictionary<string, int>(StringComparer.Ordinal);
+        await foreach (var entity in _threadsTable.QueryAsync<ChatThreadTableEntity>(e => e.PartitionKey == encodedSeasonID))
+        {
+            threads[Uri.UnescapeDataString(entity.RowKey)] = entity.ThreadID;
+        }
+
+        return threads;
+    }
+
     public async Task<bool> TryAddThreadAsync(string seasonID, string beerID, int threadID)
     {
         _logger.LogInformation("[{Class}.{Method}] Add chat thread {ThreadID} for beer '{BeerID}' in season '{SeasonID}'", _className, nameof(TryAddThreadAsync), threadID, beerID, seasonID);
