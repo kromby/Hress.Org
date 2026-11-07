@@ -145,6 +145,44 @@ describe("BeerPage", () => {
     );
   });
 
+  it("puts the rating in the post's footer, like the Hardhead page", async () => {
+    renderPage();
+
+    const rating = await screen.findByTestId("rating-stars");
+    expect(rating.closest("article.post > footer ul.stats")).not.toBeNull();
+    expect(screen.getByTestId("beer-details").closest("footer")).toBeNull();
+  });
+
+  it("names my existing rating", async () => {
+    renderPage("b2");
+
+    expect(await screen.findByTestId("rating-label")).toHaveTextContent(
+      "Slakur bjór"
+    );
+  });
+
+  it("names each number of stars while hovering, from Vondur to Frábær bjór", async () => {
+    renderPage();
+    await screen.findByTestId("rating-stars");
+    const label = screen.getByTestId("rating-label");
+    expect(label).toHaveTextContent(/^\s*$/);
+
+    const expected = [
+      "Vondur bjór",
+      "Slakur bjór",
+      "Ágætur bjór",
+      "Góður bjór",
+      "Frábær bjór",
+    ];
+    stars().forEach((star, index) => {
+      fireEvent.mouseEnter(star);
+      expect(label).toHaveTextContent(expected[index]);
+    });
+
+    fireEvent.mouseLeave(stars()[4]);
+    expect(label).toHaveTextContent(/^\s*$/);
+  });
+
   it("tells me I can change my existing rating", async () => {
     renderPage("b2");
 
