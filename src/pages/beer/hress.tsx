@@ -70,6 +70,9 @@ export const HressPost = ({
     description={description}
     meta={meta}
     thumbnail={thumbnail}
+    // An empty actions list fills the footer and pushes the stats to the
+    // right, as on the Hardhead pages.
+    actions={stats ? <ul className="actions" /> : undefined}
     stats={stats}
     body={children}
   />

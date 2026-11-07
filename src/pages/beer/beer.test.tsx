@@ -171,12 +171,12 @@ describe("BeerPage", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("shows five stars and a hint when I haven't rated the beer", async () => {
+  it("shows five stars and no instructions when I haven't rated the beer", async () => {
     renderPage();
 
     await screen.findByTestId("rating-stars");
     expect(stars()).toHaveLength(5);
-    expect(screen.getByTestId("rating-hint")).toBeInTheDocument();
+    expect(screen.queryByText(/Smelltu/)).not.toBeInTheDocument();
   });
 
   it("shows my existing rating", async () => {
@@ -194,6 +194,10 @@ describe("BeerPage", () => {
     const rating = await screen.findByTestId("rating-stars");
     expect(rating.closest("article.post > footer ul.stats")).not.toBeNull();
     expect(screen.getByTestId("beer-details").closest("footer")).toBeNull();
+    // An empty actions list before the stats pushes them to the right.
+    const footer = rating.closest("footer");
+    expect(footer?.firstElementChild).toHaveClass("actions");
+    expect(footer?.firstElementChild).toBeEmptyDOMElement();
   });
 
   it("names my existing rating", async () => {
@@ -224,14 +228,6 @@ describe("BeerPage", () => {
 
     fireEvent.mouseLeave(stars()[4]);
     expect(label).toHaveTextContent(/^\s*$/);
-  });
-
-  it("tells me I can change my existing rating", async () => {
-    renderPage("b2");
-
-    expect(await screen.findByTestId("rating-hint")).toHaveTextContent(
-      "Smelltu á aðra stjörnu til að breyta einkunninni."
-    );
   });
 
   it("changing my rating saves the new stars and shows them", async () => {
@@ -405,7 +401,10 @@ describe("BeerPage", () => {
     renderPage("b1");
 
     expect(await screen.findByText("Sætur en góður.")).toBeInTheDocument();
-    expect(screen.getByTestId("rating-hint")).toBeInTheDocument();
+    expect(screen.getByTestId("rating-stars")).toHaveAttribute(
+      "role",
+      "radiogroup"
+    );
     expect(axios.get).toHaveBeenCalledWith(
       "http://localhost:7072/api/beer/seasons/jolabjor-2026/beers/b1/messages",
       expect.anything()

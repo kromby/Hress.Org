@@ -78,29 +78,23 @@ const BeerRatingStars = ({
         <div data-testid="rating-label" style={lineStyle}>
           {label ?? " "}
         </div>
-        <div style={lineStyle}>
-          {readonly ? (
-            <span data-testid="rating-closed">
-              Tímabilið er búið og ekki hægt að gefa einkunn.
-            </span>
-          ) : saveRating.isPending ? (
-            <span data-testid="rating-saving">Vista…</span>
-          ) : saveRating.isError ? (
-            <span data-testid="rating-error" role="alert">
-              Ekki tókst að vista einkunnina. Reyndu aftur.
-            </span>
-          ) : saveRating.isSuccess ? (
-            <span data-testid="rating-saved" role="status">
-              Einkunn vistuð: {saveRating.data.stars} af 5
-            </span>
-          ) : (
-            <span data-testid="rating-hint">
-              {myRating
-                ? "Smelltu á aðra stjörnu til að breyta einkunninni."
-                : "Smelltu á stjörnu til að gefa einkunn."}
-            </span>
-          )}
-        </div>
+        {readonly ? (
+          <div style={lineStyle} data-testid="rating-closed">
+            Tímabilið er búið og ekki hægt að gefa einkunn.
+          </div>
+        ) : saveRating.isPending ? (
+          <div style={lineStyle} data-testid="rating-saving">
+            Vista…
+          </div>
+        ) : saveRating.isError ? (
+          <div style={lineStyle} data-testid="rating-error" role="alert">
+            Ekki tókst að vista einkunnina. Reyndu aftur.
+          </div>
+        ) : saveRating.isSuccess ? (
+          <div style={lineStyle} data-testid="rating-saved" role="status">
+            Einkunn vistuð: {saveRating.data.stars} af 5
+          </div>
+        ) : null}
       </li>
     </ul>
   );
