@@ -411,6 +411,27 @@ describe("BeerPage", () => {
     );
   });
 
+  it("puts the chat in its own post under the beer, with the rating on the beer's post", async () => {
+    mockGet(openSeason, [chatMessage]);
+    renderPage("b1");
+
+    await screen.findByText("Sætur en góður.");
+    const chatPost = screen.getByTestId("chat").closest("article.post");
+    const beerPost = screen.getByTestId("rating-stars").closest("article.post");
+    expect(chatPost).not.toBeNull();
+    expect(chatPost).not.toBe(beerPost);
+    expect(beerPost?.compareDocumentPosition(chatPost as Node)).toBe(
+      Node.DOCUMENT_POSITION_FOLLOWING
+    );
+    expect(
+      within(chatPost as HTMLElement).getByRole("heading", { name: "Spjall" })
+    ).toBeInTheDocument();
+    expect(chatPost).toHaveTextContent("1 skilaboð");
+    expect(
+      within(beerPost as HTMLElement).getByTestId("beer-details")
+    ).toBeInTheDocument();
+  });
+
   it("shows the chat but no message box when the season is closed", async () => {
     mockGet(closedSeason, [chatMessage]);
     renderPage();
