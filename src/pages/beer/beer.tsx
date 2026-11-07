@@ -38,7 +38,11 @@ const BeerPage = () => {
     return <LoginRedirect />;
   }
 
-  if (season.isLoading || beers.isLoading) {
+  const summary = beers.data?.find((s) => s.beer.id === beerID);
+
+  // A beer that isn't in the list yet may just be waiting for the refetch
+  // after it was added.
+  if (season.isLoading || beers.isLoading || (!summary && beers.isFetching)) {
     return (
       <HressPage title="Bjór">
         <p data-testid="beer-loading">Sæki bjór…</p>
@@ -55,7 +59,6 @@ const BeerPage = () => {
     );
   }
 
-  const summary = beers.data?.find((s) => s.beer.id === beerID);
   if (!season.data || !summary) {
     return (
       <HressPage title="Bjór">

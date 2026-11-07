@@ -4,6 +4,9 @@ import { ReactNode } from "react";
 import config from "react-global-configuration";
 import { Post } from "../../components";
 import { useAuth } from "../../context/auth";
+import { useAlbums } from "../../hooks/useAlbums";
+import { useImages } from "../../hooks/useImages";
+import { ImageContainer } from "../../types/image";
 
 export interface HressAuth {
   isLoggedIn: boolean;
@@ -39,6 +42,33 @@ export const hressApiUrl = (path: string): string =>
 // An image in the hress.org image store, scaled to the given width.
 export const hressImageUrl = (imageID: number, width: number): string =>
   hressApiUrl(`images/${imageID}/content?width=${width}`);
+
+// The hress.org album that collects the beer photos.
+export const BEER_ALBUM_ID = 46153;
+
+// Saves beer photos in the hress.org image store and album.
+export const useHressPhotos = () => {
+  const { uploadImage } = useImages();
+  const { addImage } = useAlbums();
+
+  const uploadPhoto = async (file: File, name: string): Promise<number> => {
+    const image = await uploadImage({
+      file,
+      name,
+      container: ImageContainer.Album,
+    });
+    if (!image?.id) {
+      throw new Error("The photo could not be uploaded.");
+    }
+    return image.id;
+  };
+
+  const addToAlbum = async (imageID: number): Promise<void> => {
+    await addImage(BEER_ALBUM_ID, imageID);
+  };
+
+  return { uploadPhoto, addToAlbum };
+};
 
 interface HressPostProps {
   title: string;

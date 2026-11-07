@@ -3,9 +3,11 @@ import axios from "axios";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactNode } from "react";
 import {
+  DuplicateBeerError,
   seasonBeersKey,
   useAddBeerToSeason,
   useCatalogSearch,
+  useCreateBeer,
 } from "./useBeerApi";
 import { useDebouncedValue } from "./useDebouncedValue";
 import { AuthContext } from "../../../context/auth";
@@ -73,7 +75,87 @@ describe("beer catalog hooks", () => {
     );
     expect(invalidate).toHaveBeenCalledWith({
       queryKey: seasonBeersKey("jolabjor-2026"),
+      refetchType: "all",
     });
+  });
+
+  it("useCreateBeer posts the beer and refreshes the season list", async () => {
+    (axios.post as jest.Mock).mockResolvedValue({ data: { id: "abc" } });
+    const invalidate = jest.spyOn(queryClient, "invalidateQueries");
+    const { result } = renderHook(() => useCreateBeer("jolabjor-2026"), {
+      wrapper,
+    });
+    const input = {
+      name: "Jóla Gull",
+      producer: "Ölgerðin",
+      country: "Ísland",
+      alcoholPercentage: 5.4,
+    };
+
+    await act(async () => {
+      await result.current.mutateAsync(input);
+    });
+
+    expect(axios.post).toHaveBeenCalledWith(
+      "http://localhost:7072/api/beer/seasons/jolabjor-2026/beers",
+      { beer: input },
+      expect.anything()
+    );
+    expect(invalidate).toHaveBeenCalledWith({
+      queryKey: seasonBeersKey("jolabjor-2026"),
+      refetchType: "all",
+    });
+  });
+
+  it("useCreateBeer turns a 409 duplicate into DuplicateBeerError", async () => {
+    (axios.post as jest.Mock).mockRejectedValue({
+      response: {
+        status: 409,
+        data: { duplicate: { id: "1", name: "Jóla Kaldi" } },
+      },
+    });
+    const { result } = renderHook(() => useCreateBeer("s"), { wrapper });
+
+    let error: unknown;
+    await act(async () => {
+      try {
+        await result.current.mutateAsync({
+          name: "Jóla Kaldi",
+          producer: "p",
+          country: "c",
+          alcoholPercentage: 5,
+        });
+      } catch (e) {
+        error = e;
+      }
+    });
+
+    expect(error).toBeInstanceOf(DuplicateBeerError);
+    expect((error as DuplicateBeerError).existing.id).toBe("1");
+  });
+
+  it("useCreateBeer passes other errors through", async () => {
+    (axios.post as jest.Mock).mockRejectedValue({
+      response: { status: 409, data: "Season 'x' is closed." },
+    });
+    const { result } = renderHook(() => useCreateBeer("s"), { wrapper });
+
+    let error: unknown;
+    await act(async () => {
+      try {
+        await result.current.mutateAsync({
+          name: "n",
+          producer: "p",
+          country: "c",
+          alcoholPercentage: 5,
+        });
+      } catch (e) {
+        error = e;
+      }
+    });
+
+    expect(error).toBeDefined();
+    expect(error).not.toBeInstanceOf(DuplicateBeerError);
   });
 
   it("useDebouncedValue only updates after the delay", () => {
