@@ -8,7 +8,7 @@ import BeerCover from "./BeerCover";
 // StarRating requires a handler even when read-only.
 const ignoreRatingChange = () => undefined;
 
-const formatAlcohol = (percentage = 0) =>
+export const formatAlcohol = (percentage = 0) =>
   `${percentage.toLocaleString("is-IS", { maximumFractionDigits: 1 })}%`;
 
 const MyStars = ({ rating }: { rating: number }) => (

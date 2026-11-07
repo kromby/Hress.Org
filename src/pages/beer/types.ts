@@ -55,3 +55,11 @@ export interface ChatMessage {
   // When the message was last edited, absent if never.
   edited?: string;
 }
+
+// A catalog search hit. The backend omits false and null values.
+export interface CatalogBeer {
+  beer: Beer;
+  latestSeasonID?: string;
+  latestSeasonName?: string;
+  inCurrentSeason?: boolean;
+}

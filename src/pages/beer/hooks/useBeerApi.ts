@@ -1,7 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { hressApiUrl, useHressAuth } from "../hress";
-import { BeerSummary, ChatMessage, Rating, Season } from "../types";
+import {
+  Beer,
+  BeerSummary,
+  CatalogBeer,
+  ChatMessage,
+  Rating,
+  Season,
+} from "../types";
 
 // The backend omits default and null values, so a closed season arrives
 // without `isOpen` and an open season without `endDate`.
@@ -39,7 +46,7 @@ export const useCurrentSeason = () => {
   });
 };
 
-const seasonBeersKey = (seasonID?: string) => [
+export const seasonBeersKey = (seasonID?: string) => [
   "beer",
   "season",
   seasonID,
@@ -148,6 +155,44 @@ export const usePostMessage = (seasonID: string, beerID: string) => {
       queryClient.invalidateQueries({
         queryKey: messagesKey(seasonID, beerID),
       });
+    },
+  });
+};
+
+// Searches the beer catalog by name. Waits for at least two characters.
+export const useCatalogSearch = (query: string) => {
+  const { headers } = useHressAuth();
+  const trimmed = query.trim();
+
+  return useQuery<CatalogBeer[]>({
+    queryKey: ["beer", "catalog", trimmed],
+    enabled: trimmed.length >= 2,
+    queryFn: async () => {
+      const response = await axios.get<CatalogBeer[]>(
+        hressApiUrl(`beer/beers?query=${encodeURIComponent(trimmed)}`),
+        { headers }
+      );
+      return response.data;
+    },
+  });
+};
+
+// Adds a catalog beer to the season. The variable is the beer ID.
+export const useAddBeerToSeason = (seasonID: string) => {
+  const { headers } = useHressAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (beerID: string): Promise<Beer> => {
+      const response = await axios.post<Beer>(
+        hressApiUrl(`beer/seasons/${encodeURIComponent(seasonID)}/beers`),
+        { beerID },
+        { headers }
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: seasonBeersKey(seasonID) });
     },
   });
 };
