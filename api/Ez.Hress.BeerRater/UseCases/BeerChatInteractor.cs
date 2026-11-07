@@ -38,6 +38,22 @@ public class BeerChatInteractor
         return await _chatDataAccess.GetMessagesAsync(threadID.Value);
     }
 
+    // The number of messages about each beer in the season, by beer ID. Beers nobody has
+    // posted about are left out.
+    public async Task<IDictionary<string, int>> GetMessageCountsAsync(string seasonID)
+    {
+        _log.LogInformation("[{Class}.{Method}] Counting chat messages in season '{SeasonID}'", nameof(BeerChatInteractor), nameof(GetMessageCountsAsync), seasonID);
+
+        var threads = await _threadDataAccess.GetThreadIDsAsync(seasonID);
+        if (threads.Count == 0)
+            return new Dictionary<string, int>(StringComparer.Ordinal);
+
+        var counts = await _chatDataAccess.GetMessageCountsAsync(threads.Values.Distinct().ToList());
+        return threads
+            .Where(t => counts.ContainsKey(t.Value))
+            .ToDictionary(t => t.Key, t => counts[t.Value], StringComparer.Ordinal);
+    }
+
     public async Task<ChatMessage> PostMessageAsync(string seasonID, string beerID, int userID, string? text)
     {
         _log.LogInformation("[{Class}.{Method}] User {UserID} posts about beer '{BeerID}' in season '{SeasonID}'", nameof(BeerChatInteractor), nameof(PostMessageAsync), userID, beerID, seasonID);

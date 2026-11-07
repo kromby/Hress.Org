@@ -28,6 +28,10 @@ export interface BeerSummary {
   beer: Beer;
   // The current user's stars, absent if they haven't rated the beer.
   myRating?: number;
+  // How many members have rated it and how many chat messages there are.
+  // The backend omits zeros, so absent means 0.
+  ratingCount?: number;
+  messageCount?: number;
 }
 
 export interface Rating {

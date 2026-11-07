@@ -47,6 +47,36 @@ public class ChatInteractorTests
     }
 
     [Fact]
+    public async Task GetMessageCounts_SkipsInvalidAndDuplicateThreads()
+    {
+        // ARRANGE
+        _dataMock.Setup(d => d.GetMessageCountsAsync(It.IsAny<IReadOnlyCollection<int>>()))
+            .ReturnsAsync(new Dictionary<int, int> { [ThreadID] = 4 });
+        var interactor = Arrange();
+
+        // ACT
+        var result = await interactor.GetMessageCountsAsync(new[] { ThreadID, 0, -1, ThreadID });
+
+        // ASSERT
+        Assert.Equal(4, result[ThreadID]);
+        _dataMock.Verify(d => d.GetMessageCountsAsync(It.Is<IReadOnlyCollection<int>>(ids => ids.SequenceEqual(new[] { ThreadID }))), Times.Once);
+    }
+
+    [Fact]
+    public async Task GetMessageCounts_NoThreads_DoesNotQuery()
+    {
+        // ARRANGE
+        var interactor = Arrange();
+
+        // ACT
+        var result = await interactor.GetMessageCountsAsync(Array.Empty<int>());
+
+        // ASSERT
+        Assert.Empty(result);
+        _dataMock.Verify(d => d.GetMessageCountsAsync(It.IsAny<IReadOnlyCollection<int>>()), Times.Never);
+    }
+
+    [Fact]
     public async Task PostMessage_StoresEncodedHtml_ReturnsPlainText()
     {
         // ARRANGE

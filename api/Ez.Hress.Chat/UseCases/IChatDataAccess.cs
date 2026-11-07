@@ -7,6 +7,10 @@ public interface IChatDataAccess
     // The thread's messages that aren't deleted, oldest first, with Text as stored (HTML).
     Task<IList<ChatMessage>> GetMessagesAsync(int threadID);
 
+    // The number of messages that aren't deleted in each of the threads, by thread ID.
+    // Threads with no messages, or that are deleted, are left out.
+    Task<IDictionary<int, int>> GetMessageCountsAsync(IReadOnlyCollection<int> threadIDs);
+
     // A message that isn't deleted, with Text as stored (HTML), or null.
     Task<ChatMessage?> GetMessageAsync(int messageID);
 

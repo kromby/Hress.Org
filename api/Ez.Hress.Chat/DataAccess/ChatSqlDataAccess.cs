@@ -56,6 +56,43 @@ public class ChatSqlDataAccess : IChatDataAccess
         return list;
     }
 
+    public async Task<IDictionary<int, int>> GetMessageCountsAsync(IReadOnlyCollection<int> threadIDs)
+    {
+        _log.LogInformation("[{Class}.{Method}] Count messages in {Count} threads", _className, nameof(GetMessageCountsAsync), threadIDs.Count);
+
+        var counts = new Dictionary<int, int>();
+        if (threadIDs.Count == 0)
+            return counts;
+
+        // One parameter per thread: @thread0, @thread1, ...
+        var ids = threadIDs.Distinct().ToList();
+        var parameterNames = ids.Select((_, index) => $"@thread{index}");
+        var sql = $@"SELECT	msg.ComponentId, COUNT(*) 'MessageCount'
+                        FROM	scr_Text msg
+                        JOIN	adm_Component thread ON thread.Id = msg.ComponentId AND thread.TypeId = @chatTypeId AND thread.Deleted IS NULL
+                        WHERE	msg.TypeId = @bodyTypeId
+                            AND	msg.Deleted IS NULL
+                            AND	msg.ComponentId IN ({string.Join(", ", parameterNames)})
+                        GROUP BY msg.ComponentId";
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = CreateMessageCommand(sql, connection);
+        for (var index = 0; index < ids.Count; index++)
+        {
+            command.Parameters.AddWithValue($"thread{index}", ids[index]);
+        }
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            counts[reader.GetInt32(0)] = reader.GetInt32(1);
+        }
+
+        return counts;
+    }
+
     public async Task<ChatMessage?> GetMessageAsync(int messageID)
     {
         const string sql = SelectMessages + @"

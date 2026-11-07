@@ -18,7 +18,8 @@ const openSeason: Season = {
   isOpen: true,
 };
 
-// The backend omits null values, so an unrated beer has no myRating.
+// The backend omits null and zero values, so an unrated beer has no myRating
+// and b2, with no ratings or messages, has no counts.
 const summaries = [
   {
     beer: {
@@ -29,6 +30,8 @@ const summaries = [
       country: "Ísland",
     },
     myRating: 4,
+    ratingCount: 21,
+    messageCount: 3,
   },
   {
     beer: {
@@ -159,6 +162,31 @@ describe("SeasonBeerList", () => {
     expect(within(rows[0]).queryByTestId("not-rated")).not.toBeInTheDocument();
     expect(within(rows[1]).getByTestId("not-rated")).toBeInTheDocument();
     expect(within(rows[1]).queryByTestId("my-rating")).not.toBeInTheDocument();
+  });
+
+  it("shows how many have commented on and rated each beer in its meta column", async () => {
+    renderComponent();
+
+    await screen.findAllByRole("link", { name: "Egils Jólabjór" });
+    const rows = await findBeerPosts();
+    const counts = (row: HTMLElement) => ({
+      messages: within(row).getByTestId("message-count"),
+      ratings: within(row).getByTestId("rating-count"),
+    });
+
+    const first = counts(rows[0]);
+    expect(first.messages.closest("header .meta")).not.toBeNull();
+    // A header-only card, without a footer.
+    expect(rows[0].querySelector("footer")).toBeNull();
+    expect(first.messages).toHaveTextContent("3 skilaboð");
+    expect(first.messages).toHaveAttribute("title", "3 skilaboð");
+    // 21 takes the singular in Icelandic.
+    expect(first.ratings).toHaveTextContent("21 einkunn");
+
+    // The backend omitted b2's zero counts.
+    const second = counts(rows[1]);
+    expect(second.messages).toHaveAttribute("title", "0 skilaboð");
+    expect(second.ratings).toHaveAttribute("title", "0 einkunnir");
   });
 
   it("offers to rate a beer I haven't tasted, linking to its page", async () => {

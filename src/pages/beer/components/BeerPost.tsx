@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import StarRating from "../../../components/StarRating";
 import { HressPost } from "../hress";
 import { BeerSummary } from "../types";
+import BeerCounts from "./BeerCounts";
 import BeerCover from "./BeerCover";
 
 // StarRating requires a handler even when read-only.
@@ -60,7 +61,7 @@ interface BeerPostProps {
 
 // A beer in the season's list, as a hress.org post: cover photo, name,
 // producer and strength, with my rating or a prompt to rate it in the meta
-// column.
+// column, with how many have commented on and rated it under that.
 const BeerPost = ({ summary }: BeerPostProps) => {
   const { beer, myRating } = summary;
   const beerPath = `/beer/${encodeURIComponent(beer.id)}`;
@@ -72,11 +73,17 @@ const BeerPost = ({ summary }: BeerPostProps) => {
       description={`${beer.producer} · ${formatAlcohol(beer.alcoholPercentage)}`}
       thumbnail={<BeerCover beer={beer} />}
       meta={
-        myRating ? (
-          <MyStars rating={myRating} />
-        ) : (
-          <RatePrompt beerName={beer.name} beerPath={beerPath} />
-        )
+        <>
+          {myRating ? (
+            <MyStars rating={myRating} />
+          ) : (
+            <RatePrompt beerName={beer.name} beerPath={beerPath} />
+          )}
+          <BeerCounts
+            messageCount={summary.messageCount ?? 0}
+            ratingCount={summary.ratingCount ?? 0}
+          />
+        </>
       }
     />
   );
