@@ -38,7 +38,7 @@ interface RatePromptProps {
 const RatePrompt = ({ beerName, beerPath }: RatePromptProps) => (
   <>
     <span className="published" data-testid="not-rated">
-      Ósmakaður
+      Ósmakkaður
     </span>
     {/* Wrapped: the theme resets padding on the meta column's children. */}
     <span>

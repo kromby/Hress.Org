@@ -167,7 +167,7 @@ describe("SeasonBeerList", () => {
     await screen.findAllByRole("link", { name: "Egils Jólabjór" });
     const rows = await findBeerPosts();
     expect(within(rows[1]).getByTestId("not-rated")).toHaveTextContent(
-      "Ósmakaður"
+      "Ósmakkaður"
     );
     expect(
       within(rows[1]).getByRole("link", {
