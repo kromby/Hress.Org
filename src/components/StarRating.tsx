@@ -13,6 +13,8 @@ interface StarRatingProps {
   onHoverChange?: (rating: number) => void;
   // Exposes the stars as keyboard-operable radios. The caller must wrap them in a radiogroup.
   asRadio?: boolean;
+  // With asRadio: what a number of stars means, added to that radio's name.
+  starLabel?: (stars: number) => string | undefined;
 }
 
 const StarRating: React.FC<StarRatingProps> = ({
@@ -27,6 +29,7 @@ const StarRating: React.FC<StarRatingProps> = ({
   readonly = false,
   onHoverChange,
   asRadio = false,
+  starLabel,
 }) => {
   const [hoverRating, setHoverRating] = useState(0);
   const starRefs = useRef<(SVGSVGElement | null)[]>([]);
@@ -127,8 +130,16 @@ const StarRating: React.FC<StarRatingProps> = ({
               },
               role: "radio",
               "aria-checked": rating === starPosition,
-              "aria-label": `${starPosition} af ${numberOfStars}`,
+              "aria-label": [
+                `${starPosition} af ${numberOfStars}`,
+                starLabel?.(starPosition),
+              ]
+                .filter(Boolean)
+                .join(": "),
               tabIndex: starPosition === tabStop ? 0 : -1,
+              // Keyboard users get the same preview as hovering.
+              onFocus: () => onHoverChange?.(starPosition),
+              onBlur: () => onHoverChange?.(0),
               onKeyDown: (event: React.KeyboardEvent<SVGSVGElement>) =>
                 handleKeyDown(event, starPosition),
             })}

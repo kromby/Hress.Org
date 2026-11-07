@@ -14,7 +14,11 @@ import {
 const formatAlcohol = (percentage = 0) =>
   `${percentage.toLocaleString("is-IS", { maximumFractionDigits: 1 })}%`;
 
-const BackLink = () => <Link to="/beer">← Allir bjórar</Link>;
+const BackLink = () => (
+  <p>
+    <Link to="/beer">← Allir bjórar</Link>
+  </p>
+);
 
 // A beer in the current season. It's read from the season's beer list,
 // which holds the details and the user's own rating.
@@ -70,6 +74,13 @@ const BeerPage = () => {
       title={beer.name}
       description={season.data.name}
       thumbnail={<BeerCover beer={beer} size="large" />}
+      stats={
+        <BeerRatingStars
+          season={season.data}
+          beerID={beer.id}
+          myRating={myRating}
+        />
+      }
     >
       <p data-testid="beer-details">
         {beer.producer} · {beer.country} ·{" "}
@@ -83,11 +94,6 @@ const BeerPage = () => {
           </>
         )}
       </p>
-      <BeerRatingStars
-        season={season.data}
-        beerID={beer.id}
-        myRating={myRating}
-      />
       <ChatThread
         seasonID={season.data.id}
         beerID={beer.id}

@@ -49,6 +49,8 @@ interface HressPostProps {
   meta?: ReactNode;
   // A small image beside the title (on phones, above it).
   thumbnail?: ReactNode;
+  // The post's footer, e.g. a <ul className="stats"> with a rating.
+  stats?: ReactNode;
   children?: ReactNode;
 }
 
@@ -59,6 +61,7 @@ export const HressPost = ({
   description,
   meta,
   thumbnail,
+  stats,
   children,
 }: HressPostProps) => (
   <Post
@@ -67,6 +70,7 @@ export const HressPost = ({
     description={description}
     meta={meta}
     thumbnail={thumbnail}
+    stats={stats}
     body={children}
   />
 );
@@ -75,6 +79,7 @@ interface HressPageProps {
   title: string;
   description?: string;
   thumbnail?: ReactNode;
+  stats?: ReactNode;
   children?: ReactNode;
   // Rendered under the post card (e.g. more posts).
   below?: ReactNode;
@@ -85,11 +90,17 @@ export const HressPage = ({
   title,
   description,
   thumbnail,
+  stats,
   children,
   below,
 }: HressPageProps) => (
   <div id="main">
-    <HressPost title={title} description={description} thumbnail={thumbnail}>
+    <HressPost
+      title={title}
+      description={description}
+      thumbnail={thumbnail}
+      stats={stats}
+    >
       {children}
     </HressPost>
     {below}
