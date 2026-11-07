@@ -22,6 +22,7 @@ const summaries = [
       alcoholPercentage: 5.4,
       country: "Danmörk",
       vinbudinUrl: "https://www.vinbudin.is/b1",
+      imageID: 279076,
     },
   },
   {
@@ -100,6 +101,31 @@ describe("BeerPage", () => {
       "href",
       "https://www.vinbudin.is/b1"
     );
+  });
+
+  it("shows the beer's cover photo next to its name", async () => {
+    renderPage();
+
+    expect(
+      await screen.findByRole("img", { name: "Tuborg Lille Jul" })
+    ).toHaveAttribute(
+      "src",
+      "http://localhost:7072/api/images/279076/content?width=192"
+    );
+    expect(
+      screen.queryByTestId("beer-cover-placeholder")
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows a placeholder for a beer without a cover photo", async () => {
+    renderPage("b2");
+
+    expect(
+      await screen.findByTestId("beer-cover-placeholder")
+    ).toHaveTextContent("MYND");
+    expect(
+      screen.queryByRole("img", { name: "Egils Jólabjór" })
+    ).not.toBeInTheDocument();
   });
 
   it("shows five stars and a hint when I haven't rated the beer", async () => {

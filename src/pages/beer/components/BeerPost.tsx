@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import StarRating from "../../../components/StarRating";
 import { HressPost } from "../hress";
 import { BeerSummary } from "../types";
+import BeerCover from "./BeerCover";
 
 // StarRating requires a handler even when read-only.
 const ignoreRatingChange = () => undefined;
@@ -37,7 +38,7 @@ interface RatePromptProps {
 const RatePrompt = ({ beerName, beerPath }: RatePromptProps) => (
   <>
     <span className="published" data-testid="not-rated">
-      Ósmakaður
+      Ósmakkaður
     </span>
     {/* Wrapped: the theme resets padding on the meta column's children. */}
     <span>
@@ -57,8 +58,9 @@ interface BeerPostProps {
   summary: BeerSummary;
 }
 
-// A beer in the season's list, as a hress.org post: name, producer and
-// strength, with my rating or a prompt to rate it in the meta column.
+// A beer in the season's list, as a hress.org post: cover photo, name,
+// producer and strength, with my rating or a prompt to rate it in the meta
+// column.
 const BeerPost = ({ summary }: BeerPostProps) => {
   const { beer, myRating } = summary;
   const beerPath = `/beer/${encodeURIComponent(beer.id)}`;
@@ -68,6 +70,7 @@ const BeerPost = ({ summary }: BeerPostProps) => {
       title={beer.name}
       href={beerPath}
       description={`${beer.producer} · ${formatAlcohol(beer.alcoholPercentage)}`}
+      thumbnail={<BeerCover beer={beer} />}
       meta={
         myRating ? (
           <MyStars rating={myRating} />

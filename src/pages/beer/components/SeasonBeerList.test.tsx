@@ -37,6 +37,7 @@ const summaries = [
       producer: "Carlsberg",
       alcoholPercentage: 5.4,
       country: "Danmörk",
+      imageID: 279076,
     },
   },
 ];
@@ -98,6 +99,26 @@ describe("SeasonBeerList", () => {
     ).toHaveAttribute("href", "/beer/b1");
   });
 
+  it("shows each beer's cover photo, or a placeholder if it has none", async () => {
+    renderComponent();
+
+    await screen.findAllByRole("link", { name: "Egils Jólabjór" });
+    const [egils, tuborg] = await findBeerPosts();
+    expect(
+      within(egils).getByTestId("beer-cover-placeholder")
+    ).toHaveTextContent("MYND");
+    expect(egils.querySelector("img")).toBeNull();
+    const cover = tuborg.querySelector("img");
+    expect(cover).toHaveAttribute(
+      "src",
+      "http://localhost:7072/api/images/279076/content?width=112"
+    );
+    expect(cover?.closest("a")).toHaveAttribute("href", "/beer/b2");
+    expect(
+      within(tuborg).queryByTestId("beer-cover-placeholder")
+    ).not.toBeInTheDocument();
+  });
+
   it("has no search box (the nav bar search is used instead)", async () => {
     renderComponent();
     await screen.findAllByRole("link", { name: "Egils Jólabjór" });
@@ -146,7 +167,7 @@ describe("SeasonBeerList", () => {
     await screen.findAllByRole("link", { name: "Egils Jólabjór" });
     const rows = await findBeerPosts();
     expect(within(rows[1]).getByTestId("not-rated")).toHaveTextContent(
-      "Ósmakaður"
+      "Ósmakkaður"
     );
     expect(
       within(rows[1]).getByRole("link", {

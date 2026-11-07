@@ -14,6 +14,9 @@ public class Beer
 
     public string? VinbudinUrl { get; set; }
 
+    // The beer's cover photo, an image in the hress.org image store.
+    public int? ImageID { get; set; }
+
     public int RegisteredBy { get; set; }
 
     public DateTime RegisteredAt { get; set; }

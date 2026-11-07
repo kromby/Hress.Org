@@ -63,12 +63,14 @@ public class ImageInteractor
 
                 useWidth = useWidth < (imageObject.Width * 2) ? useWidth : imageObject.Width * 2;
 
+                // JPEG has no transparency: without a background, transparent
+                // areas (e.g. a PNG cut-out of a beer can) come out black.
                 imageObject.Mutate(i => i.AutoOrient().Resize(new ResizeOptions
                 {
                     Mode = ResizeMode.Crop,
                     Position = AnchorPositionMode.Center,
                     Size = new Size(useWidth, height)
-                }));
+                }).BackgroundColor(Color.White));
 
                 using var ms = new MemoryStream();
                 imageObject.SaveAsJpeg(ms);
