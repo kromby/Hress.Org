@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useHressAuth } from "../hress";
+import { HressPost, useHressAuth } from "../hress";
 import { isUnauthorized, useMessages } from "../hooks/useBeerApi";
 import { ChatMessage } from "../types";
 import ChatComposer from "./ChatComposer";
@@ -12,8 +12,7 @@ interface ChatThreadProps {
 }
 
 const styles = {
-  section: { margin: "1.5em 0" },
-  list: { listStyle: "none", padding: 0, margin: 0 },
+  list: { listStyle: "none", padding: 0, margin: "0 0 1.5em" },
   message: {
     padding: "0.6em 0",
     borderBottom: "solid 1px rgba(160, 160, 160, 0.3)",
@@ -49,8 +48,13 @@ const Message = ({ message }: { message: ChatMessage }) => (
   </li>
 );
 
-// The beer's chat, oldest first. Everyone sees it, rated or not, also after
-// the season has ended.
+// "skilaboð" is the same in the singular and the plural. With no messages the
+// body says so, so the header leaves the count out.
+const describeCount = (count: number) =>
+  count > 0 ? `${count} skilaboð` : undefined;
+
+// The beer's chat, oldest first, as its own post under the beer. Everyone sees
+// it, rated or not, also after the season has ended.
 const ChatThread = ({ seasonID, beerID, isOpen }: ChatThreadProps) => {
   const { signOut } = useHressAuth();
   const {
@@ -68,29 +72,33 @@ const ChatThread = ({ seasonID, beerID, isOpen }: ChatThreadProps) => {
   }, [unauthorized]);
 
   return (
-    <section data-testid="chat" style={styles.section}>
-      <h3>Spjall</h3>
-      {isLoading ? (
-        <p data-testid="chat-loading">Sæki spjall…</p>
-      ) : isError ? (
-        <p data-testid="chat-error">Ekki tókst að sækja spjallið.</p>
-      ) : messages && messages.length > 0 ? (
-        <ol style={styles.list} aria-label="Skilaboð">
-          {messages.map((message) => (
-            <Message key={message.id} message={message} />
-          ))}
-        </ol>
-      ) : (
-        <p data-testid="chat-empty">Engin skilaboð enn.</p>
-      )}
-      {isOpen ? (
-        <ChatComposer seasonID={seasonID} beerID={beerID} />
-      ) : (
-        <small data-testid="chat-closed">
-          Tímabilið er búið og ekki hægt að senda skilaboð.
-        </small>
-      )}
-    </section>
+    <HressPost
+      title="Spjall"
+      description={describeCount(messages?.length ?? 0)}
+    >
+      <div data-testid="chat">
+        {isLoading ? (
+          <p data-testid="chat-loading">Sæki spjall…</p>
+        ) : isError ? (
+          <p data-testid="chat-error">Ekki tókst að sækja spjallið.</p>
+        ) : messages && messages.length > 0 ? (
+          <ol style={styles.list} aria-label="Skilaboð">
+            {messages.map((message) => (
+              <Message key={message.id} message={message} />
+            ))}
+          </ol>
+        ) : (
+          <p data-testid="chat-empty">Engin skilaboð enn.</p>
+        )}
+        {isOpen ? (
+          <ChatComposer seasonID={seasonID} beerID={beerID} />
+        ) : (
+          <small data-testid="chat-closed">
+            Tímabilið er búið og ekki hægt að senda skilaboð.
+          </small>
+        )}
+      </div>
+    </HressPost>
   );
 };
 
