@@ -104,6 +104,9 @@ describe("ChatThread", () => {
     expect(await screen.findByTestId("chat-empty")).toHaveTextContent(
       "Engin skilaboð enn."
     );
+    expect(screen.getByRole("heading", { name: "Spjall" })).toBeInTheDocument();
+    // The body says there are no messages, so the header leaves the count out.
+    expect(screen.queryByText(/skilaboð$/)).not.toBeInTheDocument();
   });
 
   it("clears an expired token when the chat request is unauthorized", async () => {
