@@ -1,3 +1,4 @@
+using Azure;
 using Azure.Data.Tables;
 using Ez.Hress.BeerRater.Entities;
 using Ez.Hress.BeerRater.UseCases;
@@ -39,5 +40,21 @@ public class BeerTableAccess : IBeerDataAccess
         }
 
         return list;
+    }
+
+    public async Task AddBeerAsync(Beer beer)
+    {
+        _logger.LogInformation("[{Class}.{Method}] Add beer '{BeerID}'", _className, nameof(AddBeerAsync), beer.ID);
+
+        try
+        {
+            // AddEntity fails if the row exists, so an ID collision can't overwrite a beer.
+            await _beersTable.AddEntityAsync(new BeerTableEntity(beer));
+        }
+        catch (RequestFailedException ex) when (ex.Status == 409)
+        {
+            _logger.LogWarning("[{Class}.{Method}] Beer '{BeerID}' already exists", _className, nameof(AddBeerAsync), beer.ID);
+            throw new InvalidOperationException($"A beer with ID '{beer.ID}' already exists.", ex);
+        }
     }
 }
