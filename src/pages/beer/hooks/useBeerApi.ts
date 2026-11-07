@@ -6,6 +6,7 @@ import {
   BeerSummary,
   CatalogBeer,
   ChatMessage,
+  NewBeerInput,
   Rating,
   Season,
 } from "../types";
@@ -190,6 +191,47 @@ export const useAddBeerToSeason = (seasonID: string) => {
         { headers }
       );
       return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: seasonBeersKey(seasonID) });
+    },
+  });
+};
+
+// Thrown when the beer is already in the catalog (same name and producer).
+export class DuplicateBeerError extends Error {
+  constructor(public existing: Beer) {
+    super(`The beer '${existing.name}' already exists.`);
+    Object.setPrototypeOf(this, DuplicateBeerError.prototype);
+    this.name = "DuplicateBeerError";
+  }
+}
+
+// Creates a new beer in the catalog and adds it to the season.
+export const useCreateBeer = (seasonID: string) => {
+  const { headers } = useHressAuth();
+  const queryClient = useQueryClient();
+
+  return useMutation<Beer, unknown, NewBeerInput>({
+    mutationFn: async (input) => {
+      try {
+        const response = await axios.post<Beer>(
+          hressApiUrl(`beer/seasons/${encodeURIComponent(seasonID)}/beers`),
+          { beer: input },
+          { headers }
+        );
+        return response.data;
+      } catch (error) {
+        const response = (
+          error as {
+            response?: { status?: number; data?: { duplicate?: Beer } };
+          } | null
+        )?.response;
+        if (response?.status === 409 && response.data?.duplicate) {
+          throw new DuplicateBeerError(response.data.duplicate);
+        }
+        throw error;
+      }
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: seasonBeersKey(seasonID) });
