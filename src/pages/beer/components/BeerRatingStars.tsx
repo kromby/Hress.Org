@@ -24,7 +24,8 @@ const lineStyle = { paddingTop: "5px" };
 const ignoreRatingChange = () => undefined;
 
 // My rating of the beer, for the post's footer, laid out like the Hardhead
-// ratings: an icon, the stars, and what the hovered or given stars mean.
+// ratings: an icon, the stars, and what the hovered, focused or given stars
+// mean.
 const BeerRatingStars = ({
   season,
   beerID,
@@ -71,6 +72,7 @@ const BeerRatingStars = ({
             readonly={readonly}
             onHoverChange={setHoverRating}
             asRadio
+            starLabel={(stars) => ratingLabels[stars]}
           />
         </span>
         <div data-testid="rating-label" style={lineStyle}>

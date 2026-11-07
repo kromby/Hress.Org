@@ -301,6 +301,24 @@ describe("BeerPage", () => {
     );
   });
 
+  it("names each star radio and previews its label on keyboard focus", async () => {
+    renderPage("b2");
+    await screen.findByRole("radiogroup");
+
+    expect(
+      screen.getByRole("radio", { name: "1 af 5: Vondur bjór" })
+    ).toBeInTheDocument();
+    const great = screen.getByRole("radio", { name: "5 af 5: Frábær bjór" });
+    const label = screen.getByTestId("rating-label");
+    expect(label).toHaveTextContent("Slakur bjór");
+
+    fireEvent.focus(great);
+    expect(label).toHaveTextContent("Frábær bjór");
+
+    fireEvent.blur(great);
+    expect(label).toHaveTextContent("Slakur bjór");
+  });
+
   it("refetches the season's beers after saving", async () => {
     (axios.put as jest.Mock).mockResolvedValue({ data: { stars: 4 } });
     renderPage();
