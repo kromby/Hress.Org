@@ -128,8 +128,11 @@ const NewBeerForm = ({
 
   return (
     <form ref={formRef} onSubmit={submit} noValidate>
-      <BeerPhotoInput file={photo} onChange={changePhoto} />
+      {/* One grid for every field, so the gaps between them match. */}
       <div className="row gtr-uniform">
+        <div className="col-12">
+          <BeerPhotoInput file={photo} onChange={changePhoto} />
+        </div>
         <div className="col-12">
           <label htmlFor="beer-producer">Brugghús</label>
           <input
@@ -163,49 +166,54 @@ const NewBeerForm = ({
           />
           <FieldError message={errors.alcohol} />
         </div>
+        <div className="col-12">
+          <label htmlFor="beer-vinbudin">Vínbúðin (valfrjálst)</label>
+          <input
+            id="beer-vinbudin"
+            // Text, not url: the theme only styles text inputs. inputMode still
+            // brings up the URL keyboard on phones.
+            type="text"
+            inputMode="url"
+            value={vinbudinUrl}
+            maxLength={MAX_LENGTHS.vinbudinUrl}
+            onChange={(e) => setVinbudinUrl(e.target.value)}
+          />
+          <FieldError message={errors.vinbudinUrl} />
+        </div>
+        <div className="col-12">
+          <label htmlFor="beer-style">Tegund (valfrjálst)</label>
+          <input
+            id="beer-style"
+            type="text"
+            value={style}
+            maxLength={MAX_LENGTHS.style}
+            onChange={(e) => setStyle(e.target.value)}
+          />
+          <FieldError message={errors.style} />
+        </div>
+        <div className="col-12">
+          <label htmlFor="beer-description">Lýsing (valfrjálst)</label>
+          <textarea
+            id="beer-description"
+            rows={4}
+            value={description}
+            maxLength={MAX_LENGTHS.description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+          <FieldError message={errors.description} />
+        </div>
+        <div className="col-12">
+          {failure === "closed" && (
+            <p role="alert">Tímabilið er búið og ekki hægt að skrá bjór.</p>
+          )}
+          {failure === "failed" && (
+            <p role="alert">Ekki tókst að skrá bjórinn. Reyndu aftur.</p>
+          )}
+          <button type="submit" className="button primary" disabled={saving}>
+            Skrá bjór
+          </button>
+        </div>
       </div>
-      <p>
-        <label htmlFor="beer-vinbudin">Vínbúðin (valfrjálst)</label>
-        <input
-          id="beer-vinbudin"
-          type="url"
-          value={vinbudinUrl}
-          maxLength={MAX_LENGTHS.vinbudinUrl}
-          onChange={(e) => setVinbudinUrl(e.target.value)}
-        />
-        <FieldError message={errors.vinbudinUrl} />
-      </p>
-      <p>
-        <label htmlFor="beer-style">Tegund (valfrjálst)</label>
-        <input
-          id="beer-style"
-          type="text"
-          value={style}
-          maxLength={MAX_LENGTHS.style}
-          onChange={(e) => setStyle(e.target.value)}
-        />
-        <FieldError message={errors.style} />
-      </p>
-      <p>
-        <label htmlFor="beer-description">Lýsing (valfrjálst)</label>
-        <textarea
-          id="beer-description"
-          rows={4}
-          value={description}
-          maxLength={MAX_LENGTHS.description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-        <FieldError message={errors.description} />
-      </p>
-      {failure === "closed" && (
-        <p role="alert">Tímabilið er búið og ekki hægt að skrá bjór.</p>
-      )}
-      {failure === "failed" && (
-        <p role="alert">Ekki tókst að skrá bjórinn. Reyndu aftur.</p>
-      )}
-      <button type="submit" className="button primary" disabled={saving}>
-        Skrá bjór
-      </button>
     </form>
   );
 };

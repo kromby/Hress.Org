@@ -469,6 +469,51 @@ describe("RegisterBeerPage", () => {
       expect(col("Styrkleiki %")).toHaveClass("col-6", "col-12-small");
     });
 
+    it("keeps every field in one grid, with themed inputs", async () => {
+      renderPage();
+      await screen.findByLabelText("Nafn");
+
+      // Every new-beer field sits in the same grid, so the gaps match.
+      const grid = screen.getByLabelText("Brugghús").closest(".row");
+      for (const label of [
+        "Taka mynd af dósinni",
+        "Vínbúðin (valfrjálst)",
+        "Tegund (valfrjálst)",
+        "Lýsing (valfrjálst)",
+      ]) {
+        expect(screen.getByLabelText(label).closest(".row")).toBe(grid);
+      }
+      // The theme only styles text inputs; inputMode keeps the URL keyboard.
+      expect(screen.getByLabelText("Vínbúðin (valfrjálst)")).toHaveAttribute(
+        "type",
+        "text"
+      );
+      expect(screen.getByLabelText("Vínbúðin (valfrjálst)")).toHaveAttribute(
+        "inputMode",
+        "url"
+      );
+      // The photo picker is a theme button, not the browser's "Browse…".
+      expect(screen.getByText("Taka mynd af dósinni")).toHaveClass("button");
+    });
+
+    it("drops the photo button's focus outline once a photo replaces the input", async () => {
+      renderPage();
+      await screen.findByLabelText("Nafn");
+      const button = screen.getByText("Taka mynd af dósinni");
+
+      fireEvent.focus(screen.getByLabelText("Taka mynd af dósinni"));
+      expect(button.style.outline).not.toBe("");
+
+      fireEvent.change(screen.getByLabelText("Taka mynd af dósinni"), {
+        target: {
+          files: [new File(["x"], "dos.jpg", { type: "image/jpeg" })],
+        },
+      });
+
+      await screen.findByAltText("Mynd af dósinni");
+      expect(screen.getByText("Taka mynd af dósinni").style.outline).toBe("");
+    });
+
     it("can add the duplicate beer to the season", async () => {
       (axios.post as jest.Mock)
         .mockRejectedValueOnce(new DuplicateBeerError(newBeer as Beer))
