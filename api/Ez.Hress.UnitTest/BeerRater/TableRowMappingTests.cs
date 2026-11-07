@@ -85,8 +85,41 @@ public class TableRowMappingTests
 
         // ASSERT
         Assert.Null(beer.VinbudinUrl);
+        Assert.Null(beer.ImageID);
         Assert.Equal(0, beer.AlcoholPercentage);
         Assert.Equal(0, beer.RegisteredBy);
+    }
+
+    [Theory]
+    [InlineData(279076)]
+    [InlineData(279076L)]
+    [InlineData("279076")]
+    [InlineData(" 279076 ")]
+    public void Beer_ImageID_Maps(object imageID)
+    {
+        // ARRANGE - typed Int32 or Int64, or String as Storage Explorer stores it by default.
+        var row = BeerRow();
+        row["ImageID"] = imageID;
+
+        // ACT
+        var beer = BeerTableEntity.ToBeer(row);
+
+        // ASSERT
+        Assert.Equal(279076, beer.ImageID);
+    }
+
+    [Fact]
+    public void Beer_EmptyImageID_IsNull()
+    {
+        // ARRANGE
+        var row = BeerRow();
+        row["ImageID"] = " ";
+
+        // ACT
+        var beer = BeerTableEntity.ToBeer(row);
+
+        // ASSERT
+        Assert.Null(beer.ImageID);
     }
 
     [Fact]
@@ -107,6 +140,7 @@ public class TableRowMappingTests
     [InlineData("RegisteredBy", "Guðjón")]
     [InlineData("AlcoholPercentage", "sterkur")]
     [InlineData("RegisteredAt", "í gær")]
+    [InlineData("ImageID", "mynd")]
     public void Beer_UnconvertibleValue_ThrowsFormatNamingTheProperty(string property, string value)
     {
         // ARRANGE

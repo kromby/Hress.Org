@@ -15,6 +15,8 @@ export interface Beer {
   alcoholPercentage?: number;
   country: string;
   vinbudinUrl?: string;
+  // The cover photo in the hress.org image store, absent if it has none.
+  imageID?: number;
   registeredBy: number;
   registeredAt: string;
 }

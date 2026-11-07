@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import LoginRedirect from "./LoginRedirect";
+import BeerCover from "./components/BeerCover";
 import BeerRatingStars from "./components/BeerRatingStars";
 import ChatThread from "./components/ChatThread";
 import { HressPage, useHressAuth } from "./hress";
@@ -65,7 +66,11 @@ const BeerPage = () => {
   const { beer, myRating } = summary;
 
   return (
-    <HressPage title={beer.name} description={season.data.name}>
+    <HressPage
+      title={beer.name}
+      description={season.data.name}
+      thumbnail={<BeerCover beer={beer} size="large" />}
+    >
       <p data-testid="beer-details">
         {beer.producer} · {beer.country} ·{" "}
         {formatAlcohol(beer.alcoholPercentage)}

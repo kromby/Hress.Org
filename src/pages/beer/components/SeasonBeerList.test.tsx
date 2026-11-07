@@ -37,6 +37,7 @@ const summaries = [
       producer: "Carlsberg",
       alcoholPercentage: 5.4,
       country: "Danmörk",
+      imageID: 279076,
     },
   },
 ];
@@ -96,6 +97,26 @@ describe("SeasonBeerList", () => {
     expect(
       within(posts[0]).getByRole("link", { name: "Egils Jólabjór" })
     ).toHaveAttribute("href", "/beer/b1");
+  });
+
+  it("shows each beer's cover photo, or a placeholder if it has none", async () => {
+    renderComponent();
+
+    await screen.findAllByRole("link", { name: "Egils Jólabjór" });
+    const [egils, tuborg] = await findBeerPosts();
+    expect(
+      within(egils).getByTestId("beer-cover-placeholder")
+    ).toHaveTextContent("MYND");
+    expect(egils.querySelector("img")).toBeNull();
+    const cover = tuborg.querySelector("img");
+    expect(cover).toHaveAttribute(
+      "src",
+      "http://localhost:7072/api/images/279076/content?width=112"
+    );
+    expect(cover?.closest("a")).toHaveAttribute("href", "/beer/b2");
+    expect(
+      within(tuborg).queryByTestId("beer-cover-placeholder")
+    ).not.toBeInTheDocument();
   });
 
   it("has no search box (the nav bar search is used instead)", async () => {

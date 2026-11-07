@@ -9,10 +9,23 @@ export default class Post extends Component {
         return (
             <article className="post">
                 <header>
-                    <div className="title">
-                        <h2>{this.props.href ? <Link to={this.props.href}>{this.props.title}</Link> : this.props.title}</h2>
-                        {this.props.description ? <p>{this.props.description}</p> : null}
-                    </div>
+                    {this.props.thumbnail ? (
+                        // A small image beside the title (on phones, above it).
+                        <div className="title has-thumbnail">
+                            {this.props.href ?
+                                <Link to={this.props.href} className="thumbnail" tabIndex={-1} aria-hidden="true">{this.props.thumbnail}</Link>
+                                : <div className="thumbnail">{this.props.thumbnail}</div>}
+                            <div>
+                                <h2>{this.props.href ? <Link to={this.props.href}>{this.props.title}</Link> : this.props.title}</h2>
+                                {this.props.description ? <p>{this.props.description}</p> : null}
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="title">
+                            <h2>{this.props.href ? <Link to={this.props.href}>{this.props.title}</Link> : this.props.title}</h2>
+                            {this.props.description ? <p>{this.props.description}</p> : null}
+                        </div>
+                    )}
                     {/* <div className="meta">
                         {this.props.date ?
                             <time className="published" dateTime={this.props.date}>{this.props.dateFormatted}</time>

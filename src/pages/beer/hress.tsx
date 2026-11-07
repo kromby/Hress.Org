@@ -36,6 +36,10 @@ export const useHressAuth = (): HressAuth => {
 export const hressApiUrl = (path: string): string =>
   `${config.get("apiPath")}/api/${path}`;
 
+// An image in the hress.org image store, scaled to the given width.
+export const hressImageUrl = (imageID: number, width: number): string =>
+  hressApiUrl(`images/${imageID}/content?width=${width}`);
+
 interface HressPostProps {
   title: string;
   // Makes the title a link.
@@ -43,6 +47,8 @@ interface HressPostProps {
   description?: ReactNode;
   // The right-hand column of the header (on phones, under the title).
   meta?: ReactNode;
+  // A small image beside the title (on phones, above it).
+  thumbnail?: ReactNode;
   children?: ReactNode;
 }
 
@@ -52,6 +58,7 @@ export const HressPost = ({
   href,
   description,
   meta,
+  thumbnail,
   children,
 }: HressPostProps) => (
   <Post
@@ -59,6 +66,7 @@ export const HressPost = ({
     href={href}
     description={description}
     meta={meta}
+    thumbnail={thumbnail}
     body={children}
   />
 );
@@ -66,6 +74,7 @@ export const HressPost = ({
 interface HressPageProps {
   title: string;
   description?: string;
+  thumbnail?: ReactNode;
   children?: ReactNode;
   // Rendered under the post card (e.g. more posts).
   below?: ReactNode;
@@ -75,11 +84,12 @@ interface HressPageProps {
 export const HressPage = ({
   title,
   description,
+  thumbnail,
   children,
   below,
 }: HressPageProps) => (
   <div id="main">
-    <HressPost title={title} description={description}>
+    <HressPost title={title} description={description} thumbnail={thumbnail}>
       {children}
     </HressPost>
     {below}
