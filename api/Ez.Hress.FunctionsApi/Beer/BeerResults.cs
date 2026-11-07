@@ -23,6 +23,9 @@ internal static class BeerResults
             case SeasonClosedException:
                 log.LogWarning(ex, "[BeerResults.From] Conflict");
                 return new ConflictObjectResult(ex.Message);
+            case DuplicateBeerException d:
+                log.LogWarning(ex, "[BeerResults.From] Duplicate beer");
+                return new ConflictObjectResult(new { duplicate = d.Existing });
             default:
                 log.LogError(ex, "[BeerResults.From] Unhandled error");
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
