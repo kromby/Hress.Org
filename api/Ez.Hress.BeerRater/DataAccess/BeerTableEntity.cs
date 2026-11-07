@@ -26,6 +26,8 @@ internal class BeerTableEntity : ITableEntity
         AlcoholPercentage = beer.AlcoholPercentage;
         Country = beer.Country;
         VinbudinUrl = beer.VinbudinUrl;
+        Style = beer.Style;
+        Description = beer.Description;
         ImageID = beer.ImageID;
         RegisteredBy = beer.RegisteredBy;
         RegisteredAt = DateTime.SpecifyKind(beer.RegisteredAt, DateTimeKind.Utc);
@@ -41,6 +43,8 @@ internal class BeerTableEntity : ITableEntity
     public double AlcoholPercentage { get; set; }
     public string Country { get; set; }
     public string? VinbudinUrl { get; set; }
+    public string? Style { get; set; }
+    public string? Description { get; set; }
     public int? ImageID { get; set; }
     public int RegisteredBy { get; set; }
     public DateTime RegisteredAt { get; set; }
@@ -53,6 +57,8 @@ internal class BeerTableEntity : ITableEntity
         AlcoholPercentage = TableValues.GetDouble(entity, nameof(AlcoholPercentage)),
         Country = TableValues.GetString(entity, nameof(Country)),
         VinbudinUrl = TableValues.GetOptionalString(entity, nameof(VinbudinUrl)),
+        Style = TableValues.GetOptionalString(entity, nameof(Style)),
+        Description = TableValues.GetOptionalString(entity, nameof(Description)),
         ImageID = TableValues.GetOptionalInt32(entity, nameof(ImageID)),
         RegisteredBy = TableValues.GetInt32(entity, nameof(RegisteredBy)),
         RegisteredAt = TableValues.GetDateTime(entity, nameof(RegisteredAt))

@@ -85,6 +85,8 @@ public class TableRowMappingTests
 
         // ASSERT
         Assert.Null(beer.VinbudinUrl);
+        Assert.Null(beer.Style);
+        Assert.Null(beer.Description);
         Assert.Null(beer.ImageID);
         Assert.Equal(0, beer.AlcoholPercentage);
         Assert.Equal(0, beer.RegisteredBy);
@@ -120,6 +122,38 @@ public class TableRowMappingTests
 
         // ASSERT
         Assert.Null(beer.ImageID);
+    }
+
+    [Fact]
+    public void Beer_StyleAndDescription_Map()
+    {
+        // ARRANGE
+        var row = BeerRow();
+        row["Style"] = "Lager";
+        row["Description"] = "Ljós og léttur jólabjór.\nGóður með hangikjöti.";
+
+        // ACT
+        var beer = BeerTableEntity.ToBeer(row);
+
+        // ASSERT
+        Assert.Equal("Lager", beer.Style);
+        Assert.Equal("Ljós og léttur jólabjór.\nGóður með hangikjöti.", beer.Description);
+    }
+
+    [Fact]
+    public void Beer_BlankStyleAndDescription_AreNull()
+    {
+        // ARRANGE
+        var row = BeerRow();
+        row["Style"] = "";
+        row["Description"] = "  ";
+
+        // ACT
+        var beer = BeerTableEntity.ToBeer(row);
+
+        // ASSERT
+        Assert.Null(beer.Style);
+        Assert.Null(beer.Description);
     }
 
     [Fact]
