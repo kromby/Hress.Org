@@ -212,7 +212,9 @@ describe("BeerPage", () => {
     renderPage();
     await screen.findByTestId("rating-stars");
     const label = screen.getByTestId("rating-label");
-    expect(label).toHaveTextContent(/^\s*$/);
+    // A non-breaking space, not an empty line, so hovering doesn't move the
+    // stars.
+    expect(label.textContent).toBe("\u00a0");
 
     const expected = [
       "Vondur bjór",
@@ -227,7 +229,7 @@ describe("BeerPage", () => {
     });
 
     fireEvent.mouseLeave(stars()[4]);
-    expect(label).toHaveTextContent(/^\s*$/);
+    expect(label.textContent).toBe("\u00a0");
   });
 
   it("changing my rating saves the new stars and shows them", async () => {

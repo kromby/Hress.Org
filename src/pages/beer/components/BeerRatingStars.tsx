@@ -76,7 +76,9 @@ const BeerRatingStars = ({
           />
         </span>
         <div data-testid="rating-label" style={lineStyle}>
-          {label ?? " "}
+          {/* A non-breaking space keeps the line's height when there's no
+              label, so the stars don't jump on hover (as on Hardhead). */}
+          {label ?? "\u00a0"}
         </div>
         {readonly ? (
           <div style={lineStyle} data-testid="rating-closed">
