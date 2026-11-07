@@ -469,6 +469,33 @@ describe("RegisterBeerPage", () => {
       expect(col("Styrkleiki %")).toHaveClass("col-6", "col-12-small");
     });
 
+    it("keeps every field in one grid, with themed inputs", async () => {
+      renderPage();
+      await screen.findByLabelText("Nafn");
+
+      // Every new-beer field sits in the same grid, so the gaps match.
+      const grid = screen.getByLabelText("Brugghús").closest(".row");
+      for (const label of [
+        "Taka mynd af dósinni",
+        "Vínbúðin (valfrjálst)",
+        "Tegund (valfrjálst)",
+        "Lýsing (valfrjálst)",
+      ]) {
+        expect(screen.getByLabelText(label).closest(".row")).toBe(grid);
+      }
+      // The theme only styles text inputs; inputMode keeps the URL keyboard.
+      expect(screen.getByLabelText("Vínbúðin (valfrjálst)")).toHaveAttribute(
+        "type",
+        "text"
+      );
+      expect(screen.getByLabelText("Vínbúðin (valfrjálst)")).toHaveAttribute(
+        "inputMode",
+        "url"
+      );
+      // The photo picker is a theme button, not the browser's "Browse…".
+      expect(screen.getByText("Taka mynd af dósinni")).toHaveClass("button");
+    });
+
     it("can add the duplicate beer to the season", async () => {
       (axios.post as jest.Mock)
         .mockRejectedValueOnce(new DuplicateBeerError(newBeer as Beer))

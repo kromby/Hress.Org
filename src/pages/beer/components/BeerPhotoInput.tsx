@@ -2,6 +2,16 @@ import { useEffect, useState } from "react";
 
 const MAX_BYTES = 10 * 1024 * 1024;
 
+// Hides the browser's file input but keeps it focusable; the label is the
+// visible button.
+const hiddenInput = {
+  position: "absolute" as const,
+  width: "1px",
+  height: "1px",
+  opacity: 0,
+  overflow: "hidden",
+};
+
 interface BeerPhotoInputProps {
   file: File | null;
   onChange: (file: File | null) => void;
@@ -11,6 +21,7 @@ interface BeerPhotoInputProps {
 const BeerPhotoInput = ({ file, onChange }: BeerPhotoInputProps) => {
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [focused, setFocused] = useState(false);
 
   useEffect(() => {
     if (!file || typeof URL.createObjectURL !== "function") {
@@ -40,7 +51,6 @@ const BeerPhotoInput = ({ file, onChange }: BeerPhotoInputProps) => {
 
   return (
     <div>
-      <label htmlFor="beer-photo">Taka mynd af dósinni</label>
       <input
         id="beer-photo"
         type="file"
@@ -48,8 +58,19 @@ const BeerPhotoInput = ({ file, onChange }: BeerPhotoInputProps) => {
         capture="environment"
         // Lets the same file be picked again after removing it.
         key={file ? "has-file" : "no-file"}
+        style={hiddenInput}
+        onFocus={() => setFocused(true)}
+        onBlur={() => setFocused(false)}
         onChange={(e) => pick(e.target.files?.[0])}
       />
+      {/* The theme's button look, instead of the browser's "Browse…". */}
+      <label
+        htmlFor="beer-photo"
+        className="button icon solid fa-camera"
+        style={focused ? { outline: "2px solid currentColor" } : undefined}
+      >
+        Taka mynd af dósinni
+      </label>
       {error && <p role="alert">{error}</p>}
       {file && previewUrl && (
         <p>
