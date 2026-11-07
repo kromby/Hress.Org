@@ -1,4 +1,10 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+  within,
+} from "@testing-library/react";
 import axios from "axios";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -23,6 +29,8 @@ const summaries = [
       country: "Danmörk",
       vinbudinUrl: "https://www.vinbudin.is/b1",
       imageID: 279076,
+      style: "Lager",
+      description: "Danskur jólabjór.\nLéttur og sætur.",
     },
   },
   {
@@ -101,6 +109,41 @@ describe("BeerPage", () => {
       "href",
       "https://www.vinbudin.is/b1"
     );
+  });
+
+  it("shows the beer's description with its line breaks, under a heading", async () => {
+    renderPage();
+
+    expect(
+      await screen.findByRole("heading", { name: "Bjórinn" })
+    ).toBeInTheDocument();
+    const description = screen.getByTestId("beer-description");
+    expect(description.textContent).toBe("Danskur jólabjór.\nLéttur og sætur.");
+    expect(description).toHaveStyle({ whiteSpace: "pre-wrap" });
+  });
+
+  it("lists the style, brewery, country and strength as labelled facts", async () => {
+    renderPage();
+
+    const details = await screen.findByTestId("beer-details");
+    const cells = within(details)
+      .getAllByText(/./, { selector: "strong" })
+      .map((label) => label.parentElement?.textContent);
+    expect(cells).toEqual([
+      "TegundLager",
+      "BrugghúsCarlsberg",
+      "LandDanmörk",
+      "Styrkleiki5,4%",
+    ]);
+  });
+
+  it("leaves out the description and style when the beer has none", async () => {
+    renderPage("b2");
+
+    const details = await screen.findByTestId("beer-details");
+    expect(screen.queryByTestId("beer-description")).not.toBeInTheDocument();
+    expect(details).not.toHaveTextContent("Tegund");
+    expect(details).toHaveTextContent("Brugghús");
   });
 
   it("shows the beer's cover photo next to its name", async () => {

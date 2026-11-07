@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import LoginRedirect from "./LoginRedirect";
+import BeerAbout from "./components/BeerAbout";
 import BeerCover from "./components/BeerCover";
 import BeerRatingStars from "./components/BeerRatingStars";
 import ChatThread from "./components/ChatThread";
@@ -10,9 +11,6 @@ import {
   useCurrentSeason,
   useSeasonBeers,
 } from "./hooks/useBeerApi";
-
-const formatAlcohol = (percentage = 0) =>
-  `${percentage.toLocaleString("is-IS", { maximumFractionDigits: 1 })}%`;
 
 const BackLink = () => (
   <p>
@@ -82,18 +80,7 @@ const BeerPage = () => {
         />
       }
     >
-      <p data-testid="beer-details">
-        {beer.producer} · {beer.country} ·{" "}
-        {formatAlcohol(beer.alcoholPercentage)}
-        {beer.vinbudinUrl && (
-          <>
-            <br />
-            <a href={beer.vinbudinUrl} target="_blank" rel="noreferrer">
-              Skoða í Vínbúðinni
-            </a>
-          </>
-        )}
-      </p>
+      <BeerAbout beer={beer} />
       <ChatThread
         seasonID={season.data.id}
         beerID={beer.id}

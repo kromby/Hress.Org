@@ -14,6 +14,11 @@ public class Beer
 
     public string? VinbudinUrl { get; set; }
 
+    // The beer's style, e.g. "Lager" or "Bock".
+    public string? Style { get; set; }
+
+    public string? Description { get; set; }
+
     // The beer's cover photo, an image in the hress.org image store.
     public int? ImageID { get; set; }
 
