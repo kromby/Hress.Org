@@ -14,7 +14,7 @@ interface NewBeerFormProps {
   // The page's "Nafn" field is the new beer's name.
   name: string;
   // Reports a validation error for the name, shown under that field.
-  onNameError: (error?: string) => void;
+  onNameError: (error: string | null) => void;
   onSaved: (beer: Beer) => void;
   onDuplicate: (beer: Beer) => void;
   // Called when a submit starts, so the page can drop stale feedback.
@@ -56,22 +56,22 @@ const NewBeerForm = ({
   const [description, setDescription] = useState("");
   const [photo, setPhoto] = useState<File | null>(null);
   // Kept so a retry skips the steps that already worked.
-  const [uploadedImageID, setUploadedImageID] = useState<number>();
+  const [uploadedImageID, setUploadedImageID] = useState<number | null>(null);
   const [addedToAlbum, setAddedToAlbum] = useState(false);
   const [errors, setErrors] = useState<NewBeerErrors>({});
   const [saving, setSaving] = useState(false);
-  const [failure, setFailure] = useState<"closed" | "failed">();
+  const [failure, setFailure] = useState<"closed" | "failed" | null>(null);
 
   const changePhoto = (file: File | null) => {
     setPhoto(file);
-    setUploadedImageID(undefined);
+    setUploadedImageID(null);
     setAddedToAlbum(false);
   };
 
   const submit = async (event: FormEvent) => {
     event.preventDefault();
     if (saving) return;
-    setFailure(undefined);
+    setFailure(null);
     onSubmitStart();
 
     const result = validateNewBeer({
@@ -84,7 +84,7 @@ const NewBeerForm = ({
       description,
     });
     setErrors(result.errors);
-    onNameError(result.errors.name);
+    onNameError(result.errors.name ?? null);
     if (!result.input) {
       if (result.errors.name) focusName();
       else {
@@ -98,11 +98,11 @@ const NewBeerForm = ({
     setSaving(true);
     try {
       let imageID = uploadedImageID;
-      if (photo && imageID === undefined) {
+      if (photo && imageID === null) {
         imageID = await uploadPhoto(photo, result.input.name);
         setUploadedImageID(imageID);
       }
-      if (imageID !== undefined && !addedToAlbum) {
+      if (imageID !== null && !addedToAlbum) {
         try {
           await addToAlbum(imageID);
           setAddedToAlbum(true);
@@ -113,7 +113,10 @@ const NewBeerForm = ({
           );
         }
       }
-      const beer = await create.mutateAsync({ ...result.input, imageID });
+      const beer = await create.mutateAsync({
+        ...result.input,
+        imageID: imageID ?? undefined,
+      });
       onSaved(beer);
     } catch (error) {
       if (error instanceof DuplicateBeerError) onDuplicate(error.existing);

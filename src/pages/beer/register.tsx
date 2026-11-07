@@ -26,8 +26,8 @@ const RegisterForm = ({ season }: { season: Season }) => {
   const debouncedName = useDebouncedValue(name, 300);
   const search = useCatalogSearch(debouncedName);
   const add = useAddBeerToSeason(season.id);
-  const [nameError, setNameError] = useState<string>();
-  const [duplicate, setDuplicate] = useState<Beer>();
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [duplicate, setDuplicate] = useState<Beer | null>(null);
   const nameInput = useRef<HTMLInputElement>(null);
   const duplicatePanel = useRef<HTMLDivElement>(null);
   const matches = debouncedName.trim().length >= 2 ? (search.data ?? []) : [];
@@ -62,8 +62,8 @@ const RegisterForm = ({ season }: { season: Season }) => {
           autoComplete="off"
           onChange={(e) => {
             setName(e.target.value);
-            setNameError(undefined);
-            setDuplicate(undefined);
+            setNameError(null);
+            setDuplicate(null);
             add.reset();
           }}
         />
@@ -102,7 +102,7 @@ const RegisterForm = ({ season }: { season: Season }) => {
         onNameError={setNameError}
         onSaved={(beer) => navigate(`/beer/${encodeURIComponent(beer.id)}`)}
         onDuplicate={setDuplicate}
-        onSubmitStart={() => setDuplicate(undefined)}
+        onSubmitStart={() => setDuplicate(null)}
         focusName={() => nameInput.current?.focus()}
       />
       <BackLink />

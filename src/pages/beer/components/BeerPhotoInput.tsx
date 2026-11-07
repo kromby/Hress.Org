@@ -9,13 +9,13 @@ interface BeerPhotoInputProps {
 
 // Takes (or picks) a photo of the can and previews it.
 const BeerPhotoInput = ({ file, onChange }: BeerPhotoInputProps) => {
-  const [error, setError] = useState<string>();
-  const [previewUrl, setPreviewUrl] = useState<string>();
+  const [error, setError] = useState<string | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!file || typeof URL.createObjectURL !== "function") {
-      setPreviewUrl(undefined);
-      return;
+      setPreviewUrl(null);
+      return undefined;
     }
     const url = URL.createObjectURL(file);
     setPreviewUrl(url);
@@ -33,7 +33,7 @@ const BeerPhotoInput = ({ file, onChange }: BeerPhotoInputProps) => {
       setError("Mynd er of stór. Hámarksstærð er 10MB");
       onChange(null);
     } else {
-      setError(undefined);
+      setError(null);
       onChange(picked);
     }
   };
@@ -63,7 +63,7 @@ const BeerPhotoInput = ({ file, onChange }: BeerPhotoInputProps) => {
             type="button"
             className="button small"
             onClick={() => {
-              setError(undefined);
+              setError(null);
               onChange(null);
             }}
           >

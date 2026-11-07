@@ -109,7 +109,7 @@ describe("RegisterBeerPage", () => {
     jest.clearAllMocks();
     realBeerPage = false;
     mockUploadPhoto.mockResolvedValue(279080);
-    mockAddToAlbum.mockResolvedValue(undefined);
+    mockAddToAlbum.mockImplementation(() => Promise.resolve());
     URL.createObjectURL = jest.fn(() => "blob:preview");
     URL.revokeObjectURL = jest.fn();
     queryClient = new QueryClient({
@@ -326,7 +326,7 @@ describe("RegisterBeerPage", () => {
     it("still saves the beer when adding the photo to the album fails", async () => {
       const consoleError = jest
         .spyOn(console, "error")
-        .mockImplementation(() => {});
+        .mockImplementation(() => undefined);
       mockAddToAlbum.mockRejectedValue(new Error("nope"));
       (axios.post as jest.Mock).mockResolvedValue({ data: newBeer });
       renderPage();
@@ -372,7 +372,9 @@ describe("RegisterBeerPage", () => {
     });
 
     it("disables Skrá bjór while saving", async () => {
-      (axios.post as jest.Mock).mockImplementation(() => new Promise(() => {}));
+      (axios.post as jest.Mock).mockImplementation(
+        () => new Promise(() => undefined)
+      );
       renderPage();
       await fill();
 
@@ -413,7 +415,7 @@ describe("RegisterBeerPage", () => {
         .mockRejectedValueOnce({
           response: { status: 409, data: { duplicate: newBeer } },
         })
-        .mockImplementationOnce(() => new Promise(() => {}));
+        .mockImplementationOnce(() => new Promise(() => undefined));
       renderPage();
       await fill();
 
@@ -552,7 +554,7 @@ describe("RegisterBeerPage", () => {
     // The season list is cached without the new beer and its refetch is held
     // until the test resolves it.
     const holdListRefetch = () => {
-      let resolveList: (beers: object[]) => void = () => {};
+      let resolveList: (beers: object[]) => void = () => undefined;
       let listCalls = 0;
       (axios.get as jest.Mock).mockImplementation((url: string) => {
         if (url.includes("/beer/beers?")) {
