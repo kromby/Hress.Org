@@ -22,6 +22,10 @@ const BeerPhotoInput = ({ file, onChange }: BeerPhotoInputProps) => {
   const [error, setError] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [focused, setFocused] = useState(false);
+  // Changing the key replaces the input, and a removed element doesn't always
+  // fire blur (Firefox), so clear the outline whenever the input is replaced.
+  const inputKey = file ? "has-file" : "no-file";
+  useEffect(() => setFocused(false), [inputKey]);
 
   useEffect(() => {
     if (!file || typeof URL.createObjectURL !== "function") {
@@ -57,7 +61,7 @@ const BeerPhotoInput = ({ file, onChange }: BeerPhotoInputProps) => {
         accept="image/*"
         capture="environment"
         // Lets the same file be picked again after removing it.
-        key={file ? "has-file" : "no-file"}
+        key={inputKey}
         style={hiddenInput}
         onFocus={() => setFocused(true)}
         onBlur={() => setFocused(false)}

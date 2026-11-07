@@ -496,6 +496,24 @@ describe("RegisterBeerPage", () => {
       expect(screen.getByText("Taka mynd af dósinni")).toHaveClass("button");
     });
 
+    it("drops the photo button's focus outline once a photo replaces the input", async () => {
+      renderPage();
+      await screen.findByLabelText("Nafn");
+      const button = screen.getByText("Taka mynd af dósinni");
+
+      fireEvent.focus(screen.getByLabelText("Taka mynd af dósinni"));
+      expect(button.style.outline).not.toBe("");
+
+      fireEvent.change(screen.getByLabelText("Taka mynd af dósinni"), {
+        target: {
+          files: [new File(["x"], "dos.jpg", { type: "image/jpeg" })],
+        },
+      });
+
+      await screen.findByAltText("Mynd af dósinni");
+      expect(screen.getByText("Taka mynd af dósinni").style.outline).toBe("");
+    });
+
     it("can add the duplicate beer to the season", async () => {
       (axios.post as jest.Mock)
         .mockRejectedValueOnce(new DuplicateBeerError(newBeer as Beer))
