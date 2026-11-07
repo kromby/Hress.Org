@@ -75,6 +75,7 @@ describe("beer catalog hooks", () => {
     );
     expect(invalidate).toHaveBeenCalledWith({
       queryKey: seasonBeersKey("jolabjor-2026"),
+      refetchType: "all",
     });
   });
 
@@ -102,6 +103,7 @@ describe("beer catalog hooks", () => {
     );
     expect(invalidate).toHaveBeenCalledWith({
       queryKey: seasonBeersKey("jolabjor-2026"),
+      refetchType: "all",
     });
   });
 

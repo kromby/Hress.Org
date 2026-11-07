@@ -26,6 +26,15 @@ export const isUnauthorized = (error: unknown): boolean =>
   (error as { response?: { status?: number } } | null)?.response?.status ===
   401;
 
+// A 409 with a plain-text body means the season closed in the meantime.
+// (A duplicate is a 409 with an object body.)
+export const isSeasonClosed = (error: unknown): boolean => {
+  const response = (
+    error as { response?: { status?: number; data?: unknown } } | null
+  )?.response;
+  return response?.status === 409 && typeof response.data === "string";
+};
+
 export const useCurrentSeason = () => {
   const { isLoggedIn, headers } = useHressAuth();
 
@@ -192,9 +201,13 @@ export const useAddBeerToSeason = (seasonID: string) => {
       );
       return response.data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: seasonBeersKey(seasonID) });
-    },
+    // Returned so the mutation resolves after the season list has been
+    // refetched; the beer's page reads the beer from that list.
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: seasonBeersKey(seasonID),
+        refetchType: "all",
+      }),
   });
 };
 
@@ -233,8 +246,12 @@ export const useCreateBeer = (seasonID: string) => {
         throw error;
       }
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: seasonBeersKey(seasonID) });
-    },
+    // Returned so the mutation resolves after the season list has been
+    // refetched; the beer's page reads the beer from that list.
+    onSuccess: () =>
+      queryClient.invalidateQueries({
+        queryKey: seasonBeersKey(seasonID),
+        refetchType: "all",
+      }),
   });
 };

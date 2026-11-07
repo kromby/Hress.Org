@@ -1,6 +1,10 @@
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 import { useHressPhotos } from "../hress";
-import { useCreateBeer, DuplicateBeerError } from "../hooks/useBeerApi";
+import {
+  DuplicateBeerError,
+  isSeasonClosed,
+  useCreateBeer,
+} from "../hooks/useBeerApi";
 import { MAX_LENGTHS, NewBeerErrors, validateNewBeer } from "../newBeer";
 import { Beer } from "../types";
 import BeerPhotoInput from "./BeerPhotoInput";
@@ -13,14 +17,20 @@ interface NewBeerFormProps {
   onNameError: (error?: string) => void;
   onSaved: (beer: Beer) => void;
   onDuplicate: (beer: Beer) => void;
+  // Called when a submit starts, so the page can drop stale feedback.
+  onSubmitStart: () => void;
+  // Focuses the page's "Nafn" field.
+  focusName: () => void;
 }
 
-const isSeasonClosed = (error: unknown): boolean => {
-  const response = (
-    error as { response?: { status?: number; data?: unknown } } | null
-  )?.response;
-  return response?.status === 409 && typeof response.data === "string";
-};
+const FIELD_IDS: [keyof NewBeerErrors, string][] = [
+  ["producer", "beer-producer"],
+  ["country", "beer-country"],
+  ["alcohol", "beer-alcohol"],
+  ["vinbudinUrl", "beer-vinbudin"],
+  ["style", "beer-style"],
+  ["description", "beer-description"],
+];
 
 const FieldError = ({ message }: { message?: string }) =>
   message ? <small role="alert">{message}</small> : null;
@@ -32,7 +42,10 @@ const NewBeerForm = ({
   onNameError,
   onSaved,
   onDuplicate,
+  onSubmitStart,
+  focusName,
 }: NewBeerFormProps) => {
+  const formRef = useRef<HTMLFormElement>(null);
   const create = useCreateBeer(seasonID);
   const { uploadPhoto, addToAlbum } = useHressPhotos();
   const [producer, setProducer] = useState("");
@@ -59,6 +72,7 @@ const NewBeerForm = ({
     event.preventDefault();
     if (saving) return;
     setFailure(undefined);
+    onSubmitStart();
 
     const result = validateNewBeer({
       name,
@@ -71,7 +85,15 @@ const NewBeerForm = ({
     });
     setErrors(result.errors);
     onNameError(result.errors.name);
-    if (!result.input) return;
+    if (!result.input) {
+      if (result.errors.name) focusName();
+      else {
+        const first = FIELD_IDS.find(([key]) => result.errors[key]);
+        if (first)
+          formRef.current?.querySelector<HTMLElement>(`#${first[1]}`)?.focus();
+      }
+      return;
+    }
 
     setSaving(true);
     try {
@@ -102,10 +124,10 @@ const NewBeerForm = ({
   };
 
   return (
-    <form onSubmit={submit} noValidate>
+    <form ref={formRef} onSubmit={submit} noValidate>
       <BeerPhotoInput file={photo} onChange={changePhoto} />
       <div className="row gtr-uniform">
-        <div className="col-6 col-12-small">
+        <div className="col-12">
           <label htmlFor="beer-producer">Brugghús</label>
           <input
             id="beer-producer"

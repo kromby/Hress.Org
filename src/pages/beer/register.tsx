@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import LoginRedirect from "./LoginRedirect";
 import BeerMatches from "./components/BeerMatches";
 import { HressPage, useHressAuth } from "./hress";
 import { useDebouncedValue } from "./hooks/useDebouncedValue";
 import {
+  isSeasonClosed,
   isUnauthorized,
   useAddBeerToSeason,
   useCatalogSearch,
@@ -27,7 +28,19 @@ const RegisterForm = ({ season }: { season: Season }) => {
   const add = useAddBeerToSeason(season.id);
   const [nameError, setNameError] = useState<string>();
   const [duplicate, setDuplicate] = useState<Beer>();
+  const nameInput = useRef<HTMLInputElement>(null);
+  const duplicatePanel = useRef<HTMLDivElement>(null);
   const matches = debouncedName.trim().length >= 2 ? (search.data ?? []) : [];
+
+  // Bring the existing beer into view; the form is long on a phone.
+  useEffect(() => {
+    if (duplicate) {
+      duplicatePanel.current?.scrollIntoView?.({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [duplicate]);
 
   const addBeer = (beerID: string) => {
     if (add.isPending) return;
@@ -42,6 +55,7 @@ const RegisterForm = ({ season }: { season: Season }) => {
         <label htmlFor="beer-name">Nafn</label>
         <input
           id="beer-name"
+          ref={nameInput}
           type="text"
           value={name}
           maxLength={100}
@@ -66,14 +80,21 @@ const RegisterForm = ({ season }: { season: Season }) => {
         </>
       )}
       {duplicate && (
-        <>
+        <div ref={duplicatePanel}>
           <p>Þessi bjór er þegar til:</p>
           <BeerMatches
             matches={[{ beer: duplicate }]}
             onAdd={addBeer}
             adding={add.isPending}
           />
-        </>
+        </div>
+      )}
+      {add.isError && (
+        <p role="alert">
+          {isSeasonClosed(add.error)
+            ? "Tímabilið er búið og ekki hægt að skrá bjór."
+            : "Ekki tókst að bæta bjórnum við. Reyndu aftur."}
+        </p>
       )}
       <NewBeerForm
         seasonID={season.id}
@@ -81,10 +102,9 @@ const RegisterForm = ({ season }: { season: Season }) => {
         onNameError={setNameError}
         onSaved={(beer) => navigate(`/beer/${encodeURIComponent(beer.id)}`)}
         onDuplicate={setDuplicate}
+        onSubmitStart={() => setDuplicate(undefined)}
+        focusName={() => nameInput.current?.focus()}
       />
-      {add.isError && (
-        <p role="alert">Ekki tókst að bæta bjórnum við. Reyndu aftur.</p>
-      )}
       <BackLink />
     </HressPage>
   );

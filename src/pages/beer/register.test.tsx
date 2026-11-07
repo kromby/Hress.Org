@@ -10,7 +10,8 @@ import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import RegisterBeerPage from "./register";
 import { AuthContext } from "../../context/auth";
-import { DuplicateBeerError } from "./hooks/useBeerApi";
+import BeerPage from "./beer";
+import { DuplicateBeerError, seasonBeersKey } from "./hooks/useBeerApi";
 import { Beer } from "./types";
 
 const mockUploadPhoto = jest.fn();
@@ -67,6 +68,8 @@ describe("RegisterBeerPage", () => {
       })
     );
 
+  let realBeerPage = false;
+
   const renderPage = () =>
     render(
       <QueryClientProvider client={queryClient}>
@@ -81,7 +84,13 @@ describe("RegisterBeerPage", () => {
               <Route path="/beer/register" element={<RegisterBeerPage />} />
               <Route
                 path="/beer/:beerID"
-                element={<p data-testid="beer-page">beer page</p>}
+                element={
+                  realBeerPage ? (
+                    <BeerPage />
+                  ) : (
+                    <p data-testid="beer-page">beer page</p>
+                  )
+                }
               />
             </Routes>
           </AuthContext.Provider>
@@ -98,6 +107,7 @@ describe("RegisterBeerPage", () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
+    realBeerPage = false;
     mockUploadPhoto.mockResolvedValue(279080);
     mockAddToAlbum.mockResolvedValue(undefined);
     URL.createObjectURL = jest.fn(() => "blob:preview");
@@ -189,6 +199,42 @@ describe("RegisterBeerPage", () => {
     );
     expect(screen.queryByTestId("beer-page")).not.toBeInTheDocument();
     expect(screen.getByLabelText("Nafn")).toBeInTheDocument();
+  });
+
+  it("shows the add error right under the matches, before the form", async () => {
+    (axios.post as jest.Mock).mockRejectedValue({ response: { status: 500 } });
+    renderPage();
+    await typeName();
+
+    fireEvent.click(screen.getByRole("button", { name: /Bæta við/ }));
+
+    const alert = await screen.findByRole("alert");
+    const matchesList = screen.getAllByTestId("beer-matches")[0];
+    const form = screen
+      .getByRole("button", { name: "Skrá bjór" })
+      .closest("form");
+    expect(
+      matchesList.compareDocumentPosition(alert) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+    expect(
+      alert.compareDocumentPosition(form as HTMLElement) &
+        Node.DOCUMENT_POSITION_FOLLOWING
+    ).toBeTruthy();
+  });
+
+  it("says the season is closed when adding gets a closed-season 409", async () => {
+    (axios.post as jest.Mock).mockRejectedValue({
+      response: { status: 409, data: "Season is closed" },
+    });
+    renderPage();
+    await typeName();
+
+    fireEvent.click(screen.getByRole("button", { name: /Bæta við/ }));
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(
+      "Tímabilið er búið og ekki hægt að skrá bjór."
+    );
   });
 
   describe("new beer form", () => {
@@ -358,6 +404,67 @@ describe("RegisterBeerPage", () => {
       expect(screen.queryByTestId("beer-page")).not.toBeInTheDocument();
     });
 
+    it("scrolls the duplicate panel into view and clears it when saving again", async () => {
+      const scrollIntoView = jest.fn();
+      Element.prototype.scrollIntoView = scrollIntoView;
+      (axios.post as jest.Mock)
+        .mockRejectedValueOnce({
+          response: { status: 409, data: { duplicate: newBeer } },
+        })
+        .mockImplementationOnce(() => new Promise(() => {}));
+      renderPage();
+      await fill();
+
+      save();
+      await screen.findByText("Þessi bjór er þegar til:");
+      expect(scrollIntoView).toHaveBeenCalledTimes(1);
+      expect(scrollIntoView.mock.instances[0]).toBe(
+        screen.getByText("Þessi bjór er þegar til:").parentElement
+      );
+
+      save();
+      await waitFor(() =>
+        expect(
+          screen.queryByText("Þessi bjór er þegar til:")
+        ).not.toBeInTheDocument()
+      );
+      delete (Element.prototype as Partial<Element>).scrollIntoView;
+    });
+
+    it("focuses Nafn when the name is the first error", async () => {
+      renderPage();
+      await screen.findByLabelText("Nafn");
+
+      save();
+
+      await waitFor(() => expect(screen.getByLabelText("Nafn")).toHaveFocus());
+    });
+
+    it("focuses the first invalid field below Nafn", async () => {
+      renderPage();
+      fireEvent.change(await screen.findByLabelText("Nafn"), {
+        target: { value: "Jóla Gull" },
+      });
+      fireEvent.change(screen.getByLabelText("Brugghús"), {
+        target: { value: "Ölgerðin" },
+      });
+
+      save();
+
+      await waitFor(() => expect(screen.getByLabelText("Land")).toHaveFocus());
+    });
+
+    it("lays out Brugghús full width and Land beside Styrkleiki %", async () => {
+      renderPage();
+      await screen.findByLabelText("Nafn");
+
+      const col = (label: string) =>
+        screen.getByLabelText(label).parentElement as HTMLElement;
+      expect(col("Brugghús")).toHaveClass("col-12");
+      expect(col("Land")).toHaveClass("col-6", "col-12-small");
+      expect(col("Styrkleiki %")).toHaveClass("col-6", "col-12-small");
+    });
+
     it("can add the duplicate beer to the season", async () => {
       (axios.post as jest.Mock)
         .mockRejectedValueOnce(new DuplicateBeerError(newBeer as Beer))
@@ -428,6 +535,100 @@ describe("RegisterBeerPage", () => {
       fireEvent.click(screen.getByRole("button", { name: "Fjarlægja mynd" }));
 
       expect(screen.queryByAltText("Mynd af dósinni")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("landing on the new beer's page", () => {
+    const created = {
+      id: "n1",
+      name: "Jóla Gull",
+      producer: "Ölgerðin",
+      country: "Ísland",
+      alcoholPercentage: 5.4,
+    };
+
+    // The season list is cached without the new beer and its refetch is held
+    // until the test resolves it.
+    const holdListRefetch = () => {
+      let resolveList: (beers: object[]) => void = () => {};
+      let listCalls = 0;
+      (axios.get as jest.Mock).mockImplementation((url: string) => {
+        if (url.includes("/beer/beers?")) {
+          return Promise.resolve({ data: matches });
+        }
+        if (url.endsWith("/seasons/jolabjor-2026/beers")) {
+          listCalls++;
+          return new Promise((resolve) => {
+            resolveList = (beers) => resolve({ data: beers });
+          });
+        }
+        if (url.endsWith("/messages")) return Promise.resolve({ data: [] });
+        return Promise.resolve({ data: openSeason });
+      });
+      queryClient.setQueryData(seasonBeersKey(openSeason.id), []);
+      return {
+        listCalls: () => listCalls,
+        resolve: (beers: object[]) => resolveList(beers),
+      };
+    };
+
+    const flush = () => new Promise((resolve) => setTimeout(resolve, 50));
+
+    beforeEach(() => {
+      realBeerPage = true;
+    });
+
+    it("never says the beer isn't in the season after creating it", async () => {
+      (axios.post as jest.Mock).mockResolvedValue({ data: created });
+      const list = holdListRefetch();
+      renderPage();
+      fireEvent.change(await screen.findByLabelText("Nafn"), {
+        target: { value: "Jóla Gull" },
+      });
+      fireEvent.change(screen.getByLabelText("Brugghús"), {
+        target: { value: "Ölgerðin" },
+      });
+      fireEvent.change(screen.getByLabelText("Land"), {
+        target: { value: "Ísland" },
+      });
+      fireEvent.change(screen.getByLabelText("Styrkleiki %"), {
+        target: { value: "5,4" },
+      });
+
+      fireEvent.click(screen.getByRole("button", { name: "Skrá bjór" }));
+      await waitFor(() => expect(axios.post).toHaveBeenCalled());
+      await flush();
+
+      expect(list.listCalls()).toBeGreaterThan(0);
+      expect(screen.queryByTestId("beer-not-found")).not.toBeInTheDocument();
+
+      list.resolve([{ beer: created }]);
+
+      expect(
+        await screen.findByRole("heading", { name: "Jóla Gull" })
+      ).toBeInTheDocument();
+      expect(screen.queryByTestId("beer-not-found")).not.toBeInTheDocument();
+    });
+
+    it("never says the beer isn't in the season after adding an existing one", async () => {
+      (axios.post as jest.Mock).mockResolvedValue({ data: matches[0].beer });
+      const list = holdListRefetch();
+      renderPage();
+      await typeName();
+
+      fireEvent.click(screen.getByRole("button", { name: /Bæta við/ }));
+      await waitFor(() => expect(axios.post).toHaveBeenCalled());
+      await flush();
+
+      expect(list.listCalls()).toBeGreaterThan(0);
+      expect(screen.queryByTestId("beer-not-found")).not.toBeInTheDocument();
+
+      list.resolve([{ beer: matches[0].beer }]);
+
+      expect(
+        await screen.findByRole("heading", { name: "Jóla Kaldi" })
+      ).toBeInTheDocument();
+      expect(screen.queryByTestId("beer-not-found")).not.toBeInTheDocument();
     });
   });
 });
