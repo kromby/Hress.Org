@@ -142,7 +142,9 @@ describe("RegisterBeerPage", () => {
   });
 
   it("disables Bæta við while adding", async () => {
-    (axios.post as jest.Mock).mockImplementation(() => new Promise(() => {}));
+    (axios.post as jest.Mock).mockImplementation(
+      () => new Promise(() => undefined)
+    );
     renderPage();
     await typeName();
     const button = screen.getByRole("button", { name: /Bæta við/ });
