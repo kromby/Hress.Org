@@ -1,0 +1,188 @@
+import { FormEvent, useState } from "react";
+import { useHressPhotos } from "../hress";
+import { useCreateBeer, DuplicateBeerError } from "../hooks/useBeerApi";
+import { MAX_LENGTHS, NewBeerErrors, validateNewBeer } from "../newBeer";
+import { Beer } from "../types";
+import BeerPhotoInput from "./BeerPhotoInput";
+
+interface NewBeerFormProps {
+  seasonID: string;
+  // The page's "Nafn" field is the new beer's name.
+  name: string;
+  // Reports a validation error for the name, shown under that field.
+  onNameError: (error?: string) => void;
+  onSaved: (beer: Beer) => void;
+  onDuplicate: (beer: Beer) => void;
+}
+
+const isSeasonClosed = (error: unknown): boolean => {
+  const response = (
+    error as { response?: { status?: number; data?: unknown } } | null
+  )?.response;
+  return response?.status === 409 && typeof response.data === "string";
+};
+
+const FieldError = ({ message }: { message?: string }) =>
+  message ? <small role="alert">{message}</small> : null;
+
+// Registers a beer that isn't in the catalog yet, with a photo of the can.
+const NewBeerForm = ({
+  seasonID,
+  name,
+  onNameError,
+  onSaved,
+  onDuplicate,
+}: NewBeerFormProps) => {
+  const create = useCreateBeer(seasonID);
+  const { uploadPhoto, addToAlbum } = useHressPhotos();
+  const [producer, setProducer] = useState("");
+  const [country, setCountry] = useState("");
+  const [alcohol, setAlcohol] = useState("");
+  const [vinbudinUrl, setVinbudinUrl] = useState("");
+  const [style, setStyle] = useState("");
+  const [description, setDescription] = useState("");
+  const [photo, setPhoto] = useState<File | null>(null);
+  // Kept so a retry skips the steps that already worked.
+  const [uploadedImageID, setUploadedImageID] = useState<number>();
+  const [addedToAlbum, setAddedToAlbum] = useState(false);
+  const [errors, setErrors] = useState<NewBeerErrors>({});
+  const [saving, setSaving] = useState(false);
+  const [failure, setFailure] = useState<"closed" | "failed">();
+
+  const changePhoto = (file: File | null) => {
+    setPhoto(file);
+    setUploadedImageID(undefined);
+    setAddedToAlbum(false);
+  };
+
+  const submit = async (event: FormEvent) => {
+    event.preventDefault();
+    if (saving) return;
+    setFailure(undefined);
+
+    const result = validateNewBeer({
+      name,
+      producer,
+      country,
+      alcohol,
+      vinbudinUrl,
+      style,
+      description,
+    });
+    setErrors(result.errors);
+    onNameError(result.errors.name);
+    if (!result.input) return;
+
+    setSaving(true);
+    try {
+      let imageID = uploadedImageID;
+      if (photo && imageID === undefined) {
+        imageID = await uploadPhoto(photo, result.input.name);
+        setUploadedImageID(imageID);
+      }
+      if (imageID !== undefined && !addedToAlbum) {
+        try {
+          await addToAlbum(imageID);
+          setAddedToAlbum(true);
+        } catch (error) {
+          console.error(
+            "[NewBeerForm.submit] Could not add photo to album",
+            error
+          );
+        }
+      }
+      const beer = await create.mutateAsync({ ...result.input, imageID });
+      onSaved(beer);
+    } catch (error) {
+      if (error instanceof DuplicateBeerError) onDuplicate(error.existing);
+      else setFailure(isSeasonClosed(error) ? "closed" : "failed");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} noValidate>
+      <BeerPhotoInput file={photo} onChange={changePhoto} />
+      <div className="row gtr-uniform">
+        <div className="col-6 col-12-small">
+          <label htmlFor="beer-producer">Brugghús</label>
+          <input
+            id="beer-producer"
+            type="text"
+            value={producer}
+            maxLength={MAX_LENGTHS.producer}
+            onChange={(e) => setProducer(e.target.value)}
+          />
+          <FieldError message={errors.producer} />
+        </div>
+        <div className="col-6 col-12-small">
+          <label htmlFor="beer-country">Land</label>
+          <input
+            id="beer-country"
+            type="text"
+            value={country}
+            maxLength={MAX_LENGTHS.country}
+            onChange={(e) => setCountry(e.target.value)}
+          />
+          <FieldError message={errors.country} />
+        </div>
+        <div className="col-6 col-12-small">
+          <label htmlFor="beer-alcohol">Styrkleiki %</label>
+          <input
+            id="beer-alcohol"
+            type="text"
+            inputMode="decimal"
+            value={alcohol}
+            onChange={(e) => setAlcohol(e.target.value)}
+          />
+          <FieldError message={errors.alcohol} />
+        </div>
+      </div>
+      <p>
+        <label htmlFor="beer-vinbudin">Vínbúðin (valfrjálst)</label>
+        <input
+          id="beer-vinbudin"
+          type="url"
+          value={vinbudinUrl}
+          maxLength={MAX_LENGTHS.vinbudinUrl}
+          onChange={(e) => setVinbudinUrl(e.target.value)}
+        />
+        <FieldError message={errors.vinbudinUrl} />
+      </p>
+      <p>
+        <label htmlFor="beer-style">Tegund (valfrjálst)</label>
+        <input
+          id="beer-style"
+          type="text"
+          value={style}
+          maxLength={MAX_LENGTHS.style}
+          onChange={(e) => setStyle(e.target.value)}
+        />
+        <FieldError message={errors.style} />
+      </p>
+      <p>
+        <label htmlFor="beer-description">Lýsing (valfrjálst)</label>
+        <textarea
+          id="beer-description"
+          rows={4}
+          value={description}
+          maxLength={MAX_LENGTHS.description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+        <FieldError message={errors.description} />
+      </p>
+      {failure === "closed" && (
+        <p role="alert">Tímabilið er búið og ekki hægt að skrá bjór.</p>
+      )}
+      {failure === "failed" && (
+        <p role="alert">Ekki tókst að skrá bjórinn. Reyndu aftur.</p>
+      )}
+      <button type="submit" className="button primary" disabled={saving}>
+        Skrá bjór
+      </button>
+    </form>
+  );
+};
+
+export default NewBeerForm;

@@ -10,7 +10,8 @@ import {
   useCatalogSearch,
   useCurrentSeason,
 } from "./hooks/useBeerApi";
-import { Season } from "./types";
+import NewBeerForm from "./components/NewBeerForm";
+import { Beer, Season } from "./types";
 
 const BackLink = () => (
   <p>
@@ -24,6 +25,8 @@ const RegisterForm = ({ season }: { season: Season }) => {
   const debouncedName = useDebouncedValue(name, 300);
   const search = useCatalogSearch(debouncedName);
   const add = useAddBeerToSeason(season.id);
+  const [nameError, setNameError] = useState<string>();
+  const [duplicate, setDuplicate] = useState<Beer>();
   const matches = debouncedName.trim().length >= 2 ? (search.data ?? []) : [];
 
   const addBeer = (beerID: string) => {
@@ -43,8 +46,14 @@ const RegisterForm = ({ season }: { season: Season }) => {
           value={name}
           maxLength={100}
           autoComplete="off"
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            setNameError(undefined);
+            setDuplicate(undefined);
+            add.reset();
+          }}
         />
+        {nameError && <small role="alert">{nameError}</small>}
       </p>
       {matches.length > 0 && (
         <>
@@ -56,6 +65,23 @@ const RegisterForm = ({ season }: { season: Season }) => {
           <p>Finnurðu hann ekki? Haltu áfram að skrá hann.</p>
         </>
       )}
+      {duplicate && (
+        <>
+          <p>Þessi bjór er þegar til:</p>
+          <BeerMatches
+            matches={[{ beer: duplicate }]}
+            onAdd={addBeer}
+            adding={add.isPending}
+          />
+        </>
+      )}
+      <NewBeerForm
+        seasonID={season.id}
+        name={name}
+        onNameError={setNameError}
+        onSaved={(beer) => navigate(`/beer/${encodeURIComponent(beer.id)}`)}
+        onDuplicate={setDuplicate}
+      />
       {add.isError && (
         <p role="alert">Ekki tókst að bæta bjórnum við. Reyndu aftur.</p>
       )}
