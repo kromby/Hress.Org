@@ -24,25 +24,25 @@ public class HardheadInteractor
     public async Task<IList<HardheadNight>> GetHardheadsAsync(DateTime fromDate)
     {
         _log.LogInformation("[{Class}] Getting all Hardheads from '{from}' until now", _class, fromDate);
-        return await _hardheadDataAccess.GetHardheads(fromDate, DateTime.UtcNow.AddDays(-1));
+        return await IncludeGuestsAsync(await _hardheadDataAccess.GetHardheads(fromDate, DateTime.UtcNow.AddDays(-1)));
     }
 
     public async Task<IList<HardheadNight>> GetHardheadsAsync(int parentID)
     {
         _log.LogInformation("[{Class}] Getting all Hardheads for parent '{ParentID}'", _class, parentID);
-        return await _hardheadDataAccess.GetHardheads(parentID);
+        return await IncludeGuestsAsync(await _hardheadDataAccess.GetHardheads(parentID));
     }
 
     public async Task<IList<HardheadNight>> GetHardheadsByMovieAsync(string nameAndActorFilter)
     {
         _log.LogInformation("[{Class}] Getting all Hardheads by movie filter '{Filter}'", _class, nameAndActorFilter);
-        return await _hardheadDataAccess.GetHardheadsByMovieFilterAsync(nameAndActorFilter);
+        return await IncludeGuestsAsync(await _hardheadDataAccess.GetHardheadsByMovieFilterAsync(nameAndActorFilter));
     }
 
     public async Task<IList<HardheadNight>> GetNextHardheadAsync()
     {
         var list = await _hardheadDataAccess.GetHardheads(DateTime.UtcNow.AddDays(-1), DateTime.UtcNow.AddMonths(2));
-        return list;
+        return await IncludeGuestsAsync(list);
     }
 
     public async Task<IList<HardheadNight>> GetHardheadsAsync(int userID, UserType type)
@@ -51,9 +51,23 @@ public class HardheadInteractor
 
         if (idList != null && idList.Any())
         {
-            return await _hardheadDataAccess.GetHardheads(idList).ConfigureAwait(false);
+            return await IncludeGuestsAsync(await _hardheadDataAccess.GetHardheads(idList).ConfigureAwait(false));
         }
         return new List<HardheadNight>();
+    }
+
+    // Loads the guests of every night in one query so list pages don't need a guests call per night.
+    private async Task<IList<HardheadNight>> IncludeGuestsAsync(IList<HardheadNight> list)
+    {
+        if (list == null || list.Count == 0)
+            return list ?? new List<HardheadNight>();
+
+        var guestsByNight = await _hardheadDataAccess.GetGuestsForHardheads(list.Select(n => n.ID).ToList());
+        foreach (var night in list)
+        {
+            night.Guests = guestsByNight.TryGetValue(night.ID, out var guests) ? guests : new List<UserBasicEntity>();
+        }
+        return list;
     }
 
     public async Task SaveHardheadAsync(HardheadNight night, int userID)

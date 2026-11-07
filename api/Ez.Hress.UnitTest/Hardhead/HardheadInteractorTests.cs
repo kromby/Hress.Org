@@ -155,4 +155,51 @@ public class HardheadInteractorTests
         await Assert.ThrowsAsync<ArgumentException>(() => _interactor.AddGuestAsync(hardheadId, hostId, userId));
         _hardheadDataAccess.Verify(d => d.AddGuest(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<DateTime>()), Times.Never);
     }
+
+    [Fact]
+    public async Task GetHardheadsAsync_ByDate_IncludesGuestsFromOneBatchedCall()
+    {
+        // ARRANGE
+        var fromDate = new DateTime(2026, 6, 1);
+        var nights = new List<HardheadNight>
+        {
+            new(5461, 300, new UserBasicEntity { ID = 1 }),
+            new(5460, 299, new UserBasicEntity { ID = 2 }),
+        };
+        var guest = new UserBasicEntity { ID = 7, Username = "gestur" };
+
+        _hardheadDataAccess
+            .Setup(d => d.GetHardheads(fromDate, It.IsAny<DateTime>()))
+            .ReturnsAsync(nights);
+        _hardheadDataAccess
+            .Setup(d => d.GetGuestsForHardheads(It.IsAny<IList<int>>()))
+            .ReturnsAsync(new Dictionary<int, IList<UserBasicEntity>> { { 5461, new List<UserBasicEntity> { guest } } });
+
+        // ACT
+        var result = await _interactor.GetHardheadsAsync(fromDate);
+
+        // ASSERT
+        Assert.Single(result[0].Guests!);
+        Assert.Equal(7, result[0].Guests![0].ID);
+        Assert.NotNull(result[1].Guests);
+        Assert.Empty(result[1].Guests!);
+        _hardheadDataAccess.Verify(d => d.GetGuestsForHardheads(It.Is<IList<int>>(ids => ids.Count == 2 && ids.Contains(5461) && ids.Contains(5460))), Times.Once);
+        _hardheadDataAccess.Verify(d => d.GetGuests(It.IsAny<int>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task GetHardheadsAsync_ByParent_NoNights_SkipsGuestLookup()
+    {
+        // ARRANGE
+        _hardheadDataAccess
+            .Setup(d => d.GetHardheads(It.IsAny<int>()))
+            .ReturnsAsync(new List<HardheadNight>());
+
+        // ACT
+        var result = await _interactor.GetHardheadsAsync(42);
+
+        // ASSERT
+        Assert.Empty(result);
+        _hardheadDataAccess.Verify(d => d.GetGuestsForHardheads(It.IsAny<IList<int>>()), Times.Never);
+    }
 }

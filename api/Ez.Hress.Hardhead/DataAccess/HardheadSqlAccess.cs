@@ -384,6 +384,56 @@ public class HardheadSqlAccess : IHardheadDataAccess
         return list;
     }
 
+    public async Task<IDictionary<int, IList<UserBasicEntity>>> GetGuestsForHardheads(IList<int> hardheadIDs)
+    {
+        var result = new Dictionary<int, IList<UserBasicEntity>>();
+        if (hardheadIDs == null || hardheadIDs.Count == 0)
+            return result;
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand { Connection = connection };
+        var paramNames = new List<string>();
+        for (int i = 0; i < hardheadIDs.Count; i++)
+        {
+            var param = $"@id{i}";
+            paramNames.Add(param);
+            command.Parameters.AddWithValue(param, hardheadIDs[i]);
+        }
+
+        command.CommandText = $@"SELECT	guest.EventId, guest.UserId, hressUser.Username, userPhoto.ImageId
+                        FROM	rep_User guest
+                        JOIN	adm_User hressUser ON guest.UserId = hressUser.Id
+                        LEFT OUTER JOIN	upf_Image userPhoto ON hressUser.Id = userPhoto.UserId AND userPhoto.TypeId = 14
+                        WHERE   guest.EventId IN ({string.Join(", ", paramNames)})
+                            AND guest.TypeId = 52
+                        ORDER BY hressUser.Username";
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            var eventId = SqlHelper.GetInt(reader, "EventId");
+            var guest = new UserBasicEntity()
+            {
+                ID = SqlHelper.GetInt(reader, "UserId"),
+                Username = reader.GetString(reader.GetOrdinal("Username")),
+            };
+
+            if (!reader.IsDBNull(reader.GetOrdinal("ImageId")))
+                guest.ProfilePhotoId = SqlHelper.GetInt(reader, "ImageId");
+
+            if (!result.TryGetValue(eventId, out var guests))
+            {
+                guests = new List<UserBasicEntity>();
+                result[eventId] = guests;
+            }
+            guests.Add(guest);
+        }
+
+        return result;
+    }
+
     public async Task<int> AddGuest(int hardheadID, int guestID, int userID, DateTime actionDate)
     {
         var sql = @"INSERT INTO [dbo].[rep_User] ([EventId],[TypeId],[UserId],[Inserted],[InsertedBy])

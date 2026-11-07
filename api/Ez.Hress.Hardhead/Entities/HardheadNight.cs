@@ -31,6 +31,8 @@ public class HardheadNight : EntityBase<int>
 
     public int GuestCount { get; set; }
 
+    public IList<UserBasicEntity>? Guests { get; set; }
+
     public UserBasicEntity Host
     {
         get; set;
