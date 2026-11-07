@@ -15,10 +15,13 @@ public class BeerCatalogInteractor(
 
     public async Task<IList<CatalogBeer>> SearchAsync(string? query)
     {
-        log.LogInformation("[{Class}.{Method}] Searching the catalog for '{Query}'", nameof(BeerCatalogInteractor), nameof(SearchAsync), query);
+        // The query is free text, so only its length is logged.
+        var trimmedLength = query?.Trim().Length ?? 0;
+        log.LogInformation("[{Class}.{Method}] Searching the catalog, query length {Length}", nameof(BeerCatalogInteractor), nameof(SearchAsync), trimmedLength);
 
+        // Checked before normalizing too: "æ" and "þ" normalize to two letters.
         var normalizedQuery = BeerNames.Normalize(query);
-        if (normalizedQuery.Length < MinQueryLength)
+        if (trimmedLength < MinQueryLength || normalizedQuery.Length < MinQueryLength)
         {
             return new List<CatalogBeer>();
         }

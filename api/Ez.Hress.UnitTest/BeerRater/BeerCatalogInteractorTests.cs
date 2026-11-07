@@ -38,7 +38,10 @@ public class BeerCatalogInteractorTests
     [Fact]
     public async Task Search_IgnoresCaseAndDiacritics()
     {
-        var result = await Arrange().SearchAsync("JOLA");
+        // Listed out of order, so the result proves the Icelandic sort.
+        var beers = new List<Beer> { NewBeer("2", "Jólabjór"), NewBeer("3", "Tuborg Lille Jul"), NewBeer("1", "Jóla Kaldi") };
+
+        var result = await Arrange(beers).SearchAsync("JOLA");
 
         Assert.Equal(new[] { "1", "2" }, result.Select(r => r.Beer.ID));
     }
@@ -69,6 +72,8 @@ public class BeerCatalogInteractorTests
 
     [Theory]
     [InlineData("j")]
+    [InlineData("æ")]
+    [InlineData(" þ ")]
     [InlineData("  ")]
     [InlineData(null)]
     public async Task Search_ShortOrBlankQuery_ReturnsEmptyWithoutReading(string? query)
@@ -82,10 +87,11 @@ public class BeerCatalogInteractorTests
     [Fact]
     public async Task Search_ReturnsAtMostTen()
     {
-        var beers = Enumerable.Range(1, 12).Select(i => NewBeer(i.ToString(), $"Jól {i:00}")).ToList();
+        // Listed in reverse, so the result proves it sorts before taking ten.
+        var beers = Enumerable.Range(1, 12).Reverse().Select(i => NewBeer(i.ToString(), $"Jól {i:00}")).ToList();
 
         var result = await Arrange(beers).SearchAsync("jol");
 
-        Assert.Equal(10, result.Count);
+        Assert.Equal(Enumerable.Range(1, 10).Select(i => i.ToString()), result.Select(r => r.Beer.ID));
     }
 }
