@@ -7,7 +7,7 @@ Guidance for AI agents working in the Hress.Org repository. For human-facing set
 Personal website at [www.hress.org](https://www.hress.org), hosted on **Azure Static Web Apps**.
 
 - **Frontend** (`src/`) — React 19 SPA, built with Create React App via `react-app-rewired`. Deployed as the SWA static site.
-- **API** (`api/`) — Azure Functions (.NET 9, isolated worker). Deployed as the SWA managed API.
+- **API** (`api/`) — Azure Functions (.NET 10, isolated worker). Deployed as the SWA managed API.
 - **Storage** — Azure SQL Database + Azure Blob/Table Storage.
 
 The two halves are separate stacks in one repo. Decide which one a task touches before starting.

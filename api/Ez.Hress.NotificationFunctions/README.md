@@ -8,7 +8,9 @@ notification and pushes it to the subscribed devices.
 
 1. Generate VAPID keys: `npx web-push generate-vapid-keys`. Keep the private key out of the repo.
 2. Create the Function App: **Windows** Consumption plan, .NET 10 isolated, Functions v4, with its own
-   storage account for `AzureWebJobsStorage`. (Flex Consumption is the alternative, but it needs the workflow to log in
+   storage account for `AzureWebJobsStorage`. Then turn on **SCM Basic Auth Publishing Credentials**
+   (Function App -> Settings -> Configuration -> General settings); it is off by default for new apps, and without it
+   the downloaded publish profile has no usable credentials and the first deploy fails with 401. (Flex Consumption is the alternative, but it needs the workflow to log in
    with `azure/login` (OIDC) instead of a publish profile.)
 3. Function App settings:
    - `ContentStorage`: the content storage account connection string (the one holding the notification tables and the queue).
@@ -19,7 +21,9 @@ notification and pushes it to the subscribed devices.
    The app refuses to start if any of the four is missing.
 4. Static Web App environment variables: `Ez.Hress.Notifications.Vapid.PublicKey` (same public key).
 5. GitHub repository secrets: `NOTIFICATION_FUNCTIONS_APP_NAME` and `NOTIFICATION_FUNCTIONS_PUBLISH_PROFILE`
-   (download the publish profile from the Function App).
+   (download the publish profile from the Function App, after enabling SCM Basic Auth Publishing Credentials as in step 2).
+
+Finish this whole checklist before merging: the deploy workflow runs on the first `api/**` push to main.
 6. The queue and tables are created by the code on first use; nothing to provision.
 
 ## Local run
