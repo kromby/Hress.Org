@@ -32,7 +32,7 @@ const NotificationsPage = () => {
             : best,
         undefined
       );
-      markSeen(newest);
+      markSeen({ upTo: newest });
     }
   }, [cached, isFetchedAfterMount, markSeen]);
 

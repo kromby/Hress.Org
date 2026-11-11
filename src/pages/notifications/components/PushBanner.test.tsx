@@ -57,7 +57,7 @@ describe("PushBanner", () => {
 
   it("off shows Kveikja; clicking enables and shows the on line", async () => {
     mockGetState.mockResolvedValueOnce("off").mockResolvedValueOnce("on");
-    mockEnable.mockResolvedValue(undefined);
+    mockEnable.mockImplementation(() => Promise.resolve());
     renderBanner();
     fireEvent.click(await screen.findByRole("button", { name: "Kveikja" }));
     expect(mockEnable).toHaveBeenCalledWith("tok");
@@ -78,7 +78,7 @@ describe("PushBanner", () => {
 
   it("on: clicking Slökkva calls disablePush", async () => {
     mockGetState.mockResolvedValueOnce("on").mockResolvedValueOnce("off");
-    mockDisable.mockResolvedValue(undefined);
+    mockDisable.mockImplementation(() => Promise.resolve());
     renderBanner();
     fireEvent.click(await screen.findByRole("button", { name: "Slökkva" }));
     expect(mockDisable).toHaveBeenCalledWith("tok");

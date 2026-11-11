@@ -95,7 +95,7 @@ describe("useMarkNotificationsSeen", () => {
       wrapper: localWrapper,
     });
     await act(async () => {
-      await seen.result.current.mutateAsync(undefined);
+      await seen.result.current.mutateAsync({});
     });
     await act(async () => {
       resolveStale({ data: { hasUnread: true } });
@@ -108,7 +108,7 @@ describe("useMarkNotificationsSeen", () => {
     mockedAxios.post.mockResolvedValue({});
     const seen = renderHook(() => useMarkNotificationsSeen(), { wrapper });
     await act(async () => {
-      await seen.result.current.mutateAsync("2026-03-01T00:00:00Z");
+      await seen.result.current.mutateAsync({ upTo: "2026-03-01T00:00:00Z" });
     });
     expect(mockedAxios.post).toHaveBeenCalledWith(
       "http://localhost:7072/api/notifications/seen",
@@ -140,7 +140,7 @@ describe("useMarkNotificationsSeen", () => {
       wrapper: localWrapper,
     });
     act(() => {
-      seen.result.current.mutate(undefined);
+      seen.result.current.mutate({});
     });
     auth = { authTokens: { token: "tokB" }, setAuthTokens: jest.fn() };
     seen.rerender();

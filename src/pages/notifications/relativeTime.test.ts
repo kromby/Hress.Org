@@ -27,8 +27,8 @@ describe("relativeTime", () => {
     expect(relativeTime(ago(7 * DAY - MIN), now)).toBe("fyrir 6 dögum");
   });
   it("older shows the date", () => {
-    const d = new Date(now.getTime() - 7 * DAY);
-    expect(relativeTime(d.toISOString(), now)).toMatch(/^\d+\. \S+$/);
+    const weekAgo = new Date(now.getTime() - 7 * DAY);
+    expect(relativeTime(weekAgo.toISOString(), now)).toMatch(/^\d+\. \S+$/);
     expect(relativeTime("2026-03-03T12:00:00Z", now)).toBe(
       `${new Date("2026-03-03T12:00:00Z").getDate()}. mar.`
     );

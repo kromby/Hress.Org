@@ -120,7 +120,7 @@ describe("getPushState", () => {
     setNavigator({
       serviceWorker: {
         ready: new Promise(() => undefined),
-        getRegistration: jest.fn().mockResolvedValue(undefined),
+        getRegistration: jest.fn(() => Promise.resolve()),
       },
     });
     expect(await getPushState("jwt")).toBe("off");

@@ -25,6 +25,9 @@ export const useNotifications = () => {
   });
 };
 
+// upTo: the created time of the newest notification shown; omit to mark all.
+export type SeenVariables = { upTo?: string };
+
 export const useMarkNotificationsSeen = () => {
   const { authTokens } = useAuth();
   const queryClient = useQueryClient();
@@ -33,10 +36,10 @@ export const useMarkNotificationsSeen = () => {
   const currentToken = useRef(token);
   currentToken.current = token;
 
-  return useMutation<void, unknown, string | undefined, string | undefined>({
+  return useMutation<void, unknown, SeenVariables, string | undefined>({
     // Remember who started the request.
     onMutate: () => token,
-    mutationFn: async (upTo) => {
+    mutationFn: async ({ upTo }) => {
       await axios.post(
         `${config.get("apiPath")}/api/notifications/seen`,
         upTo === undefined ? undefined : { upTo },
