@@ -42,12 +42,12 @@ public class WebPushSender : IPushSender
         }
         catch (PushServiceClientException ex) when (ex.StatusCode is HttpStatusCode.NotFound or HttpStatusCode.Gone)
         {
-            _log.LogInformation("[WebPushSender.SendAsync] Subscription gone ({Status})", ex.StatusCode);
+            _log.LogInformation("[{Class}.{Method}] Subscription gone ({Status})", nameof(WebPushSender), nameof(SendAsync), ex.StatusCode);
             return PushSendResult.Gone;
         }
         catch (Exception ex)
         {
-            _log.LogWarning(ex, "[WebPushSender.SendAsync] Push delivery failed");
+            _log.LogWarning(ex, "[{Class}.{Method}] Push delivery failed", nameof(WebPushSender), nameof(SendAsync));
             return PushSendResult.Failed;
         }
     }

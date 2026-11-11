@@ -133,6 +133,12 @@ describe("getPushState", () => {
     expect(await getPushState("jwt")).toBe("off");
   });
 
+  it("returns error when the subscription lookup fails", async () => {
+    pushManager.getSubscription.mockRejectedValue(new Error("boom"));
+    jest.spyOn(console, "error").mockImplementation(() => undefined);
+    expect(await getPushState("jwt")).toBe("error");
+  });
+
   it("returns unsupported without PushManager", async () => {
     delete (window as unknown as Record<string, unknown>).PushManager;
     expect(await getPushState("jwt")).toBe("unsupported");
@@ -204,15 +210,45 @@ describe("disablePush", () => {
   it("still unsubscribes when the DELETE rejects", async () => {
     pushManager.getSubscription.mockResolvedValue(subscription);
     mockedAxios.delete.mockRejectedValue(new Error("network"));
-    jest.spyOn(console, "error").mockImplementation(() => undefined);
+    jest.spyOn(console, "warn").mockImplementation(() => undefined);
 
     await disablePush("jwt");
 
     expect(mockedAxios.delete).toHaveBeenCalledWith(`${base}/subscriptions`, {
       data: { endpoint: subscription.endpoint },
       headers,
+      timeout: 3000,
     });
     expect(subscription.unsubscribe).toHaveBeenCalled();
+  });
+
+  it("unsubscribes locally even when the DELETE never resolves", async () => {
+    pushManager.getSubscription.mockResolvedValue(subscription);
+    mockedAxios.delete.mockReturnValue(new Promise(() => undefined));
+
+    await expect(disablePush("jwt")).resolves.toBeUndefined();
+
+    expect(subscription.unsubscribe).toHaveBeenCalled();
+    expect(mockedAxios.delete).toHaveBeenCalledWith(
+      `${base}/subscriptions`,
+      expect.objectContaining({ timeout: 3000 })
+    );
+  });
+
+  it("rejects when the local unsubscribe fails", async () => {
+    pushManager.getSubscription.mockResolvedValue(subscription);
+    mockedAxios.delete.mockResolvedValue({});
+    subscription.unsubscribe.mockRejectedValue(new Error("nope"));
+
+    await expect(disablePush("jwt")).rejects.toThrow("nope");
+  });
+
+  it("rejects when the subscription lookup fails", async () => {
+    pushManager.getSubscription.mockRejectedValue(new Error("lookup"));
+
+    await expect(disablePush("jwt")).rejects.toThrow("lookup");
+    expect(mockedAxios.delete).not.toHaveBeenCalled();
+    expect(subscription.unsubscribe).not.toHaveBeenCalled();
   });
 
   it("returns without calling the server when there is no subscription", async () => {

@@ -20,6 +20,8 @@ var contentStorage = Required("ContentStorage");
 var vapidPublicKey = Required("Ez.Hress.Notifications.Vapid.PublicKey");
 var vapidPrivateKey = Required("Ez.Hress.Notifications.Vapid.PrivateKey");
 var vapidSubject = Required("Ez.Hress.Notifications.Vapid.Subject");
+var vapidSettings = new VapidSettings(vapidPublicKey, vapidPrivateKey, vapidSubject);
+vapidSettings.Validate();
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
@@ -39,8 +41,10 @@ var host = new HostBuilder()
         services.AddApplicationInsightsTelemetryWorkerService();
         services.ConfigureFunctionsApplicationInsights();
 
-        services.AddSingleton(new VapidSettings(vapidPublicKey, vapidPrivateKey, vapidSubject));
-        services.AddHttpClient<IPushSender, WebPushSender>();
+        services.AddSingleton(vapidSettings);
+        // No redirects: a push service must answer itself, never forward the VAPID header elsewhere.
+        services.AddHttpClient<IPushSender, WebPushSender>()
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler { AllowAutoRedirect = false });
         services.AddSingleton(new BlobConnectionInfo(contentStorage));
         services.AddSingleton<INotificationDataAccess, NotificationTableAccess>(sp => new NotificationTableAccess(sp.GetRequiredService<BlobConnectionInfo>(), sp.GetRequiredService<ILogger<NotificationTableAccess>>()));
         services.AddSingleton<IPushSubscriptionDataAccess, PushSubscriptionTableAccess>(sp => new PushSubscriptionTableAccess(sp.GetRequiredService<BlobConnectionInfo>(), sp.GetRequiredService<ILogger<PushSubscriptionTableAccess>>()));

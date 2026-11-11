@@ -29,7 +29,12 @@ const NotificationBell = () => {
       <Link className="fa-bell" to="/notifications">
         Tilkynningar
       </Link>
-      {data?.hasUnread && <span className="notification-dot" />}
+      {data?.hasUnread && (
+        <>
+          <span className="notification-dot" aria-hidden="true" />
+          <span className="visually-hidden">Ólesnar tilkynningar</span>
+        </>
+      )}
     </li>
   );
 };

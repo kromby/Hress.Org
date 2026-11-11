@@ -134,8 +134,8 @@ public class NotificationInteractorTests
             .Callback<PushSubscription>(upserted.Add)
             .Returns(Task.CompletedTask);
 
-        await _sut.SaveSubscriptionAsync(new PushSubscription { Endpoint = "https://push.example.com/e", P256dh = "p", Auth = "a", UserID = 1 });
-        await _sut.SaveSubscriptionAsync(new PushSubscription { Endpoint = "https://push.example.com/e", P256dh = "p", Auth = "a", UserID = 2 });
+        await _sut.SaveSubscriptionAsync(new PushSubscription { Endpoint = "https://fcm.googleapis.com/fcm/send/e", P256dh = "p", Auth = "a", UserID = 1 });
+        await _sut.SaveSubscriptionAsync(new PushSubscription { Endpoint = "https://fcm.googleapis.com/fcm/send/e", P256dh = "p", Auth = "a", UserID = 2 });
 
         Assert.Equal(2, upserted.Count);
         Assert.All(upserted, s => Assert.True(Math.Abs((DateTime.UtcNow - s.Created).TotalSeconds) < 5));
@@ -167,7 +167,7 @@ public class NotificationInteractorTests
     [Fact]
     public async Task SaveSubscription_EndpointTooLong_Throws()
     {
-        var endpoint = "https://push.example.com/" + new string('a', 2048);
+        var endpoint = "https://fcm.googleapis.com/fcm/send/" + new string('a', 2048);
         await Assert.ThrowsAsync<ArgumentException>(() => _sut.SaveSubscriptionAsync(
             new PushSubscription { Endpoint = endpoint, P256dh = "p", Auth = "a", UserID = 1 }));
         _subscriptions.Verify(s => s.UpsertAsync(It.IsAny<PushSubscription>()), Times.Never);
@@ -198,5 +198,79 @@ public class NotificationInteractorTests
         Assert.True(await _sut.IsSubscribedAsync(5, "e"));
         Assert.False(await _sut.IsSubscribedAsync(6, "e"));
         Assert.False(await _sut.IsSubscribedAsync(5, "none"));
+    }
+    [Theory]
+    [InlineData("https://fcm.googleapis.com/fcm/send/abc")]
+    [InlineData("https://updates.push.services.mozilla.com/wpush/v2/abc")]
+    [InlineData("https://wns2-par02p.notify.windows.com/w/?token=abc")]
+    [InlineData("https://web.push.apple.com/abc")]
+    [InlineData("https://FCM.GoogleAPIs.com/fcm/send/abc")]
+    public async Task SaveSubscription_KnownPushServiceHost_Saves(string endpoint)
+    {
+        await _sut.SaveSubscriptionAsync(new PushSubscription { Endpoint = endpoint, P256dh = "p", Auth = "a", UserID = 1 });
+        _subscriptions.Verify(s => s.UpsertAsync(It.IsAny<PushSubscription>()), Times.Once);
+    }
+
+    [Theory]
+    [InlineData("https://push.example.com/e")]
+    [InlineData("https://evilfcm.googleapis.com.example.com/e")]
+    [InlineData("https://notfcm.googleapis.com/e")]
+    [InlineData("https://127.0.0.1/e")]
+    public async Task SaveSubscription_UnknownHost_Throws(string endpoint)
+    {
+        await Assert.ThrowsAsync<ArgumentException>(() => _sut.SaveSubscriptionAsync(
+            new PushSubscription { Endpoint = endpoint, P256dh = "p", Auth = "a", UserID = 1 }));
+        _subscriptions.Verify(s => s.UpsertAsync(It.IsAny<PushSubscription>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task MarkSeen_WithUpTo_SetsLastSeenToUpTo()
+    {
+        var upTo = DateTime.UtcNow.AddMinutes(-5);
+        await _sut.MarkSeenAsync(7, upTo);
+        _seen.Verify(s => s.SetLastSeenAsync(7, upTo), Times.Once);
+    }
+
+    [Fact]
+    public async Task MarkSeen_UpToInFuture_ClampsToNow()
+    {
+        DateTime? set = null;
+        _seen.Setup(s => s.SetLastSeenAsync(7, It.IsAny<DateTime>()))
+            .Callback<int, DateTime>((_, t) => set = t)
+            .Returns(Task.CompletedTask);
+
+        await _sut.MarkSeenAsync(7, DateTime.UtcNow.AddDays(1));
+
+        Assert.NotNull(set);
+        Assert.True(set!.Value <= DateTime.UtcNow);
+    }
+
+    [Fact]
+    public async Task MarkSeen_OlderThanCurrent_DoesNotMoveBackwards()
+    {
+        var current = DateTime.UtcNow.AddMinutes(-1);
+        _seen.Setup(s => s.GetLastSeenAsync(7)).ReturnsAsync(current);
+
+        await _sut.MarkSeenAsync(7, current.AddMinutes(-10));
+
+        _seen.Verify(s => s.SetLastSeenAsync(It.IsAny<int>(), It.IsAny<DateTime>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task MarkSeen_UpToNewestShown_LaterNotificationStaysUnread()
+    {
+        var shown = DateTime.UtcNow.AddSeconds(-30);
+        DateTime? lastSeen = null;
+        _seen.Setup(s => s.SetLastSeenAsync(7, It.IsAny<DateTime>()))
+            .Callback<int, DateTime>((_, t) => lastSeen = t)
+            .Returns(Task.CompletedTask);
+        _seen.Setup(s => s.GetLastSeenAsync(7)).ReturnsAsync(() => lastSeen);
+
+        await _sut.MarkSeenAsync(7, shown);
+
+        _notifications.Setup(n => n.GetLatestAsync(7, 1)).ReturnsAsync(new List<Notification> { N(shown) });
+        Assert.False(await _sut.HasUnreadAsync(7));
+        _notifications.Setup(n => n.GetLatestAsync(7, 1)).ReturnsAsync(new List<Notification> { N(shown.AddSeconds(10)) });
+        Assert.True(await _sut.HasUnreadAsync(7));
     }
 }

@@ -88,6 +88,18 @@ const PushBanner = () => {
           </button>
         </>
       )}
+      {state === "error" && (
+        <>
+          <p>Gat ekki athugað stöðu tilkynninga. Reyndu aftur.</p>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => change(() => Promise.resolve(), "")}
+          >
+            Reyna aftur
+          </button>
+        </>
+      )}
       {error && (
         <p className="push-error" role="alert">
           {error}

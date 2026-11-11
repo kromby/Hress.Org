@@ -100,8 +100,27 @@ describe("NotificationsPage", () => {
     expect(mockedAxios.post.mock.calls[0][0]).toBe(
       "http://localhost:7072/api/notifications/seen"
     );
+    expect(mockedAxios.post.mock.calls[0][1]).toEqual({
+      upTo: "2026-03-01T00:00:00Z",
+    });
     // The highlight is not recomputed after the seen mutation.
     expect(screen.getByRole("listitem")).toHaveClass("unread");
+  });
+
+  it("sends upTo as the newest displayed created value", async () => {
+    mockList({
+      lastSeen: null,
+      notifications: [
+        item("1", "2026-03-01T00:00:00Z"),
+        item("3", "2026-03-03T10:00:00.1234567Z"),
+        item("2", "2026-03-02T00:00:00Z"),
+      ],
+    });
+    renderPage();
+    await waitFor(() => expect(mockedAxios.post).toHaveBeenCalledTimes(1));
+    expect(mockedAxios.post.mock.calls[0][1]).toEqual({
+      upTo: "2026-03-03T10:00:00.1234567Z",
+    });
   });
 
   it("shows the empty text", async () => {
@@ -110,6 +129,8 @@ describe("NotificationsPage", () => {
     expect(
       await screen.findByText("Engar tilkynningar ennþá.")
     ).toBeInTheDocument();
+    await waitFor(() => expect(mockedAxios.post).toHaveBeenCalledTimes(1));
+    expect(mockedAxios.post.mock.calls[0][1]).toBeUndefined();
   });
 
   it("navigates to the news link when clicked", async () => {

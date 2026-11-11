@@ -20,7 +20,7 @@ public class PushInteractor(
         var notification = await notifications.GetAsync(notificationID);
         if (notification == null)
         {
-            log.LogWarning("[PushInteractor.SendAsync] Notification {NotificationID} not found", notificationID);
+            log.LogWarning("[{Class}.{Method}] Notification {NotificationID} not found", nameof(PushInteractor), nameof(SendAsync), notificationID);
             return new PushRunResult(0, 0, 0);
         }
 
@@ -49,7 +49,7 @@ public class PushInteractor(
                     }
                     catch (Exception ex)
                     {
-                        log.LogWarning(ex, "[PushInteractor.SendAsync] Removing a gone subscription failed");
+                        log.LogWarning(ex, "[{Class}.{Method}] Removing a gone subscription failed", nameof(PushInteractor), nameof(SendAsync));
                         failed++;
                     }
                     break;
@@ -59,8 +59,8 @@ public class PushInteractor(
             }
         }
 
-        log.LogInformation("[PushInteractor.SendAsync] Notification {NotificationID}: sent {Sent}, removed {Removed}, failed {Failed}",
-            notificationID, sent, removed, failed);
+        log.LogInformation("[{Class}.{Method}] Notification {NotificationID}: sent {Sent}, removed {Removed}, failed {Failed}",
+            nameof(PushInteractor), nameof(SendAsync), notificationID, sent, removed, failed);
         return new PushRunResult(sent, removed, failed);
     }
 
@@ -73,7 +73,7 @@ public class PushInteractor(
         }
         catch (Exception ex)
         {
-            log.LogWarning(ex, "[PushInteractor.SendAsync] Sending to a device failed");
+            log.LogWarning(ex, "[{Class}.{Method}] Sending to a device failed", nameof(PushInteractor), nameof(SendAsync));
             return PushSendResult.Failed;
         }
     }

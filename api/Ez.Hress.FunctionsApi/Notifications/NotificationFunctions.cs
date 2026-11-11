@@ -26,6 +26,12 @@ public class SubscriptionKeys
     public string Auth { get; set; } = string.Empty;
 }
 
+public class SeenRequest
+{
+    // The newest notification the member was shown; omitted means "everything up to now".
+    public DateTimeOffset? UpTo { get; set; }
+}
+
 public class UnsubscribeRequest
 {
     public string Endpoint { get; set; } = string.Empty;
@@ -53,7 +59,9 @@ public class NotificationFunctions(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "notifications/seen")] HttpRequest req)
         => ExecuteAsync(req, nameof(RunSeenAsync), async userID =>
         {
-            await notificationInteractor.MarkSeenAsync(userID);
+            var body = await new StreamReader(req.Body).ReadToEndAsync();
+            var request = string.IsNullOrWhiteSpace(body) ? null : JsonSerializer.Deserialize<SeenRequest>(body, RequestJsonOptions);
+            await notificationInteractor.MarkSeenAsync(userID, request?.UpTo?.UtcDateTime);
             return new NoContentResult();
         });
 

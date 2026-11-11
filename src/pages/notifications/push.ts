@@ -2,6 +2,7 @@ import axios from "axios";
 import config from "react-global-configuration";
 import { PushState } from "./types";
 
+const DELETE_TIMEOUT_MS = 3000;
 const baseUrl = () => `${config.get("apiPath")}/api/notifications`;
 const authHeaders = (token: string) => ({
   "X-Custom-Authorization": `token ${token}`,
@@ -42,20 +43,15 @@ function getReadyRegistration(): Promise<ServiceWorkerRegistration> {
   return navigator.serviceWorker.ready;
 }
 
-// Returns the current browser push subscription, or null. Never throws or
-// hangs: unsupported browsers, no registered service worker and lookup
-// failures all resolve to null.
+// Returns the current browser push subscription, or null when there is none
+// (unsupported browser, no service worker registration, nothing subscribed).
+// A failed lookup throws so it is not mistaken for "no subscription".
 async function getCurrentSubscription(): Promise<PushSubscription | null> {
   if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
     return null;
   }
-  try {
-    const registration = await navigator.serviceWorker.getRegistration();
-    return (await registration?.pushManager.getSubscription()) ?? null;
-  } catch (error) {
-    console.error("Failed to look up push subscription", error);
-    return null;
-  }
+  const registration = await navigator.serviceWorker.getRegistration();
+  return (await registration?.pushManager.getSubscription()) ?? null;
 }
 
 export async function getPushState(token: string): Promise<PushState> {
@@ -73,7 +69,13 @@ export async function getPushState(token: string): Promise<PushState> {
     return "blocked";
   }
 
-  const subscription = await getCurrentSubscription();
+  let subscription: PushSubscription | null = null;
+  try {
+    subscription = await getCurrentSubscription();
+  } catch (error) {
+    console.error("Failed to look up push subscription", error);
+    return "error";
+  }
   if (!subscription) {
     return "off";
   }
@@ -113,22 +115,23 @@ export async function enablePush(token: string): Promise<void> {
 }
 
 export async function disablePush(token: string): Promise<void> {
+  // A failed lookup rejects, so callers know push may still be active.
   const subscription = await getCurrentSubscription();
   if (!subscription) {
     return;
   }
 
-  try {
-    await axios.delete(`${baseUrl()}/subscriptions`, {
+  // The server call is aborted after a timeout and never gates the local
+  // unsubscribe; the server drops dead subscriptions on 404/410 anyway.
+  axios
+    .delete(`${baseUrl()}/subscriptions`, {
       data: { endpoint: subscription.endpoint },
       headers: authHeaders(token),
+      timeout: DELETE_TIMEOUT_MS,
+    })
+    .catch((error) => {
+      console.warn("Failed to delete push subscription on server", error);
     });
-  } catch (error) {
-    console.error("Failed to delete push subscription on server", error);
-  }
-  try {
-    await subscription.unsubscribe();
-  } catch (error) {
-    console.error("Failed to unsubscribe in browser", error);
-  }
+
+  await subscription.unsubscribe();
 }

@@ -95,12 +95,62 @@ describe("useMarkNotificationsSeen", () => {
       wrapper: localWrapper,
     });
     await act(async () => {
-      await seen.result.current.mutateAsync();
+      await seen.result.current.mutateAsync(undefined);
     });
     await act(async () => {
       resolveStale({ data: { hasUnread: true } });
       await Promise.resolve();
     });
     expect(status.result.current.data).toEqual({ hasUnread: false });
+  });
+
+  it("sends upTo in the body when given", async () => {
+    mockedAxios.post.mockResolvedValue({});
+    const seen = renderHook(() => useMarkNotificationsSeen(), { wrapper });
+    await act(async () => {
+      await seen.result.current.mutateAsync("2026-03-01T00:00:00Z");
+    });
+    expect(mockedAxios.post).toHaveBeenCalledWith(
+      "http://localhost:7072/api/notifications/seen",
+      { upTo: "2026-03-01T00:00:00Z" },
+      { headers: { "X-Custom-Authorization": "token jwt" } }
+    );
+  });
+
+  it("leaves the status cache alone when the token changed before it resolved", async () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    let auth = { authTokens: { token: "tokA" }, setAuthTokens: jest.fn() };
+    const localWrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={client}>
+        <AuthContext.Provider value={auth as never}>
+          {children}
+        </AuthContext.Provider>
+      </QueryClientProvider>
+    );
+    let resolvePost: (v: unknown) => void = jest.fn();
+    mockedAxios.post.mockReturnValue(
+      new Promise((resolve) => {
+        resolvePost = resolve;
+      })
+    );
+    client.setQueryData(["notifications", "status"], { hasUnread: true });
+    const seen = renderHook(() => useMarkNotificationsSeen(), {
+      wrapper: localWrapper,
+    });
+    act(() => {
+      seen.result.current.mutate(undefined);
+    });
+    auth = { authTokens: { token: "tokB" }, setAuthTokens: jest.fn() };
+    seen.rerender();
+    await act(async () => {
+      resolvePost({});
+      await Promise.resolve();
+    });
+    await waitFor(() => expect(seen.result.current.isSuccess).toBe(true));
+    expect(client.getQueryData(["notifications", "status"])).toEqual({
+      hasUnread: true,
+    });
   });
 });

@@ -12,4 +12,4 @@ export type NotificationListResponse = {
 };
 
 export type PushState =
-  "unsupported" | "ios-install" | "blocked" | "off" | "on";
+  "unsupported" | "ios-install" | "blocked" | "off" | "on" | "error";

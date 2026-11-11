@@ -58,13 +58,42 @@ public class NotificationInteractor(
         return lastSeen == null || latest[0].Created > lastSeen.Value;
     }
 
-    public async Task MarkSeenAsync(int userID)
+    /// <summary>
+    /// Marks notifications as seen up to <paramref name="upTo"/>, the newest notification the member was shown.
+    /// Without it, everything up to now is marked seen. Never moves the marker backwards or into the future.
+    /// </summary>
+    public async Task MarkSeenAsync(int userID, DateTime? upTo = null)
     {
         log.LogInformation("[{Class}.{Method}] Marking notifications seen for user {UserID}", nameof(NotificationInteractor), nameof(MarkSeenAsync), userID);
-        await seen.SetLastSeenAsync(userID, DateTime.UtcNow);
+        var now = DateTime.UtcNow;
+        var seenAt = upTo.HasValue && upTo.Value.ToUniversalTime() < now ? upTo.Value.ToUniversalTime() : now;
+
+        var current = await seen.GetLastSeenAsync(userID);
+        if (current.HasValue && current.Value >= seenAt)
+        {
+            return;
+        }
+        await seen.SetLastSeenAsync(userID, seenAt);
     }
 
     private const int MaxEndpointLength = 2048;
+
+    // Hosts of the browser push services (Chrome/Edge-Chromium/Opera, Firefox, Windows, Safari).
+    // A subdomain of one of these also matches, since WNS and Apple use per-region hosts.
+    private static readonly string[] PushServiceHosts =
+    [
+        "fcm.googleapis.com",
+        "android.googleapis.com",
+        "push.services.mozilla.com",
+        "notify.windows.com",
+        "push.apple.com",
+    ];
+
+    private static bool IsKnownPushService(Uri endpoint)
+    {
+        var host = endpoint.IdnHost.ToLowerInvariant();
+        return PushServiceHosts.Any(h => host == h || host.EndsWith("." + h, StringComparison.Ordinal));
+    }
 
     public async Task SaveSubscriptionAsync(PushSubscription subscription)
     {
@@ -81,6 +110,11 @@ public class NotificationInteractor(
             || endpointUri.Scheme != Uri.UriSchemeHttps)
         {
             throw new ArgumentException("Endpoint must be an absolute https URL of at most 2048 characters", nameof(subscription));
+        }
+
+        if (!IsKnownPushService(endpointUri))
+        {
+            throw new ArgumentException("Endpoint must belong to a known browser push service", nameof(subscription));
         }
 
         subscription.Created = DateTime.UtcNow;

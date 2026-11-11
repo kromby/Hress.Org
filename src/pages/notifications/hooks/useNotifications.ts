@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import axios from "axios";
 import config from "react-global-configuration";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
@@ -27,20 +28,34 @@ export const useNotifications = () => {
 export const useMarkNotificationsSeen = () => {
   const { authTokens } = useAuth();
   const queryClient = useQueryClient();
+  const token: string | undefined = authTokens?.token;
+  // Always the member signed in right now, even from a stale mutation callback.
+  const currentToken = useRef(token);
+  currentToken.current = token;
 
-  return useMutation<void, unknown, void>({
-    mutationFn: async () => {
+  return useMutation<void, unknown, string | undefined, string | undefined>({
+    // Remember who started the request.
+    onMutate: () => token,
+    mutationFn: async (upTo) => {
       await axios.post(
         `${config.get("apiPath")}/api/notifications/seen`,
-        undefined,
-        { headers: { "X-Custom-Authorization": `token ${authTokens?.token}` } }
+        upTo === undefined ? undefined : { upTo },
+        { headers: { "X-Custom-Authorization": `token ${token}` } }
       );
     },
-    onSuccess: async () => {
+    onSuccess: async (_data, _upTo, startedWith) => {
+      // The token changed while the request was pending: another member's
+      // status must not be overwritten.
+      if (startedWith !== currentToken.current) {
+        return;
+      }
       // A status refetch still in flight may carry pre-seen data; drop it first.
       await queryClient.cancelQueries({
         queryKey: ["notifications", "status"],
       });
+      if (startedWith !== currentToken.current) {
+        return;
+      }
       queryClient.setQueryData(["notifications", "status"], {
         hasUnread: false,
       });

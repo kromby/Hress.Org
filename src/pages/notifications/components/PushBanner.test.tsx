@@ -37,6 +37,18 @@ describe("PushBanner", () => {
     expect(screen.queryByRole("button")).toBeNull();
   });
 
+  it("shows an actionable message when the state check failed", async () => {
+    mockGetState.mockResolvedValueOnce("error").mockResolvedValueOnce("off");
+    renderBanner();
+    expect(
+      await screen.findByText(/Gat ekki athugað stöðu tilkynninga/)
+    ).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Reyna aftur" }));
+    expect(
+      await screen.findByRole("button", { name: "Kveikja" })
+    ).toBeInTheDocument();
+  });
+
   it("explains blocked notifications", async () => {
     mockGetState.mockResolvedValue("blocked");
     renderBanner();

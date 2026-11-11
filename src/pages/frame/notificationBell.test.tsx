@@ -50,6 +50,7 @@ describe("NotificationBell", () => {
     await waitFor(() =>
       expect(container.querySelector(".notification-dot")).not.toBeNull()
     );
+    expect(screen.getByText("Ólesnar tilkynningar")).toBeInTheDocument();
   });
 
   it("shows no dot when nothing is unread", async () => {
@@ -58,6 +59,7 @@ describe("NotificationBell", () => {
     await waitFor(() => expect(mockedAxios.get).toHaveBeenCalled());
     expect(screen.getByRole("link", { name: "Tilkynningar" })).toBeTruthy();
     expect(container.querySelector(".notification-dot")).toBeNull();
+    expect(screen.queryByText("Ólesnar tilkynningar")).toBeNull();
   });
 
   it("shows the link and no dot when the status request fails", async () => {

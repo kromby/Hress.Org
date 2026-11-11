@@ -24,7 +24,15 @@ const NotificationsPage = () => {
     if (cached && isFetchedAfterMount && !marked.current) {
       marked.current = true;
       setData(cached);
-      markSeen();
+      // Only mark what this visit displayed: the newest item's created value.
+      const newest = cached.notifications.reduce<string | undefined>(
+        (best, n) =>
+          best === undefined || new Date(n.created) > new Date(best)
+            ? n.created
+            : best,
+        undefined
+      );
+      markSeen(newest);
     }
   }, [cached, isFetchedAfterMount, markSeen]);
 
