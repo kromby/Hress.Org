@@ -1,3 +1,4 @@
+using Ez.Hress.Notifications.DataAccess;
 using Ez.Hress.Notifications.Entities;
 using Ez.Hress.Notifications.UseCases;
 using Microsoft.Extensions.Logging;
@@ -49,6 +50,28 @@ public class PushInteractorTests
         _subscriptions.Verify(s => s.DeleteAsync("b"), Times.Once);
         _subscriptions.Verify(s => s.DeleteAsync(It.Is<string>(e => e != "b")), Times.Never);
         Assert.Equal(new PushRunResult(2, 1, 1), result);
+    }
+
+    [Fact]
+    public async Task Send_GoneAndDeleteThrows_OthersStillSent()
+    {
+        SetSubs(Sub("a"), Sub("b"), Sub("c"));
+        _sender.Setup(s => s.SendAsync(It.Is<PushSubscription>(x => x.Endpoint == "a"), It.IsAny<PushPayload>())).ReturnsAsync(PushSendResult.Gone);
+        _subscriptions.Setup(s => s.DeleteAsync("a")).ThrowsAsync(new InvalidOperationException("storage"));
+
+        var result = await _sut.SendAsync("n1");
+
+        _sender.Verify(s => s.SendAsync(It.IsAny<PushSubscription>(), It.IsAny<PushPayload>()), Times.Exactly(3));
+        Assert.Equal(new PushRunResult(2, 0, 1), result);
+    }
+
+    [Fact]
+    public void Payload_SerializesWithTitleBodyLinkKeys()
+    {
+        var json = System.Text.Json.JsonSerializer.Serialize(new PushPayload("Ný frétt", "t", "/news/1"), WebPushSender.JsonOptions);
+        using var doc = System.Text.Json.JsonDocument.Parse(json);
+        var keys = doc.RootElement.EnumerateObject().Select(p => p.Name).ToArray();
+        Assert.Equal(new[] { "title", "body", "link" }, keys);
     }
 
     [Fact]

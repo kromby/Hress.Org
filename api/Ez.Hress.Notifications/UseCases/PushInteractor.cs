@@ -51,8 +51,16 @@ public class PushInteractor(
                     sent++;
                     break;
                 case PushSendResult.Gone:
-                    await subscriptions.DeleteAsync(subscription.Endpoint);
-                    removed++;
+                    try
+                    {
+                        await subscriptions.DeleteAsync(subscription.Endpoint);
+                        removed++;
+                    }
+                    catch (Exception ex)
+                    {
+                        log.LogWarning(ex, "[PushInteractor.SendAsync] Removing a gone subscription failed");
+                        failed++;
+                    }
                     break;
                 default:
                     failed++;

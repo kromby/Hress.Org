@@ -13,7 +13,7 @@ namespace Ez.Hress.Notifications.DataAccess;
 public class WebPushSender : IPushSender
 {
     private const int TimeToLiveSeconds = 86400; // 24 hours
-    private static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
+    internal static readonly JsonSerializerOptions JsonOptions = new(JsonSerializerDefaults.Web);
 
     private readonly PushServiceClient _client;
     private readonly ILogger<WebPushSender> _log;
