@@ -11,7 +11,8 @@ self.addEventListener("push", (event) => {
   }
 
   const title = payload.title || "Ný frétt";
-  const link = typeof payload.link === "string" && payload.link ? payload.link : "/";
+  const link =
+    typeof payload.link === "string" && payload.link ? payload.link : "/";
 
   event.waitUntil(
     self.registration.showNotification(title, {
@@ -20,6 +21,10 @@ self.addEventListener("push", (event) => {
       data: { link },
     })
   );
+});
+
+self.addEventListener("activate", (event) => {
+  event.waitUntil(self.clients.claim());
 });
 
 self.addEventListener("notificationclick", (event) => {
@@ -34,9 +39,17 @@ self.addEventListener("notificationclick", (event) => {
     self.clients
       .matchAll({ type: "window", includeUncontrolled: true })
       .then((clients) => {
-        const client = clients.find((c) => c.url.startsWith(self.location.origin));
+        const client = clients.find((c) =>
+          c.url.startsWith(self.location.origin)
+        );
         if (client) {
-          return client.focus().then((focused) => (focused || client).navigate(target.href));
+          return client
+            .focus()
+            .then((focused) => (focused || client).navigate(target.href))
+            .then((navigated) =>
+              navigated ? navigated : self.clients.openWindow(target.href)
+            )
+            .catch(() => self.clients.openWindow(target.href));
         }
         return self.clients.openWindow(target.href);
       })
