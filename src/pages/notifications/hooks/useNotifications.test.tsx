@@ -4,7 +4,11 @@ import axios from "axios";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthContext } from "../../../context/auth";
 import { useMarkNotificationsSeen, useNotifications } from "./useNotifications";
-import { useNotificationStatus } from "./useNotificationStatus";
+import {
+  notificationStatusKey,
+  useNotificationStatus,
+} from "./useNotificationStatus";
+import { clearNotificationCache } from "../clearNotificationCache";
 
 jest.mock("axios");
 jest.mock("react-global-configuration", () => ({
@@ -66,27 +70,48 @@ describe("notification hooks normalization", () => {
 });
 
 describe("useMarkNotificationsSeen", () => {
-  it("cancels an in-flight status refetch so stale data cannot bring the dot back", async () => {
+  type Auth = {
+    authTokens: { token: string } | null;
+    setAuthTokens: jest.Mock;
+  };
+  const setup = (initial: Auth) => {
     const client = new QueryClient({
       defaultOptions: { queries: { retry: false } },
     });
+    const state = { auth: initial };
     const localWrapper = ({ children }: { children: ReactNode }) => (
       <QueryClientProvider client={client}>
-        <AuthContext.Provider
-          value={
-            { authTokens: { token: "jwt" }, setAuthTokens: jest.fn() } as never
-          }
-        >
+        <AuthContext.Provider value={state.auth as never}>
           {children}
         </AuthContext.Provider>
       </QueryClientProvider>
     );
-    let resolveStale: (v: unknown) => void = jest.fn();
-    mockedAxios.get.mockReturnValue(
+    return { client, state, localWrapper };
+  };
+  const signedIn = (token: string): Auth => ({
+    authTokens: { token },
+    setAuthTokens: jest.fn(),
+  });
+  const pendingPost = () => {
+    const control = { resolve: jest.fn() as (v: unknown) => void };
+    mockedAxios.post.mockReturnValue(
       new Promise((resolve) => {
-        resolveStale = resolve;
+        control.resolve = resolve;
       })
     );
+    return control;
+  };
+
+  it("drops an in-flight stale status and refetches after marking seen", async () => {
+    const { client, localWrapper } = setup(signedIn("jwt"));
+    const stale = { resolve: jest.fn() as (v: unknown) => void };
+    mockedAxios.get
+      .mockReturnValueOnce(
+        new Promise((resolve) => {
+          stale.resolve = resolve;
+        })
+      )
+      .mockResolvedValue({ data: {} });
     mockedAxios.post.mockResolvedValue({});
     const status = renderHook(() => useNotificationStatus(), {
       wrapper: localWrapper,
@@ -98,10 +123,38 @@ describe("useMarkNotificationsSeen", () => {
       await seen.result.current.mutateAsync({});
     });
     await act(async () => {
-      resolveStale({ data: { hasUnread: true } });
+      stale.resolve({ data: { hasUnread: true } });
       await Promise.resolve();
     });
+    expect(mockedAxios.get).toHaveBeenCalledTimes(2);
     expect(status.result.current.data).toEqual({ hasUnread: false });
+    expect(client.getQueryData(notificationStatusKey("jwt"))).toEqual({
+      hasUnread: false,
+    });
+  });
+
+  it("keeps the dot when the refetch reports a newer unread notification", async () => {
+    const { localWrapper } = setup(signedIn("jwt"));
+    mockedAxios.get
+      .mockResolvedValueOnce({ data: { hasUnread: true } })
+      .mockResolvedValueOnce({ data: { hasUnread: true } });
+    mockedAxios.post.mockResolvedValue({});
+    const status = renderHook(() => useNotificationStatus(), {
+      wrapper: localWrapper,
+    });
+    await waitFor(() =>
+      expect(status.result.current.data).toEqual({ hasUnread: true })
+    );
+    const seen = renderHook(() => useMarkNotificationsSeen(), {
+      wrapper: localWrapper,
+    });
+    await act(async () => {
+      await seen.result.current.mutateAsync({ upTo: "2026-03-01T00:00:00Z" });
+    });
+    await waitFor(() => expect(mockedAxios.get).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(status.result.current.data).toEqual({ hasUnread: true })
+    );
   });
 
   it("sends upTo in the body when given", async () => {
@@ -117,40 +170,58 @@ describe("useMarkNotificationsSeen", () => {
     );
   });
 
-  it("leaves the status cache alone when the token changed before it resolved", async () => {
-    const client = new QueryClient({
-      defaultOptions: { queries: { retry: false } },
-    });
-    let auth = { authTokens: { token: "tokA" }, setAuthTokens: jest.fn() };
-    const localWrapper = ({ children }: { children: ReactNode }) => (
-      <QueryClientProvider client={client}>
-        <AuthContext.Provider value={auth as never}>
-          {children}
-        </AuthContext.Provider>
-      </QueryClientProvider>
-    );
-    let resolvePost: (v: unknown) => void = jest.fn();
-    mockedAxios.post.mockReturnValue(
-      new Promise((resolve) => {
-        resolvePost = resolve;
-      })
-    );
-    client.setQueryData(["notifications", "status"], { hasUnread: true });
+  it("leaves the next member's status alone when the token changed before it resolved", async () => {
+    const { client, state, localWrapper } = setup(signedIn("tokA"));
+    const post = pendingPost();
+    client.setQueryData(notificationStatusKey("tokA"), { hasUnread: true });
     const seen = renderHook(() => useMarkNotificationsSeen(), {
       wrapper: localWrapper,
     });
     act(() => {
       seen.result.current.mutate({});
     });
-    auth = { authTokens: { token: "tokB" }, setAuthTokens: jest.fn() };
+    clearNotificationCache(client);
+    state.auth = signedIn("tokB");
+    client.setQueryData(notificationStatusKey("tokB"), { hasUnread: true });
     seen.rerender();
     await act(async () => {
-      resolvePost({});
+      post.resolve({});
       await Promise.resolve();
     });
     await waitFor(() => expect(seen.result.current.isSuccess).toBe(true));
-    expect(client.getQueryData(["notifications", "status"])).toEqual({
+    expect(client.getQueryData(notificationStatusKey("tokB"))).toEqual({
       hasUnread: true,
     });
+    expect(client.getQueryData(notificationStatusKey("tokA"))).toBeUndefined();
+  });
+
+  it("leaves the next member's status alone when the page unmounted before it resolved", async () => {
+    const { client, state, localWrapper } = setup(signedIn("tokA"));
+    const post = pendingPost();
+    client.setQueryData(notificationStatusKey("tokA"), { hasUnread: true });
+    const seen = renderHook(() => useMarkNotificationsSeen(), {
+      wrapper: localWrapper,
+    });
+    act(() => {
+      seen.result.current.mutate({});
+    });
+    // Member A signs out: the page unmounts and the cache is cleared.
+    seen.unmount();
+    clearNotificationCache(client);
+    state.auth = signedIn("tokB");
+    client.setQueryData(notificationStatusKey("tokB"), { hasUnread: true });
+    await act(async () => {
+      post.resolve({});
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    });
+    await waitFor(() =>
+      expect(client.getMutationCache().getAll()[0]?.state.status).toBe(
+        "success"
+      )
+    );
+    expect(client.getQueryData(notificationStatusKey("tokB"))).toEqual({
+      hasUnread: true,
+    });
+    expect(client.getQueryData(notificationStatusKey("tokA"))).toBeUndefined();
   });
 });

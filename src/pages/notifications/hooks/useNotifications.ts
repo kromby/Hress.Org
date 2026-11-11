@@ -1,9 +1,9 @@
-import { useRef } from "react";
 import axios from "axios";
 import config from "react-global-configuration";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "../../../context/auth";
 import { NotificationListResponse } from "../types";
+import { notificationStatusKey } from "./useNotificationStatus";
 
 export const useNotifications = () => {
   const { authTokens } = useAuth();
@@ -32,12 +32,10 @@ export const useMarkNotificationsSeen = () => {
   const { authTokens } = useAuth();
   const queryClient = useQueryClient();
   const token: string | undefined = authTokens?.token;
-  // Always the member signed in right now, even from a stale mutation callback.
-  const currentToken = useRef(token);
-  currentToken.current = token;
 
   return useMutation({
-    // Remember who started the request.
+    // Remember who started the request; the callbacks below may run after
+    // that member signed out and the page unmounted.
     onMutate: (): string | undefined => token,
     mutationFn: async ({ upTo }: SeenVariables) => {
       await axios.post(
@@ -46,22 +44,18 @@ export const useMarkNotificationsSeen = () => {
         { headers: { "X-Custom-Authorization": `token ${token}` } }
       );
     },
-    onSuccess: async (_data, _upTo, startedWith) => {
-      // The token changed while the request was pending: another member's
-      // status must not be overwritten.
-      if (startedWith !== currentToken.current) {
+    onSuccess: async (_data, _variables, startedWith) => {
+      const key = notificationStatusKey(startedWith);
+      // Signed out meanwhile: that member's status is gone from the cache.
+      if (!queryClient.getQueryState(key)) {
         return;
       }
-      // A status refetch still in flight may carry pre-seen data; drop it first.
-      await queryClient.cancelQueries({
-        queryKey: ["notifications", "status"],
-      });
-      if (startedWith !== currentToken.current) {
-        return;
-      }
-      queryClient.setQueryData(["notifications", "status"], {
-        hasUnread: false,
-      });
+      // A status refetch still in flight may carry pre-seen data; drop it,
+      // clear the dot right away, then ask the server, which still reports
+      // anything newer than what was shown.
+      await queryClient.cancelQueries({ queryKey: key });
+      queryClient.setQueryData(key, { hasUnread: false });
+      await queryClient.invalidateQueries({ queryKey: key });
     },
   });
 };

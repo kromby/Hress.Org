@@ -129,8 +129,8 @@ describe("NotificationsPage", () => {
     expect(
       await screen.findByText("Engar tilkynningar ennþá.")
     ).toBeInTheDocument();
-    await waitFor(() => expect(mockedAxios.post).toHaveBeenCalledTimes(1));
-    expect(mockedAxios.post.mock.calls[0][1]).toBeUndefined();
+    // Nothing was shown, so nothing is marked seen.
+    expect(mockedAxios.post).not.toHaveBeenCalled();
   });
 
   it("navigates to the news link when clicked", async () => {

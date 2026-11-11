@@ -28,7 +28,10 @@ const NotificationsPage = () => {
       const newest = cached.notifications
         .map((n) => n.created)
         .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0];
-      markSeen({ upTo: newest });
+      // Nothing shown, nothing to mark: a notification arriving meanwhile stays unread.
+      if (newest !== undefined) {
+        markSeen({ upTo: newest });
+      }
     }
   }, [cached, isFetchedAfterMount, markSeen]);
 
