@@ -4,7 +4,7 @@ import { useLocation, useNavigationType, createRoutesFromChildren, matchRoutes }
 import { createRoot } from "react-dom/client";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import "./index.css";
-import * as serviceWorker from "./serviceWorker";
+import { registerPushServiceWorker } from "./pushServiceWorker";
 import config from "react-global-configuration";
 import App from "./pages/App";
 const packageJson = require("../package.json");
@@ -86,7 +86,4 @@ root.render(
   </StrictMode>
 );
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+registerPushServiceWorker();
