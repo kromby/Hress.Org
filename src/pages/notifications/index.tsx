@@ -25,13 +25,9 @@ const NotificationsPage = () => {
       marked.current = true;
       setData(cached);
       // Only mark what this visit displayed: the newest item's created value.
-      const newest = cached.notifications.reduce<string | undefined>(
-        (best, n) =>
-          best === undefined || new Date(n.created) > new Date(best)
-            ? n.created
-            : best,
-        undefined
-      );
+      const newest = cached.notifications
+        .map((n) => n.created)
+        .sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0];
       markSeen({ upTo: newest });
     }
   }, [cached, isFetchedAfterMount, markSeen]);

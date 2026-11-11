@@ -36,10 +36,10 @@ export const useMarkNotificationsSeen = () => {
   const currentToken = useRef(token);
   currentToken.current = token;
 
-  return useMutation<void, unknown, SeenVariables, string | undefined>({
+  return useMutation({
     // Remember who started the request.
-    onMutate: () => token,
-    mutationFn: async ({ upTo }) => {
+    onMutate: (): string | undefined => token,
+    mutationFn: async ({ upTo }: SeenVariables) => {
       await axios.post(
         `${config.get("apiPath")}/api/notifications/seen`,
         upTo === undefined ? undefined : { upTo },
