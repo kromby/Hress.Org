@@ -1,4 +1,6 @@
-﻿using Ez.Hress.Scripts.Entities;
+﻿using Ez.Hress.Notifications.Entities;
+using Ez.Hress.Notifications.UseCases;
+using Ez.Hress.Scripts.Entities;
 using Ez.Hress.Scripts.UseCases;
 using Ez.Hress.Shared.Entities;
 using Microsoft.Extensions.Logging;
@@ -10,11 +12,64 @@ public class NewsInteractorTests
 {
     private readonly Mock<INewsDataAccess> _newsDataAccess;
     private readonly Mock<ILogger<NewsInteractor>> _log;
+    private readonly Mock<INotificationDataAccess> _notifications = new();
+    private readonly Mock<IPushQueue> _queue = new();
 
     public NewsInteractorTests()
     {
         _newsDataAccess = new Mock<INewsDataAccess>();
         _log = new Mock<ILogger<NewsInteractor>>();
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>()))
+            .ReturnsAsync((Notification n) => { n.ID = "saved-id"; return n; });
+    }
+
+    private NotificationInteractor CreateNotificationInteractor() => new(
+        _notifications.Object,
+        Mock.Of<INotificationSeenDataAccess>(),
+        Mock.Of<IPushSubscriptionDataAccess>(),
+        _queue.Object,
+        Mock.Of<ILogger<NotificationInteractor>>());
+
+    [Fact]
+    public async Task CreateNews_NotifiesWithNewsIDAndTitle()
+    {
+        _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>())).ReturnsAsync(77);
+        Notification? saved = null;
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>()))
+            .Callback<Notification>(n => saved = n)
+            .ReturnsAsync((Notification n) => { n.ID = "saved-id"; return n; });
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
+
+        await interactor.CreateNewsAsync(new News { Name = "Ný frétt", Content = "<p>Halló</p>" }, 2630);
+
+        Assert.NotNull(saved);
+        Assert.Equal("/news/77", saved!.Link);
+        Assert.Equal("Ný frétt", saved.Title);
+        _queue.Verify(q => q.EnqueueAsync("saved-id"), Times.Once);
+    }
+
+    [Fact]
+    public async Task CreateNews_NotificationFailure_StillReturnsNews()
+    {
+        _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>())).ReturnsAsync(77);
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>())).ThrowsAsync(new Exception("storage down"));
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
+
+        var result = await interactor.CreateNewsAsync(new News { Name = "Ný frétt", Content = "<p>Halló</p>" }, 2630);
+
+        Assert.Equal(77, result.ID);
+    }
+
+    [Fact]
+    public async Task UpdateNews_DoesNotNotify()
+    {
+        SetupExistingNews(5, 2630);
+        _newsDataAccess.Setup(x => x.UpdateNews(It.IsAny<News>())).Returns(Task.CompletedTask);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
+
+        await interactor.UpdateNewsAsync(5, new News { Name = "Breytt", Content = "<p>x</p>" }, 2630);
+
+        _notifications.Verify(n => n.SaveAsync(It.IsAny<Notification>()), Times.Never);
     }
 
     [Fact]
@@ -23,7 +78,7 @@ public class NewsInteractorTests
         // ARRANGE
         IList<News> list = new List<News>();
         _newsDataAccess.Setup(x => x.GetLatestNews(It.IsAny<int>())).Returns(Task.FromResult(list));
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
 
         // ACT
         var result = await interactor.GetLatestNewsAsync();
@@ -43,7 +98,7 @@ public class NewsInteractorTests
             new() { ID = 2, Name = "Frétt 2", InsertedBy = userId, Hits = 0, Public = false },
         };
         _newsDataAccess.Setup(x => x.GetNewsByAuthor(userId)).Returns(Task.FromResult(list));
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
 
         // ACT
         var result = await interactor.GetNewsByAuthorAsync(userId);
@@ -60,7 +115,7 @@ public class NewsInteractorTests
     public async Task GetNewsByAuthorInvalidUser_TestAsync(int userId)
     {
         // ARRANGE
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
 
         // ACT & ASSERT
         await Assert.ThrowsAsync<ArgumentException>(() => interactor.GetNewsByAuthorAsync(userId));
@@ -76,7 +131,7 @@ public class NewsInteractorTests
         _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>()))
             .Callback<News>(n => saved = n)
             .Returns(Task.FromResult(1234));
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
         var news = new News { Name = "  Ný frétt  ", Content = "<p>Halló</p>", Public = true };
 
         // ACT
@@ -101,7 +156,7 @@ public class NewsInteractorTests
     public async Task CreateNewsMissingFields_TestAsync(string? name, string? content)
     {
         // ARRANGE
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
         var news = new News { Name = name, Content = content };
 
         // ACT & ASSERT
@@ -115,7 +170,7 @@ public class NewsInteractorTests
     public async Task CreateNewsInvalidUser_TestAsync(int userId)
     {
         // ARRANGE
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
         var news = new News { Name = "Headline", Content = "<p>Body</p>" };
 
         // ACT & ASSERT
@@ -139,7 +194,7 @@ public class NewsInteractorTests
         _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>()))
             .Callback<News>(n => saved = n)
             .Returns(Task.FromResult(1));
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
 
         // ACT
         await interactor.CreateNewsAsync(new News { Name = "Headline", Content = content }, 2630);
@@ -156,7 +211,7 @@ public class NewsInteractorTests
         _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>()))
             .Callback<News>(n => saved = n)
             .Returns(Task.FromResult(1));
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
         var news = new News { Name = "Headline", Content = "<p>Body</p>", Image = new ImageHrefEntity(55, string.Empty) };
 
         // ACT
@@ -173,7 +228,7 @@ public class NewsInteractorTests
     public async Task CreateNewsInvalidImageAlign_TestAsync(int align)
     {
         // ARRANGE
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
         var news = new News
         {
             Name = "Headline",
@@ -191,7 +246,7 @@ public class NewsInteractorTests
     public async Task CreateNewsInvalidImageId_TestAsync()
     {
         // ARRANGE
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
         var news = new News { Name = "Headline", Content = "<p>Body</p>", Image = new ImageHrefEntity(0, string.Empty) };
 
         // ACT & ASSERT
@@ -211,7 +266,7 @@ public class NewsInteractorTests
         _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>()))
             .Callback<News>(n => saved = n)
             .Returns(Task.FromResult(1));
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
 
         // ACT
         await interactor.CreateNewsAsync(new News { Name = "Headline", Content = content }, 2630);
@@ -232,7 +287,7 @@ public class NewsInteractorTests
         _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>()))
             .Callback<News>(n => saved = n)
             .Returns(Task.FromResult(1));
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
 
         // ACT
         await interactor.CreateNewsAsync(new News { Name = "Headline", Content = content }, 2630);
@@ -249,7 +304,7 @@ public class NewsInteractorTests
     public async Task CreateNewsBodyEmptyAfterSanitizing_TestAsync(string content)
     {
         // ARRANGE
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
         var news = new News { Name = "Headline", Content = content };
 
         // ACT & ASSERT
@@ -262,7 +317,7 @@ public class NewsInteractorTests
     {
         // ARRANGE
         _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>())).Returns(Task.FromResult(1));
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
         var news = new News { Name = "Headline", Content = "<p><img src=\"https://hress.org/a.png\"></p>" };
 
         // ACT
@@ -288,7 +343,7 @@ public class NewsInteractorTests
         _newsDataAccess.Setup(x => x.UpdateNews(It.IsAny<News>()))
             .Callback<News>(n => saved = n)
             .Returns(Task.CompletedTask);
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
         var news = new News
         {
             Name = "  Breytt frétt  ",
@@ -318,7 +373,7 @@ public class NewsInteractorTests
     {
         // ARRANGE
         _newsDataAccess.Setup(x => x.GetNews(5)).Returns(Task.FromResult(new News()));
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
         var news = new News { Name = "Headline", Content = "<p>Body</p>" };
 
         // ACT & ASSERT
@@ -331,7 +386,7 @@ public class NewsInteractorTests
     {
         // ARRANGE
         SetupExistingNews(5, authorId: 999);
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
         var news = new News { Name = "Headline", Content = "<p>Body</p>" };
 
         // ACT & ASSERT
@@ -348,7 +403,7 @@ public class NewsInteractorTests
     {
         // ARRANGE
         SetupExistingNews(5, 2630);
-        var interactor = new NewsInteractor(_newsDataAccess.Object, _log.Object);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
         var news = new News { Name = name, Content = content };
 
         // ACT & ASSERT

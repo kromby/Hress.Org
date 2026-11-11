@@ -1,4 +1,5 @@
-﻿using Ez.Hress.Scripts.Entities;
+﻿using Ez.Hress.Notifications.UseCases;
+using Ez.Hress.Scripts.Entities;
 using Microsoft.Extensions.Logging;
 using Ganss.Xss;
 using System.Text.RegularExpressions;
@@ -8,11 +9,13 @@ namespace Ez.Hress.Scripts.UseCases;
 public class NewsInteractor
 {
     private readonly INewsDataAccess _newsDataAccess;
+    private readonly NotificationInteractor _notificationInteractor;
     private readonly ILogger<NewsInteractor> _log;
 
-    public NewsInteractor(INewsDataAccess newsDataAccess, ILogger<NewsInteractor> log)
+    public NewsInteractor(INewsDataAccess newsDataAccess, NotificationInteractor notificationInteractor, ILogger<NewsInteractor> log)
     {
         _newsDataAccess = newsDataAccess;
+        _notificationInteractor = notificationInteractor;
         _log = log;
     }
 
@@ -97,6 +100,16 @@ public class NewsInteractor
 
         _log.LogInformation("[{Class}.{Method}] Creating news '{Name}' for user '{UserId}'", nameof(NewsInteractor), nameof(CreateNewsAsync), news.Name, userId);
         news.ID = await _newsDataAccess.CreateNews(news);
+
+        try
+        {
+            await _notificationInteractor.NotifyNewsCreatedAsync(news.ID, news.Name);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "[{Class}.{Method}] Failed to notify about news '{Id}'", nameof(NewsInteractor), nameof(CreateNewsAsync), news.ID);
+        }
+
         return news;
     }
 

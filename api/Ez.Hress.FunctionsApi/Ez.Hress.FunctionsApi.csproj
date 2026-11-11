@@ -16,7 +16,7 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.23.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.ApplicationInsights" Version="2.50.0" />
-    <PackageReference Include="Azure.Storage.Common" Version="12.24.0" />
+    <PackageReference Include="Azure.Storage.Common" Version="12.29.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="10.0.15" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
@@ -33,6 +33,7 @@
     <ProjectReference Include="..\Ez.Hress.Chat\Ez.Hress.Chat.csproj" />
     <ProjectReference Include="..\Ez.Hress.Hardhead\Ez.Hress.Hardhead.csproj" />
     <ProjectReference Include="..\Ez.Hress.MajorEvents\Ez.Hress.MajorEvents.csproj" />
+    <ProjectReference Include="..\Ez.Hress.Notifications\Ez.Hress.Notifications.csproj" />
     <ProjectReference Include="..\Ez.Hress.Scripts\Ez.Hress.Scripts.csproj" />
     <ProjectReference Include="..\Ez.Hress.Shared\Ez.Hress.Shared.csproj" />
     <ProjectReference Include="..\Ez.Hress.UserProfile\Ez.Hress.UserProfile.csproj" />
