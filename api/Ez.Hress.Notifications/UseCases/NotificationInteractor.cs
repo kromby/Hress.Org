@@ -102,6 +102,6 @@ public class NotificationInteractor(
     {
         log.LogInformation("[{Class}.{Method}] Checking push subscription for user {UserID}", nameof(NotificationInteractor), nameof(IsSubscribedAsync), userID);
         var stored = await subscriptions.GetAsync(endpoint);
-        return stored != null && stored.UserID == userID;
+        return stored?.UserID == userID;
     }
 }

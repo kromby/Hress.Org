@@ -92,9 +92,9 @@ const Menu = ({ visible, onClick }) => {
         if (loggingOut.current) return;
         loggingOut.current = true;
         // Turn push off while the token is still valid, but never block sign-out on it.
-        let timer;
+        let timer = null;
         const timeout = new Promise((resolve) => { timer = setTimeout(resolve, 3000); });
-        await Promise.race([disablePush(authTokens.token).catch(() => { }), timeout]);
+        await Promise.race([disablePush(authTokens.token).catch(() => undefined), timeout]);
         clearTimeout(timer);
         setAuthTokens();
         loggingOut.current = false;

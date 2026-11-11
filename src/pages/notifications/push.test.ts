@@ -68,7 +68,9 @@ beforeEach(() => {
   });
   setStandalone(false);
   Object.defineProperty(window, "PushManager", {
-    value: function PushManager() {},
+    value: function PushManager() {
+      return undefined;
+    },
     configurable: true,
     writable: true,
   });
@@ -105,19 +107,19 @@ describe("getPushState", () => {
   });
 
   it("returns unsupported without serviceWorker", async () => {
-    delete (window.navigator as any).serviceWorker;
+    delete (window.navigator as Partial<Navigator>).serviceWorker;
     expect(await getPushState("jwt")).toBe("unsupported");
   });
 
   it("returns unsupported without Notification", async () => {
-    delete (window as any).Notification;
+    delete (window as unknown as Record<string, unknown>).Notification;
     expect(await getPushState("jwt")).toBe("unsupported");
   });
 
   it("returns off when no service worker is registered", async () => {
     setNavigator({
       serviceWorker: {
-        ready: new Promise(() => {}),
+        ready: new Promise(() => undefined),
         getRegistration: jest.fn().mockResolvedValue(undefined),
       },
     });
@@ -127,12 +129,12 @@ describe("getPushState", () => {
   it("returns off when the server call rejects", async () => {
     pushManager.getSubscription.mockResolvedValue(subscription);
     mockedAxios.get.mockRejectedValue(new Error("401"));
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation(() => undefined);
     expect(await getPushState("jwt")).toBe("off");
   });
 
   it("returns unsupported without PushManager", async () => {
-    delete (window as any).PushManager;
+    delete (window as unknown as Record<string, unknown>).PushManager;
     expect(await getPushState("jwt")).toBe("unsupported");
   });
 
@@ -202,7 +204,7 @@ describe("disablePush", () => {
   it("still unsubscribes when the DELETE rejects", async () => {
     pushManager.getSubscription.mockResolvedValue(subscription);
     mockedAxios.delete.mockRejectedValue(new Error("network"));
-    jest.spyOn(console, "error").mockImplementation(() => {});
+    jest.spyOn(console, "error").mockImplementation(() => undefined);
 
     await disablePush("jwt");
 
@@ -220,7 +222,7 @@ describe("disablePush", () => {
   });
 
   it("resolves without service worker support", async () => {
-    delete (window.navigator as any).serviceWorker;
+    delete (window.navigator as Partial<Navigator>).serviceWorker;
     await expect(disablePush("jwt")).resolves.toBeUndefined();
     expect(mockedAxios.delete).not.toHaveBeenCalled();
   });

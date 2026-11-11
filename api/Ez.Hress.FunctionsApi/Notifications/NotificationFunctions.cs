@@ -40,27 +40,27 @@ public class NotificationFunctions(
     private static readonly JsonSerializerOptions RequestJsonOptions = new() { PropertyNameCaseInsensitive = true };
 
     [Function("notificationsList")]
-    public Task<IActionResult> RunList(
+    public Task<IActionResult> RunListAsync(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "notifications")] HttpRequest req)
-        => Execute(req, nameof(RunList), async userID =>
+        => ExecuteAsync(req, nameof(RunListAsync), async userID =>
         {
             var list = await notificationInteractor.GetNotificationsAsync(userID);
             return new OkObjectResult(list);
         });
 
     [Function("notificationsSeen")]
-    public Task<IActionResult> RunSeen(
+    public Task<IActionResult> RunSeenAsync(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "notifications/seen")] HttpRequest req)
-        => Execute(req, nameof(RunSeen), async userID =>
+        => ExecuteAsync(req, nameof(RunSeenAsync), async userID =>
         {
             await notificationInteractor.MarkSeenAsync(userID);
             return new NoContentResult();
         });
 
     [Function("notificationsStatus")]
-    public Task<IActionResult> RunStatus(
+    public Task<IActionResult> RunStatusAsync(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "notifications/status")] HttpRequest req)
-        => Execute(req, nameof(RunStatus), async userID =>
+        => ExecuteAsync(req, nameof(RunStatusAsync), async userID =>
         {
             var hasUnread = await notificationInteractor.HasUnreadAsync(userID);
             return new OkObjectResult(new { hasUnread });
@@ -81,9 +81,9 @@ public class NotificationFunctions(
     }
 
     [Function("notificationsSubscribe")]
-    public Task<IActionResult> RunSubscribe(
+    public Task<IActionResult> RunSubscribeAsync(
         [HttpTrigger(AuthorizationLevel.Function, "post", Route = "notifications/subscriptions")] HttpRequest req)
-        => Execute(req, nameof(RunSubscribe), async userID =>
+        => ExecuteAsync(req, nameof(RunSubscribeAsync), async userID =>
         {
             var body = await new StreamReader(req.Body).ReadToEndAsync();
             var request = JsonSerializer.Deserialize<SubscribeRequest>(body, RequestJsonOptions);
@@ -104,9 +104,9 @@ public class NotificationFunctions(
         });
 
     [Function("notificationsUnsubscribe")]
-    public Task<IActionResult> RunUnsubscribe(
+    public Task<IActionResult> RunUnsubscribeAsync(
         [HttpTrigger(AuthorizationLevel.Function, "delete", Route = "notifications/subscriptions")] HttpRequest req)
-        => Execute(req, nameof(RunUnsubscribe), async userID =>
+        => ExecuteAsync(req, nameof(RunUnsubscribeAsync), async userID =>
         {
             var body = await new StreamReader(req.Body).ReadToEndAsync();
             var request = JsonSerializer.Deserialize<UnsubscribeRequest>(body, RequestJsonOptions);
@@ -120,9 +120,9 @@ public class NotificationFunctions(
         });
 
     [Function("notificationsSubscribed")]
-    public Task<IActionResult> RunSubscribed(
+    public Task<IActionResult> RunSubscribedAsync(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "notifications/subscriptions/current")] HttpRequest req)
-        => Execute(req, nameof(RunSubscribed), async userID =>
+        => ExecuteAsync(req, nameof(RunSubscribedAsync), async userID =>
         {
             string? endpoint = req.Query["endpoint"];
             if (string.IsNullOrWhiteSpace(endpoint))
@@ -134,7 +134,7 @@ public class NotificationFunctions(
             return new OkObjectResult(new { subscribed });
         });
 
-    private async Task<IActionResult> Execute(HttpRequest req, string methodName, Func<int, Task<IActionResult>> action)
+    private async Task<IActionResult> ExecuteAsync(HttpRequest req, string methodName, Func<int, Task<IActionResult>> action)
     {
         log.LogInformation("[{Class}.{Method}] C# HTTP trigger function processed a request.", nameof(NotificationFunctions), methodName);
 

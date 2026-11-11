@@ -12,7 +12,9 @@ const mockDisable = disablePush as jest.Mock;
 const renderBanner = () =>
   render(
     <AuthContext.Provider
-      value={{ authTokens: { token: "tok" }, setAuthTokens: jest.fn() } as any}
+      value={
+        { authTokens: { token: "tok" }, setAuthTokens: jest.fn() } as never
+      }
     >
       <PushBanner />
     </AuthContext.Provider>

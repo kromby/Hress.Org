@@ -21,7 +21,7 @@ export function isStandalone(): boolean {
       ? window.matchMedia("(display-mode: standalone)")
       : undefined;
   return (
-    !!mql?.matches ||
+    Boolean(mql?.matches) ||
     (navigator as Navigator & { standalone?: boolean }).standalone === true
   );
 }
@@ -38,7 +38,7 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
 }
 
 // Used when subscribing: waits for the service worker to become active.
-async function getReadyRegistration(): Promise<ServiceWorkerRegistration> {
+function getReadyRegistration(): Promise<ServiceWorkerRegistration> {
   return navigator.serviceWorker.ready;
 }
 

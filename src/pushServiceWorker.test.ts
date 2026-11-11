@@ -7,7 +7,7 @@ describe("registerPushServiceWorker", () => {
     if (original) {
       Object.defineProperty(navigator, "serviceWorker", original);
     } else {
-      delete (navigator as any).serviceWorker;
+      delete (navigator as Partial<Navigator>).serviceWorker;
     }
     jest.restoreAllMocks();
   });
@@ -25,7 +25,7 @@ describe("registerPushServiceWorker", () => {
   });
 
   it("does nothing when unsupported", async () => {
-    delete (navigator as any).serviceWorker;
+    delete (navigator as Partial<Navigator>).serviceWorker;
 
     await expect(registerPushServiceWorker()).resolves.toBeUndefined();
   });
@@ -37,7 +37,9 @@ describe("registerPushServiceWorker", () => {
       value: { register },
       configurable: true,
     });
-    const consoleError = jest.spyOn(console, "error").mockImplementation(() => {});
+    const consoleError = jest
+      .spyOn(console, "error")
+      .mockImplementation(() => undefined);
 
     await expect(registerPushServiceWorker()).resolves.toBeUndefined();
     expect(consoleError).toHaveBeenCalled();

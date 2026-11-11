@@ -34,16 +34,7 @@ public class PushInteractor(
 
         foreach (var subscription in targets)
         {
-            PushSendResult result;
-            try
-            {
-                result = await sender.SendAsync(subscription, payload);
-            }
-            catch (Exception ex)
-            {
-                log.LogWarning(ex, "[PushInteractor.SendAsync] Sending to a device failed");
-                result = PushSendResult.Failed;
-            }
+            var result = await TrySendAsync(subscription, payload);
 
             switch (result)
             {
@@ -71,5 +62,19 @@ public class PushInteractor(
         log.LogInformation("[PushInteractor.SendAsync] Notification {NotificationID}: sent {Sent}, removed {Removed}, failed {Failed}",
             notificationID, sent, removed, failed);
         return new PushRunResult(sent, removed, failed);
+    }
+
+    // One device failing must never stop the others, so any exception counts as a failed send.
+    private async Task<PushSendResult> TrySendAsync(PushSubscription subscription, PushPayload payload)
+    {
+        try
+        {
+            return await sender.SendAsync(subscription, payload);
+        }
+        catch (Exception ex)
+        {
+            log.LogWarning(ex, "[PushInteractor.SendAsync] Sending to a device failed");
+            return PushSendResult.Failed;
+        }
     }
 }

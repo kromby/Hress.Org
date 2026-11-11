@@ -16,7 +16,7 @@ export const useNotificationStatus = () => {
       // The API omits false values, so a missing flag means false.
       return { hasUnread: response.data?.hasUnread === true };
     },
-    enabled: !!authTokens?.token,
+    enabled: Boolean(authTokens?.token),
     retry: false,
   });
 };

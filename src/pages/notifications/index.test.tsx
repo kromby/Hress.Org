@@ -36,7 +36,7 @@ const renderPage = (
       <MemoryRouter initialEntries={["/notifications"]}>
         <AuthContext.Provider
           value={
-            { authTokens: { token: "tok" }, setAuthTokens: jest.fn() } as any
+            { authTokens: { token: "tok" }, setAuthTokens: jest.fn() } as never
           }
         >
           <Routes>
@@ -130,11 +130,11 @@ describe("NotificationsPage", () => {
       lastSeen: "2026-01-01T00:00:00Z",
       notifications: [item("old", "2026-01-02T00:00:00Z")],
     });
-    let resolveGet: (v: unknown) => void = () => {};
+    let resolveGet: (v: unknown) => void = jest.fn();
     mockedAxios.get.mockReturnValue(
       new Promise((resolve) => {
         resolveGet = resolve;
-      }) as any
+      }) as Promise<never>
     );
     mockedAxios.post.mockResolvedValue({});
     renderPage(client);

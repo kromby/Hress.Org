@@ -21,7 +21,7 @@ const renderBell = (loggedIn: boolean) =>
             {
               authTokens: loggedIn ? { token: "tok" } : undefined,
               setAuthTokens: jest.fn(),
-            } as any
+            } as never
           }
         >
           <ul>

@@ -9,7 +9,7 @@ public class NotificationPushFunction(PushInteractor pushInteractor, ILogger<Not
 {
     // Bound as a string and parsed by hand so the casing of the JSON keys never matters.
     [Function("notificationPush")]
-    public async Task Run([QueueTrigger(NotificationQueue.Name, Connection = "ContentStorage")] string body)
+    public async Task RunAsync([QueueTrigger(NotificationQueue.Name, Connection = "ContentStorage")] string body)
     {
         var message = NotificationPushMessage.Parse(body);
 
@@ -17,6 +17,6 @@ public class NotificationPushFunction(PushInteractor pushInteractor, ILogger<Not
         // throwing would retry and re-send to devices that already got the push.
         var result = await pushInteractor.SendAsync(message.NotificationID);
 
-        log.LogInformation("[NotificationPushFunction.Run] Notification {NotificationID} result: {Result}", message.NotificationID, result);
+        log.LogInformation("[NotificationPushFunction.RunAsync] Notification {NotificationID} result: {Result}", message.NotificationID, result);
     }
 }

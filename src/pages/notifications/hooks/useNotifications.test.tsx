@@ -21,7 +21,7 @@ function wrapper({ children }: { children: ReactNode }) {
     <QueryClientProvider client={client}>
       <AuthContext.Provider
         value={
-          { authTokens: { token: "jwt" }, setAuthTokens: jest.fn() } as any
+          { authTokens: { token: "jwt" }, setAuthTokens: jest.fn() } as never
         }
       >
         {children}
@@ -74,14 +74,14 @@ describe("useMarkNotificationsSeen", () => {
       <QueryClientProvider client={client}>
         <AuthContext.Provider
           value={
-            { authTokens: { token: "jwt" }, setAuthTokens: jest.fn() } as any
+            { authTokens: { token: "jwt" }, setAuthTokens: jest.fn() } as never
           }
         >
           {children}
         </AuthContext.Provider>
       </QueryClientProvider>
     );
-    let resolveStale: (v: unknown) => void = () => {};
+    let resolveStale: (v: unknown) => void = jest.fn();
     mockedAxios.get.mockReturnValue(
       new Promise((resolve) => {
         resolveStale = resolve;
@@ -99,6 +99,7 @@ describe("useMarkNotificationsSeen", () => {
     });
     await act(async () => {
       resolveStale({ data: { hasUnread: true } });
+      await Promise.resolve();
     });
     expect(status.result.current.data).toEqual({ hasUnread: false });
   });

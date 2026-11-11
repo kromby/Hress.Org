@@ -20,7 +20,7 @@ export const useNotifications = () => {
         notifications: response.data?.notifications ?? [],
       };
     },
-    enabled: !!authTokens?.token,
+    enabled: Boolean(authTokens?.token),
   });
 };
 

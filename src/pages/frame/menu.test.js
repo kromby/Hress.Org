@@ -13,7 +13,7 @@ jest.mock("react-global-configuration", () => ({
 jest.mock("../notifications/push", () => ({ disablePush: jest.fn() }));
 
 const setAuthTokens = jest.fn();
-let client;
+let client = null;
 
 const renderMenu = async () => {
   render(
@@ -22,13 +22,13 @@ const renderMenu = async () => {
         <AuthContext.Provider
           value={{ authTokens: { token: "tok" }, setAuthTokens }}
         >
-          <Menu visible={true} onClick={jest.fn()} />
+          <Menu visible onClick={jest.fn()} />
         </AuthContext.Provider>
       </MemoryRouter>
     </QueryClientProvider>
   );
   // Let the menu's own data load settle before the test acts.
-  await act(async () => {});
+  await act(() => Promise.resolve());
 };
 
 const clickLogout = async () => {
@@ -46,7 +46,7 @@ describe("Menu logout", () => {
   afterEach(() => jest.useRealTimers());
 
   it("turns push off with the token, then clears the tokens", async () => {
-    disablePush.mockResolvedValue(undefined);
+    disablePush.mockResolvedValue();
     await renderMenu();
     await clickLogout();
     expect(disablePush).toHaveBeenCalledWith("tok");
@@ -55,7 +55,7 @@ describe("Menu logout", () => {
   });
 
   it("ignores a second click while sign-out is in progress", async () => {
-    disablePush.mockReturnValue(new Promise(() => {}));
+    disablePush.mockReturnValue(new Promise(() => undefined));
     await renderMenu();
     await screen.findByText("Útskráning");
     jest.useFakeTimers();
@@ -64,6 +64,7 @@ describe("Menu logout", () => {
     expect(disablePush).toHaveBeenCalledTimes(1);
     await act(async () => {
       jest.advanceTimersByTime(3000);
+      await Promise.resolve();
     });
     expect(setAuthTokens).toHaveBeenCalledTimes(1);
   });
@@ -76,7 +77,7 @@ describe("Menu logout", () => {
   });
 
   it("logs out after 3000 ms when disablePush never resolves", async () => {
-    disablePush.mockReturnValue(new Promise(() => {}));
+    disablePush.mockReturnValue(new Promise(() => undefined));
     await renderMenu();
     await screen.findByText("Útskráning");
     jest.useFakeTimers();
@@ -84,10 +85,12 @@ describe("Menu logout", () => {
     expect(setAuthTokens).not.toHaveBeenCalled();
     await act(async () => {
       jest.advanceTimersByTime(2999);
+      await Promise.resolve();
     });
     expect(setAuthTokens).not.toHaveBeenCalled();
     await act(async () => {
       jest.advanceTimersByTime(1);
+      await Promise.resolve();
     });
     expect(setAuthTokens).toHaveBeenCalledWith();
   });

@@ -25,7 +25,7 @@ const PushBanner = () => {
   }, [token]);
 
   const change = useCallback(
-    async (action: (token: string) => Promise<void>, message: string) => {
+    async (action: (pushToken: string) => Promise<void>, message: string) => {
       setBusy(true);
       setError(null);
       try {

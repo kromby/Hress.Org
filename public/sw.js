@@ -3,7 +3,7 @@ self.addEventListener("push", (event) => {
   let payload = {};
   try {
     payload = event.data ? event.data.json() : {};
-  } catch (e) {
+  } catch {
     payload = {};
   }
   if (!payload || typeof payload !== "object") {
@@ -29,7 +29,7 @@ self.addEventListener("activate", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const link = (event.notification.data && event.notification.data.link) || "/";
+  const link = event.notification.data?.link || "/";
   const target = new URL(link, self.location.origin);
   if (target.origin !== self.location.origin) {
     return;

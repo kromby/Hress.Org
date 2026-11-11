@@ -46,7 +46,7 @@ const NotificationsPage = () => {
               <ul className="notifications-list">
                 {data.notifications.map((item) => {
                   const unread =
-                    lastSeen == null ||
+                    lastSeen === null ||
                     new Date(item.created) > new Date(lastSeen);
                   return (
                     <li key={item.id} className={unread ? "unread" : undefined}>
