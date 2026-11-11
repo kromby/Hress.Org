@@ -12,9 +12,13 @@ const PushBanner = () => {
 
   useEffect(() => {
     let cancelled = false;
-    getPushState(token).then((s) => {
-      if (!cancelled) setState(s);
-    });
+    getPushState(token)
+      .then((s) => {
+        if (!cancelled) setState(s);
+      })
+      .catch(() => {
+        if (!cancelled) setState("unsupported");
+      });
     return () => {
       cancelled = true;
     };
@@ -26,10 +30,13 @@ const PushBanner = () => {
       setError(null);
       try {
         await action(token);
-        setState(await getPushState(token));
       } catch {
         setError(message);
+      }
+      try {
         setState(await getPushState(token));
+      } catch {
+        // Keep the previous state.
       } finally {
         setBusy(false);
       }

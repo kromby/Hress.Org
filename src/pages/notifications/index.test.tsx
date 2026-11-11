@@ -26,10 +26,11 @@ const item = (id: string, created: string, link = `/news/${id}`) => ({
   created,
 });
 
-const renderPage = () => {
-  const client = new QueryClient({
+const renderPage = (
+  client = new QueryClient({
     defaultOptions: { queries: { retry: false } },
-  });
+  })
+) => {
   return render(
     <QueryClientProvider client={client}>
       <MemoryRouter initialEntries={["/notifications"]}>
@@ -119,5 +120,41 @@ describe("NotificationsPage", () => {
     renderPage();
     fireEvent.click(await screen.findByRole("link", { name: /Frétt 42/ }));
     expect(await screen.findByText("Frétt opnuð")).toBeInTheDocument();
+  });
+
+  it("ignores a cached list: posts /seen and highlights only after the fresh load", async () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    client.setQueryData(["notifications"], {
+      lastSeen: "2026-01-01T00:00:00Z",
+      notifications: [item("old", "2026-01-02T00:00:00Z")],
+    });
+    let resolveGet: (v: unknown) => void = () => {};
+    mockedAxios.get.mockReturnValue(
+      new Promise((resolve) => {
+        resolveGet = resolve;
+      }) as any
+    );
+    mockedAxios.post.mockResolvedValue({});
+    renderPage(client);
+
+    await waitFor(() => expect(mockedAxios.get).toHaveBeenCalled());
+    expect(screen.queryByText("Frétt old")).toBeNull();
+    expect(mockedAxios.post).not.toHaveBeenCalled();
+
+    resolveGet({
+      data: {
+        lastSeen: "2026-03-02T00:00:00Z",
+        notifications: [
+          item("new", "2026-03-03T00:00:00Z"),
+          item("read", "2026-03-01T00:00:00Z"),
+        ],
+      },
+    });
+    const items = await screen.findAllByRole("listitem");
+    expect(items[0]).toHaveClass("unread");
+    expect(items[1]).not.toHaveClass("unread");
+    await waitFor(() => expect(mockedAxios.post).toHaveBeenCalledTimes(1));
   });
 });
