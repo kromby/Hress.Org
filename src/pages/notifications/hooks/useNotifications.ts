@@ -36,7 +36,11 @@ export const useMarkNotificationsSeen = () => {
         { headers: { "X-Custom-Authorization": `token ${authTokens?.token}` } }
       );
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      // A status refetch still in flight may carry pre-seen data; drop it first.
+      await queryClient.cancelQueries({
+        queryKey: ["notifications", "status"],
+      });
       queryClient.setQueryData(["notifications", "status"], {
         hasUnread: false,
       });

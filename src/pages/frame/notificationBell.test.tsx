@@ -1,6 +1,6 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import axios from "axios";
-import { MemoryRouter } from "react-router-dom";
+import { Link, MemoryRouter } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthContext } from "../../context/auth";
 import NotificationBell from "./notificationBell";
@@ -27,6 +27,7 @@ const renderBell = (loggedIn: boolean) =>
           <ul>
             <NotificationBell />
           </ul>
+          <Link to="/other">go</Link>
         </AuthContext.Provider>
       </MemoryRouter>
     </QueryClientProvider>
@@ -37,7 +38,7 @@ describe("NotificationBell", () => {
 
   it("renders nothing when logged out", () => {
     renderBell(false);
-    expect(screen.queryByRole("link")).toBeNull();
+    expect(screen.queryByRole("link", { name: "Tilkynningar" })).toBeNull();
     expect(mockedAxios.get).not.toHaveBeenCalled();
   });
 
@@ -65,5 +66,13 @@ describe("NotificationBell", () => {
     await waitFor(() => expect(mockedAxios.get).toHaveBeenCalled());
     expect(screen.getByRole("link", { name: "Tilkynningar" })).toBeTruthy();
     expect(container.querySelector(".notification-dot")).toBeNull();
+  });
+
+  it("fetches the status again after navigating to another route", async () => {
+    mockedAxios.get.mockResolvedValue({ data: { hasUnread: false } });
+    renderBell(true);
+    await waitFor(() => expect(mockedAxios.get).toHaveBeenCalledTimes(1));
+    fireEvent.click(screen.getByText("go"));
+    await waitFor(() => expect(mockedAxios.get).toHaveBeenCalledTimes(2));
   });
 });

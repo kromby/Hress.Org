@@ -1,9 +1,9 @@
 import { ReactNode } from "react";
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import axios from "axios";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthContext } from "../../../context/auth";
-import { useNotifications } from "./useNotifications";
+import { useMarkNotificationsSeen, useNotifications } from "./useNotifications";
 import { useNotificationStatus } from "./useNotificationStatus";
 
 jest.mock("axios");
@@ -62,5 +62,44 @@ describe("notification hooks normalization", () => {
       lastSeen: "2026-01-01",
       notifications: [item],
     });
+  });
+});
+
+describe("useMarkNotificationsSeen", () => {
+  it("cancels an in-flight status refetch so stale data cannot bring the dot back", async () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false } },
+    });
+    const localWrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={client}>
+        <AuthContext.Provider
+          value={
+            { authTokens: { token: "jwt" }, setAuthTokens: jest.fn() } as any
+          }
+        >
+          {children}
+        </AuthContext.Provider>
+      </QueryClientProvider>
+    );
+    let resolveStale: (v: unknown) => void = () => {};
+    mockedAxios.get.mockReturnValue(
+      new Promise((resolve) => {
+        resolveStale = resolve;
+      })
+    );
+    mockedAxios.post.mockResolvedValue({});
+    const status = renderHook(() => useNotificationStatus(), {
+      wrapper: localWrapper,
+    });
+    const seen = renderHook(() => useMarkNotificationsSeen(), {
+      wrapper: localWrapper,
+    });
+    await act(async () => {
+      await seen.result.current.mutateAsync();
+    });
+    await act(async () => {
+      resolveStale({ data: { hasUnread: true } });
+    });
+    expect(status.result.current.data).toEqual({ hasUnread: false });
   });
 });

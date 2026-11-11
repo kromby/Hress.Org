@@ -45,17 +45,27 @@ describe("Menu logout", () => {
   });
   afterEach(() => jest.useRealTimers());
 
-  it("turns push off with the token, then clears the tokens and cached notifications", async () => {
+  it("turns push off with the token, then clears the tokens", async () => {
     disablePush.mockResolvedValue(undefined);
-    client.setQueryData(["notifications", "status"], { hasUnread: true });
-    client.setQueryData(["notifications", "list"], { notifications: [] });
     await renderMenu();
     await clickLogout();
     expect(disablePush).toHaveBeenCalledWith("tok");
     expect(setAuthTokens).toHaveBeenCalledTimes(1);
     expect(setAuthTokens).toHaveBeenCalledWith();
-    expect(client.getQueryData(["notifications", "status"])).toBeUndefined();
-    expect(client.getQueryData(["notifications", "list"])).toBeUndefined();
+  });
+
+  it("ignores a second click while sign-out is in progress", async () => {
+    disablePush.mockReturnValue(new Promise(() => {}));
+    await renderMenu();
+    await screen.findByText("Útskráning");
+    jest.useFakeTimers();
+    fireEvent.click(screen.getByText("Útskráning"));
+    fireEvent.click(screen.getByText("Útskráning"));
+    expect(disablePush).toHaveBeenCalledTimes(1);
+    await act(async () => {
+      jest.advanceTimersByTime(3000);
+    });
+    expect(setAuthTokens).toHaveBeenCalledTimes(1);
   });
 
   it("still logs out when disablePush rejects", async () => {

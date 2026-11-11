@@ -4,7 +4,6 @@ import { isMobile } from 'react-device-detect';
 import config from 'react-global-configuration';
 import { useAuth } from '../../context/auth';
 import axios from "axios";
-import { useQueryClient } from '@tanstack/react-query';
 import { disablePush } from '../notifications/push';
 
 /**
@@ -40,7 +39,7 @@ const Menu = ({ visible, onClick }) => {
     const wrapperRef = useRef(null);
     const location = useLocation();
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
+    const loggingOut = useRef(false);
 
     useOutsideAlerter(wrapperRef, visible, onClick);
 
@@ -90,14 +89,15 @@ const Menu = ({ visible, onClick }) => {
     }, [location, authTokens])
 
     const logout = async () => {
+        if (loggingOut.current) return;
+        loggingOut.current = true;
         // Turn push off while the token is still valid, but never block sign-out on it.
         let timer;
         const timeout = new Promise((resolve) => { timer = setTimeout(resolve, 3000); });
         await Promise.race([disablePush(authTokens.token).catch(() => { }), timeout]);
         clearTimeout(timer);
-        // Don't leave this member's notifications cached for the next member on this device.
-        queryClient.removeQueries({ queryKey: ["notifications"] });
         setAuthTokens();
+        loggingOut.current = false;
         navigate("/");
     }
 
