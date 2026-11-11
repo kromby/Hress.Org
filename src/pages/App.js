@@ -46,6 +46,7 @@ import RequireLogin from "./beer/RequireLogin";
 import BeerHome from "./beer";
 import BeerPage from "./beer/beer";
 import RegisterBeerPage from "./beer/register";
+import NotificationsPage from "./notifications";
 
 function App() {
   const [authTokens, setAuthTokens] = useState();
@@ -195,6 +196,14 @@ function App() {
                   }
                 />
               </Route>
+              <Route
+                path="notifications"
+                element={
+                  <RequireLogin>
+                    <NotificationsPage />
+                  </RequireLogin>
+                }
+              />
               <Route path="login">
                 <Route path="" element={<Login />} />
                 <Route path="magic" element={<Magic />} />
