@@ -47,6 +47,7 @@ import BeerHome from "./beer";
 import BeerPage from "./beer/beer";
 import RegisterBeerPage from "./beer/register";
 import NotificationsPage from "./notifications";
+import NotificationBell from "./frame/notificationBell";
 
 function App() {
   const [authTokens, setAuthTokens] = useState();
@@ -117,6 +118,7 @@ function App() {
               <Navigation />
               <nav className="main">
                 <ul>
+                  <NotificationBell />
                   <li className="search" onClick={() => toggleMenu()}>
                     <a className="fa-search" href="#search">
                       Search

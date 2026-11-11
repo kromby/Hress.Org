@@ -1,0 +1,14 @@
+#header .main ul li.notifications {
+  position: relative;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 0.6em;
+  right: 0.6em;
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: #2ebaae;
+  pointer-events: none;
+}
