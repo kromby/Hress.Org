@@ -9,13 +9,14 @@ namespace Ez.Hress.Notifications.DataAccess;
 public class NotificationTableAccess : INotificationDataAccess
 {
     private readonly TableClient _table;
+    private readonly EnsureCreatedOnce _ensureCreated;
     private readonly ILogger<NotificationTableAccess> _logger;
     private readonly string _className;
 
     public NotificationTableAccess(BlobConnectionInfo connectionInfo, ILogger<NotificationTableAccess> logger)
     {
         _table = new TableClient(connectionInfo.ConnectionString, "Notifications");
-        _table.CreateIfNotExists();
+        _ensureCreated = new EnsureCreatedOnce(() => _table.CreateIfNotExistsAsync());
         _logger = logger;
         _className = nameof(NotificationTableAccess);
     }
@@ -23,6 +24,7 @@ public class NotificationTableAccess : INotificationDataAccess
     public async Task<Notification> SaveAsync(Notification notification)
     {
         _logger.LogInformation("[{Class}.{Method}] Save notification of type '{Type}'", _className, nameof(SaveAsync), notification.Type);
+        await _ensureCreated.RunAsync();
 
         var entity = new NotificationTableEntity(notification);
         await _table.AddEntityAsync(entity);
@@ -34,6 +36,7 @@ public class NotificationTableAccess : INotificationDataAccess
     public async Task<Notification?> GetAsync(string id)
     {
         _logger.LogInformation("[{Class}.{Method}] Get notification '{ID}'", _className, nameof(GetAsync), id);
+        await _ensureCreated.RunAsync();
 
         var parts = id.Split('|', 2);
         if (parts.Length != 2 || parts[0].Length == 0 || parts[1].Length == 0)
@@ -49,6 +52,7 @@ public class NotificationTableAccess : INotificationDataAccess
     public async Task<IList<Notification>> GetLatestAsync(int userID, int top)
     {
         _logger.LogInformation("[{Class}.{Method}] Get latest {Top} notifications for user {UserID}", _className, nameof(GetLatestAsync), top, userID);
+        await _ensureCreated.RunAsync();
 
         var list = new List<Notification>();
         foreach (var partition in new[] { NotificationKeys.AllPartition, userID.ToString() })

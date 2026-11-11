@@ -61,6 +61,19 @@ public class NewsInteractorTests
     }
 
     [Fact]
+    public async Task CreateNews_EnqueueFailure_StillReturnsNews()
+    {
+        _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>())).ReturnsAsync(77);
+        _queue.Setup(q => q.EnqueueAsync(It.IsAny<string>())).ThrowsAsync(new Exception("queue down"));
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object);
+
+        var result = await interactor.CreateNewsAsync(new News { Name = "Ný frétt", Content = "<p>Halló</p>" }, 2630);
+
+        Assert.Equal(77, result.ID);
+        _notifications.Verify(n => n.SaveAsync(It.IsAny<Notification>()), Times.Once);
+    }
+
+    [Fact]
     public async Task UpdateNews_DoesNotNotify()
     {
         SetupExistingNews(5, 2630);
