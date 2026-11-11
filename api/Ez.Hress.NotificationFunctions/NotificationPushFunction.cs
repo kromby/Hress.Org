@@ -1,3 +1,4 @@
+using Ez.Hress.Notifications.Entities;
 using Ez.Hress.Notifications.UseCases;
 using Microsoft.Azure.Functions.Worker;
 using Microsoft.Extensions.Logging;

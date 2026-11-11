@@ -1,4 +1,4 @@
-using Ez.Hress.NotificationFunctions;
+using Ez.Hress.Notifications.Entities;
 
 namespace Ez.Hress.UnitTest.Notifications;
 
@@ -18,6 +18,7 @@ public class NotificationPushMessageTests
     [Theory]
     [InlineData("{}")]
     [InlineData("null")]
+    [InlineData("not json")]
     [InlineData("{\"notificationID\":\"\"}")]
     public void Parse_ShouldThrow_WhenNotificationIDIsMissing(string body)
     {
