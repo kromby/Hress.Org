@@ -134,8 +134,8 @@ public class NotificationInteractorTests
             .Callback<PushSubscription>(upserted.Add)
             .Returns(Task.CompletedTask);
 
-        await _sut.SaveSubscriptionAsync(new PushSubscription { Endpoint = "e", P256dh = "p", Auth = "a", UserID = 1 });
-        await _sut.SaveSubscriptionAsync(new PushSubscription { Endpoint = "e", P256dh = "p", Auth = "a", UserID = 2 });
+        await _sut.SaveSubscriptionAsync(new PushSubscription { Endpoint = "https://push.example.com/e", P256dh = "p", Auth = "a", UserID = 1 });
+        await _sut.SaveSubscriptionAsync(new PushSubscription { Endpoint = "https://push.example.com/e", P256dh = "p", Auth = "a", UserID = 2 });
 
         Assert.Equal(2, upserted.Count);
         Assert.All(upserted, s => Assert.True(Math.Abs((DateTime.UtcNow - s.Created).TotalSeconds) < 5));
@@ -150,6 +150,26 @@ public class NotificationInteractorTests
     {
         await Assert.ThrowsAsync<ArgumentException>(() => _sut.SaveSubscriptionAsync(
             new PushSubscription { Endpoint = endpoint, P256dh = p256dh, Auth = auth, UserID = 1 }));
+        _subscriptions.Verify(s => s.UpsertAsync(It.IsAny<PushSubscription>()), Times.Never);
+    }
+
+    [Theory]
+    [InlineData("http://push.example.com/e")]
+    [InlineData("/relative/path")]
+    [InlineData("not a url")]
+    public async Task SaveSubscription_NonHttpsAbsoluteEndpoint_Throws(string endpoint)
+    {
+        await Assert.ThrowsAsync<ArgumentException>(() => _sut.SaveSubscriptionAsync(
+            new PushSubscription { Endpoint = endpoint, P256dh = "p", Auth = "a", UserID = 1 }));
+        _subscriptions.Verify(s => s.UpsertAsync(It.IsAny<PushSubscription>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task SaveSubscription_EndpointTooLong_Throws()
+    {
+        var endpoint = "https://push.example.com/" + new string('a', 2048);
+        await Assert.ThrowsAsync<ArgumentException>(() => _sut.SaveSubscriptionAsync(
+            new PushSubscription { Endpoint = endpoint, P256dh = "p", Auth = "a", UserID = 1 }));
         _subscriptions.Verify(s => s.UpsertAsync(It.IsAny<PushSubscription>()), Times.Never);
     }
 

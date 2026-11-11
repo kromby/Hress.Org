@@ -31,6 +31,21 @@ public class NewsInteractorTests
         Mock.Of<ILogger<NotificationInteractor>>());
 
     [Fact]
+    public async Task CreateNews_NotifierHangs_StillReturnsWithinTimeout()
+    {
+        _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>())).ReturnsAsync(78);
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>()))
+            .Returns(new TaskCompletionSource<Notification>().Task);
+        var interactor = new NewsInteractor(_newsDataAccess.Object, CreateNotificationInteractor(), _log.Object, TimeSpan.FromMilliseconds(50));
+
+        var task = interactor.CreateNewsAsync(new News { Name = "Ný frétt", Content = "<p>Halló</p>" }, 2630);
+        var completed = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(3)));
+
+        Assert.Same(task, completed);
+        Assert.Equal(78, (await task).ID);
+    }
+
+    [Fact]
     public async Task CreateNews_NotifiesWithNewsIDAndTitle()
     {
         _newsDataAccess.Setup(x => x.CreateNews(It.IsAny<News>())).ReturnsAsync(77);

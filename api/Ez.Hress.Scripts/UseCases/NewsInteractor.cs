@@ -11,9 +11,11 @@ public class NewsInteractor
     private readonly INewsDataAccess _newsDataAccess;
     private readonly NotificationInteractor _notificationInteractor;
     private readonly ILogger<NewsInteractor> _log;
+    private readonly TimeSpan _notifyTimeout;
 
-    public NewsInteractor(INewsDataAccess newsDataAccess, NotificationInteractor notificationInteractor, ILogger<NewsInteractor> log)
+    public NewsInteractor(INewsDataAccess newsDataAccess, NotificationInteractor notificationInteractor, ILogger<NewsInteractor> log, TimeSpan? notifyTimeout = null)
     {
+        _notifyTimeout = notifyTimeout ?? TimeSpan.FromSeconds(5);
         _newsDataAccess = newsDataAccess;
         _notificationInteractor = notificationInteractor;
         _log = log;
@@ -103,7 +105,7 @@ public class NewsInteractor
 
         try
         {
-            await _notificationInteractor.NotifyNewsCreatedAsync(news.ID, news.Name);
+            await _notificationInteractor.NotifyNewsCreatedAsync(news.ID, news.Name).WaitAsync(_notifyTimeout);
         }
         catch (Exception ex)
         {

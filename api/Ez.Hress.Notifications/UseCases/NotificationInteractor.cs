@@ -64,6 +64,8 @@ public class NotificationInteractor(
         await seen.SetLastSeenAsync(userID, DateTime.UtcNow);
     }
 
+    private const int MaxEndpointLength = 2048;
+
     public async Task SaveSubscriptionAsync(PushSubscription subscription)
     {
         log.LogInformation("[{Class}.{Method}] Saving push subscription for user {UserID}", nameof(NotificationInteractor), nameof(SaveSubscriptionAsync), subscription.UserID);
@@ -72,6 +74,13 @@ public class NotificationInteractor(
             || string.IsNullOrWhiteSpace(subscription.Auth))
         {
             throw new ArgumentException("Endpoint, P256dh and Auth are required", nameof(subscription));
+        }
+
+        if (subscription.Endpoint.Length > MaxEndpointLength
+            || !Uri.TryCreate(subscription.Endpoint, UriKind.Absolute, out var endpointUri)
+            || endpointUri.Scheme != Uri.UriSchemeHttps)
+        {
+            throw new ArgumentException("Endpoint must be an absolute https URL of at most 2048 characters", nameof(subscription));
         }
 
         subscription.Created = DateTime.UtcNow;

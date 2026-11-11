@@ -71,6 +71,12 @@ public class NotificationFunctions(
         [HttpTrigger(AuthorizationLevel.Function, "get", Route = "notifications/vapid-public-key")] HttpRequest req)
     {
         // Anonymous in the sense that no JWT is checked.
+        if (string.IsNullOrWhiteSpace(vapidPublicKey.Value))
+        {
+            log.LogWarning("[{Class}.{Method}] VAPID public key is not configured", nameof(NotificationFunctions), nameof(RunVapidKey));
+            return new StatusCodeResult(StatusCodes.Status503ServiceUnavailable);
+        }
+
         return new OkObjectResult(new { publicKey = vapidPublicKey.Value });
     }
 

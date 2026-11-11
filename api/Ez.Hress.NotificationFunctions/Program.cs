@@ -23,6 +23,17 @@ var vapidSubject = Required("Ez.Hress.Notifications.Vapid.Subject");
 
 var host = new HostBuilder()
     .ConfigureFunctionsWorkerDefaults()
+    .ConfigureLogging(logging =>
+    {
+        // Remove the default Warning+ filter so Information logs reach Application Insights.
+        logging.Services.Configure<LoggerFilterOptions>(options =>
+        {
+            LoggerFilterRule? defaultRule = options.Rules.FirstOrDefault(rule => rule.ProviderName
+                == "Microsoft.Extensions.Logging.ApplicationInsights.ApplicationInsightsLoggerProvider");
+            if (defaultRule is not null)
+                options.Rules.Remove(defaultRule);
+        });
+    })
     .ConfigureServices(services =>
     {
         services.AddApplicationInsightsTelemetryWorkerService();
