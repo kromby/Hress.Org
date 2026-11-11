@@ -63,6 +63,7 @@ beforeEach(() => {
     standalone: undefined,
     serviceWorker: {
       ready: Promise.resolve({ pushManager }),
+      getRegistration: jest.fn().mockResolvedValue({ pushManager }),
     },
   });
   setStandalone(false);
@@ -94,6 +95,40 @@ describe("getPushState", () => {
   it("returns ios-install on iPhone when not standalone", async () => {
     setNavigator({ userAgent: IPHONE_UA });
     expect(await getPushState("jwt")).toBe("ios-install");
+  });
+
+  it("proceeds past ios-install on iPhone when standalone", async () => {
+    setNavigator({ userAgent: IPHONE_UA });
+    setStandalone(true);
+    pushManager.getSubscription.mockResolvedValue(null);
+    expect(await getPushState("jwt")).toBe("off");
+  });
+
+  it("returns unsupported without serviceWorker", async () => {
+    delete (window.navigator as any).serviceWorker;
+    expect(await getPushState("jwt")).toBe("unsupported");
+  });
+
+  it("returns unsupported without Notification", async () => {
+    delete (window as any).Notification;
+    expect(await getPushState("jwt")).toBe("unsupported");
+  });
+
+  it("returns off when no service worker is registered", async () => {
+    setNavigator({
+      serviceWorker: {
+        ready: new Promise(() => {}),
+        getRegistration: jest.fn().mockResolvedValue(undefined),
+      },
+    });
+    expect(await getPushState("jwt")).toBe("off");
+  });
+
+  it("returns off when the server call rejects", async () => {
+    pushManager.getSubscription.mockResolvedValue(subscription);
+    mockedAxios.get.mockRejectedValue(new Error("401"));
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    expect(await getPushState("jwt")).toBe("off");
   });
 
   it("returns unsupported without PushManager", async () => {
@@ -176,5 +211,17 @@ describe("disablePush", () => {
       headers,
     });
     expect(subscription.unsubscribe).toHaveBeenCalled();
+  });
+
+  it("returns without calling the server when there is no subscription", async () => {
+    pushManager.getSubscription.mockResolvedValue(null);
+    await disablePush("jwt");
+    expect(mockedAxios.delete).not.toHaveBeenCalled();
+  });
+
+  it("resolves without service worker support", async () => {
+    delete (window.navigator as any).serviceWorker;
+    await expect(disablePush("jwt")).resolves.toBeUndefined();
+    expect(mockedAxios.delete).not.toHaveBeenCalled();
   });
 });

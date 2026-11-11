@@ -37,8 +37,25 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
   return output;
 }
 
-async function getRegistration(): Promise<ServiceWorkerRegistration> {
+// Used when subscribing: waits for the service worker to become active.
+async function getReadyRegistration(): Promise<ServiceWorkerRegistration> {
   return navigator.serviceWorker.ready;
+}
+
+// Returns the current browser push subscription, or null. Never throws or
+// hangs: unsupported browsers, no registered service worker and lookup
+// failures all resolve to null.
+async function getCurrentSubscription(): Promise<PushSubscription | null> {
+  if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
+    return null;
+  }
+  try {
+    const registration = await navigator.serviceWorker.getRegistration();
+    return (await registration?.pushManager.getSubscription()) ?? null;
+  } catch (error) {
+    console.error("Failed to look up push subscription", error);
+    return null;
+  }
 }
 
 export async function getPushState(token: string): Promise<PushState> {
@@ -56,17 +73,21 @@ export async function getPushState(token: string): Promise<PushState> {
     return "blocked";
   }
 
-  const registration = await getRegistration();
-  const subscription = await registration.pushManager.getSubscription();
+  const subscription = await getCurrentSubscription();
   if (!subscription) {
     return "off";
   }
 
-  const response = await axios.get<{ subscribed?: boolean }>(
-    `${baseUrl()}/subscriptions/current?endpoint=${encodeURIComponent(subscription.endpoint)}`,
-    { headers: authHeaders(token) }
-  );
-  return response.data?.subscribed === true ? "on" : "off";
+  try {
+    const response = await axios.get<{ subscribed?: boolean }>(
+      `${baseUrl()}/subscriptions/current?endpoint=${encodeURIComponent(subscription.endpoint)}`,
+      { headers: authHeaders(token) }
+    );
+    return response.data?.subscribed === true ? "on" : "off";
+  } catch (error) {
+    console.error("Failed to check push subscription on server", error);
+    return "off";
+  }
 }
 
 export async function enablePush(token: string): Promise<void> {
@@ -75,7 +96,7 @@ export async function enablePush(token: string): Promise<void> {
     throw new Error("Notification permission was not granted");
   }
 
-  const registration = await getRegistration();
+  const registration = await getReadyRegistration();
   const keyResponse = await axios.get<{ publicKey: string }>(
     `${baseUrl()}/vapid-public-key`
   );
@@ -92,8 +113,7 @@ export async function enablePush(token: string): Promise<void> {
 }
 
 export async function disablePush(token: string): Promise<void> {
-  const registration = await getRegistration();
-  const subscription = await registration.pushManager.getSubscription();
+  const subscription = await getCurrentSubscription();
   if (!subscription) {
     return;
   }
@@ -106,5 +126,9 @@ export async function disablePush(token: string): Promise<void> {
   } catch (error) {
     console.error("Failed to delete push subscription on server", error);
   }
-  await subscription.unsubscribe();
+  try {
+    await subscription.unsubscribe();
+  } catch (error) {
+    console.error("Failed to unsubscribe in browser", error);
+  }
 }
