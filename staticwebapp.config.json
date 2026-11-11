@@ -8,7 +8,13 @@
         "headers": {
           "cache-control": "must-revalidate, max-age=15770000"
         }
-      }      
+      },
+      {
+        "route": "/sw.js",
+        "headers": {
+          "cache-control": "no-cache"
+        }
+      }
     ],
     "navigationFallback": {
       "rewrite": "index.html",
