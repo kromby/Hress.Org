@@ -1,0 +1,40 @@
+using Ez.Hress.Notifications.DataAccess;
+using Ez.Hress.Notifications.UseCases;
+using Ez.Hress.Shared.Entities;
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
+string Required(string key)
+{
+    var value = Environment.GetEnvironmentVariable(key);
+    if (string.IsNullOrWhiteSpace(value))
+    {
+        throw new InvalidOperationException($"Missing required setting '{key}'. Set it in the Function App configuration (see README.md).");
+    }
+    return value;
+}
+
+var contentStorage = Required("ContentStorage");
+var vapidPublicKey = Required("Ez.Hress.Notifications.Vapid.PublicKey");
+var vapidPrivateKey = Required("Ez.Hress.Notifications.Vapid.PrivateKey");
+var vapidSubject = Required("Ez.Hress.Notifications.Vapid.Subject");
+
+var host = new HostBuilder()
+    .ConfigureFunctionsWorkerDefaults()
+    .ConfigureServices(services =>
+    {
+        services.AddApplicationInsightsTelemetryWorkerService();
+        services.ConfigureFunctionsApplicationInsights();
+
+        services.AddSingleton(new VapidSettings(vapidPublicKey, vapidPrivateKey, vapidSubject));
+        services.AddHttpClient<IPushSender, WebPushSender>();
+        services.AddSingleton(new BlobConnectionInfo(contentStorage));
+        services.AddSingleton<INotificationDataAccess, NotificationTableAccess>(sp => new NotificationTableAccess(sp.GetRequiredService<BlobConnectionInfo>(), sp.GetRequiredService<ILogger<NotificationTableAccess>>()));
+        services.AddSingleton<IPushSubscriptionDataAccess, PushSubscriptionTableAccess>(sp => new PushSubscriptionTableAccess(sp.GetRequiredService<BlobConnectionInfo>(), sp.GetRequiredService<ILogger<PushSubscriptionTableAccess>>()));
+        services.AddSingleton<PushInteractor>();
+    })
+    .Build();
+
+host.Run();

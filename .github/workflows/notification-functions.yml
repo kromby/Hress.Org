@@ -1,0 +1,33 @@
+name: Notification Functions CI/CD
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "api/**"
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+    name: Build, test and deploy
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Test
+        run: dotnet test api/Ez.Hress.FunctionsApi.sln
+
+      - name: Publish
+        run: dotnet publish api/Ez.Hress.NotificationFunctions --configuration Release --output ./publish
+
+      - name: Deploy
+        uses: Azure/functions-action@v1
+        with:
+          app-name: ${{ secrets.NOTIFICATION_FUNCTIONS_APP_NAME }}
+          package: ./publish
+          publish-profile: ${{ secrets.NOTIFICATION_FUNCTIONS_PUBLISH_PROFILE }}

@@ -25,6 +25,7 @@
     <ProjectReference Include="..\Ez.Hress.Chat\Ez.Hress.Chat.csproj" />
     <ProjectReference Include="..\Ez.Hress.Hardhead\Ez.Hress.Hardhead.csproj" />
     <ProjectReference Include="..\Ez.Hress.Notifications\Ez.Hress.Notifications.csproj" />
+    <ProjectReference Include="..\Ez.Hress.NotificationFunctions\Ez.Hress.NotificationFunctions.csproj" />
     <ProjectReference Include="..\Ez.Hress.Scripts\Ez.Hress.Scripts.csproj" />
     <ProjectReference Include="..\Ez.Hress.Shared\Ez.Hress.Shared.csproj" />
   </ItemGroup>
