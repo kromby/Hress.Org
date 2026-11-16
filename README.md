@@ -7,7 +7,7 @@ Personal website running at [www.hress.org](https://www.hress.org), hosted on Az
 ## Architecture
 
 - **Frontend** — React 19, deployed as the SWA static site
-- **API** — Azure Functions (.NET 9, isolated worker), deployed as the SWA managed API
+- **API** — Azure Functions (.NET 10, isolated worker), deployed as the SWA managed API
 - **Storage** — Azure SQL Database + Azure Blob/Table Storage
 
 ## Local Development
@@ -15,7 +15,7 @@ Personal website running at [www.hress.org](https://www.hress.org), hosted on Az
 ### Prerequisites
 
 - Node.js
-- .NET 9 SDK
+- .NET 10 SDK
 - [Azure Functions Core Tools v4](https://learn.microsoft.com/en-us/azure/azure-functions/functions-run-local)
 
 ### Frontend

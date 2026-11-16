@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
@@ -9,6 +9,7 @@
     <PackageReference Include="HtmlSanitizer" Version="9.2.1039" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Ez.Hress.Notifications\Ez.Hress.Notifications.csproj" />
     <ProjectReference Include="..\Ez.Hress.Shared\Ez.Hress.Shared.csproj" />
   </ItemGroup>
 </Project>

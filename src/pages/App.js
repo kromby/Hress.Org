@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/react";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
 import jwt from "jsonwebtoken";
 import ReactGA from "react-ga4";
@@ -46,13 +47,19 @@ import RequireLogin from "./beer/RequireLogin";
 import BeerHome from "./beer";
 import BeerPage from "./beer/beer";
 import RegisterBeerPage from "./beer/register";
+import NotificationsPage from "./notifications";
+import NotificationBell from "./frame/notificationBell";
+import { clearNotificationCache } from "./notifications/clearNotificationCache";
 
 function App() {
+  const queryClient = useQueryClient();
   const [authTokens, setAuthTokens] = useState();
   const [data, setData] = useState({ showMenu: false });
   const TRACKING_ID = "G-Z6HJ4VPZTN";
 
   const setTokens = (tokenData) => {
+    // Every token change (sign-in, sign-out, rejected token) starts from an empty notification cache.
+    clearNotificationCache(queryClient);
     if (tokenData) {
       localStorage.setItem("tokens", JSON.stringify(tokenData));
       const decodedToken = jwt.decode(tokenData.token, { complete: true });
@@ -116,6 +123,7 @@ function App() {
               <Navigation />
               <nav className="main">
                 <ul>
+                  <NotificationBell />
                   <li className="search" onClick={() => toggleMenu()}>
                     <a className="fa-search" href="#search">
                       Search
@@ -195,6 +203,14 @@ function App() {
                   }
                 />
               </Route>
+              <Route
+                path="notifications"
+                element={
+                  <RequireLogin>
+                    <NotificationsPage />
+                  </RequireLogin>
+                }
+              />
               <Route path="login">
                 <Route path="" element={<Login />} />
                 <Route path="magic" element={<Magic />} />

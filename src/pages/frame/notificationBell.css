@@ -1,0 +1,26 @@
+#header .main ul li.notifications {
+  position: relative;
+}
+
+.notification-dot {
+  position: absolute;
+  top: 0.6em;
+  right: 0.6em;
+  width: 0.6em;
+  height: 0.6em;
+  border-radius: 50%;
+  background: #2ebaae;
+  pointer-events: none;
+}
+
+.notifications .visually-hidden {
+  border: 0;
+  clip: rect(0, 0, 0, 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}

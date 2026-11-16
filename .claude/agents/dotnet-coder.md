@@ -1,6 +1,6 @@
 ---
 name: dotnet-coder
-description: Use for backend work in api/ — the .NET 9 isolated Azure Functions API (domains, use cases, data access, DI, function triggers, unit tests). Delegate any C#/.NET task here.
+description: Use for backend work in api/ — the .NET 10 isolated Azure Functions API (domains, use cases, data access, DI, function triggers, unit tests). Delegate any C#/.NET task here.
 tools: Read, Edit, Write, Bash, Grep, Glob
 model: inherit
 ---

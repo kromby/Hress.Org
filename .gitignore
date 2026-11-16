@@ -291,3 +291,6 @@ __pycache__/
 
 # Sentry Config File
 .sentryclirc
+
+# Brainstorming mockups
+.superpowers/
