@@ -7,11 +7,14 @@ notification and pushes it to the subscribed devices.
 ## Owner setup checklist
 
 1. Generate VAPID keys: `npx web-push generate-vapid-keys`. Keep the private key out of the repo.
-2. Create the Function App: **Windows** Consumption plan, .NET 10 isolated, Functions v4, with its own
-   storage account for `AzureWebJobsStorage`. Then turn on **SCM Basic Auth Publishing Credentials**
+2. Create the Function App: **Flex Consumption** plan (Linux), .NET 10 isolated, with its own
+   storage account for `AzureWebJobsStorage`. The production app is `ez-func-hressorg-push` in
+   `ez-rg-hressorg`. Then turn on **SCM Basic Auth Publishing Credentials**
    (Function App -> Settings -> Configuration -> General settings); it is off by default for new apps, and without it
-   the downloaded publish profile has no usable credentials and the first deploy fails with 401. (Flex Consumption is the alternative, but it needs the workflow to log in
-   with `azure/login` (OIDC) instead of a publish profile.)
+   the downloaded publish profile has no usable credentials and the first deploy fails with 401.
+   The deploy workflow sets `sku: flexconsumption`; without it a publish-profile deploy falls back to Kudu
+   zipdeploy, which Flex doesn't have (405 on app settings, then 404 on zipdeploy). If the app is ever moved
+   to a Windows Consumption plan, remove that `sku` line.
 3. Function App settings:
    - `ContentStorage`: the content storage account connection string (the one holding the notification tables and the queue).
    - `Ez.Hress.Notifications.Vapid.PublicKey`
