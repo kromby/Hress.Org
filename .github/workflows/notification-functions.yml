@@ -36,4 +36,7 @@ jobs:
         with:
           app-name: ${{ secrets.NOTIFICATION_FUNCTIONS_APP_NAME }}
           package: ./publish
+          # The app runs on a Flex Consumption plan: with a publish profile the action
+          # only uses the Flex deploy endpoint when sku is set (otherwise Kudu zipdeploy, which 404s).
+          sku: flexconsumption
           publish-profile: ${{ secrets.NOTIFICATION_FUNCTIONS_PUBLISH_PROFILE }}
