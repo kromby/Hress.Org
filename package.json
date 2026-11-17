@@ -34,7 +34,7 @@
     "react-dom": "19.2.8",
     "react-error-boundary": "^6.1.6",
     "react-ga4": "^3.0.1",
-    "react-global-configuration": "^1.4.1",
+    "react-global-configuration": "^1.4.2",
     "react-router": "^7.18.4",
     "react-router-dom": "^7.18.4",
     "react-youtube": "^10.1.0",
