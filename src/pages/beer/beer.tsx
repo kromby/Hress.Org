@@ -1,0 +1,99 @@
+import { useEffect } from "react";
+import { Link, useParams } from "react-router-dom";
+import LoginRedirect from "./LoginRedirect";
+import BeerAbout from "./components/BeerAbout";
+import BeerCover from "./components/BeerCover";
+import BeerRatingStars from "./components/BeerRatingStars";
+import ChatThread from "./components/ChatThread";
+import { HressPage, useHressAuth } from "./hress";
+import {
+  isUnauthorized,
+  useCurrentSeason,
+  useSeasonBeers,
+} from "./hooks/useBeerApi";
+
+const BackLink = () => (
+  <p>
+    <Link to="/beer">← Allir bjórar</Link>
+  </p>
+);
+
+// A beer in the current season. It's read from the season's beer list,
+// which holds the details and the user's own rating.
+const BeerPage = () => {
+  const { beerID } = useParams();
+  const { signOut } = useHressAuth();
+  const season = useCurrentSeason();
+  const beers = useSeasonBeers(season.data?.id);
+  const error = season.error ?? beers.error;
+  const unauthorized = isUnauthorized(error);
+
+  // The API rejected the stored token. Clear it, otherwise the login page
+  // sees a token and sends the user straight back here.
+  useEffect(() => {
+    if (unauthorized) signOut();
+  }, [unauthorized]);
+
+  if (unauthorized) {
+    return <LoginRedirect />;
+  }
+
+  const summary = beers.data?.find((s) => s.beer.id === beerID);
+
+  // A beer that isn't in the list yet may just be waiting for the refetch
+  // after it was added.
+  if (season.isLoading || beers.isLoading || (!summary && beers.isFetching)) {
+    return (
+      <HressPage title="Bjór">
+        <p data-testid="beer-loading">Sæki bjór…</p>
+      </HressPage>
+    );
+  }
+
+  if (error) {
+    return (
+      <HressPage title="Bjór">
+        <p data-testid="beer-error">Ekki tókst að sækja bjórinn.</p>
+        <BackLink />
+      </HressPage>
+    );
+  }
+
+  if (!season.data || !summary) {
+    return (
+      <HressPage title="Bjór">
+        <p data-testid="beer-not-found">Þessi bjór er ekki á tímabilinu.</p>
+        <BackLink />
+      </HressPage>
+    );
+  }
+
+  const { beer, myRating } = summary;
+
+  return (
+    <HressPage
+      title={beer.name}
+      description={season.data.name}
+      thumbnail={<BeerCover beer={beer} size="large" />}
+      stats={
+        <BeerRatingStars
+          season={season.data}
+          beerID={beer.id}
+          myRating={myRating}
+        />
+      }
+      below={
+        <ChatThread
+          seasonID={season.data.id}
+          beerID={beer.id}
+          isOpen={season.data.isOpen}
+        />
+      }
+    >
+      <BeerAbout beer={beer} />
+      <BackLink />
+    </HressPage>
+  );
+};
+
+export default BeerPage;

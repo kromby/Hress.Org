@@ -1,5 +1,6 @@
 import * as Sentry from "@sentry/react";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { BrowserRouter, Link, Routes, Route } from "react-router-dom";
 import jwt from "jsonwebtoken";
 import ReactGA from "react-ga4";
@@ -28,6 +29,8 @@ import News from "./news";
 import MainSidebar from "./news/mainSidebar";
 import SingleNews from "./news/singleNews";
 import HistoryNews from "./news/history";
+import MyNews from "./news/myNews";
+import NewsEdit from "./news/newsEdit";
 import HistorySidebar from "./news/historySidebar";
 import DinnerParties from "./dinnerparties";
 import DinnerParty from "./dinnerparties/dinnerparty";
@@ -40,13 +43,23 @@ import Password from "./profile/password";
 import DinnerPartySidebar from "./dinnerparties/sidebar";
 import MovieList from "./hardhead/list";
 import AlbumImageUpload from "./albums/albumImageUpload";
+import RequireLogin from "./beer/RequireLogin";
+import BeerHome from "./beer";
+import BeerPage from "./beer/beer";
+import RegisterBeerPage from "./beer/register";
+import NotificationsPage from "./notifications";
+import NotificationBell from "./frame/notificationBell";
+import { clearNotificationCache } from "./notifications/clearNotificationCache";
 
 function App() {
+  const queryClient = useQueryClient();
   const [authTokens, setAuthTokens] = useState();
   const [data, setData] = useState({ showMenu: false });
   const TRACKING_ID = "G-Z6HJ4VPZTN";
 
   const setTokens = (tokenData) => {
+    // Every token change (sign-in, sign-out, rejected token) starts from an empty notification cache.
+    clearNotificationCache(queryClient);
     if (tokenData) {
       localStorage.setItem("tokens", JSON.stringify(tokenData));
       const decodedToken = jwt.decode(tokenData.token, { complete: true });
@@ -110,6 +123,7 @@ function App() {
               <Navigation />
               <nav className="main">
                 <ul>
+                  <NotificationBell />
                   <li className="search" onClick={() => toggleMenu()}>
                     <a className="fa-search" href="#search">
                       Search
@@ -163,6 +177,40 @@ function App() {
                 <Route path="films.aspx" element={<LegacyFrame />} />
                 <Route path="defaultold.aspx" element={<LegacyFrame />} />
               </Route>
+              <Route path="beer">
+                <Route
+                  path=""
+                  element={
+                    <RequireLogin>
+                      <BeerHome />
+                    </RequireLogin>
+                  }
+                />
+                <Route
+                  path="register"
+                  element={
+                    <RequireLogin>
+                      <RegisterBeerPage />
+                    </RequireLogin>
+                  }
+                />
+                <Route
+                  path=":beerID"
+                  element={
+                    <RequireLogin>
+                      <BeerPage />
+                    </RequireLogin>
+                  }
+                />
+              </Route>
+              <Route
+                path="notifications"
+                element={
+                  <RequireLogin>
+                    <NotificationsPage />
+                  </RequireLogin>
+                }
+              />
               <Route path="login">
                 <Route path="" element={<Login />} />
                 <Route path="magic" element={<Magic />} />
@@ -183,6 +231,9 @@ function App() {
               <Route path="hressgames" element={<LegacyFrame />} />
               <Route path="mission" element={<LegacyFrame />} />
               <Route path="news">
+                <Route path="mine" element={<MyNews />} />
+                <Route path="new" element={<NewsEdit />} />
+                <Route path=":id/edit" element={<NewsEdit />} />
                 <Route path=":id" element={<SingleNews />} />
                 <Route path="history" element={<HistoryNews />} />
               </Route>

@@ -1,58 +1,53 @@
-import { act } from "react";
-const axios = require('axios');
-import Guests from './guests';
-import { createRoot } from 'react-dom/client';
+import { render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router-dom";
+import axios from "axios";
+import Guests from "./guests";
 
-jest.mock('axios');
+jest.mock("axios");
+jest.mock("react-global-configuration", () => ({
+  get: () => "http://localhost:7072",
+}));
 
-describe('Guests', () => {
-  let container = null;
+describe("Guests", () => {
+  const guests = [
+    { id: 1, username: "guest1", profilePhoto: { href: "photo1.jpg" } },
+    { id: 2, username: "guest2", profilePhoto: { href: "photo2.jpg" } },
+  ];
 
-  beforeEach(() => {
-    // Set up a DOM element as a render target
-    container = document.createElement('div');
-    document.body.appendChild(container);
-  });
+  const renderGuests = (props) =>
+    render(
+      <MemoryRouter>
+        <Guests hardheadID={123} {...props} />
+      </MemoryRouter>
+    );
 
   afterEach(() => {
-    // Clean up on exiting
-    createRoot(container).unmountComponentAtNode(container);
-    container.remove();
+    jest.clearAllMocks();
   });
 
-  it('renders without crashing', () => {
-    const guests = [
-      { id: 1, username: 'guest1', profilePhoto: { href: 'photo1.jpg' } },
-      { id: 2, username: 'guest2', profilePhoto: { href: 'photo2.jpg' } },
-    ];
-
+  it("fetches and renders guests when none are passed in", async () => {
     axios.get.mockResolvedValueOnce({ data: guests });
 
-    // Render the component
-    act(() => {
-      render(<Guests hardheadID={123} />, container);
-    });
+    renderGuests();
 
-    // Check if the guests are rendered correctly
-    expect(container.querySelectorAll('.col-2').length).toBe(guests.length);
-
-    // Clean up
-    axios.get.mockClear();
+    expect(await screen.findByText("guest1")).toBeInTheDocument();
+    expect(screen.getByText("guest2")).toBeInTheDocument();
+    expect(axios.get).toHaveBeenCalledWith(
+      "http://localhost:7072/api/hardhead/123/guests"
+    );
   });
 
-  it('handles error when retrieving guests', () => {
-    const error = new Error('Failed to retrieve guests');
-    axios.get.mockRejectedValueOnce(error);
+  it("renders passed-in guests without calling the API", () => {
+    renderGuests({ initialGuests: guests });
 
-    // Render the component
-    act(() => {
-      createRoot(container).render(<Guests hardheadID={123} />);
-    });
+    expect(screen.getByText("guest1")).toBeInTheDocument();
+    expect(screen.getByText("guest2")).toBeInTheDocument();
+    expect(axios.get).not.toHaveBeenCalled();
+  });
 
-    // Check if the error is displayed
-    expect(container.textContent).toContain('Error retrieving guests');
+  it("does not call the API when the night has no guests", () => {
+    renderGuests({ initialGuests: [] });
 
-    // Clean up
-    axios.get.mockClear();
+    expect(axios.get).not.toHaveBeenCalled();
   });
 });

@@ -1,16 +1,23 @@
-﻿using Ez.Hress.Scripts.Entities;
+﻿using Ez.Hress.Notifications.UseCases;
+using Ez.Hress.Scripts.Entities;
 using Microsoft.Extensions.Logging;
+using Ganss.Xss;
+using System.Text.RegularExpressions;
 
 namespace Ez.Hress.Scripts.UseCases;
 
 public class NewsInteractor
 {
     private readonly INewsDataAccess _newsDataAccess;
+    private readonly NotificationInteractor _notificationInteractor;
     private readonly ILogger<NewsInteractor> _log;
+    private readonly TimeSpan _notifyTimeout;
 
-    public NewsInteractor(INewsDataAccess newsDataAccess, ILogger<NewsInteractor> log)
+    public NewsInteractor(INewsDataAccess newsDataAccess, NotificationInteractor notificationInteractor, ILogger<NewsInteractor> log, TimeSpan? notifyTimeout = null)
     {
+        _notifyTimeout = notifyTimeout ?? TimeSpan.FromSeconds(5);
         _newsDataAccess = newsDataAccess;
+        _notificationInteractor = notificationInteractor;
         _log = log;
     }
 
@@ -74,5 +81,158 @@ public class NewsInteractor
     public async Task<IList<StatisticNewsByDate>> GetNewsMonthStatisticsAsync(int year)
     {
         return await _newsDataAccess.GetNewsStatisticsByDate(year);
+    }
+
+    public async Task<IList<News>> GetNewsByAuthorAsync(int userId)
+    {
+        if (userId < 1)
+        {
+            throw new ArgumentException("User ID must be a positive number", nameof(userId));
+        }
+
+        _log.LogInformation("[{Class}.{Method}] Get news by author '{UserId}'", nameof(NewsInteractor), nameof(GetNewsByAuthorAsync), userId);
+        return await _newsDataAccess.GetNewsByAuthor(userId);
+    }
+
+    public async Task<News> CreateNewsAsync(News news, int userId)
+    {
+        ValidateAndPrepare(news, userId);
+        news.InsertedBy = userId;
+        news.Inserted = DateTime.UtcNow;
+
+        _log.LogInformation("[{Class}.{Method}] Creating news '{Name}' for user '{UserId}'", nameof(NewsInteractor), nameof(CreateNewsAsync), news.Name, userId);
+        news.ID = await _newsDataAccess.CreateNews(news);
+
+        try
+        {
+            await _notificationInteractor.NotifyNewsCreatedAsync(news.ID, news.Name).WaitAsync(_notifyTimeout);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "[{Class}.{Method}] Failed to notify about news '{Id}'", nameof(NewsInteractor), nameof(CreateNewsAsync), news.ID);
+        }
+
+        return news;
+    }
+
+    public async Task<News> UpdateNewsAsync(int id, News news, int userId)
+    {
+        if (id < 1)
+        {
+            throw new ArgumentException("News ID must be a positive number", nameof(id));
+        }
+
+        ValidateAndPrepare(news, userId);
+
+        var existing = await _newsDataAccess.GetNews(id);
+        if (existing == null || existing.ID < 1)
+        {
+            throw new KeyNotFoundException($"News '{id}' not found");
+        }
+
+        if (existing.InsertedBy != userId)
+        {
+            _log.LogWarning("[{Class}.{Method}] User '{UserId}' is not the author of news '{Id}'", nameof(NewsInteractor), nameof(UpdateNewsAsync), userId, id);
+            throw new UnauthorizedAccessException("Only the author can edit this news");
+        }
+
+        news.ID = id;
+        news.InsertedBy = existing.InsertedBy;
+        news.Inserted = existing.Inserted;
+        news.UpdatedBy = userId;
+        news.Updated = DateTime.UtcNow;
+
+        _log.LogInformation("[{Class}.{Method}] Updating news '{Id}' for user '{UserId}'", nameof(NewsInteractor), nameof(UpdateNewsAsync), id, userId);
+        await _newsDataAccess.UpdateNews(news);
+        return news;
+    }
+
+    private static void ValidateAndPrepare(News news, int userId)
+    {
+        if (userId < 1)
+        {
+            throw new ArgumentException("User ID must be a positive number", nameof(userId));
+        }
+
+        if (string.IsNullOrWhiteSpace(news.Name))
+        {
+            throw new ArgumentException("Headline is required", nameof(news));
+        }
+
+        if (string.IsNullOrWhiteSpace(news.Content))
+        {
+            throw new ArgumentException("Body is required", nameof(news));
+        }
+
+        if (news.Image != null)
+        {
+            if (news.Image.ID < 1)
+            {
+                throw new ArgumentException("Image ID must be a positive number", nameof(news));
+            }
+
+            if (news.ImageAlign == default)
+            {
+                news.ImageAlign = Align.Left;
+            }
+            else if (!Enum.IsDefined(news.ImageAlign))
+            {
+                throw new ArgumentException($"Invalid image alignment '{(int)news.ImageAlign}'", nameof(news));
+            }
+        }
+
+        var content = NewsHtmlSanitizer.Sanitize(news.Content);
+        if (!HasVisibleContent(content))
+        {
+            throw new ArgumentException("Body is required", nameof(news));
+        }
+
+        news.Name = news.Name.Trim();
+        news.Content = OpenExternalLinksInNewTab(content);
+    }
+
+    // News bodies are user-authored HTML; only the formatting the editor (and legacy news) uses is kept.
+    private static readonly HtmlSanitizer NewsHtmlSanitizer = CreateSanitizer();
+
+    private static HtmlSanitizer CreateSanitizer()
+    {
+        var options = new HtmlSanitizerOptions
+        {
+            AllowedTags = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "p", "br", "strong", "b", "em", "i", "u", "s", "span", "div",
+                "ul", "ol", "li", "h2", "h3", "blockquote", "code", "pre", "a", "img",
+            },
+            AllowedAttributes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "href", "target", "src", "alt", "title", "width", "height",
+            },
+            AllowedSchemes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "http", "https", "mailto" },
+            UriAttributes = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "href", "src" },
+        };
+        return new HtmlSanitizer(options);
+    }
+
+    private static readonly Regex HtmlTag = new(@"<[^>]*>", RegexOptions.Compiled);
+    // Runs on sanitized output, where an unsafe src has already been removed.
+    private static readonly Regex ImageWithSource = new(@"<img\b[^>]*\bsrc\s*=\s*[""'][^""'\s]+", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static bool HasVisibleContent(string html)
+    {
+        return ImageWithSource.IsMatch(html)
+            || !string.IsNullOrWhiteSpace(System.Net.WebUtility.HtmlDecode(HtmlTag.Replace(html, string.Empty)));
+    }
+
+    // Ported from legacy ContentManager.HandleHyperlinks: external links open in a new tab.
+    private static readonly Regex AnchorTag = new(@"<a\s[^>]*>", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex TargetAttribute = new(@"(?<![\w-])target\s*=", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+    private static readonly Regex ExternalHref = new(@"(?<![\w-])href\s*=\s*[""']?https?:", RegexOptions.IgnoreCase | RegexOptions.Compiled);
+
+    private static string OpenExternalLinksInNewTab(string html)
+    {
+        return AnchorTag.Replace(html, m =>
+            ExternalHref.IsMatch(m.Value) && !TargetAttribute.IsMatch(m.Value)
+                ? m.Value.Insert(2, " target=\"_blank\"")
+                : m.Value);
     }
 }

@@ -7,7 +7,7 @@ Guidance for AI agents working in the Hress.Org repository. For human-facing set
 Personal website at [www.hress.org](https://www.hress.org), hosted on **Azure Static Web Apps**.
 
 - **Frontend** (`src/`) — React 19 SPA, built with Create React App via `react-app-rewired`. Deployed as the SWA static site.
-- **API** (`api/`) — Azure Functions (.NET 9, isolated worker). Deployed as the SWA managed API.
+- **API** (`api/`) — Azure Functions (.NET 10, isolated worker). Deployed as the SWA managed API.
 - **Storage** — Azure SQL Database + Azure Blob/Table Storage.
 
 The two halves are separate stacks in one repo. Decide which one a task touches before starting.
@@ -56,7 +56,7 @@ Clean-architecture layout. Each domain is its own project; all follow the same t
 - `UseCases/` — interactors (no interfaces) + data-access interfaces (`I{Entity}DataAccess`).
 - `DataAccess/` — `{Entity}TableAccess` / `{Entity}SqlAccess` implementations and `{Entity}TableEntity` (`ITableEntity`) classes.
 
-Projects: `Ez.Hress.Shared`, `Ez.Hress.Hardhead`, `Ez.Hress.Album`, `Ez.Hress.MajorEvents`, `Ez.Hress.Administration`, `Ez.Hress.UserProfile`, `Ez.Hress.Scripts`. The HTTP-trigger functions and DI wiring live in `Ez.Hress.FunctionsApi` (`Program.cs`); tests live in `Ez.Hress.UnitTest`.
+Projects: `Ez.Hress.Shared`, `Ez.Hress.Hardhead`, `Ez.Hress.Album`, `Ez.Hress.MajorEvents`, `Ez.Hress.Administration`, `Ez.Hress.UserProfile`, `Ez.Hress.Scripts`, `Ez.Hress.Chat` (shared chat threads and messages), `Ez.Hress.BeerRater`. The HTTP-trigger functions and DI wiring live in `Ez.Hress.FunctionsApi` (`Program.cs`); tests live in `Ez.Hress.UnitTest`.
 
 Key rules (full detail in [ARCHITECTURE_RULES.md](ARCHITECTURE_RULES.md)):
 

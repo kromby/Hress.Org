@@ -89,6 +89,7 @@ const Hardhead = () => {
                   description={hardhead.description}
                   movie={hardhead.movie}
                   dateShown={hardhead.date}
+                  guests={hardhead.guests}
                 />
               }
               actions={<HardheadActions id={hardhead.id} />}

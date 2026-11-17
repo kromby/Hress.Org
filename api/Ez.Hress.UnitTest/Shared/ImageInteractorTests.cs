@@ -2,6 +2,8 @@
 using Ez.Hress.Shared.UseCases;
 using Microsoft.Extensions.Logging;
 using Moq;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 
 namespace Ez.Hress.UnitTest.Shared;
 
@@ -45,6 +47,33 @@ public class ImageInteractorTests
     }
 
     [Fact]
+    public async Task GetContent_ResizedTransparentPng_HasWhiteBackground()
+    {
+        // ARRANGE - a fully transparent PNG, like a cut-out of a beer can.
+        using var png = new MemoryStream();
+        using (var transparent = new Image<Rgba32>(20, 40))
+        {
+            transparent.SaveAsPng(png);
+        }
+        ImageEntity? entity = new(279076, "Tuborg Lille Jul", "https://example.com/tuborg.png") { };
+        _infoMock.Setup(i => i.GetImage(It.IsAny<int>())).Returns(Task.FromResult<ImageEntity?>(entity));
+        _contentHttpMock.Setup(c => c.GetContent(entity.PhotoUrl)).Returns(Task.FromResult<byte[]?>(png.ToArray()));
+        var contentList = new List<IImageContentDataAccess>() { _contentHttpMock.Object, _contentBlobMock.Object, _contentRelativeMock.Object };
+        var interactor = new ImageInteractor(_infoMock.Object, contentList, _log.Object);
+
+        // ACT
+        var result = await interactor.GetContentAsync(279076, 10, 0);
+
+        // ASSERT - resized to JPEG, with white (not black) where it was transparent.
+        Assert.NotNull(result?.Content);
+        using var jpeg = Image.Load<Rgb24>(result.Content);
+        Assert.Equal(10, jpeg.Width);
+        Assert.Equal(20, jpeg.Height);
+        var pixel = jpeg[5, 10];
+        Assert.True(pixel.R > 245 && pixel.G > 245 && pixel.B > 245, $"Expected white, got {pixel}");
+    }
+
+    [Fact]
     public async Task GetContentBlobOK_TestAsync()
     {
         // ARRANGE
@@ -80,5 +109,37 @@ public class ImageInteractorTests
         Assert.NotNull(result);
         Assert.NotNull(result.Content);
         _contentBlobMock.Verify();
+    }
+
+    [Fact]
+    public async Task SaveBeerContainer_SetsBlobBeerPhotoUrl()
+    {
+        // ARRANGE
+        var blobSaveMock = new Mock<IImageContentDataAccess>();
+        blobSaveMock.Setup(c => c.Prefix).Returns("blob:/");
+        blobSaveMock.Setup(c => c.Save(It.IsAny<string>(), It.IsAny<byte[]>(), It.IsAny<int>())).Returns(Task.CompletedTask);
+
+        ImageEntity? savedEntity = null;
+        _infoMock.Setup(i => i.Save(It.IsAny<ImageEntity>(), It.IsAny<int>(), It.IsAny<int>(), It.IsAny<int>()))
+            .Callback<ImageEntity, int, int, int>((e, _, _, _) => savedEntity = e)
+            .ReturnsAsync(42);
+
+        using var png = new MemoryStream();
+        using (var image = new Image<Rgba32>(1, 1))
+        {
+            image.SaveAsPng(png);
+        }
+
+        var entity = new ImageEntity(0, "x", "") { Content = png.ToArray(), Container = ImageContainer.Beer };
+        var interactor = new ImageInteractor(_infoMock.Object, new List<IImageContentDataAccess> { blobSaveMock.Object }, _log.Object);
+
+        // ACT
+        var result = await interactor.SaveAsync(entity, 7);
+
+        // ASSERT
+        Assert.Equal(42, result.ID);
+        Assert.NotNull(savedEntity);
+        Assert.StartsWith("BLOB:/beer/", savedEntity.PhotoUrl);
+        blobSaveMock.Verify(c => c.Save("beer", It.IsAny<byte[]>(), 42), Times.Once);
     }
 }

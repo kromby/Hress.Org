@@ -4,11 +4,18 @@ using Ez.Hress.Administration.DataAccess;
 using Ez.Hress.Administration.UseCases;
 using Ez.Hress.Albums.DataAccess;
 using Ez.Hress.Albums.UseCases;
+using Ez.Hress.BeerRater.DataAccess;
+using Ez.Hress.BeerRater.UseCases;
+using Ez.Hress.Chat.DataAccess;
+using Ez.Hress.Chat.UseCases;
 using Ez.Hress.FunctionsApi;
+using Ez.Hress.FunctionsApi.Notifications;
 using Ez.Hress.Hardhead.DataAccess;
 using Ez.Hress.Hardhead.UseCases;
 using Ez.Hress.MajorEvents.DataAccess;
 using Ez.Hress.MajorEvents.UseCases;
+using Ez.Hress.Notifications.DataAccess;
+using Ez.Hress.Notifications.UseCases;
 using Ez.Hress.Scripts.DataAccess;
 using Ez.Hress.Scripts.UseCases;
 using Ez.Hress.Shared.DataAccess;
@@ -111,9 +118,21 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
     services.AddSingleton<IMenuDataAccess, MenuSqlDataAccess>();
     services.AddSingleton<MenuInteractor>();
 
+    // Notifications
+    services.AddSingleton<INotificationDataAccess, NotificationTableAccess>(sp => new NotificationTableAccess(sp.GetRequiredService<BlobConnectionInfo>(), sp.GetRequiredService<ILogger<NotificationTableAccess>>()));
+    services.AddSingleton<INotificationSeenDataAccess, NotificationSeenTableAccess>(sp => new NotificationSeenTableAccess(sp.GetRequiredService<BlobConnectionInfo>(), sp.GetRequiredService<ILogger<NotificationSeenTableAccess>>()));
+    services.AddSingleton<IPushSubscriptionDataAccess, PushSubscriptionTableAccess>(sp => new PushSubscriptionTableAccess(sp.GetRequiredService<BlobConnectionInfo>(), sp.GetRequiredService<ILogger<PushSubscriptionTableAccess>>()));
+    services.AddSingleton<IPushQueue, PushQueueStorageAccess>(sp => new PushQueueStorageAccess(sp.GetRequiredService<BlobConnectionInfo>(), sp.GetRequiredService<ILogger<PushQueueStorageAccess>>()));
+    services.AddSingleton<NotificationInteractor>();
+    services.AddSingleton(new VapidPublicKey(config["Ez.Hress.Notifications.Vapid.PublicKey"] ?? ""));
+
     // News
     services.AddSingleton<INewsDataAccess, NewsSqlDataAccess>();
     services.AddSingleton<NewsInteractor>();
+
+    // Chat
+    services.AddSingleton<IChatDataAccess, ChatSqlDataAccess>();
+    services.AddSingleton<ChatInteractor>();
 
     // Dinner Party
     services.AddSingleton<IDinnerPartyDataAccess, DinnerPartySqlDataAccess>();
@@ -180,4 +199,20 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
     services.AddHttpClient();
     services.AddSingleton<ITranslationDataAccess, TranslationSqlDataAccess>();
     services.AddSingleton<TranslationService>();
+
+    // BeerRater
+    var beerStorage = config["Ez.Hress.BeerRater.Storage.ConnectionString"];
+    var beerConnection = new BlobConnectionInfo(string.IsNullOrEmpty(beerStorage) ? config["Ez.Hress.Shared.ContentStorage.ConnectionString"]! : beerStorage);
+    services.AddSingleton<IBeerSeasonDataAccess>(sp => new BeerSeasonTableAccess(beerConnection, sp.GetRequiredService<ILogger<BeerSeasonTableAccess>>()));
+    services.AddSingleton<SeasonInteractor>();
+    services.AddSingleton<IBeerDataAccess>(sp => new BeerTableAccess(beerConnection, sp.GetRequiredService<ILogger<BeerTableAccess>>()));
+    services.AddSingleton<BeerInteractor>();
+    services.AddSingleton<BeerCatalogInteractor>();
+    services.AddSingleton<IBeerRatingDataAccess>(sp => new BeerRatingTableAccess(beerConnection, sp.GetRequiredService<ILogger<BeerRatingTableAccess>>()));
+    services.AddSingleton<SummaryInteractor>();
+    services.AddSingleton<RatingInteractor>();
+    services.AddSingleton<IBeerChatThreadDataAccess>(sp => new BeerChatThreadTableAccess(beerConnection, sp.GetRequiredService<ILogger<BeerChatThreadTableAccess>>()));
+    _ = int.TryParse(config[HressChatAccess.CategorySetting], out var beerChatCategoryID);
+    services.AddSingleton<IBeerChatDataAccess>(sp => new HressChatAccess(sp.GetRequiredService<ChatInteractor>(), beerChatCategoryID, sp.GetRequiredService<ILogger<HressChatAccess>>()));
+    services.AddSingleton<BeerChatInteractor>();
 }

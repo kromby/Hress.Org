@@ -1,5 +1,9 @@
 version = 1
 
+exclude_patterns = [
+  "api/Ez.Hress.UnitTest/**"
+]
+
 [[analyzers]]
 name = "csharp"
 test_patterns = [  

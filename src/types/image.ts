@@ -5,6 +5,7 @@ export enum ImageContainer {
   News = 3,
   Album = 4,
   ATVR = 5,
+  Beer = 6,
 }
 
 export interface ImageEntity {

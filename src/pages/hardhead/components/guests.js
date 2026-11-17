@@ -3,9 +3,11 @@ import config from "react-global-configuration";
 import UserImage from "../../../components/users/userimage";
 import axios from "axios";
 
-const Guests = ({ hardheadID }) => {
+// Pass `initialGuests` when the parent already has them (e.g. from the hardhead list
+// response) to avoid one guests request per night.
+const Guests = ({ hardheadID, initialGuests }) => {
   const [error, setError] = useState();
-  const [guests, setGuests] = useState();
+  const [guests, setGuests] = useState(initialGuests);
 
   useEffect(() => {
     const getGuests = () => {
