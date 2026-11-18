@@ -15,7 +15,7 @@ internal class NotificationTableEntity : ITableEntity
     public NotificationTableEntity(Notification notification)
     {
         PartitionKey = notification.RecipientUserID?.ToString() ?? NotificationKeys.AllPartition;
-        RowKey = NotificationKeys.NewestFirst(notification.Created) + "_" + Guid.NewGuid().ToString("N");
+        RowKey = NotificationKeys.NewestFirst(notification.Created) + "_" + (notification.Key ?? Guid.NewGuid().ToString("N"));
         Type = notification.Type;
         Title = notification.Title;
         Link = notification.Link;

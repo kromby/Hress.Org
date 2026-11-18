@@ -6,6 +6,7 @@
     "ContentStorage": "",
     "Ez.Hress.Notifications.Vapid.PublicKey": "",
     "Ez.Hress.Notifications.Vapid.PrivateKey": "",
-    "Ez.Hress.Notifications.Vapid.Subject": ""
+    "Ez.Hress.Notifications.Vapid.Subject": "",
+    "Ez.Hress.Database.ConnectionString": ""
   }
 }

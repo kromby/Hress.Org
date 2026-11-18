@@ -11,4 +11,9 @@ public class Notification
     public int? RecipientUserID { get; set; }
     /// <summary>UTC.</summary>
     public DateTime Created { get; set; }
+    /// <summary>
+    /// Optional stable identity. Together with RecipientUserID and Created it decides the storage key,
+    /// so saving the same keyed notification twice is detected (see INotificationDataAccess.SaveIfNewAsync).
+    /// </summary>
+    public string? Key { get; set; }
 }

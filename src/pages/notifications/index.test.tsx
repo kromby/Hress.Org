@@ -143,6 +143,35 @@ describe("NotificationsPage", () => {
     expect(await screen.findByText("Frétt opnuð")).toBeInTheDocument();
   });
 
+  it("labels each item by its type", async () => {
+    mockList({
+      lastSeen: null,
+      notifications: [
+        item("42", "2026-03-01T00:00:00Z"),
+        {
+          id: "h1",
+          type: "hardhead",
+          title: "Harðhaus #250 er í kvöld hjá Jónsi",
+          link: "/hardhead/123",
+          created: "2026-03-01T09:00:00Z",
+        },
+        { ...item("43", "2026-03-01T00:00:00Z"), type: "unknown" },
+      ],
+    });
+    renderPage();
+    const hardhead = await screen.findByRole("link", {
+      name: /Harðhaus #250 er í kvöld hjá Jónsi/,
+    });
+    expect(hardhead).toHaveTextContent("Harðhausakvöld ·");
+    expect(hardhead).toHaveAttribute("href", "/hardhead/123");
+    expect(screen.getByRole("link", { name: /Frétt 42/ })).toHaveTextContent(
+      "Ný frétt ·"
+    );
+    expect(
+      screen.getByRole("link", { name: /Frétt 43/ })
+    ).not.toHaveTextContent("·");
+  });
+
   it("ignores a cached list: posts /seen and highlights only after the fresh load", async () => {
     const client = new QueryClient({
       defaultOptions: { queries: { retry: false } },

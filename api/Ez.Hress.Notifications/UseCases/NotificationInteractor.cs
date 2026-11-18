@@ -38,6 +38,56 @@ public class NotificationInteractor(
         return saved;
     }
 
+    /// <summary>Time of day (UTC, which is also Iceland's time) the Hardhead reminder is stamped with.</summary>
+    public static readonly TimeSpan HardheadReminderTime = TimeSpan.FromHours(9);
+
+    /// <summary>
+    /// Tells each recipient that Hardhead night <paramref name="hardheadID"/> is tonight. One notification
+    /// per recipient, stamped at <see cref="HardheadReminderTime"/> on <paramref name="day"/> and keyed by
+    /// the night, so running this again for the same day saves and queues nothing new.
+    /// Returns how many notifications were queued.
+    /// </summary>
+    public async Task<int> NotifyHardheadTonightAsync(int hardheadID, int number, string hostName, DateTime day, IEnumerable<int> recipientUserIDs)
+    {
+        log.LogInformation("[{Class}.{Method}] Notifying about Hardhead night {HardheadID}", nameof(NotificationInteractor), nameof(NotifyHardheadTonightAsync), hardheadID);
+        if (hardheadID <= 0)
+        {
+            throw new ArgumentException("Hardhead ID must be positive", nameof(hardheadID));
+        }
+
+        var title = string.IsNullOrWhiteSpace(hostName)
+            ? $"Harðhaus #{number} er í kvöld"
+            : $"Harðhaus #{number} er í kvöld hjá {hostName}";
+        if (title.Length > TitleMaxLength)
+        {
+            title = title[..(TitleMaxLength - 1)] + "…";
+        }
+
+        var created = DateTime.SpecifyKind(day.Date, DateTimeKind.Utc) + HardheadReminderTime;
+        var queued = 0;
+        foreach (var userID in recipientUserIDs.Where(id => id > 0).Distinct())
+        {
+            var saved = await notifications.SaveIfNewAsync(new Notification
+            {
+                Type = NotificationTypes.Hardhead,
+                Title = title,
+                Link = $"/hardhead/{hardheadID}",
+                RecipientUserID = userID,
+                Created = created,
+                Key = $"hardhead-{hardheadID}"
+            });
+            if (saved == null)
+            {
+                continue;
+            }
+            await queue.EnqueueAsync(saved.ID);
+            queued++;
+        }
+
+        log.LogInformation("[{Class}.{Method}] Queued {Queued} notifications for Hardhead night {HardheadID}", nameof(NotificationInteractor), nameof(NotifyHardheadTonightAsync), queued, hardheadID);
+        return queued;
+    }
+
     public async Task<NotificationList> GetNotificationsAsync(int userID, int top = 50)
     {
         log.LogInformation("[{Class}.{Method}] Getting notifications for user {UserID}", nameof(NotificationInteractor), nameof(GetNotificationsAsync), userID);
