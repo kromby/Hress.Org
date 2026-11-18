@@ -20,7 +20,7 @@
     "@sentry/react": "^10.76.2",
     "@tanstack/react-query": "^5.104.1",
     "@tiptap/pm": "3.31.4",
-    "@tiptap/react": "3.31.4",
+    "@tiptap/react": "3.34.0",
     "@tiptap/starter-kit": "3.31.4",
     "@types/react-star-ratings": "^2.3.3",
     "axios": "^1.20.0",
