@@ -66,6 +66,108 @@ public class NotificationInteractorTests
         _queue.Verify(q => q.EnqueueAsync(It.IsAny<string>()), Times.Never);
     }
 
+    private List<Notification> CaptureHardheadSaves(Func<Notification, bool>? alreadySaved = null)
+    {
+        var saved = new List<Notification>();
+        _notifications.Setup(n => n.SaveIfNewAsync(It.IsAny<Notification>()))
+            .ReturnsAsync((Notification n) =>
+            {
+                if (alreadySaved?.Invoke(n) == true)
+                {
+                    return null;
+                }
+                saved.Add(n);
+                n.ID = $"{n.RecipientUserID}|{n.Key}";
+                return n;
+            });
+        return saved;
+    }
+
+    [Fact]
+    public async Task NotifyHardheadTonight_OneNotificationPerRecipient_QueuedAndStampedAtNine()
+    {
+        var saved = CaptureHardheadSaves();
+        var day = new DateTime(2026, 11, 20, 0, 0, 0, DateTimeKind.Utc);
+
+        var queued = await _sut.NotifyHardheadTonightAsync(123, 250, "Jónsi", day, new[] { 7, 8 });
+
+        Assert.Equal(2, queued);
+        Assert.Equal(new int?[] { 7, 8 }, saved.Select(n => n.RecipientUserID));
+        Assert.All(saved, n =>
+        {
+            Assert.Equal("hardhead", n.Type);
+            Assert.Equal("Harðhaus #250 er í kvöld hjá Jónsi", n.Title);
+            Assert.Equal("/hardhead/123", n.Link);
+            Assert.Equal("hardhead-123", n.Key);
+            Assert.Equal(new DateTime(2026, 11, 20, 9, 0, 0, DateTimeKind.Utc), n.Created);
+            Assert.Equal(DateTimeKind.Utc, n.Created.Kind);
+        });
+        _queue.Verify(q => q.EnqueueAsync("7|hardhead-123"), Times.Once);
+        _queue.Verify(q => q.EnqueueAsync("8|hardhead-123"), Times.Once);
+    }
+
+    [Fact]
+    public async Task NotifyHardheadTonight_StampIgnoresTimeOfDay()
+    {
+        var saved = CaptureHardheadSaves();
+
+        await _sut.NotifyHardheadTonightAsync(1, 1, "a", new DateTime(2026, 11, 20, 9, 0, 3, DateTimeKind.Utc), new[] { 7 });
+        await _sut.NotifyHardheadTonightAsync(1, 1, "a", new DateTime(2026, 11, 20, 14, 30, 0, DateTimeKind.Utc), new[] { 7 });
+
+        Assert.Equal(saved[0].Created, saved[1].Created);
+    }
+
+    [Fact]
+    public async Task NotifyHardheadTonight_AlreadyNotified_NotQueuedAgain()
+    {
+        CaptureHardheadSaves(alreadySaved: n => n.RecipientUserID == 7);
+
+        var queued = await _sut.NotifyHardheadTonightAsync(123, 250, "Jónsi", new DateTime(2026, 11, 20), new[] { 7, 8 });
+
+        Assert.Equal(1, queued);
+        _queue.Verify(q => q.EnqueueAsync("8|hardhead-123"), Times.Once);
+        _queue.Verify(q => q.EnqueueAsync(It.IsAny<string>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task NotifyHardheadTonight_DuplicateAndInvalidRecipients_Skipped()
+    {
+        var saved = CaptureHardheadSaves();
+
+        await _sut.NotifyHardheadTonightAsync(123, 250, "Jónsi", new DateTime(2026, 11, 20), new[] { 7, 7, 0, -1, 8 });
+
+        Assert.Equal(new int?[] { 7, 8 }, saved.Select(n => n.RecipientUserID));
+    }
+
+    [Fact]
+    public async Task NotifyHardheadTonight_NoHostName_TitleWithoutHost()
+    {
+        var saved = CaptureHardheadSaves();
+
+        await _sut.NotifyHardheadTonightAsync(123, 250, " ", new DateTime(2026, 11, 20), new[] { 7 });
+
+        Assert.Equal("Harðhaus #250 er í kvöld", saved.Single().Title);
+    }
+
+    [Fact]
+    public async Task NotifyHardheadTonight_NoRecipients_NothingSaved()
+    {
+        var queued = await _sut.NotifyHardheadTonightAsync(123, 250, "Jónsi", new DateTime(2026, 11, 20), Array.Empty<int>());
+
+        Assert.Equal(0, queued);
+        _notifications.Verify(n => n.SaveIfNewAsync(It.IsAny<Notification>()), Times.Never);
+        _queue.Verify(q => q.EnqueueAsync(It.IsAny<string>()), Times.Never);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public async Task NotifyHardheadTonight_InvalidHardheadID_Throws(int hardheadID)
+    {
+        await Assert.ThrowsAsync<ArgumentException>(() => _sut.NotifyHardheadTonightAsync(hardheadID, 1, "a", new DateTime(2026, 11, 20), new[] { 7 }));
+        _notifications.Verify(n => n.SaveIfNewAsync(It.IsAny<Notification>()), Times.Never);
+    }
+
     [Fact]
     public async Task GetNotifications_ReturnsLastSeenBeforeThisVisit()
     {

@@ -68,6 +68,69 @@ public class HardheadSqlAccess : IHardheadDataAccess
         return list;
     }
 
+    public async Task<IList<HardheadNight>> GetHardheadsOnDay(DateTime day)
+    {
+        _log.LogInformation("[{Class}.{Method}] Getting hardheads on '{Day}'.", nameof(HardheadSqlAccess), nameof(GetHardheadsOnDay), day);
+        const string sql = @"
+            SELECT  night.Id, night.Number, night.Date, night.Inserted, night.Updated, host.UserId, hressUser.Username
+            FROM    rep_Event night
+            JOIN    rep_User host ON host.EventId = night.Id AND host.TypeId = 53
+            JOIN    adm_User hressUser ON host.UserId = hressUser.Id
+            WHERE   night.TypeId = 49 AND night.Date >= @dayStart AND night.Date < @dayEnd";
+
+        var list = new List<HardheadNight>();
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add(new SqlParameter("dayStart", day.Date));
+        command.Parameters.Add(new SqlParameter("dayEnd", day.Date.AddDays(1)));
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            list.Add(new HardheadNight(Convert.ToInt32(reader["Id"]), Convert.ToInt32(reader["Number"]),
+                new UserBasicEntity
+                {
+                    ID = SqlHelper.GetInt(reader, "UserId"),
+                    Username = reader.GetString(reader.GetOrdinal("Username"))
+                })
+            {
+                Date = reader.GetDateTime(reader.GetOrdinal("Date")),
+                Inserted = reader.GetDateTime(reader.GetOrdinal("Inserted")),
+                Updated = reader.IsDBNull(reader.GetOrdinal("Updated")) ? null : reader.GetDateTime(reader.GetOrdinal("Updated")),
+            });
+        }
+        return list;
+    }
+
+    public async Task<IList<int>> GetAttendeeIDs(DateTime fromDate, DateTime toDate)
+    {
+        _log.LogInformation("[{Class}.{Method}] Getting attendees between '{From}' and '{To}'.", nameof(HardheadSqlAccess), nameof(GetAttendeeIDs), fromDate, toDate);
+        // 53 = host, 52 = guest. User 2646 is left out, as in the night guest counts.
+        const string sql = @"
+            SELECT  DISTINCT attendee.UserId
+            FROM    rep_User attendee
+            JOIN    rep_Event night ON night.Id = attendee.EventId
+            WHERE   night.TypeId = 49 AND night.Date > @dateFrom AND night.Date <= @dateTo
+                AND attendee.TypeId IN (52, 53) AND attendee.UserId != 2646";
+
+        var list = new List<int>();
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add(new SqlParameter("dateFrom", fromDate));
+        command.Parameters.Add(new SqlParameter("dateTo", toDate));
+
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            list.Add(SqlHelper.GetInt(reader, "UserId"));
+        }
+        return list;
+    }
+
     public async Task<IList<HardheadNight>> GetHardheads(int parentID)
     {
         var sql = string.Format(SQL_GETHARDHEAD, "night.ParentId = @parentID");

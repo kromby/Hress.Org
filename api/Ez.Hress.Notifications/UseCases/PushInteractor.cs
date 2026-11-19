@@ -10,6 +10,7 @@ public class PushInteractor(
     ILogger<PushInteractor> log)
 {
     public const string NewsPushTitle = "Ný frétt";
+    public const string HardheadPushTitle = "Harðhausakvöld";
 
     /// <summary>
     /// Sends the notification to the relevant devices. Per-device failures are counted, not thrown;
@@ -29,7 +30,8 @@ public class PushInteractor(
             ? all.Where(s => s.UserID == notification.RecipientUserID.Value).ToList()
             : all.ToList();
 
-        var payload = new PushPayload(NewsPushTitle, notification.Title, notification.Link);
+        var pushTitle = notification.Type == NotificationTypes.Hardhead ? HardheadPushTitle : NewsPushTitle;
+        var payload = new PushPayload(pushTitle, notification.Title, notification.Link);
         int sent = 0, removed = 0, failed = 0;
 
         foreach (var subscription in targets)
