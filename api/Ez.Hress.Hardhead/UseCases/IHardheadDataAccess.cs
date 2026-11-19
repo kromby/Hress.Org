@@ -13,6 +13,15 @@ public interface IHardheadDataAccess
 
     Task<IList<HardheadNight>> GetHardheads(int parentID);
 
+    /// <summary>
+    /// Nights dated on <paramref name="day"/>, at any time that day. Only ID, Number, Date, Host,
+    /// Inserted and Updated are filled in.
+    /// </summary>
+    Task<IList<HardheadNight>> GetHardheadsOnDay(DateTime day);
+
+    /// <summary>Distinct user IDs of the hosts and guests of nights dated after fromDate and on or before toDate.</summary>
+    Task<IList<int>> GetAttendeeIDs(DateTime fromDate, DateTime toDate);
+
     Task<IList<HardheadNight>> GetHardheads(IList<HardheadNight> idList);
 
     Task<IList<HardheadNight>> GetHardheadIDs(int userID, UserType? type);

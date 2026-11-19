@@ -10,6 +10,11 @@ import { relativeTime } from "./relativeTime";
 import { NotificationListResponse } from "./types";
 import "./notifications.css";
 
+const typeLabels: Record<string, string> = {
+  news: "Ný frétt",
+  hardhead: "Harðhausakvöld",
+};
+
 const NotificationsPage = () => {
   const { data: cached, isError, isFetchedAfterMount } = useNotifications();
   const { mutate: markSeen } = useMarkNotificationsSeen();
@@ -60,7 +65,9 @@ const NotificationsPage = () => {
                       <Link to={item.link}>
                         {item.title}
                         <small>
-                          {item.type === "news" ? "Ný frétt · " : ""}
+                          {typeLabels[item.type]
+                            ? `${typeLabels[item.type]} · `
+                            : ""}
                           {relativeTime(item.created)}
                         </small>
                       </Link>

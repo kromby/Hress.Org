@@ -1,3 +1,4 @@
+using Azure;
 using Azure.Data.Tables;
 using Ez.Hress.Notifications.Entities;
 using Ez.Hress.Notifications.UseCases;
@@ -28,6 +29,30 @@ public class NotificationTableAccess : INotificationDataAccess
 
         var entity = new NotificationTableEntity(notification);
         await _table.AddEntityAsync(entity);
+
+        notification.ID = entity.Id;
+        return notification;
+    }
+
+    public async Task<Notification?> SaveIfNewAsync(Notification notification)
+    {
+        _logger.LogInformation("[{Class}.{Method}] Save notification of type '{Type}' with key '{Key}'", _className, nameof(SaveIfNewAsync), notification.Type, notification.Key);
+        if (string.IsNullOrWhiteSpace(notification.Key))
+        {
+            throw new ArgumentException("A notification saved with SaveIfNewAsync needs a Key", nameof(notification));
+        }
+        await _ensureCreated.RunAsync();
+
+        var entity = new NotificationTableEntity(notification);
+        try
+        {
+            await _table.AddEntityAsync(entity);
+        }
+        catch (RequestFailedException ex) when (ex.Status == 409)
+        {
+            _logger.LogInformation("[{Class}.{Method}] Notification '{ID}' already exists", _className, nameof(SaveIfNewAsync), entity.Id);
+            return null;
+        }
 
         notification.ID = entity.Id;
         return notification;
