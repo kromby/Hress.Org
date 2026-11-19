@@ -9,6 +9,7 @@ import MovieEdit from './components/movieEdit';
 import GuestsEdit from './components/guestsEdit';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useUsers, UserRole } from '../../hooks/useUsers';
+import { toWallClockString } from './utils/wallClock';
 
 const HardheadEdit = () => {
 	const { authTokens } = useAuth();
@@ -20,6 +21,7 @@ const HardheadEdit = () => {
 	const [nextHostID, setNextHostID] = useState();
 	const [hardheadDate, setDate] = useState(new Date());
 	const [description, setDescription] = useState("");
+	const [nightLocation, setNightLocation] = useState("");
 	const [data, setData] = useState({ isLoaded: false, hardhead: null, description: null, hardheadDate: new Date(), saved: false });
 	const [buttonEnabled, setButtonEnabled] = useState(false);
 
@@ -37,6 +39,7 @@ const HardheadEdit = () => {
 				setHardhead(response.data);
 				setDate(date);
 				setDescription(response.data.description)
+				setNightLocation(response.data.location ?? "");
 				setData({ error: null, isLoaded: true, visible: true, minDate: new Date(date.getFullYear(), date.getMonth(), 1), maxDate: new Date(date.getFullYear(), date.getMonth() + 1, 0) });
 			} catch (e) {
 				console.error(e);
@@ -58,8 +61,9 @@ const HardheadEdit = () => {
 				ID: params.hardheadID,
 				Number: hardhead.number,
 				Host: hardhead.host,
-				Date: hardheadDate,
+				Date: toWallClockString(hardheadDate),
 				Description: description,
+				Location: nightLocation,
 				NextHostID: nextHostID
 			}, {
 				headers: { 'X-Custom-Authorization': 'token ' + authTokens.token },
@@ -75,6 +79,7 @@ const HardheadEdit = () => {
 
 	const handleDescriptionChange = (event) => { setDescription(event.target.value); setButtonEnabled(true); }
 	const handleDateChange = (event) => { setDate(event); setButtonEnabled(true); }
+	const handleLocationChange = (event) => { setNightLocation(event.target.value); setButtonEnabled(true); }
 	const handleHostChange = (event) => { setNextHostID(event.target.value); setButtonEnabled(true); }
 
 	return (
@@ -95,7 +100,8 @@ const HardheadEdit = () => {
 							<form onSubmit={handleSubmit}>
 								<div className="row gtr-uniform">
 									<div className="col-6 col-12-xsmall">
-										<DatePicker selected={hardheadDate} onChange={(date) => handleDateChange(date)} dateFormat="dd.MM.yyyy" minDate={data.minDate} maxDate={data.maxDate} />
+										<DatePicker selected={hardheadDate} onChange={(date) => handleDateChange(date)} dateFormat="dd.MM.yyyy HH:mm" minDate={data.minDate} maxDate={data.maxDate}
+											showTimeSelect timeFormat="HH:mm" timeIntervals={15} timeCaption="Byrjar" />
 									</div>
 									<div className="col-6 col-12-xsmall">
 										{users ?
@@ -108,6 +114,9 @@ const HardheadEdit = () => {
 												)}
 											</select>
 											: null}
+									</div>
+									<div className="col-12">
+										<input type="text" name="location" aria-label="Staðsetning" maxLength={100} defaultValue={hardhead.location ?? ""} onChange={(ev) => handleLocationChange(ev)} placeholder="Staðsetning" />
 									</div>
 									<div className="col-12">
 										<textarea name="Lýsing" rows="3" onChange={(ev) => handleDescriptionChange(ev)} defaultValue={hardhead.description} placeholder="Lýstu kvöldinu" />

@@ -24,5 +24,5 @@ notification bell and web push from the news notifications work (2026-11-08-news
 
 ## Not included
 
-- Start time and location in the text. These are planned as new night fields; the text can include them once they exist.
+- Start time and location in the text: added later, see 2026-11-19-hardhead-night-location-start-time-design.md.
 - Per-user opt-out of reminders.

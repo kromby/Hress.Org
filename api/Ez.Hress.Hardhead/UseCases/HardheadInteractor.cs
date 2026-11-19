@@ -80,6 +80,16 @@ public class HardheadInteractor
             throw new ArgumentException("Ekki má breyta ári eða mánuði harðhausakvölds.", nameof(night));
         }
 
+        // Null leaves the location as it is; empty or whitespace clears it.
+        var location = night.Location?.Trim();
+        if (location != null && location.Length > HardheadNight.LocationMaxLength)
+        {
+            throw new ArgumentException($"Staðsetning má ekki vera lengri en {HardheadNight.LocationMaxLength} stafir.", nameof(night));
+        }
+
+        // The start time is the time part of Date; keep it to the minute.
+        night.Date = new DateTime(night.Date.Year, night.Date.Month, night.Date.Day, night.Date.Hour, night.Date.Minute, 0, night.Date.Kind);
+
         // It's handled in the stored procedure to do nothing when description is empty.
         if (night.Description == oldNight.Description)
             night.Description = string.Empty;
@@ -89,6 +99,9 @@ public class HardheadInteractor
 
         if (!await _hardheadDataAccess.AlterHardhead(night))
             throw new SystemException("Saving failed");
+
+        if (location != null && location != (oldNight.Location ?? string.Empty))
+            await _hardheadDataAccess.SaveLocation(night.ID, location, userID, night.Updated.Value);
 
         if (night.NextHostID.HasValue && night.NextHostID.Value != night.Host.ID)
         {

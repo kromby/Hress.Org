@@ -55,7 +55,8 @@ public class HardheadReminderInteractor
         var queued = 0;
         foreach (var night in scheduled)
         {
-            queued += await _notificationInteractor.NotifyHardheadTonightAsync(night.ID, night.Number, night.Host.Username ?? "", day, attendees);
+            queued += await _notificationInteractor.NotifyHardheadTonightAsync(night.ID, night.Number, night.Host.Username ?? "", day, attendees,
+                night.StartTime, night.Location);
         }
         return queued;
     }

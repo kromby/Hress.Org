@@ -15,7 +15,7 @@ public interface IHardheadDataAccess
 
     /// <summary>
     /// Nights dated on <paramref name="day"/>, at any time that day. Only ID, Number, Date, Host,
-    /// Inserted and Updated are filled in.
+    /// Location, Inserted and Updated are filled in.
     /// </summary>
     Task<IList<HardheadNight>> GetHardheadsOnDay(DateTime day);
 
@@ -29,6 +29,9 @@ public interface IHardheadDataAccess
     Task<IList<HardheadNight>> GetHardheadsByMovieFilterAsync(string nameAndActorFilter);
 
     Task<bool> AlterHardhead(HardheadNight hardhead);
+
+    /// <summary>Sets the night's location, or removes it when <paramref name="location"/> is empty.</summary>
+    Task SaveLocation(int hardheadID, string location, int userID, DateTime changeDate);
 
     Task<bool> CreateHardhead(int hostID, DateTime nextDate, int currentUserID, DateTime changeDate);
 

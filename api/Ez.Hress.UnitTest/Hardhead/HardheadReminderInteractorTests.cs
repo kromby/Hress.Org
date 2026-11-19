@@ -30,8 +30,8 @@ public class HardheadReminderInteractorTests
         _sut = new HardheadReminderInteractor(_hardheads.Object, notificationInteractor, Mock.Of<ILogger<HardheadReminderInteractor>>());
     }
 
-    private static HardheadNight Night(int id, DateTime date, DateTime? updated = null) =>
-        new(id, 250, new UserBasicEntity { ID = 3, Username = "Jónsi" }) { Date = date, Updated = updated };
+    private static HardheadNight Night(int id, DateTime date, DateTime? updated = null, string? location = null) =>
+        new(id, 250, new UserBasicEntity { ID = 3, Username = "Jónsi" }) { Date = date, Updated = updated, Location = location };
 
     private void SetNights(params HardheadNight[] nights) =>
         _hardheads.Setup(h => h.GetHardheadsOnDay(Today.Date)).ReturnsAsync(nights.ToList());
@@ -47,6 +47,16 @@ public class HardheadReminderInteractorTests
         Assert.Equal(new int?[] { 7, 8 }, _saved.Select(n => n.RecipientUserID));
         Assert.All(_saved, n => Assert.Equal("/hardhead/123", n.Link));
         Assert.All(_saved, n => Assert.Equal("Harðhaus #250 er í kvöld hjá Jónsi", n.Title));
+    }
+
+    [Fact]
+    public async Task NotifyTonight_IncludesStartTimeAndLocation()
+    {
+        SetNights(Night(123, Today.Date.AddHours(20), location: "Bláskógar 3"));
+
+        await _sut.NotifyTonightAsync(Today);
+
+        Assert.All(_saved, n => Assert.Equal("Harðhaus #250 er í kvöld kl. 20:00 hjá Jónsi · Bláskógar 3", n.Title));
     }
 
     [Fact]
