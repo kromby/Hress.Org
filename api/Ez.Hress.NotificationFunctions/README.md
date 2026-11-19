@@ -1,8 +1,14 @@
 # Ez.Hress.NotificationFunctions
 
-Queue-triggered Azure Function app that sends web push notifications. The Static Web App API
-enqueues `{"notificationID":"<id>"}` on queue `notification-push`; this app loads the
-notification and pushes it to the subscribed devices.
+Azure Function app that sends web push notifications. It has two functions:
+
+- `notificationPush` (queue trigger): the Static Web App API, or `hardheadReminder`, enqueues
+  `{"notificationID":"<id>"}` on queue `notification-push`; this loads the notification and pushes it
+  to the subscribed devices (everyone's, or only the recipient's).
+- `hardheadReminder` (timer, 09:00 UTC daily, which is 09:00 in Iceland all year): if a Hardhead night is
+  dated today, everyone who hosted or attended a night in the previous 6 months gets a notification
+  ("Harðhaus #N er í kvöld hjá …"). A night still on its placeholder date (last day of the month, never
+  edited) is skipped. Running it again the same day sends nothing new.
 
 ## Owner setup checklist
 
@@ -22,6 +28,10 @@ notification and pushes it to the subscribed devices.
    - `Ez.Hress.Notifications.Vapid.Subject`: a `mailto:` contact, for example `mailto:you@example.com`.
 
    The app refuses to start if any of the four is missing.
+   - `Ez.Hress.Database.ConnectionString`: the Hress SQL database (same value as in the Static Web App).
+     Used only by `hardheadReminder`, which logs a warning and skips its run while it's missing. The
+     Azure SQL server's firewall must let the Function App in ("Allow Azure services and resources to
+     access this server", or the app's outbound IPs).
 4. Static Web App environment variables: `Ez.Hress.Notifications.Vapid.PublicKey` (same public key).
 5. GitHub repository secrets: `NOTIFICATION_FUNCTIONS_APP_NAME` and `NOTIFICATION_FUNCTIONS_PUBLISH_PROFILE`
    (download the publish profile from the Function App, after enabling SCM Basic Auth Publishing Credentials as in step 2).

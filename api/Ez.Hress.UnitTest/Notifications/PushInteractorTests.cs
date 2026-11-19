@@ -39,6 +39,23 @@ public class PushInteractorTests
     }
 
     [Fact]
+    public async Task Send_HardheadNotification_UsesHardheadTitle_OnlyToRecipient()
+    {
+        _notifications.Setup(n => n.GetAsync("h1")).ReturnsAsync(new Notification
+        {
+            ID = "h1", Type = "hardhead", Title = "Harðhaus #250 er í kvöld hjá Jónsi", Link = "/hardhead/123", RecipientUserID = 7
+        });
+        SetSubs(Sub("a", 7), Sub("b", 8), Sub("c", 7));
+
+        var result = await _sut.SendAsync("h1");
+
+        var expected = new PushPayload("Harðhausakvöld", "Harðhaus #250 er í kvöld hjá Jónsi", "/hardhead/123");
+        _sender.Verify(s => s.SendAsync(It.Is<PushSubscription>(x => x.UserID == 7), expected), Times.Exactly(2));
+        _sender.Verify(s => s.SendAsync(It.Is<PushSubscription>(x => x.UserID == 8), It.IsAny<PushPayload>()), Times.Never);
+        Assert.Equal(new PushRunResult(2, 0, 0), result);
+    }
+
+    [Fact]
     public async Task Send_GoneSubscriptionIsDeleted_OthersStillSent()
     {
         SetSubs(Sub("a"), Sub("b"), Sub("c"), Sub("d"));
