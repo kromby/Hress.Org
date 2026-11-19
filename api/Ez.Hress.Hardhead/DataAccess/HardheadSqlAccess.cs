@@ -14,7 +14,10 @@ public class HardheadSqlAccess : IHardheadDataAccess
     private readonly ILogger<HardheadSqlAccess> _log;
     private readonly string _connectionString;
 
-    /// <summary>gen_Type shortcode of the rep_Text row that holds a night's location.</summary>
+    /// <summary>
+    /// gen_Type shortcode of the rep_Text row that holds a night's location. The SQL in this class spells
+    /// it out as a literal ('REP_T_LOCATION') so no SQL text is built by concatenation; keep them in sync.
+    /// </summary>
     public const string LocationTypeCode = "REP_T_LOCATION";
 
     private const string SQL_GETHARDHEAD = @"
@@ -38,7 +41,7 @@ public class HardheadSqlAccess : IHardheadDataAccess
         LEFT OUTER JOIN rep_Text youtube ON youtube.EventId = night.Id AND youtube.TypeId = 208
         LEFT OUTER JOIN rep_Count moviekills ON moviekills.EventId = night.Id AND moviekills.TypeId = 221
         LEFT OUTER JOIN rep_Count hhkills ON hhkills.EventId = night.Id AND hhkills.TypeId = 222
-        LEFT OUTER JOIN gen_Type locationType ON locationType.Shortcode = '" + LocationTypeCode + @"'
+        LEFT OUTER JOIN gen_Type locationType ON locationType.Shortcode = 'REP_T_LOCATION'
         LEFT OUTER JOIN rep_Text location ON location.EventId = night.Id AND location.TypeId = locationType.Id
         WHERE	night.TypeId = 49 AND {0}
         GROUP BY	night.Id, night.Number, night.Date, host.UserId, summary.TextValue, hressUser.Username, 
@@ -83,7 +86,7 @@ public class HardheadSqlAccess : IHardheadDataAccess
             FROM    rep_Event night
             JOIN    rep_User host ON host.EventId = night.Id AND host.TypeId = 53
             JOIN    adm_User hressUser ON host.UserId = hressUser.Id
-            LEFT OUTER JOIN gen_Type locationType ON locationType.Shortcode = '" + LocationTypeCode + @"'
+            LEFT OUTER JOIN gen_Type locationType ON locationType.Shortcode = 'REP_T_LOCATION'
             LEFT OUTER JOIN rep_Text location ON location.EventId = night.Id AND location.TypeId = locationType.Id
             WHERE   night.TypeId = 49 AND night.Date >= @dayStart AND night.Date < @dayEnd";
 
@@ -396,7 +399,7 @@ public class HardheadSqlAccess : IHardheadDataAccess
             BEGIN
                 IF @location <> ''
                 BEGIN
-                    ;THROW 50000, 'gen_Type with Shortcode " + LocationTypeCode + @" is missing.', 1;
+                    ;THROW 50000, 'gen_Type with Shortcode REP_T_LOCATION is missing.', 1;
                 END;
                 RETURN;
             END

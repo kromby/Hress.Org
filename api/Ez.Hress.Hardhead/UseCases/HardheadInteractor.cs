@@ -94,14 +94,15 @@ public class HardheadInteractor
         if (night.Description == oldNight.Description)
             night.Description = string.Empty;
 
-        night.Updated = DateTime.UtcNow;
+        var changeDate = DateTime.UtcNow;
+        night.Updated = changeDate;
         night.UpdatedBy = userID;
 
         if (!await _hardheadDataAccess.AlterHardhead(night))
             throw new SystemException("Saving failed");
 
         if (location != null && location != (oldNight.Location ?? string.Empty))
-            await _hardheadDataAccess.SaveLocation(night.ID, location, userID, night.Updated.Value);
+            await _hardheadDataAccess.SaveLocation(night.ID, location, userID, changeDate);
 
         if (night.NextHostID.HasValue && night.NextHostID.Value != night.Host.ID)
         {
