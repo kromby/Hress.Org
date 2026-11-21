@@ -82,7 +82,7 @@ public class HardheadInteractor
 
         // Null leaves the location as it is; empty or whitespace clears it.
         var location = night.Location?.Trim();
-        if (location != null && location.Length > HardheadNight.LocationMaxLength)
+        if (location?.Length > HardheadNight.LocationMaxLength)
         {
             throw new ArgumentException($"Staðsetning má ekki vera lengri en {HardheadNight.LocationMaxLength} stafir.", nameof(night));
         }
