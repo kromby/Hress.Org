@@ -42,12 +42,14 @@ public class NotificationInteractor(
     public static readonly TimeSpan HardheadReminderTime = TimeSpan.FromHours(9);
 
     /// <summary>
-    /// Tells each recipient that Hardhead night <paramref name="hardheadID"/> is tonight. One notification
+    /// Tells each recipient that Hardhead night <paramref name="hardheadID"/> is tonight, with its start time
+    /// and location when they are known (e.g. "Harðhaus #250 er í kvöld kl. 20:00 hjá Jónsi · Bláskógar 3"). One notification
     /// per recipient, stamped at <see cref="HardheadReminderTime"/> on <paramref name="day"/> and keyed by
     /// the night, so running this again for the same day saves and queues nothing new.
     /// Returns how many notifications were queued.
     /// </summary>
-    public async Task<int> NotifyHardheadTonightAsync(int hardheadID, int number, string hostName, DateTime day, IEnumerable<int> recipientUserIDs)
+    public async Task<int> NotifyHardheadTonightAsync(int hardheadID, int number, string hostName, DateTime day, IEnumerable<int> recipientUserIDs,
+        TimeSpan? startTime = null, string? location = null)
     {
         log.LogInformation("[{Class}.{Method}] Notifying about Hardhead night {HardheadID}", nameof(NotificationInteractor), nameof(NotifyHardheadTonightAsync), hardheadID);
         if (hardheadID <= 0)
@@ -55,9 +57,19 @@ public class NotificationInteractor(
             throw new ArgumentException("Hardhead ID must be positive", nameof(hardheadID));
         }
 
-        var title = string.IsNullOrWhiteSpace(hostName)
-            ? $"Harðhaus #{number} er í kvöld"
-            : $"Harðhaus #{number} er í kvöld hjá {hostName}";
+        var title = $"Harðhaus #{number} er í kvöld";
+        if (startTime.HasValue)
+        {
+            title += $" kl. {startTime.Value:hh\\:mm}";
+        }
+        if (!string.IsNullOrWhiteSpace(hostName))
+        {
+            title += $" hjá {hostName}";
+        }
+        if (!string.IsNullOrWhiteSpace(location))
+        {
+            title += $" · {location.Trim()}";
+        }
         if (title.Length > TitleMaxLength)
         {
             title = title[..(TitleMaxLength - 1)] + "…";

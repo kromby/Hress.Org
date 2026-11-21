@@ -32,6 +32,18 @@ const NextHardhead = ({ allowEdit }: { allowEdit: boolean }) => {
           description={
             <span>
               {hardhead.host.username}
+              {hardhead.startTimeString ? (
+                <>
+                  <br />
+                  kl. {hardhead.startTimeString}
+                </>
+              ) : null}
+              {hardhead.location ? (
+                <>
+                  <br />
+                  {hardhead.location}
+                </>
+              ) : null}
               <br />
               <br />
               {editEnabled ? <HardheadActions id={hardhead.id} /> : null}

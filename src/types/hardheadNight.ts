@@ -12,4 +12,8 @@ export interface HardheadNight extends EntityBase<number> {
     movie?: Movie
     year: HrefEntity
     nextHostId?: number
+    /** Where the night is held. */
+    location?: string | null
+    /** Start time as "20:00", or null when not set. */
+    startTimeString?: string | null
 } 

@@ -14,12 +14,19 @@ public class HardheadSqlAccess : IHardheadDataAccess
     private readonly ILogger<HardheadSqlAccess> _log;
     private readonly string _connectionString;
 
+    /// <summary>
+    /// gen_Type shortcode of the rep_Text row that holds a night's location. The SQL in this class spells
+    /// it out as a literal ('REP_T_LOCATION') so no SQL text is built by concatenation; keep them in sync.
+    /// </summary>
+    public const string LocationTypeCode = "REP_T_LOCATION";
+
     private const string SQL_GETHARDHEAD = @"
         SELECT	night.Id, night.Number, night.Date, host.UserId, summary.TextValue 'Description', hressUser.Username, 
 		        userPhoto.ImageId, COUNT(guest.ID) 'GuestCount', night.ParentId 'YearID', 
 		        film.TextValue Movie, actor.TextValue Actor, poster.ImageId poster, 
                 imdb.TextValue 'imdb', why.TextValue 'why', youtube.TextValue youtube, 
-		        CAST(moviekills.Count as int) moviekills, CAST(hhkills.Count as int) hhkills
+		        CAST(moviekills.Count as int) moviekills, CAST(hhkills.Count as int) hhkills,
+                location.TextValue 'Location'
         FROM    rep_Event night
         JOIN	rep_User host ON host.EventId = night.Id AND host.TypeId = 53
         JOIN	adm_User hressUser ON host.UserId = hressUser.Id
@@ -34,10 +41,12 @@ public class HardheadSqlAccess : IHardheadDataAccess
         LEFT OUTER JOIN rep_Text youtube ON youtube.EventId = night.Id AND youtube.TypeId = 208
         LEFT OUTER JOIN rep_Count moviekills ON moviekills.EventId = night.Id AND moviekills.TypeId = 221
         LEFT OUTER JOIN rep_Count hhkills ON hhkills.EventId = night.Id AND hhkills.TypeId = 222
+        LEFT OUTER JOIN gen_Type locationType ON locationType.Shortcode = 'REP_T_LOCATION'
+        LEFT OUTER JOIN rep_Text location ON location.EventId = night.Id AND location.TypeId = locationType.Id
         WHERE	night.TypeId = 49 AND {0}
         GROUP BY	night.Id, night.Number, night.Date, host.UserId, summary.TextValue, hressUser.Username, 
 			        userPhoto.ImageId, night.ParentId, film.TextValue, actor.TextValue, poster.ImageId, 
-			        imdb.TextValue, why.TextValue, youtube.TextValue, moviekills.Count, hhkills.Count
+			        imdb.TextValue, why.TextValue, youtube.TextValue, moviekills.Count, hhkills.Count, location.TextValue
         ORDER BY night.Date DESC";
 
     public HardheadSqlAccess(DbConnectionInfo connectionInfo, ILogger<HardheadSqlAccess> log)
@@ -72,10 +81,13 @@ public class HardheadSqlAccess : IHardheadDataAccess
     {
         _log.LogInformation("[{Class}.{Method}] Getting hardheads on '{Day}'.", nameof(HardheadSqlAccess), nameof(GetHardheadsOnDay), day);
         const string sql = @"
-            SELECT  night.Id, night.Number, night.Date, night.Inserted, night.Updated, host.UserId, hressUser.Username
+            SELECT  night.Id, night.Number, night.Date, night.Inserted, night.Updated, host.UserId, hressUser.Username,
+                    location.TextValue 'Location'
             FROM    rep_Event night
             JOIN    rep_User host ON host.EventId = night.Id AND host.TypeId = 53
             JOIN    adm_User hressUser ON host.UserId = hressUser.Id
+            LEFT OUTER JOIN gen_Type locationType ON locationType.Shortcode = 'REP_T_LOCATION'
+            LEFT OUTER JOIN rep_Text location ON location.EventId = night.Id AND location.TypeId = locationType.Id
             WHERE   night.TypeId = 49 AND night.Date >= @dayStart AND night.Date < @dayEnd";
 
         var list = new List<HardheadNight>();
@@ -99,6 +111,7 @@ public class HardheadSqlAccess : IHardheadDataAccess
                 Date = reader.GetDateTime(reader.GetOrdinal("Date")),
                 Inserted = reader.GetDateTime(reader.GetOrdinal("Inserted")),
                 Updated = reader.IsDBNull(reader.GetOrdinal("Updated")) ? null : reader.GetDateTime(reader.GetOrdinal("Updated")),
+                Location = reader.IsDBNull(reader.GetOrdinal("Location")) ? null : reader.GetString(reader.GetOrdinal("Location")),
             });
         }
         return list;
@@ -184,6 +197,7 @@ public class HardheadSqlAccess : IHardheadDataAccess
                 Date = Convert.ToDateTime(reader["Date"]),
                 Description = reader["Description"] != DBNull.Value ? reader.GetString(reader.GetOrdinal("Description")) : null,
                 GuestCount = reader.GetInt32(reader.GetOrdinal("GuestCount")),
+                Location = reader.IsDBNull(reader.GetOrdinal("Location")) ? null : reader.GetString(reader.GetOrdinal("Location")),
             };
 
             if (!reader.IsDBNull(reader.GetOrdinal("ImageId")))
@@ -373,6 +387,43 @@ public class HardheadSqlAccess : IHardheadDataAccess
             return true;
 
         return false;
+    }
+
+    public async Task SaveLocation(int hardheadID, string location, int userID, DateTime changeDate)
+    {
+        _log.LogInformation("[{Class}.{Method}] Saving location of hardhead '{ID}'.", nameof(HardheadSqlAccess), nameof(SaveLocation), hardheadID);
+        // Empty clears the location. The type row must exist to save one; see LocationTypeCode.
+        const string sql = @"
+            DECLARE @typeId int = (SELECT Id FROM gen_Type WHERE Shortcode = @typeCode AND Deleted IS NULL);
+            IF @typeId IS NULL
+            BEGIN
+                IF @location <> ''
+                BEGIN
+                    ;THROW 50000, 'gen_Type with Shortcode REP_T_LOCATION is missing.', 1;
+                END;
+                RETURN;
+            END
+            IF @location = ''
+                DELETE FROM rep_Text WHERE EventId = @hardheadID AND TypeId = @typeId;
+            ELSE
+            BEGIN
+                UPDATE rep_Text SET TextValue = @location, Updated = @changeDate, UpdatedBy = @userID
+                WHERE EventId = @hardheadID AND TypeId = @typeId;
+                IF @@ROWCOUNT = 0
+                    INSERT INTO rep_Text (EventId, TypeId, TextValue, Inserted, InsertedBy)
+                    VALUES (@hardheadID, @typeId, @location, @changeDate, @userID);
+            END";
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = new SqlCommand(sql, connection);
+        command.Parameters.Add(new SqlParameter("typeCode", LocationTypeCode));
+        command.Parameters.Add(new SqlParameter("hardheadID", hardheadID));
+        command.Parameters.Add(new SqlParameter("location", location));
+        command.Parameters.Add(new SqlParameter("userID", userID));
+        command.Parameters.Add(new SqlParameter("changeDate", changeDate));
+        await command.ExecuteNonQueryAsync();
     }
 
     public async Task<bool> CreateHardhead(int hostID, DateTime nextDate, int currentUserID, DateTime changeDate)

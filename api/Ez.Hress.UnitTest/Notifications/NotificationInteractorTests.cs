@@ -149,6 +149,20 @@ public class NotificationInteractorTests
         Assert.Equal("Harðhaus #250 er í kvöld", saved.Single().Title);
     }
 
+    [Theory]
+    [InlineData(20, 0, "Bláskógar 3", "Harðhaus #250 er í kvöld kl. 20:00 hjá Jónsi · Bláskógar 3")]
+    [InlineData(19, 30, null, "Harðhaus #250 er í kvöld kl. 19:30 hjá Jónsi")]
+    [InlineData(null, null, " Bláskógar 3 ", "Harðhaus #250 er í kvöld hjá Jónsi · Bláskógar 3")]
+    public async Task NotifyHardheadTonight_TitleWithStartTimeAndLocation(int? hour, int? minute, string? location, string expected)
+    {
+        var saved = CaptureHardheadSaves();
+        TimeSpan? startTime = hour.HasValue ? new TimeSpan(hour.Value, minute!.Value, 0) : null;
+
+        await _sut.NotifyHardheadTonightAsync(123, 250, "Jónsi", new DateTime(2026, 11, 20), new[] { 7 }, startTime, location);
+
+        Assert.Equal(expected, saved.Single().Title);
+    }
+
     [Fact]
     public async Task NotifyHardheadTonight_NoRecipients_NothingSaved()
     {
