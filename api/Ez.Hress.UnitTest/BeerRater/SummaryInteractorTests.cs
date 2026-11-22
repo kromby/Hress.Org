@@ -1,5 +1,6 @@
 using Ez.Hress.BeerRater.Entities;
 using Ez.Hress.BeerRater.UseCases;
+using Ez.Hress.Notifications.UseCases;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -41,7 +42,10 @@ public class SummaryInteractorTests
 
         var seasonInteractor = new SeasonInteractor(_seasonMock.Object, new Mock<ILogger<SeasonInteractor>>().Object);
         var beerInteractor = new BeerInteractor(_beerMock.Object, _seasonMock.Object, seasonInteractor, new Mock<ILogger<BeerInteractor>>().Object);
-        var chatInteractor = new BeerChatInteractor(_threadMock.Object, _chatMock.Object, beerInteractor, seasonInteractor, new Mock<ILogger<BeerChatInteractor>>().Object);
+        var activityInteractor = new BeerActivityInteractor(_beerMock.Object, _seasonMock.Object, _ratingMock.Object, _chatMock.Object, new Mock<ILogger<BeerActivityInteractor>>().Object);
+        var notificationInteractor = new NotificationInteractor(Mock.Of<INotificationDataAccess>(), Mock.Of<INotificationSeenDataAccess>(),
+            Mock.Of<IPushSubscriptionDataAccess>(), Mock.Of<IPushQueue>(), Mock.Of<ILogger<NotificationInteractor>>());
+        var chatInteractor = new BeerChatInteractor(_threadMock.Object, _chatMock.Object, beerInteractor, seasonInteractor, activityInteractor, notificationInteractor, new Mock<ILogger<BeerChatInteractor>>().Object);
         return new SummaryInteractor(beerInteractor, _ratingMock.Object, chatInteractor, new Mock<ILogger<SummaryInteractor>>().Object);
     }
 

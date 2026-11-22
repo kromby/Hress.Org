@@ -20,6 +20,7 @@ internal class NotificationTableEntity : ITableEntity
         Title = notification.Title;
         Link = notification.Link;
         RecipientUserID = notification.RecipientUserID;
+        ExcludedUserID = notification.ExcludedUserID;
         Created = DateTime.SpecifyKind(notification.Created, DateTimeKind.Utc);
     }
 
@@ -32,6 +33,7 @@ internal class NotificationTableEntity : ITableEntity
     public string Title { get; set; } = "";
     public string Link { get; set; } = "";
     public int? RecipientUserID { get; set; }
+    public int? ExcludedUserID { get; set; }
     public DateTime Created { get; set; }
 
     public string Id => $"{PartitionKey}|{RowKey}";
@@ -45,6 +47,7 @@ internal class NotificationTableEntity : ITableEntity
             Title = Title,
             Link = Link,
             RecipientUserID = RecipientUserID,
+            ExcludedUserID = ExcludedUserID,
             Created = DateTime.SpecifyKind(Created, DateTimeKind.Utc)
         };
     }

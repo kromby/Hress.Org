@@ -135,4 +135,37 @@ public class PushInteractorTests
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => _sut.SendAsync("n1"));
     }
+
+    [Fact]
+    public async Task Send_BeerNotification_UsesBeerTitle_SkipsExcludedUser()
+    {
+        _notifications.Setup(n => n.GetAsync("b1")).ReturnsAsync(new Notification
+        {
+            ID = "b1", Type = "beer", Title = "Jóla Gull · Ölgerðin", Link = "/beer/abc", ExcludedUserID = 7
+        });
+        SetSubs(Sub("a", 7), Sub("b", 8), Sub("c", 7), Sub("d", 9));
+
+        var result = await _sut.SendAsync("b1");
+
+        var expected = new PushPayload("Nýr bjór í Ölrýni", "Jóla Gull · Ölgerðin", "/beer/abc");
+        _sender.Verify(s => s.SendAsync(It.Is<PushSubscription>(x => x.UserID != 7), expected), Times.Exactly(2));
+        _sender.Verify(s => s.SendAsync(It.Is<PushSubscription>(x => x.UserID == 7), It.IsAny<PushPayload>()), Times.Never);
+        Assert.Equal(new PushRunResult(2, 0, 0), result);
+    }
+
+    [Fact]
+    public async Task Send_BeerChatNotification_UsesOlrynirTitle_OnlyToRecipient()
+    {
+        _notifications.Setup(n => n.GetAsync("c1")).ReturnsAsync(new Notification
+        {
+            ID = "c1", Type = "beer-chat", Title = "kromby um Jóla Gull: Góður", Link = "/beer/abc", RecipientUserID = 8
+        });
+        SetSubs(Sub("a", 7), Sub("b", 8));
+
+        var result = await _sut.SendAsync("c1");
+
+        var expected = new PushPayload("Ölrýnir", "kromby um Jóla Gull: Góður", "/beer/abc");
+        _sender.Verify(s => s.SendAsync(It.Is<PushSubscription>(x => x.UserID == 8), expected), Times.Once);
+        Assert.Equal(new PushRunResult(1, 0, 0), result);
+    }
 }

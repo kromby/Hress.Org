@@ -9,6 +9,11 @@ public class Notification
     public string Link { get; set; } = "";
     /// <summary>Null means the notification is for everyone.</summary>
     public int? RecipientUserID { get; set; }
+    /// <summary>
+    /// For a notification to everyone: a member who doesn't get it, e.g. the one whose action caused it.
+    /// They don't see it in their list and get no push.
+    /// </summary>
+    public int? ExcludedUserID { get; set; }
     /// <summary>UTC.</summary>
     public DateTime Created { get; set; }
     /// <summary>

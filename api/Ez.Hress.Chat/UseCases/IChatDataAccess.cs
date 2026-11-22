@@ -11,6 +11,10 @@ public interface IChatDataAccess
     // Threads with no messages, or that are deleted, are left out.
     Task<IDictionary<int, int>> GetMessageCountsAsync(IReadOnlyCollection<int> threadIDs);
 
+    // The distinct IDs of users with a message that isn't deleted, inserted at or after 'since',
+    // in a thread that isn't deleted under the category.
+    Task<IList<int>> GetPosterIDsAsync(int categoryID, DateTime since);
+
     // A message that isn't deleted, with Text as stored (HTML), or null.
     Task<ChatMessage?> GetMessageAsync(int messageID);
 

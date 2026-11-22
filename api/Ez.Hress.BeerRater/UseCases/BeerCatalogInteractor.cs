@@ -1,6 +1,7 @@
 using System.Globalization;
 using System.Security.Cryptography;
 using Ez.Hress.BeerRater.Entities;
+using Ez.Hress.Notifications.UseCases;
 using Microsoft.Extensions.Logging;
 
 namespace Ez.Hress.BeerRater.UseCases;
@@ -9,8 +10,12 @@ public class BeerCatalogInteractor(
     IBeerDataAccess beerDataAccess,
     IBeerSeasonDataAccess seasonDataAccess,
     SeasonInteractor seasonInteractor,
-    ILogger<BeerCatalogInteractor> log)
+    NotificationInteractor notificationInteractor,
+    ILogger<BeerCatalogInteractor> log,
+    TimeSpan? notifyTimeout = null)
 {
+    private readonly TimeSpan _notifyTimeout = notifyTimeout ?? TimeSpan.FromSeconds(5);
+
     private const int MinQueryLength = 2;
     private const int MaxResults = 10;
     private const int MaxShortText = 100;
@@ -71,16 +76,25 @@ public class BeerCatalogInteractor(
         }).ToList();
     }
 
-    public async Task<Beer> AddToSeasonAsync(string seasonID, string beerID)
+    // Adding a beer that's already in the season changes nothing and notifies nobody.
+    public async Task<Beer> AddToSeasonAsync(string seasonID, string beerID, int userID)
     {
-        log.LogInformation("[{Class}.{Method}] Adding beer '{BeerID}' to season '{SeasonID}'", nameof(BeerCatalogInteractor), nameof(AddToSeasonAsync), beerID, seasonID);
+        log.LogInformation("[{Class}.{Method}] User {UserID} adds beer '{BeerID}' to season '{SeasonID}'", nameof(BeerCatalogInteractor), nameof(AddToSeasonAsync), userID, beerID, seasonID);
 
         await seasonInteractor.GetOpenSeasonAsync(seasonID);
 
         var beer = (await beerDataAccess.GetBeersAsync()).FirstOrDefault(b => b.ID == beerID)
             ?? throw new KeyNotFoundException($"Beer '{beerID}' not found.");
 
+        var seasonBeerIDs = await seasonDataAccess.GetSeasonBeerIDsAsync(seasonID);
+        if (seasonBeerIDs.Contains(beerID, StringComparer.Ordinal))
+        {
+            log.LogInformation("[{Class}.{Method}] Beer '{BeerID}' is already in season '{SeasonID}'", nameof(BeerCatalogInteractor), nameof(AddToSeasonAsync), beerID, seasonID);
+            return beer;
+        }
+
         await seasonDataAccess.AddBeerToSeasonAsync(seasonID, beerID);
+        await NotifyBeerAddedAsync(beer, userID);
         return beer;
     }
 
@@ -133,7 +147,21 @@ public class BeerCatalogInteractor(
 
         await beerDataAccess.AddBeerAsync(beer);
         await seasonDataAccess.AddBeerToSeasonAsync(seasonID, beer.ID);
+        await NotifyBeerAddedAsync(beer, userID);
         return beer;
+    }
+
+    // Best effort: the beer is already added, so a failing or slow notification is only logged.
+    private async Task NotifyBeerAddedAsync(Beer beer, int userID)
+    {
+        try
+        {
+            await notificationInteractor.NotifyBeerAddedAsync(beer.ID, beer.Name, beer.Producer, userID).WaitAsync(_notifyTimeout);
+        }
+        catch (Exception ex)
+        {
+            log.LogError(ex, "[{Class}.{Method}] Failed to notify about beer '{BeerID}'", nameof(BeerCatalogInteractor), nameof(NotifyBeerAddedAsync), beer.ID);
+        }
     }
 
     private static string Required(string? value, string field, int maxLength)

@@ -1,5 +1,7 @@
 using Ez.Hress.BeerRater.Entities;
 using Ez.Hress.BeerRater.UseCases;
+using Ez.Hress.Notifications.Entities;
+using Ez.Hress.Notifications.UseCases;
 using Microsoft.Extensions.Logging;
 using Moq;
 
@@ -9,11 +11,21 @@ public class BeerCatalogInteractorTests
 {
     private readonly Mock<IBeerDataAccess> _beerMock = new();
     private readonly Mock<IBeerSeasonDataAccess> _seasonMock = new();
+    private readonly Mock<INotificationDataAccess> _notifications = new();
+    private readonly Mock<IPushQueue> _queue = new();
+    private readonly List<Notification> _saved = new();
+
+    public BeerCatalogInteractorTests()
+    {
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>()))
+            .Callback<Notification>(n => _saved.Add(n))
+            .ReturnsAsync((Notification n) => { n.ID = "saved-id"; return n; });
+    }
 
     private static Beer NewBeer(string id, string name) =>
         new() { ID = id, Name = name, Producer = "Carlsberg", Country = "Danmörk", AlcoholPercentage = 5.6 };
 
-    private BeerCatalogInteractor Arrange(IList<Beer>? beers = null)
+    private BeerCatalogInteractor Arrange(IList<Beer>? beers = null, TimeSpan? notifyTimeout = null)
     {
         beers ??= new List<Beer>
         {
@@ -32,7 +44,10 @@ public class BeerCatalogInteractorTests
         _seasonMock.Setup(d => d.GetSeasonBeerIDsAsync("jol-2026")).ReturnsAsync(new List<string> { "1", "3" });
 
         var seasonInteractor = new SeasonInteractor(_seasonMock.Object, new Mock<ILogger<SeasonInteractor>>().Object);
-        return new BeerCatalogInteractor(_beerMock.Object, _seasonMock.Object, seasonInteractor, new Mock<ILogger<BeerCatalogInteractor>>().Object);
+        var notificationInteractor = new NotificationInteractor(_notifications.Object, Mock.Of<INotificationSeenDataAccess>(),
+            Mock.Of<IPushSubscriptionDataAccess>(), _queue.Object, Mock.Of<ILogger<NotificationInteractor>>());
+        return new BeerCatalogInteractor(_beerMock.Object, _seasonMock.Object, seasonInteractor, notificationInteractor,
+            new Mock<ILogger<BeerCatalogInteractor>>().Object, notifyTimeout);
     }
 
     [Fact]
@@ -101,7 +116,7 @@ public class BeerCatalogInteractorTests
     [Fact]
     public async Task AddToSeason_ExistingBeer_AddsAndReturnsIt()
     {
-        var result = await Arrange().AddToSeasonAsync("jol-2026", "2");
+        var result = await Arrange().AddToSeasonAsync("jol-2026", "2", 7);
 
         Assert.Equal("2", result.ID);
         _seasonMock.Verify(d => d.AddBeerToSeasonAsync("jol-2026", "2"), Times.Once);
@@ -110,14 +125,14 @@ public class BeerCatalogInteractorTests
     [Fact]
     public async Task AddToSeason_UnknownBeer_ThrowsKeyNotFound()
     {
-        await Assert.ThrowsAsync<KeyNotFoundException>(() => Arrange().AddToSeasonAsync("jol-2026", "nope"));
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => Arrange().AddToSeasonAsync("jol-2026", "nope", 7));
         _seasonMock.Verify(d => d.AddBeerToSeasonAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
     [Fact]
     public async Task AddToSeason_ClosedSeason_ThrowsSeasonClosed()
     {
-        await Assert.ThrowsAsync<SeasonClosedException>(() => Arrange().AddToSeasonAsync("jol-2025", "2"));
+        await Assert.ThrowsAsync<SeasonClosedException>(() => Arrange().AddToSeasonAsync("jol-2025", "2", 7));
         _seasonMock.Verify(d => d.AddBeerToSeasonAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
     }
 
@@ -222,5 +237,94 @@ public class BeerCatalogInteractorTests
     {
         await Assert.ThrowsAsync<SeasonClosedException>(() => Arrange().CreateInSeasonAsync("jol-2025", ValidNewBeer(), 7));
         _beerMock.Verify(d => d.AddBeerAsync(It.IsAny<Beer>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task AddToSeason_NewToSeason_NotifiesEveryoneButAdder()
+    {
+        await Arrange().AddToSeasonAsync("jol-2026", "2", 8);
+
+        var notification = Assert.Single(_saved);
+        Assert.Equal(NotificationTypes.Beer, notification.Type);
+        Assert.Equal("Jólabjór · Carlsberg", notification.Title);
+        Assert.Equal("/beer/2", notification.Link);
+        Assert.Null(notification.RecipientUserID);
+        Assert.Equal(8, notification.ExcludedUserID);
+        _queue.Verify(q => q.EnqueueAsync("saved-id"), Times.Once);
+    }
+
+    [Fact]
+    public async Task AddToSeason_AlreadyInSeason_ReturnsBeer_NoWriteNoNotification()
+    {
+        // Beer "1" is already in jol-2026.
+        var result = await Arrange().AddToSeasonAsync("jol-2026", "1", 8);
+
+        Assert.Equal("1", result.ID);
+        _seasonMock.Verify(d => d.AddBeerToSeasonAsync(It.IsAny<string>(), It.IsAny<string>()), Times.Never);
+        _notifications.Verify(n => n.SaveAsync(It.IsAny<Notification>()), Times.Never);
+        _queue.Verify(q => q.EnqueueAsync(It.IsAny<string>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task AddToSeason_NotifierFails_StillAddsAndReturnsBeer()
+    {
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>())).ThrowsAsync(new InvalidOperationException("storage down"));
+
+        var result = await Arrange().AddToSeasonAsync("jol-2026", "2", 8);
+
+        Assert.Equal("2", result.ID);
+        _seasonMock.Verify(d => d.AddBeerToSeasonAsync("jol-2026", "2"), Times.Once);
+    }
+
+    [Fact]
+    public async Task Create_NotifiesEveryoneButAdder()
+    {
+        _beerMock.Setup(d => d.AddBeerAsync(It.IsAny<Beer>())).Returns(Task.CompletedTask);
+
+        var beer = await Arrange().CreateInSeasonAsync("jol-2026", ValidNewBeer(), 7);
+
+        var notification = Assert.Single(_saved);
+        Assert.Equal(NotificationTypes.Beer, notification.Type);
+        Assert.Equal("Jóla Gull · Ölgerðin", notification.Title);
+        Assert.Equal($"/beer/{beer.ID}", notification.Link);
+        Assert.Null(notification.RecipientUserID);
+        Assert.Equal(7, notification.ExcludedUserID);
+        _queue.Verify(q => q.EnqueueAsync("saved-id"), Times.Once);
+    }
+
+    [Fact]
+    public async Task Create_Duplicate_NoNotification()
+    {
+        var beers = new List<Beer> { new() { ID = "1", Name = "Jóla Gull", Producer = "Ölgerðin", Country = "Ísland", AlcoholPercentage = 5 } };
+
+        await Assert.ThrowsAsync<DuplicateBeerException>(() => Arrange(beers).CreateInSeasonAsync("jol-2026", ValidNewBeer(), 7));
+
+        _notifications.Verify(n => n.SaveAsync(It.IsAny<Notification>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Create_NotifierFails_StillReturnsBeer()
+    {
+        _beerMock.Setup(d => d.AddBeerAsync(It.IsAny<Beer>())).Returns(Task.CompletedTask);
+        _queue.Setup(q => q.EnqueueAsync(It.IsAny<string>())).ThrowsAsync(new InvalidOperationException("queue down"));
+
+        var beer = await Arrange().CreateInSeasonAsync("jol-2026", ValidNewBeer(), 7);
+
+        Assert.Equal("Jóla Gull", beer.Name);
+        _seasonMock.Verify(d => d.AddBeerToSeasonAsync("jol-2026", beer.ID), Times.Once);
+    }
+
+    [Fact]
+    public async Task Create_NotifierHangs_StillReturnsWithinTimeout()
+    {
+        _beerMock.Setup(d => d.AddBeerAsync(It.IsAny<Beer>())).Returns(Task.CompletedTask);
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>())).Returns(new TaskCompletionSource<Notification>().Task);
+        var interactor = Arrange(notifyTimeout: TimeSpan.FromMilliseconds(50));
+
+        var task = interactor.CreateInSeasonAsync("jol-2026", ValidNewBeer(), 7);
+        var completed = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(3)));
+
+        Assert.Same(task, completed);
+        Assert.Equal("Jóla Gull", (await task).Name);
     }
 }

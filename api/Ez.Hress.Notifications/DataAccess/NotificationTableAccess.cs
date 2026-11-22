@@ -82,18 +82,37 @@ public class NotificationTableAccess : INotificationDataAccess
         var list = new List<Notification>();
         foreach (var partition in new[] { NotificationKeys.AllPartition, userID.ToString() })
         {
-            // Row keys sort newest first, so the first 'top' rows of each partition are enough.
-            var count = 0;
-            await foreach (var entity in _table.QueryAsync<NotificationTableEntity>(e => e.PartitionKey == partition))
-            {
-                list.Add(entity.ToNotification());
-                if (++count >= top)
-                {
-                    break;
-                }
-            }
+            list.AddRange(await TakeVisibleAsync(_table.QueryAsync<NotificationTableEntity>(e => e.PartitionKey == partition), userID, top));
         }
 
         return list.OrderByDescending(n => n.Created).Take(top).ToList();
+    }
+
+    /// <summary>
+    /// The first <paramref name="top"/> rows of a partition that the member may see. Row keys sort newest first,
+    /// so that's enough. Rows that exclude the member are skipped without counting, so they don't shorten the list.
+    /// </summary>
+    internal static async Task<IList<Notification>> TakeVisibleAsync(IAsyncEnumerable<NotificationTableEntity> rows, int userID, int top)
+    {
+        var list = new List<Notification>();
+        if (top <= 0)
+        {
+            return list;
+        }
+
+        await foreach (var entity in rows)
+        {
+            if (entity.ExcludedUserID == userID)
+            {
+                continue;
+            }
+
+            list.Add(entity.ToNotification());
+            if (list.Count >= top)
+            {
+                break;
+            }
+        }
+        return list;
     }
 }

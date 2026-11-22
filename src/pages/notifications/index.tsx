@@ -13,6 +13,8 @@ import "./notifications.css";
 const typeLabels: Record<string, string> = {
   news: "Ný frétt",
   hardhead: "Harðhausakvöld",
+  beer: "Ölrýnir",
+  "beer-chat": "Ölrýnir",
 };
 
 const NotificationsPage = () => {

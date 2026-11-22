@@ -20,11 +20,7 @@ public class NotificationInteractor(
             throw new ArgumentException("News ID must be positive", nameof(newsID));
         }
 
-        var title = newsTitle ?? "";
-        if (title.Length > TitleMaxLength)
-        {
-            title = title[..(TitleMaxLength - 1)] + "…";
-        }
+        var title = Truncate(newsTitle ?? "");
 
         var saved = await notifications.SaveAsync(new Notification
         {
@@ -70,10 +66,7 @@ public class NotificationInteractor(
         {
             title += $" · {location.Trim()}";
         }
-        if (title.Length > TitleMaxLength)
-        {
-            title = title[..(TitleMaxLength - 1)] + "…";
-        }
+        title = Truncate(title);
 
         var created = DateTime.SpecifyKind(day.Date, DateTimeKind.Utc) + HardheadReminderTime;
         var queued = 0;
@@ -99,6 +92,90 @@ public class NotificationInteractor(
         log.LogInformation("[{Class}.{Method}] Queued {Queued} notifications for Hardhead night {HardheadID}", nameof(NotificationInteractor), nameof(NotifyHardheadTonightAsync), queued, hardheadID);
         return queued;
     }
+
+    /// <summary>
+    /// Tells everyone except <paramref name="addedByUserID"/> that beer <paramref name="beerID"/> was added to
+    /// the Ölrýnir season, titled "{name} · {producer}". One shared notification that the adder doesn't see.
+    /// </summary>
+    public async Task<Notification> NotifyBeerAddedAsync(string beerID, string name, string producer, int addedByUserID)
+    {
+        log.LogInformation("[{Class}.{Method}] Creating notification for beer '{BeerID}'", nameof(NotificationInteractor), nameof(NotifyBeerAddedAsync), beerID);
+        if (string.IsNullOrWhiteSpace(beerID))
+        {
+            throw new ArgumentException("Beer ID is required", nameof(beerID));
+        }
+
+        var title = (name ?? "").Trim();
+        if (!string.IsNullOrWhiteSpace(producer))
+        {
+            title += $" · {producer.Trim()}";
+        }
+
+        var saved = await notifications.SaveAsync(new Notification
+        {
+            Type = NotificationTypes.Beer,
+            Title = Truncate(title),
+            Link = BeerLink(beerID),
+            RecipientUserID = null,
+            ExcludedUserID = addedByUserID > 0 ? addedByUserID : null,
+            Created = DateTime.UtcNow
+        });
+        await queue.EnqueueAsync(saved.ID);
+        return saved;
+    }
+
+    /// <summary>
+    /// Tells each recipient that <paramref name="username"/> commented on beer <paramref name="beerID"/> in Ölrýnir,
+    /// titled "{username} um {beerName}: {text}" with line breaks collapsed. One notification per recipient, saved
+    /// and queued in parallel. A recipient that fails is logged and skipped. Returns how many notifications were queued.
+    /// </summary>
+    public async Task<int> NotifyBeerCommentAsync(string beerID, string beerName, string username, string text, IEnumerable<int> recipientUserIDs)
+    {
+        log.LogInformation("[{Class}.{Method}] Notifying about a comment on beer '{BeerID}'", nameof(NotificationInteractor), nameof(NotifyBeerCommentAsync), beerID);
+        if (string.IsNullOrWhiteSpace(beerID))
+        {
+            throw new ArgumentException("Beer ID is required", nameof(beerID));
+        }
+
+        var title = Truncate($"{CollapseWhitespace(username)} um {CollapseWhitespace(beerName)}: {CollapseWhitespace(text)}");
+        var link = BeerLink(beerID);
+        var created = DateTime.UtcNow;
+        var recipients = recipientUserIDs.Where(id => id > 0).Distinct().ToList();
+
+        var results = await Task.WhenAll(recipients.Select(async userID =>
+        {
+            try
+            {
+                var saved = await notifications.SaveAsync(new Notification
+                {
+                    Type = NotificationTypes.BeerChat,
+                    Title = title,
+                    Link = link,
+                    RecipientUserID = userID,
+                    Created = created
+                });
+                await queue.EnqueueAsync(saved.ID);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                log.LogWarning(ex, "[{Class}.{Method}] Notifying user {UserID} about beer '{BeerID}' failed", nameof(NotificationInteractor), nameof(NotifyBeerCommentAsync), userID, beerID);
+                return false;
+            }
+        }));
+
+        var queued = results.Count(r => r);
+        log.LogInformation("[{Class}.{Method}] Queued {Queued} of {Count} notifications for beer '{BeerID}'", nameof(NotificationInteractor), nameof(NotifyBeerCommentAsync), queued, recipients.Count, beerID);
+        return queued;
+    }
+
+    private static string BeerLink(string beerID) => $"/beer/{Uri.EscapeDataString(beerID)}";
+
+    private static string CollapseWhitespace(string? value) =>
+        string.Join(' ', (value ?? "").Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
+
+    private static string Truncate(string title) =>
+        title.Length > TitleMaxLength ? title[..(TitleMaxLength - 1)] + "…" : title;
 
     public async Task<NotificationList> GetNotificationsAsync(int userID, int top = 50)
     {

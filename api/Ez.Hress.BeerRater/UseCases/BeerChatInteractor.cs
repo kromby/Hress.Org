@@ -1,4 +1,5 @@
 using Ez.Hress.BeerRater.Entities;
+using Ez.Hress.Notifications.UseCases;
 using Microsoft.Extensions.Logging;
 
 namespace Ez.Hress.BeerRater.UseCases;
@@ -11,15 +12,22 @@ public class BeerChatInteractor
     private readonly IBeerChatDataAccess _chatDataAccess;
     private readonly BeerInteractor _beerInteractor;
     private readonly SeasonInteractor _seasonInteractor;
+    private readonly BeerActivityInteractor _activityInteractor;
+    private readonly NotificationInteractor _notificationInteractor;
     private readonly ILogger<BeerChatInteractor> _log;
+    private readonly TimeSpan _notifyTimeout;
 
-    public BeerChatInteractor(IBeerChatThreadDataAccess threadDataAccess, IBeerChatDataAccess chatDataAccess, BeerInteractor beerInteractor, SeasonInteractor seasonInteractor, ILogger<BeerChatInteractor> log)
+    public BeerChatInteractor(IBeerChatThreadDataAccess threadDataAccess, IBeerChatDataAccess chatDataAccess, BeerInteractor beerInteractor, SeasonInteractor seasonInteractor,
+        BeerActivityInteractor activityInteractor, NotificationInteractor notificationInteractor, ILogger<BeerChatInteractor> log, TimeSpan? notifyTimeout = null)
     {
         _threadDataAccess = threadDataAccess;
         _chatDataAccess = chatDataAccess;
         _beerInteractor = beerInteractor;
         _seasonInteractor = seasonInteractor;
+        _activityInteractor = activityInteractor;
+        _notificationInteractor = notificationInteractor;
         _log = log;
+        _notifyTimeout = notifyTimeout ?? TimeSpan.FromSeconds(5);
     }
 
     // Everyone sees the same chat, rated or not, also after the season has ended.
@@ -71,7 +79,31 @@ public class BeerChatInteractor
         var beer = await _beerInteractor.GetSeasonBeerAsync(seasonID, beerID);
 
         var threadID = await GetOrCreateThreadAsync(season, beer, userID);
-        return await _chatDataAccess.PostMessageAsync(threadID, userID, trimmed);
+        var message = await _chatDataAccess.PostMessageAsync(threadID, userID, trimmed);
+
+        // Best effort: the message is already posted, so a failing or slow notification is only logged.
+        try
+        {
+            await NotifyCommentAsync(beer, message, userID, trimmed).WaitAsync(_notifyTimeout);
+        }
+        catch (Exception ex)
+        {
+            _log.LogError(ex, "[{Class}.{Method}] Failed to notify about message {MessageID} on beer '{BeerID}'", nameof(BeerChatInteractor), nameof(PostMessageAsync), message.ID, beer.ID);
+        }
+
+        return message;
+    }
+
+    // Tells the members active in Ölrýnir, except the commenter, about the comment.
+    private async Task NotifyCommentAsync(Beer beer, ChatMessage message, int userID, string text)
+    {
+        var since = BeerActivityInteractor.ActiveSince(DateTime.UtcNow);
+        var recipients = (await _activityInteractor.GetActiveUserIDsAsync(since)).Where(id => id != userID).ToList();
+        if (recipients.Count == 0)
+            return;
+
+        var messageText = string.IsNullOrWhiteSpace(message.Text) ? text : message.Text;
+        await _notificationInteractor.NotifyBeerCommentAsync(beer.ID, beer.Name, message.Username, messageText, recipients);
     }
 
     private async Task<int> GetOrCreateThreadAsync(Season season, Beer beer, int userID)

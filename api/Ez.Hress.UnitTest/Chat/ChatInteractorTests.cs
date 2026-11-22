@@ -154,4 +154,32 @@ public class ChatInteractorTests
         await Assert.ThrowsAnyAsync<ArgumentException>(() => interactor.CreateThreadAsync(categoryID, name, 7));
         _dataMock.Verify(d => d.CreateThreadAsync(It.IsAny<int>(), It.IsAny<string>(), It.IsAny<int>(), It.IsAny<DateTime>()), Times.Never);
     }
+
+    [Fact]
+    public async Task GetPosterIDs_PassesCategoryAndSince()
+    {
+        // ARRANGE
+        var since = new DateTime(2026, 5, 22, 0, 0, 0, DateTimeKind.Utc);
+        _dataMock.Setup(d => d.GetPosterIDsAsync(77, since)).ReturnsAsync(new List<int> { 7, 8 });
+        var interactor = Arrange();
+
+        // ACT
+        var result = await interactor.GetPosterIDsAsync(77, since);
+
+        // ASSERT
+        Assert.Equal(new[] { 7, 8 }, result);
+    }
+
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public async Task GetPosterIDs_InvalidCategory_ThrowsArgument(int categoryID)
+    {
+        // ARRANGE
+        var interactor = Arrange();
+
+        // ACT & ASSERT
+        await Assert.ThrowsAnyAsync<ArgumentException>(() => interactor.GetPosterIDsAsync(categoryID, DateTime.UtcNow));
+        _dataMock.Verify(d => d.GetPosterIDsAsync(It.IsAny<int>(), It.IsAny<DateTime>()), Times.Never);
+    }
 }

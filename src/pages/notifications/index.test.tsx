@@ -156,9 +156,29 @@ describe("NotificationsPage", () => {
           created: "2026-03-01T09:00:00Z",
         },
         { ...item("43", "2026-03-01T00:00:00Z"), type: "unknown" },
+        {
+          id: "b1",
+          type: "beer",
+          title: "Jólabock · Ölvisholt",
+          link: "/beer/abc123",
+          created: "2026-03-01T10:00:00Z",
+        },
+        {
+          id: "c1",
+          type: "beer-chat",
+          title: "Jónsi um Jólabock: Frábær",
+          link: "/beer/abc123",
+          created: "2026-03-01T11:00:00Z",
+        },
       ],
     });
     renderPage();
+    expect(
+      await screen.findByRole("link", { name: /Jólabock · Ölvisholt/ })
+    ).toHaveTextContent("Ölrýnir ·");
+    expect(
+      screen.getByRole("link", { name: /Jónsi um Jólabock: Frábær/ })
+    ).toHaveTextContent("Ölrýnir ·");
     const hardhead = await screen.findByRole("link", {
       name: /Harðhaus #250 er í kvöld hjá Jónsi/,
     });
