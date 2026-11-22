@@ -77,7 +77,7 @@ public class BeerCatalogFunctions
 
             if (hasBeerID)
             {
-                var existing = await _beerCatalogInteractor.AddToSeasonAsync(seasonID, request.BeerID!);
+                var existing = await _beerCatalogInteractor.AddToSeasonAsync(seasonID, request.BeerID!, userID);
                 return new OkObjectResult(existing);
             }
 

@@ -43,6 +43,17 @@ public class ChatInteractor
         return await _dataAccess.GetMessageCountsAsync(ids);
     }
 
+    // The distinct IDs of users who have posted in the category's threads since the given time.
+    public async Task<IList<int>> GetPosterIDsAsync(int categoryID, DateTime since)
+    {
+        _log.LogInformation("[{Class}.{Method}] Getting posters in category {CategoryID} since {Since}", nameof(ChatInteractor), nameof(GetPosterIDsAsync), categoryID, since);
+
+        if (categoryID <= 0)
+            throw new ArgumentOutOfRangeException(nameof(categoryID), categoryID, "Category ID must be a positive number.");
+
+        return await _dataAccess.GetPosterIDsAsync(categoryID, since);
+    }
+
     public async Task<int> CreateThreadAsync(int categoryID, string name, int userID)
     {
         _log.LogInformation("[{Class}.{Method}] User {UserID} creates thread '{Name}' in category {CategoryID}", nameof(ChatInteractor), nameof(CreateThreadAsync), userID, name, categoryID);

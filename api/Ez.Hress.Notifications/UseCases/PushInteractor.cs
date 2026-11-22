@@ -11,6 +11,8 @@ public class PushInteractor(
 {
     public const string NewsPushTitle = "Ný frétt";
     public const string HardheadPushTitle = "Harðhausakvöld";
+    public const string BeerPushTitle = "Nýr bjór í Ölrýni";
+    public const string BeerChatPushTitle = "Ölrýnir";
 
     /// <summary>
     /// Sends the notification to the relevant devices. Per-device failures are counted, not thrown;
@@ -28,9 +30,15 @@ public class PushInteractor(
         var all = await subscriptions.GetAllAsync();
         var targets = notification.RecipientUserID.HasValue
             ? all.Where(s => s.UserID == notification.RecipientUserID.Value).ToList()
-            : all.ToList();
+            : all.Where(s => s.UserID != notification.ExcludedUserID).ToList();
 
-        var pushTitle = notification.Type == NotificationTypes.Hardhead ? HardheadPushTitle : NewsPushTitle;
+        var pushTitle = notification.Type switch
+        {
+            NotificationTypes.Hardhead => HardheadPushTitle,
+            NotificationTypes.Beer => BeerPushTitle,
+            NotificationTypes.BeerChat => BeerChatPushTitle,
+            _ => NewsPushTitle
+        };
         var payload = new PushPayload(pushTitle, notification.Title, notification.Link);
         int sent = 0, removed = 0, failed = 0;
 

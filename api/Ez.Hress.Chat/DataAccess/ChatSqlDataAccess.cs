@@ -93,6 +93,37 @@ public class ChatSqlDataAccess : IChatDataAccess
         return counts;
     }
 
+    public async Task<IList<int>> GetPosterIDsAsync(int categoryID, DateTime since)
+    {
+        const string sql = @"SELECT	DISTINCT msg.InsertedBy
+                        FROM	scr_Text msg
+                        JOIN	adm_Component thread ON thread.Id = msg.ComponentId AND thread.TypeId = @chatTypeId AND thread.Deleted IS NULL
+                        WHERE	msg.TypeId = @bodyTypeId
+                            AND	msg.Deleted IS NULL
+                            AND	thread.ParentId = @categoryId
+                            AND	msg.InsertedBy IS NOT NULL
+                            AND	msg.Inserted >= @since";
+
+        _log.LogInformation("[{Class}.{Method}] Get posters in category {CategoryID}", _className, nameof(GetPosterIDsAsync), categoryID);
+
+        using var connection = new SqlConnection(_connectionString);
+        await connection.OpenAsync();
+
+        using var command = CreateMessageCommand(sql, connection);
+        command.Parameters.AddWithValue("categoryId", categoryID);
+        // Inserted is stored as Icelandic local time, which is UTC all year.
+        command.Parameters.AddWithValue("since", since.Kind == DateTimeKind.Local ? since.ToUniversalTime() : since);
+
+        var list = new List<int>();
+        using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+        {
+            list.Add(Convert.ToInt32(reader[0]));
+        }
+
+        return list;
+    }
+
     public async Task<ChatMessage?> GetMessageAsync(int messageID)
     {
         const string sql = SelectMessages + @"
