@@ -41,6 +41,16 @@ public class HressChatAccess : IBeerChatDataAccess
         return await _chatInteractor.GetMessageCountsAsync(threadIDs);
     }
 
+    public async Task<IList<int>> GetPosterIDsAsync(DateTime since)
+    {
+        _logger.LogInformation("[{Class}.{Method}] Get posters since {Since}", _className, nameof(GetPosterIDsAsync), since);
+
+        if (_categoryID <= 0)
+            throw new InvalidOperationException($"App setting '{CategorySetting}' is not set.");
+
+        return await _chatInteractor.GetPosterIDsAsync(_categoryID, since);
+    }
+
     public async Task<int> CreateThreadAsync(string name, int userID)
     {
         _logger.LogInformation("[{Class}.{Method}] Create thread '{Name}'", _className, nameof(CreateThreadAsync), name);

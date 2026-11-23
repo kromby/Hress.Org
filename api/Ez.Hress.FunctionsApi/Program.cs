@@ -214,5 +214,6 @@ void ConfigureServices(IServiceCollection services, IConfigurationRoot config)
     services.AddSingleton<IBeerChatThreadDataAccess>(sp => new BeerChatThreadTableAccess(beerConnection, sp.GetRequiredService<ILogger<BeerChatThreadTableAccess>>()));
     _ = int.TryParse(config[HressChatAccess.CategorySetting], out var beerChatCategoryID);
     services.AddSingleton<IBeerChatDataAccess>(sp => new HressChatAccess(sp.GetRequiredService<ChatInteractor>(), beerChatCategoryID, sp.GetRequiredService<ILogger<HressChatAccess>>()));
+    services.AddSingleton<BeerActivityInteractor>();
     services.AddSingleton<BeerChatInteractor>();
 }

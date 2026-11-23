@@ -11,6 +11,9 @@ public interface IBeerChatDataAccess
     // The number of messages in each thread, by thread ID. Threads with no messages are left out.
     Task<IDictionary<int, int>> GetMessageCountsAsync(IReadOnlyCollection<int> threadIDs);
 
+    // The distinct IDs of users who have posted in BeerRater's chat category since the given time (UTC).
+    Task<IList<int>> GetPosterIDsAsync(DateTime since);
+
     // Creates a thread in BeerRater's chat category and returns its ID.
     Task<int> CreateThreadAsync(string name, int userID);
 

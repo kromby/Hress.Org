@@ -2,6 +2,8 @@ using Ez.Hress.BeerRater.DataAccess;
 using Ez.Hress.BeerRater.Entities;
 using Ez.Hress.BeerRater.UseCases;
 using Ez.Hress.Chat.UseCases;
+using Ez.Hress.Notifications.Entities;
+using Ez.Hress.Notifications.UseCases;
 using Microsoft.Extensions.Logging;
 using Moq;
 using HressChat = Ez.Hress.Chat.Entities;
@@ -20,6 +22,10 @@ public class BeerChatInteractorTests
     private readonly Mock<IBeerSeasonDataAccess> _seasonMock;
     private readonly Mock<IBeerChatThreadDataAccess> _threadMock;
     private readonly Mock<IBeerChatDataAccess> _chatMock;
+    private readonly Mock<IBeerRatingDataAccess> _ratingMock = new();
+    private readonly Mock<INotificationDataAccess> _notifications = new();
+    private readonly Mock<IPushQueue> _queue = new();
+    private readonly List<Notification> _saved = new();
 
     public BeerChatInteractorTests()
     {
@@ -27,6 +33,13 @@ public class BeerChatInteractorTests
         _seasonMock = new Mock<IBeerSeasonDataAccess>();
         _threadMock = new Mock<IBeerChatThreadDataAccess>();
         _chatMock = new Mock<IBeerChatDataAccess>();
+
+        // Nobody else is active unless a test says so.
+        _ratingMock.Setup(d => d.GetRatingsAsync(It.IsAny<string>())).ReturnsAsync(new List<Rating>());
+        _chatMock.Setup(d => d.GetPosterIDsAsync(It.IsAny<DateTime>())).ReturnsAsync(new List<int>());
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>()))
+            .Callback<Notification>(n => { lock (_saved) _saved.Add(n); })
+            .ReturnsAsync((Notification n) => { n.ID = $"id-{n.RecipientUserID}"; return n; });
 
         _seasonMock.Setup(d => d.GetSeasonsAsync()).ReturnsAsync(new List<Season>
         {
@@ -40,11 +53,28 @@ public class BeerChatInteractorTests
         });
     }
 
-    private BeerChatInteractor Arrange()
+    private BeerChatInteractor Arrange(TimeSpan? notifyTimeout = null)
     {
         var seasonInteractor = new SeasonInteractor(_seasonMock.Object, new Mock<ILogger<SeasonInteractor>>().Object);
         var beerInteractor = new BeerInteractor(_beerMock.Object, _seasonMock.Object, seasonInteractor, new Mock<ILogger<BeerInteractor>>().Object);
-        return new BeerChatInteractor(_threadMock.Object, _chatMock.Object, beerInteractor, seasonInteractor, new Mock<ILogger<BeerChatInteractor>>().Object);
+        var activityInteractor = new BeerActivityInteractor(_beerMock.Object, _seasonMock.Object, _ratingMock.Object, _chatMock.Object, new Mock<ILogger<BeerActivityInteractor>>().Object);
+        var notificationInteractor = new NotificationInteractor(_notifications.Object, Mock.Of<INotificationSeenDataAccess>(),
+            Mock.Of<IPushSubscriptionDataAccess>(), _queue.Object, Mock.Of<ILogger<NotificationInteractor>>());
+        return new BeerChatInteractor(_threadMock.Object, _chatMock.Object, beerInteractor, seasonInteractor, activityInteractor, notificationInteractor,
+            new Mock<ILogger<BeerChatInteractor>>().Object, notifyTimeout);
+    }
+
+    // Users 7 (the commenter), 8 and 9 posted recently, and user 10 rated a beer recently.
+    private void ArrangeActiveMembers()
+    {
+        _threadMock.Setup(d => d.GetThreadIDAsync(SeasonID, BeerID)).ReturnsAsync(ThreadID);
+        _chatMock.Setup(d => d.GetPosterIDsAsync(It.IsAny<DateTime>())).ReturnsAsync(new List<int> { UserID, 8, 9 });
+        _ratingMock.Setup(d => d.GetRatingsAsync(SeasonID)).ReturnsAsync(new List<Rating>
+        {
+            new() { SeasonID = SeasonID, BeerID = BeerID, UserID = 10, Stars = 4, Created = DateTime.UtcNow.AddDays(-1), Updated = DateTime.UtcNow.AddDays(-1) }
+        });
+        _chatMock.Setup(d => d.PostMessageAsync(ThreadID, UserID, It.IsAny<string>()))
+            .ReturnsAsync((int _, int _, string text) => new ChatMessage { ID = 9, UserID = UserID, Username = "kromby", Text = text });
     }
 
     [Fact]
@@ -284,5 +314,141 @@ public class BeerChatInteractorTests
 
         // ACT & ASSERT - not a 404, since the beer exists.
         await Assert.ThrowsAsync<InvalidOperationException>(() => access.CreateThreadAsync("Tuborg Lille Jul (Jólabjór 2026)", UserID));
+    }
+
+    [Fact]
+    public async Task Post_NotifiesActiveMembersExceptCommenter()
+    {
+        // ARRANGE
+        ArrangeActiveMembers();
+        var interactor = Arrange();
+
+        // ACT
+        await interactor.PostMessageAsync(SeasonID, BeerID, UserID, "Góður\n\nbjór");
+
+        // ASSERT
+        Assert.Equal(new int?[] { 8, 9, 10 }, _saved.Select(n => n.RecipientUserID).Order());
+        Assert.All(_saved, n =>
+        {
+            Assert.Equal(NotificationTypes.BeerChat, n.Type);
+            Assert.Equal("kromby um Tuborg Lille Jul: Góður bjór", n.Title);
+            Assert.Equal($"/beer/{BeerID}", n.Link);
+            Assert.Null(n.ExcludedUserID);
+        });
+        _queue.Verify(q => q.EnqueueAsync(It.IsAny<string>()), Times.Exactly(3));
+        _queue.Verify(q => q.EnqueueAsync($"id-{UserID}"), Times.Never);
+    }
+
+    [Fact]
+    public async Task Post_LongComment_TitleTruncated()
+    {
+        // ARRANGE
+        ArrangeActiveMembers();
+        var interactor = Arrange();
+
+        // ACT
+        await interactor.PostMessageAsync(SeasonID, BeerID, UserID, new string('a', 500));
+
+        // ASSERT
+        Assert.All(_saved, n =>
+        {
+            Assert.Equal(NotificationInteractor.TitleMaxLength, n.Title.Length);
+            Assert.StartsWith("kromby um Tuborg Lille Jul: aaa", n.Title);
+            Assert.EndsWith("…", n.Title);
+        });
+    }
+
+    [Fact]
+    public async Task Post_OnlyCommenterActive_NothingSaved()
+    {
+        // ARRANGE
+        _threadMock.Setup(d => d.GetThreadIDAsync(SeasonID, BeerID)).ReturnsAsync(ThreadID);
+        _chatMock.Setup(d => d.GetPosterIDsAsync(It.IsAny<DateTime>())).ReturnsAsync(new List<int> { UserID });
+        _chatMock.Setup(d => d.PostMessageAsync(ThreadID, UserID, "Góður")).ReturnsAsync(new ChatMessage { ID = 9, UserID = UserID, Username = "kromby", Text = "Góður" });
+        var interactor = Arrange();
+
+        // ACT
+        await interactor.PostMessageAsync(SeasonID, BeerID, UserID, "Góður");
+
+        // ASSERT
+        _notifications.Verify(n => n.SaveAsync(It.IsAny<Notification>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Post_ActivityLookupFails_StillReturnsMessage()
+    {
+        // ARRANGE
+        ArrangeActiveMembers();
+        _ratingMock.Setup(d => d.GetRatingsAsync(It.IsAny<string>())).ThrowsAsync(new InvalidOperationException("storage down"));
+        var interactor = Arrange();
+
+        // ACT
+        var result = await interactor.PostMessageAsync(SeasonID, BeerID, UserID, "Góður");
+
+        // ASSERT
+        Assert.Equal(9, result.ID);
+        _notifications.Verify(n => n.SaveAsync(It.IsAny<Notification>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task Post_SavingNotificationFails_StillReturnsMessage()
+    {
+        // ARRANGE
+        ArrangeActiveMembers();
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>())).ThrowsAsync(new InvalidOperationException("storage down"));
+        var interactor = Arrange();
+
+        // ACT
+        var result = await interactor.PostMessageAsync(SeasonID, BeerID, UserID, "Góður");
+
+        // ASSERT
+        Assert.Equal(9, result.ID);
+    }
+
+    [Fact]
+    public async Task Post_NotifierHangs_StillReturnsWithinTimeout()
+    {
+        // ARRANGE
+        ArrangeActiveMembers();
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>())).Returns(new TaskCompletionSource<Notification>().Task);
+        var interactor = Arrange(TimeSpan.FromMilliseconds(50));
+
+        // ACT
+        var task = interactor.PostMessageAsync(SeasonID, BeerID, UserID, "Góður");
+        var completed = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(3)));
+
+        // ASSERT
+        Assert.Same(task, completed);
+        Assert.Equal(9, (await task).ID);
+    }
+
+    [Fact]
+    public async Task HressChatAccess_GetPosterIDs_UsesCategory()
+    {
+        // ARRANGE
+        var since = new DateTime(2026, 5, 22, 0, 0, 0, DateTimeKind.Utc);
+        var chatData = new Mock<IChatDataAccess>();
+        chatData.Setup(d => d.GetPosterIDsAsync(CategoryID, since)).ReturnsAsync(new List<int> { 7, 8 });
+        var chatInteractor = new ChatInteractor(chatData.Object, new Mock<ILogger<ChatInteractor>>().Object);
+        var access = new HressChatAccess(chatInteractor, CategoryID, new Mock<ILogger<HressChatAccess>>().Object);
+
+        // ACT
+        var result = await access.GetPosterIDsAsync(since);
+
+        // ASSERT
+        Assert.Equal(new[] { 7, 8 }, result);
+    }
+
+    [Fact]
+    public async Task HressChatAccess_GetPosterIDs_NoCategorySetting_ThrowsInvalidOperation()
+    {
+        // ARRANGE
+        var chatData = new Mock<IChatDataAccess>();
+        var chatInteractor = new ChatInteractor(chatData.Object, new Mock<ILogger<ChatInteractor>>().Object);
+        var access = new HressChatAccess(chatInteractor, 0, new Mock<ILogger<HressChatAccess>>().Object);
+
+        // ACT & ASSERT
+        await Assert.ThrowsAsync<InvalidOperationException>(() => access.GetPosterIDsAsync(DateTime.UtcNow));
+        chatData.Verify(d => d.GetPosterIDsAsync(It.IsAny<int>(), It.IsAny<DateTime>()), Times.Never);
     }
 }

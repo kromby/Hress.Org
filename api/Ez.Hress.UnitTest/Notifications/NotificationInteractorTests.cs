@@ -389,4 +389,110 @@ public class NotificationInteractorTests
         _notifications.Setup(n => n.GetLatestAsync(7, 1)).ReturnsAsync(new List<Notification> { N(shown.AddSeconds(10)) });
         Assert.True(await _sut.HasUnreadAsync(7));
     }
+
+    [Fact]
+    public async Task NotifyBeerAdded_SavesSharedNotificationExcludingAdder_AndQueuesIt()
+    {
+        Notification? saved = null;
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>()))
+            .Callback<Notification>(n => saved = n)
+            .ReturnsAsync(new Notification { ID = "returned-id" });
+
+        await _sut.NotifyBeerAddedAsync("abc123", "Jóla Gull", "Ölgerðin", 7);
+
+        Assert.NotNull(saved);
+        Assert.Equal(NotificationTypes.Beer, saved!.Type);
+        Assert.Equal("Jóla Gull · Ölgerðin", saved.Title);
+        Assert.Equal("/beer/abc123", saved.Link);
+        Assert.Null(saved.RecipientUserID);
+        Assert.Equal(7, saved.ExcludedUserID);
+        Assert.Null(saved.Key);
+        Assert.True(Math.Abs((DateTime.UtcNow - saved.Created).TotalSeconds) < 5);
+        _queue.Verify(q => q.EnqueueAsync("returned-id"), Times.Once);
+    }
+
+    [Fact]
+    public async Task NotifyBeerAdded_TruncatesLongTitle()
+    {
+        Notification? saved = null;
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>()))
+            .Callback<Notification>(n => saved = n)
+            .ReturnsAsync(new Notification { ID = "id" });
+
+        await _sut.NotifyBeerAddedAsync("abc", new string('a', 90), new string('b', 90), 7);
+
+        Assert.Equal(NotificationInteractor.TitleMaxLength, saved!.Title.Length);
+        Assert.EndsWith("…", saved.Title);
+    }
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("  ")]
+    public async Task NotifyBeerAdded_NoBeerID_Throws(string beerID)
+    {
+        await Assert.ThrowsAsync<ArgumentException>(() => _sut.NotifyBeerAddedAsync(beerID, "Jóla Gull", "Ölgerðin", 7));
+        _notifications.Verify(n => n.SaveAsync(It.IsAny<Notification>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task NotifyBeerComment_OneNotificationPerValidDistinctRecipient()
+    {
+        var saved = new List<Notification>();
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>()))
+            .Callback<Notification>(n => { lock (saved) saved.Add(n); })
+            .ReturnsAsync((Notification n) => { n.ID = $"id-{n.RecipientUserID}"; return n; });
+
+        var queued = await _sut.NotifyBeerCommentAsync("abc", "Jóla Gull", "kromby", "Góður\r\n  bjór ", new[] { 8, 9, 8, 0, -1 });
+
+        Assert.Equal(2, queued);
+        Assert.Equal(new int?[] { 8, 9 }, saved.Select(n => n.RecipientUserID).Order());
+        Assert.All(saved, n =>
+        {
+            Assert.Equal(NotificationTypes.BeerChat, n.Type);
+            Assert.Equal("kromby um Jóla Gull: Góður bjór", n.Title);
+            Assert.Equal("/beer/abc", n.Link);
+            Assert.Null(n.ExcludedUserID);
+            Assert.Null(n.Key);
+        });
+        _queue.Verify(q => q.EnqueueAsync("id-8"), Times.Once);
+        _queue.Verify(q => q.EnqueueAsync("id-9"), Times.Once);
+    }
+
+    [Fact]
+    public async Task NotifyBeerComment_TruncatesLongTitle()
+    {
+        Notification? saved = null;
+        _notifications.Setup(n => n.SaveAsync(It.IsAny<Notification>()))
+            .Callback<Notification>(n => saved = n)
+            .ReturnsAsync((Notification n) => { n.ID = "id"; return n; });
+
+        await _sut.NotifyBeerCommentAsync("abc", "Jóla Gull", "kromby", new string('a', 500), new[] { 8 });
+
+        Assert.Equal(NotificationInteractor.TitleMaxLength, saved!.Title.Length);
+        Assert.StartsWith("kromby um Jóla Gull: aaa", saved.Title);
+        Assert.EndsWith("…", saved.Title);
+    }
+
+    [Fact]
+    public async Task NotifyBeerComment_OneRecipientFails_OthersStillQueued()
+    {
+        _notifications.Setup(n => n.SaveAsync(It.Is<Notification>(x => x.RecipientUserID == 8))).ThrowsAsync(new InvalidOperationException("storage"));
+        _notifications.Setup(n => n.SaveAsync(It.Is<Notification>(x => x.RecipientUserID != 8)))
+            .ReturnsAsync((Notification n) => { n.ID = $"id-{n.RecipientUserID}"; return n; });
+
+        var queued = await _sut.NotifyBeerCommentAsync("abc", "Jóla Gull", "kromby", "Góður", new[] { 8, 9, 10 });
+
+        Assert.Equal(2, queued);
+        _queue.Verify(q => q.EnqueueAsync("id-9"), Times.Once);
+        _queue.Verify(q => q.EnqueueAsync("id-10"), Times.Once);
+    }
+
+    [Fact]
+    public async Task NotifyBeerComment_NoRecipients_NothingSaved()
+    {
+        var queued = await _sut.NotifyBeerCommentAsync("abc", "Jóla Gull", "kromby", "Góður", Array.Empty<int>());
+
+        Assert.Equal(0, queued);
+        _notifications.Verify(n => n.SaveAsync(It.IsAny<Notification>()), Times.Never);
+    }
 }

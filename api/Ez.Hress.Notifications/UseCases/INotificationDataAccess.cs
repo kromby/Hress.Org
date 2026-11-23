@@ -12,6 +12,9 @@ public interface INotificationDataAccess
     /// </summary>
     Task<Notification?> SaveIfNewAsync(Notification notification);
     Task<Notification?> GetAsync(string id);
-    /// <summary>Notifications for everyone plus those with RecipientUserID == userID, newest first.</summary>
+    /// <summary>
+    /// Notifications for everyone plus those with RecipientUserID == userID, newest first.
+    /// Leaves out notifications with ExcludedUserID == userID.
+    /// </summary>
     Task<IList<Notification>> GetLatestAsync(int userID, int top);
 }
